@@ -22,7 +22,7 @@ async function checkAPI(uuid, profilename) {
     const res = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`, {
         method: 'GET',
         headers: {
-            'API-Key': process.env.HYPIXEL_API_KEY ?? ""
+            'API-Key': process.env.HYPIXEL_API_KEY
         }
     });
     const data = await res.json();
