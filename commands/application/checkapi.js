@@ -122,6 +122,9 @@ export default async (req, res) => {
             embeds: [
                 {
                     title: mojang.name,
+                    thumbnail: {
+                        url: `https://crafatar.com/avatars/${mojang.uuid}?overlay`
+                    },
                     url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${name}`,
                     description: `
                         ${inventory ? yes : no} Inventory API
