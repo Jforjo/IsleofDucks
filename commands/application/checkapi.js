@@ -130,7 +130,7 @@ export default async (req, res) => {
                         ${skills ? yes : no} Skills API
                         ${vault ? yes : no} Personal Vault API
                     `,
-                    color: parseInt("FF69B4", 16),
+                    color: parseInt("FB9B00", 16),
                     footer: {
                         text: "https://ko-fi.com/jforjo",
                         icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
