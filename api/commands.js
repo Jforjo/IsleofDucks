@@ -15,6 +15,6 @@ export default async (req, res) => {
     // await InstallGlobalCommands([CommandData]);
     // await InstallGuildCommands("997893922607087636", [CommandData]);
     // await DeleteGlobalCommands(COMMANDS);
-    await DeleteGuildCommands("997893922607087636", [CommandData]);
+    // await DeleteGuildCommands("997893922607087636", [CommandData]);
     return res.json({ message: "Commands Loaded" });
 }
