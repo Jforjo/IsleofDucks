@@ -84,11 +84,11 @@ export default async (req, res) => {
                         title: "Something went wrong!",
                         description: mojang.message,
                         color: parseInt("B00020", 16),
-                        footer: {
-                            text: "https://ko-fi.com/jforjo",
-                            icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
-                        },
-                        timestamp: date.toISOString()
+                        // footer: {
+                        //     text: "https://ko-fi.com/jforjo",
+                        //     icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
+                        // },
+                        // timestamp: date.toISOString()
                     }
                 ],
             },
@@ -105,11 +105,11 @@ export default async (req, res) => {
                         title: "Something went wrong!",
                         description: message,
                         color: parseInt("B00020", 16),
-                        footer: {
-                            text: "https://ko-fi.com/jforjo",
-                            icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
-                        },
-                        timestamp: date.toISOString()
+                        // footer: {
+                        //     text: "https://ko-fi.com/jforjo",
+                        //     icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
+                        // },
+                        // timestamp: date.toISOString()
                     }
                 ],
             },
@@ -134,11 +134,11 @@ export default async (req, res) => {
                         ${vault ? yes : no} Personal Vault API
                     `,
                     color: parseInt("FB9B00", 16),
-                    footer: {
-                        text: "https://ko-fi.com/jforjo",
-                        icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
-                    },
-                    timestamp: date.toISOString()
+                    // footer: {
+                    //     text: "https://ko-fi.com/jforjo",
+                    //     icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
+                    // },
+                    // timestamp: date.toISOString()
                 }
             ],
         },
