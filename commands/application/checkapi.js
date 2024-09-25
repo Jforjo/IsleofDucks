@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
-import { getUUID } from "../utils/hypixelUtils";
+import { getUUID } from "../../utils/hypixelUtils";
 
 async function isInventoryAPI(profiledata) {
     return "inventory" in profiledata && "inv_contents" in profiledata.inventory;
