@@ -1,3 +1,4 @@
+import { InstallGlobalCommands, InstallGuildCommands, DeleteGlobalCommands } from "../utils/discordUtils";
 import { CommandData } from "../commands/checkapi";
 // COMMANDS.push({
 //     name: 'support',
