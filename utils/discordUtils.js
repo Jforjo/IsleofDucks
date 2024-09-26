@@ -116,10 +116,10 @@ export async function SendMessage(channelId, data) {
 }
 export async function FollowupMessage(token, data) {
     // https://discord.com/developers/docs/resources/message#create-message
-    const endpoint = `webhooks/${process.env.DISCORD_CLIENT_ID}/${token}`;
+    const endpoint = `webhooks/${process.env.DISCORD_CLIENT_ID}/${token}/messages/@original`;
     const body = data;
     try {
-        const res = await DiscordRequest(endpoint, { method: 'POST', body: body });
+        const res = await DiscordRequest(endpoint, { method: 'PATCH', body: body });
         return res.json();
     } catch (err) {
         console.error(err);
