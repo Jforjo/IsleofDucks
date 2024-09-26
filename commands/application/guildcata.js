@@ -122,7 +122,7 @@ export default async (req, res) => {
         });
     }
 
-    const result = await Promise.all(guild.guild.members.map(async (member) => {
+    let result = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsername(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         const cataLevel = await getCurrentCataLevel(member.uuid);
@@ -152,7 +152,7 @@ export default async (req, res) => {
             ],
         });
     }
-    console.log(result);
+    // console.log(result);
     result.sort((a, b) => b.cataLevel - a.cataLevel);
     result = result.map((member, index) => {
         return {
@@ -162,13 +162,13 @@ export default async (req, res) => {
             cataLevel: member.cataLevel
         };
     });
-    const fieldArray = [];
+    let fieldArray = [];
     const chunkSize = 21;
     for (let i = 0; i < result.length; i += chunkSize) {
         fieldArray.push(
             {
                 name: '\u200b',
-                value: result.slice(i, i + chunkSize).map((field) => `\`${field[0].rank}\` ${field[0].name}: ${field[0].cataLevel}`).join('\n'),
+                value: result.slice(i, i + chunkSize).map((field) => `\`${field[0].rank}\` ${field[0].name}: ${Math.round((field[0].cataLevel + Number.EPSILON) * 100) / 100}`).join('\n'),
                 inline: true
             }
         );
