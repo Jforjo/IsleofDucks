@@ -6,7 +6,7 @@ export async function getUUID(username) {
         console.log("hypixelUtils.js - getUUID: " + res);
         return {
             success: false,
-            message: 'Bad response from Mojang' + res
+            message: 'Bad response from Mojang (UUID)\n' + res.json()
         };
     }
     const data = await res.json();
@@ -28,7 +28,7 @@ export async function getUsername(uuid) {
         console.log("hypixelUtils.js - getUsername: " + res);
         return {
             success: false,
-            message: 'Bad response from Mojang' + res
+            message: 'Bad response from Mojang (Username)\n' + res.json()
         };
     }
     const data = await res.json();
