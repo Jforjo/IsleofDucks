@@ -2,8 +2,8 @@
     "name": "isle-of-ducks",
     "version": "1.0.0",
     "dependencies": {
-      "discord-api-types": "^0.37.101",
-      "discord-interactions": "^4.1.0",
-      "@vercel/postgres": "^0.10.0"
+        "discord-api-types": "^0.37.101",
+        "discord-interactions": "^4.1.0",
+        "@vercel/postgres": "^0.9.0"
     }
 }
