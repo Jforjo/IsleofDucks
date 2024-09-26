@@ -3,10 +3,10 @@ export async function getUUID(username) {
         mode: 'no-cors'
     });
     if (!res.ok) {
-        console.error("hypixelUtils.js - getUUID: " + res);
+        console.log("hypixelUtils.js - getUUID: " + res);
         return {
             success: false,
-            message: 'Bad response from Mojang'
+            message: 'Bad response from Mojang' + res
         };
     }
     const data = await res.json();
@@ -25,10 +25,10 @@ export async function getUsername(uuid) {
         mode: 'no-cors'
     });
     if (!res.ok) {
-        console.error("hypixelUtils.js - getUsername: " + res);
+        console.log("hypixelUtils.js - getUsername: " + res);
         return {
             success: false,
-            message: 'Bad response from Mojang'
+            message: 'Bad response from Mojang' + res
         };
     }
     const data = await res.json();
