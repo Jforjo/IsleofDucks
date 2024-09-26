@@ -20,7 +20,7 @@ export async function getUUID(username) {
     };
 }
 export async function getUsername(uuid) {
-    const res = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(username)}`, {
+    const res = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(uuid)}`, {
         mode: 'no-cors'
     });
     const data = await res.json();
