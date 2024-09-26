@@ -113,6 +113,26 @@ export default async (req, res) => {
             },
         });
     }
+
+    const result = await Promise.all(guild.guild.members.map(async (member) => {
+        const mojang = await getUsername(member.uuid);
+        if (!mojang.success) throw new Error(mojang.message);
+
+        const cataLevel = await getCurrentCataLevel(member.uuid);
+        if (!cataLevel.success) throw new Error(cataLevel.message);
+        
+        return {
+            uuid: member.uuid,
+            name: mojang.name,
+            cataLevel: cataLevel.level
+        };
+    })).catch((err) => {
+        return {
+            success: false,
+            message: err.message
+        };
+    });
+
     if (result?.success === false) {
         return res.status(200).send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
