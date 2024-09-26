@@ -114,6 +114,17 @@ export async function SendMessage(channelId, data) {
         console.error(err);
     }
 }
+export async function CreateInteractionResponse(id, token, data) {
+    // https://discord.com/developers/docs/resources/message#create-message
+    const endpoint = `interactions/${id}/${token}/callback`;
+    const body = data;
+    try {
+        const res = await DiscordRequest(endpoint, { method: 'PATCH', body: body });
+        return res.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
 export async function FollowupMessage(token, data) {
     // https://discord.com/developers/docs/resources/message#create-message
     const endpoint = `webhooks/${process.env.DISCORD_CLIENT_ID}/${token}/messages/@original`;

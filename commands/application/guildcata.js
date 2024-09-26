@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID, getUsername } from "../../utils/hypixelUtils";
-import { FollowupMessage } from "../../utils/discordUtils";
+import { CreateInteractionResponse, FollowupMessage } from "../../utils/discordUtils";
 
 const catalevels = { 0: 0,
     1: 50, 2: 125, 3: 235, 4: 395, 5: 625, 6: 955, 7: 1425, 8: 2095, 9: 3045,
@@ -103,61 +103,21 @@ export default async (req, res) => {
     const interaction = req.body;
     const date = new Date();
 
-    await res.status(200).send({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
-    console.log("Before sleep");
-    await sleep(5000);
-    console.log("After sleep");
-    const followupResult = await FollowupMessage(interaction.token, {
-        content: null,
-        embeds: [
-            {
-                title: "Loading...",
-                description: "This may take a while...",
-                color: parseInt("FFD700", 16)
-            }
-        ],
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
     });
-    console.log(followupResult);
-    return res.status(200).send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-            content: null,
-            embeds: [
-                {
-                    title: "Loading...",
-                    description: "This may take a while...",
-                    color: parseInt("B00020", 16)
-                }
-            ],
-        }
-    });
-
-    return;
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
-        // await FollowupMessage(interaction.token, {
-        //     content: null,
-        //     embeds: [
-        //         {
-        //             title: "Something went wrong!",
-        //             description: guild.message,
-        //             color: parseInt("B00020", 16)
-        //         }
-        //     ],
-        // });
-        return res.status(200).send({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: null,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: guild.message,
-                        color: parseInt("B00020", 16)
-                    }
-                ],
-            }
+        await FollowupMessage(interaction.token, {
+            content: null,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: guild.message,
+                    color: parseInt("B00020", 16)
+                }
+            ],
         });
     }
 
@@ -179,28 +139,15 @@ export default async (req, res) => {
     });
     
     if (result?.success === false) {
-        // await FollowupMessage(interaction.token, {
-        //     content: null,
-        //     embeds: [
-        //         {
-        //             title: "Something went wrong!",
-        //             description: result.message,
-        //             color: parseInt("B00020", 16)
-        //         }
-        //     ],
-        // });
-        return res.status(200).send({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: null,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: result.message,
-                        color: parseInt("B00020", 16)
-                    }
-                ],
-            }
+        await FollowupMessage(interaction.token, {
+            content: null,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: result.message,
+                    color: parseInt("B00020", 16)
+                }
+            ],
         });
     }
 
@@ -225,30 +172,16 @@ export default async (req, res) => {
         );
     }
 
-    // await FollowupMessage(interaction.token, {
-    //     content: null,
-    //     embeds: [
-    //         {
-    //             title: 'Superlative - Cata level',
-    //             // description: ``,
-    //             color: parseInt("FB9B00", 16),
-    //             fields: fieldArray
-    //         }
-    //     ],
-    // });
-    return res.status(200).send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-            content: null,
-            embeds: [
-                {
-                    title: 'Superlative - Cata level',
-                    // description: ``,
-                    color: parseInt("FB9B00", 16),
-                    fields: fieldArray
-                }
-            ],
-        }
+    await FollowupMessage(interaction.token, {
+        content: null,
+        embeds: [
+            {
+                title: 'Superlative - Cata level',
+                // description: ``,
+                color: parseInt("FB9B00", 16),
+                fields: fieldArray
+            }
+        ],
     });
 }
 export const CommandData = {
