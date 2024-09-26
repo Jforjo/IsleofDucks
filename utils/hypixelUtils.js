@@ -26,12 +26,12 @@ export async function getUsername(uuid) {
     });
     if (!res.ok) {
         console.log("hypixelUtils.js - getUsername: " + res);
+        const data = await res.json();
         return {
             success: false,
-            message: 'Bad response from Mojang (Username)\n' + res.json()
+            message: 'Bad response from Mojang (Username)\n' + uuid + '\n' + data
         };
     }
-    const data = await res.json();
     if (data.id === null) return {
         success: false,
         message: data?.errorMessage ? data.errorMessage : 'UUID not found'
