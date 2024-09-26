@@ -1,8 +1,8 @@
+import { sql } from "@vercel/postgres";
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID, getUsername } from "../../utils/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage } from "../../utils/discordUtils";
-import { sql } from "@vercel/postgres";
 
 const catalevels = {
     1: 50, 2: 125, 3: 235, 4: 395, 5: 625, 6: 955, 7: 1425, 8: 2095, 9: 3045,
