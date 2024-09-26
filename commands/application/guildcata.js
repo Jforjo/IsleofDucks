@@ -103,10 +103,9 @@ export default async (req, res) => {
     const interaction = req.body;
     const date = new Date();
 
-    const deferred = await CreateInteractionResponse(interaction.id, interaction.token, {
+    await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
     });
-    console.log(deferred);
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
