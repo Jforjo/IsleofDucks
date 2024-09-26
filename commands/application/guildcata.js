@@ -116,22 +116,21 @@ export default async (req, res) => {
 
     const result = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsername(member.uuid);
-        if (!mojang.success) throw new Error(mojang.message);
-
+        if (!mojang.success) return;
         const cataLevel = await getCurrentCataLevel(member.uuid);
-        if (!cataLevel.success) throw new Error(cataLevel.message);
-        
+        if (!cataLevel.success) return;
         return {
             uuid: member.uuid,
             name: mojang.name,
             cataLevel: cataLevel.level
         };
-    })).catch((err) => {
-        return {
-            success: false,
-            message: err.message
-        };
-    });
+    }))
+    // .catch((err) => {
+    //     return {
+    //         success: false,
+    //         message: err.message
+    //     };
+    // });
 
     if (result?.success === false) {
         return res.status(200).send({
