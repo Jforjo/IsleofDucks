@@ -119,7 +119,7 @@ export async function CreateInteractionResponse(id, token, data) {
     const endpoint = `interactions/${id}/${token}/callback`;
     const body = data;
     try {
-        const res = await DiscordRequest(endpoint, { method: 'PATCH', body: body });
+        const res = await DiscordRequest(endpoint, { method: 'POST', body: body });
         return res.json();
     } catch (err) {
         console.error(err);
