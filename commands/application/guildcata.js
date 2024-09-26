@@ -104,10 +104,10 @@ export default async (req, res) => {
     const date = new Date();
 
     await res.status(200).send({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
-
+    console.log("Before sleep");
     await sleep(5000);
-
-    return res.status(200).send(await FollowupMessage(interaction.token, {
+    console.log("After sleep");
+    const followupResult = await FollowupMessage(interaction.token, {
         content: null,
         embeds: [
             {
@@ -116,7 +116,21 @@ export default async (req, res) => {
                 color: parseInt("FFD700", 16)
             }
         ],
-    }));
+    });
+    console.log(followupResult);
+    return res.status(200).send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+            content: null,
+            embeds: [
+                {
+                    title: "Loading...",
+                    description: "This may take a while...",
+                    color: parseInt("B00020", 16)
+                }
+            ],
+        }
+    });
 
     return;
 
