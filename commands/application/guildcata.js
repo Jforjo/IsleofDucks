@@ -43,21 +43,20 @@ async function getCurrentCataLevel(uuid) {
     let cataexp = 0;
     data.profiles.forEach((profile) => {
         let temp = profile.members[uuid]?.dungeons?.dungeon_types?.catacombs?.experience;
-        if (temp) {
+        if (temp && temp > 0) {
             if (cataexp < temp) cataexp = temp;
         }
     });
 
     let catalvl = 0;
-    Object.keys(catalevels).forEach((key) => {
-        const value = catalevels[key];
-        if (cataexp < value) {
-            catalvl += (cataexp - catalevels[key - 1]) / (value - catalevels[key - 1]);
-            return;
-        } else {
+    for (const [key, value] of Object.entries(object1)) {
+        if (cataexp >= value) {
             catalvl++;
+            return;
         }
-    });
+        catalvl += (cataexp - catalevels[key - 1]) / (value - catalevels[key - 1]);
+        break;
+    }
     return {
         success: true,
         level: catalvl
