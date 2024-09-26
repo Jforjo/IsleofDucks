@@ -107,7 +107,7 @@ export default async (req, res) => {
 
     await sleep(5000);
 
-    await FollowupMessage(interaction.token, {
+    return res.status(200).send(await FollowupMessage(interaction.token, {
         content: null,
         embeds: [
             {
@@ -116,7 +116,7 @@ export default async (req, res) => {
                 color: parseInt("FFD700", 16)
             }
         ],
-    });
+    }));
 
     return;
 
