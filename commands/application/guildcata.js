@@ -103,7 +103,7 @@ export default async (req, res) => {
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
-        return await FollowupMessage(interaction.token, {
+        await FollowupMessage(interaction.token, {
             content: null,
             embeds: [
                 {
@@ -133,7 +133,7 @@ export default async (req, res) => {
     });
     
     if (result?.success === false) {
-        return await FollowupMessage(interaction.token, {
+        await FollowupMessage(interaction.token, {
             content: null,
             embeds: [
                 {
@@ -166,7 +166,7 @@ export default async (req, res) => {
         );
     }
 
-    return await FollowupMessage(interaction.token, {
+    await FollowupMessage(interaction.token, {
         content: null,
         embeds: [
             {
