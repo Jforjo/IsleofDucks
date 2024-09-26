@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID, getUsername } from "../../utils/hypixelUtils";
+import { FollowupMessage } from "../../utils/discordUtils";
 
 const catalevels = { 0: 0,
     1: 50, 2: 125, 3: 235, 4: 395, 5: 625, 6: 955, 7: 1425, 8: 2095, 9: 3045,
@@ -97,9 +98,12 @@ async function getGuildData(name) {
 export default async (req, res) => {
     const interaction = req.body;
     const date = new Date();
+
+    await res.status(200).send({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
+
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
-        return res.status(200).send({
+        await FollowupMessage(interaction.token, {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
                 content: null,
@@ -132,7 +136,7 @@ export default async (req, res) => {
     });
     
     if (result?.success === false) {
-        return res.status(200).send({
+        await FollowupMessage(interaction.token, {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
                 content: null,
@@ -168,7 +172,7 @@ export default async (req, res) => {
         );
     }
 
-    return res.status(200).send({
+    await FollowupMessage(interaction.token, {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
             content: null,

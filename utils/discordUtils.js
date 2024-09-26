@@ -114,6 +114,17 @@ export async function SendMessage(channelId, data) {
         console.error(err);
     }
 }
+export async function FollowupMessage(token, data) {
+    // https://discord.com/developers/docs/resources/message#create-message
+    const endpoint = `webhooks/${process.env.DISCORD_CLIENT_ID}/${token}`;
+    const body = data;
+    try {
+        const res = await DiscordRequest(endpoint, { method: 'POST', body: body });
+        return res.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 export function ToPermissions(permissions) {
     // https://discord.com/developers/docs/topics/permissions
