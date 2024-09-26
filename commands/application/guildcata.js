@@ -27,7 +27,7 @@ const catalevels = {
 async function getCurrentCataLevel(uuid) {
     const date = new Date();
 
-    const storage = JSON.parse(fs.readFileSync(__dirname + '../../utils/cataxp.json', 'utf8'));
+    const storage = JSON.parse(fs.readFileSync(__dirname + '/../../utils/cataxp.json', 'utf8'));
     const user = storage[uuid];
     if (user && user.lastUpdated < date.getTime() + 1000 * 60 * 5) {
         if (user.oldxp) {
@@ -86,7 +86,7 @@ async function getCurrentCataLevel(uuid) {
             cataxp: cataxp
         };
     }
-    fs.writeFileSync(__dirname + '../../utils/cataxp.json', JSON.stringify(storage));
+    fs.writeFileSync(__dirname + '/../../utils/cataxp.json', JSON.stringify(storage));
 
     if (user.oldxp) {
         return {
