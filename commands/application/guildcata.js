@@ -95,11 +95,30 @@ async function getGuildData(name) {
     };
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 export default async (req, res) => {
     const interaction = req.body;
     const date = new Date();
 
     await res.status(200).send({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
+
+    await sleep(5000);
+
+    await FollowupMessage(interaction.token, {
+        content: null,
+        embeds: [
+            {
+                title: "Loading...",
+                description: "This may take a while...",
+                color: parseInt("FFD700", 16)
+            }
+        ],
+    });
+
+    return;
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
