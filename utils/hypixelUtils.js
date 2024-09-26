@@ -2,14 +2,13 @@ export async function getUUID(username) {
     const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${encodeURIComponent(username)}`, {
         mode: 'no-cors'
     });
+    const data = await res.json();
     if (!res.ok) {
-        console.log("hypixelUtils.js - getUUID: " + res);
         return {
             success: false,
-            message: 'Bad response from Mojang (UUID)\n' + res.json()
+            message: 'Bad response from Mojang'
         };
     }
-    const data = await res.json();
     if (data.id === null) return {
         success: false,
         message: data?.errorMessage ? data.errorMessage : 'Username not found'
@@ -26,10 +25,9 @@ export async function getUsername(uuid) {
     });
     const data = await res.json();
     if (!res.ok) {
-        console.log("hypixelUtils.js - getUsername: " + res);
         return {
             success: false,
-            message: 'Bad response from Mojang (Username)\n' + uuid + '\n' + data
+            message: 'Bad response from Mojang'
         };
     }
     if (data.id === null) return {
