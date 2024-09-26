@@ -1,5 +1,5 @@
 export default async (req, res) => {
-    return res.send({ message: 
+    return res.send(
         <button onClick={() => alert("Click")}>Click</button>
-     });
+    );
 }
