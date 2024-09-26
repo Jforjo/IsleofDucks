@@ -1,5 +1,5 @@
 import { InstallGlobalCommands, InstallGuildCommands, DeleteGlobalCommands, DeleteGuildCommands } from "../utils/discordUtils";
-import { CommandData } from "../commands/application/checkapi";
+import { CommandData } from "../commands/application/guildcata";
 // COMMANDS.push({
 //     name: 'support',
 //     description: 'Like this bot? Support me!',
@@ -13,7 +13,7 @@ import { CommandData } from "../commands/application/checkapi";
 
 export default async (req, res) => {
     // await InstallGlobalCommands([CommandData]);
-    // await InstallGuildCommands("997893922607087636", [CommandData]);
+    await InstallGuildCommands("997893922607087636", [CommandData]);
     // await DeleteGlobalCommands([{ id: "" }]);
     // await DeleteGuildCommands("997893922607087636", [{ id: "1288515773488435331" }, { id: "1288515771768504383" }]);
     return res.json({ message: "Commands Loaded" });
