@@ -49,26 +49,28 @@ async function getCurrentCataLevel(uuid) {
             message: 'User has no profiles'
         };
     }
-    let cataexp = 0;
+    let cataxp = 0;
     data.profiles.forEach((profile) => {
         let temp = profile.members[uuid]?.dungeons?.dungeon_types?.catacombs?.experience;
         if (temp && temp > 0) {
-            if (cataexp < temp) cataexp = temp;
+            if (cataxp < temp) cataxp = temp;
         }
     });
-
+    return {
+        success: true,
+        level: calcCataLevel(cataxp)
+    }
+}
+function calcCataLevel(cataxp) {
     let catalvl = 0;
     for (const [key, value] of Object.entries(catalevels)) {
-        if (cataexp < value) {
-            catalvl += (cataexp - (catalevels[key - 1] ?? 0)) / (value - (catalevels[key - 1] ?? 0));
+        if (cataxp < value) {
+            catalvl += (cataxp - (catalevels[key - 1] ?? 0)) / (value - (catalevels[key - 1] ?? 0));
             break;
         }
         catalvl++;
     }
-    return {
-        success: true,
-        level: catalvl
-    }
+    return catalvl;
 }
 
 async function getGuildData(name) {
