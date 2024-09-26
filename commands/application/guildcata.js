@@ -114,6 +114,7 @@ export default async (req, res) => {
         });
     }
     const result = await Promise.all(guild.guild.members.map(async (member) => {
+        const username = "k";
         const mojang = await getUsername(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         const cataLevel = await getCurrentCataLevel(member.uuid);
