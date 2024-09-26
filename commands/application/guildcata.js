@@ -103,19 +103,16 @@ export default async (req, res) => {
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
-        return res.status(200).send(await FollowupMessage(interaction.token, {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: null,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: guild.message,
-                        color: parseInt("B00020", 16)
-                    }
-                ],
-            },
-        }));
+        await FollowupMessage(interaction.token, {
+            content: null,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: guild.message,
+                    color: parseInt("B00020", 16)
+                }
+            ],
+        });
     }
 
     const result = await Promise.all(guild.guild.members.map(async (member) => {
@@ -136,19 +133,16 @@ export default async (req, res) => {
     });
     
     if (result?.success === false) {
-        return res.status(200).send(await FollowupMessage(interaction.token, {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: null,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: result.message,
-                        color: parseInt("B00020", 16)
-                    }
-                ],
-            },
-        }));
+        await FollowupMessage(interaction.token, {
+            content: null,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: result.message,
+                    color: parseInt("B00020", 16)
+                }
+            ],
+        });
     }
 
     result.sort((a, b) => b.cataLevel - a.cataLevel);
@@ -172,20 +166,17 @@ export default async (req, res) => {
         );
     }
 
-    return res.status(200).send(await FollowupMessage(interaction.token, {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: null,
-                embeds: [
-                    {
-                        title: 'Superlative - Cata level',
-                        // description: ``,
-                        color: parseInt("FB9B00", 16),
-                        fields: fieldArray
-                    }
-                ],
-            },
-    }));
+    await FollowupMessage(interaction.token, {
+        content: null,
+        embeds: [
+            {
+                title: 'Superlative - Cata level',
+                // description: ``,
+                color: parseInt("FB9B00", 16),
+                fields: fieldArray
+            }
+        ],
+    });
 }
 export const CommandData = {
     name: "guildcata",
