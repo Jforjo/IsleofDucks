@@ -49,7 +49,7 @@ async function getCurrentCataLevel(uuid) {
     });
 
     let catalvl = 0;
-    for (const [key, value] of Object.entries(object1)) {
+    for (const [key, value] of Object.entries(catalevels)) {
         if (cataexp >= value) {
             catalvl++;
             return;
