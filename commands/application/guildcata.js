@@ -132,6 +132,7 @@ export default async (req, res) => {
             cataLevel: cataLevel.level
         };
     })).catch((err) => {
+        console.log(err.message);
         return {
             success: false,
             message: err.message
