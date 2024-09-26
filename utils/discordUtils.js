@@ -25,7 +25,8 @@ export async function InstallGlobalCommands(commands) {
     const endpoint = `applications/${process.env.DISCORD_CLIENT_ID}/commands`;
   
     try {
-        await DiscordRequest(endpoint, { method: 'PUT', body: commands });
+        const res = await DiscordRequest(endpoint, { method: 'PUT', body: commands });
+        return res.json();
     } catch (err) {
         console.error(err);
     }
@@ -60,7 +61,8 @@ export async function InstallGuildCommands(guildId, commands) {
     const endpoint = `applications/${process.env.DISCORD_CLIENT_ID}/guilds/${guildId}/commands`;
   
     try {
-        await DiscordRequest(endpoint, { method: 'PUT', body: commands });
+        const res = await DiscordRequest(endpoint, { method: 'PUT', body: commands });
+        return res.json();
     } catch (err) {
         console.error(err);
     }
