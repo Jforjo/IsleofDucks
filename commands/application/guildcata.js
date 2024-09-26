@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-ap
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID, getUsername } from "../../utils/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage } from "../../utils/discordUtils";
-import fs from 'fs';
+import { sql } from "@vercel/postgres";
 
 const catalevels = {
     1: 50, 2: 125, 3: 235, 4: 395, 5: 625, 6: 955, 7: 1425, 8: 2095, 9: 3045,
@@ -27,10 +27,11 @@ const catalevels = {
 async function getCurrentCataLevel(uuid) {
     const date = new Date();
 
-    const storage = JSON.parse(fs.readFileSync(__dirname + '/../../utils/cataxp.json', 'utf8'));
-    const user = storage[uuid];
+    const { rows } = await sql`SELECT * from users where uuid=${uuid}`;
+    let user;
+    if (rows.length > 0) user = rows[0];
     if (user && user.lastUpdated < date.getTime() + 1000 * 60 * 5) {
-        if (user?.oldxp) {
+        if (user?.oldxp != null) {
             return {
                 success: true,
                 level: calcCataLevel(user.cataxp - user.oldxp)
@@ -75,20 +76,20 @@ async function getCurrentCataLevel(uuid) {
         }
     });
     if (user?.oldxp == null && date.getTime() > 1727755200000) {
-        storage[uuid] = {
-            lastUpdated: date.getTime(),
-            cataxp: cataxp,
-            oldxp: cataxp
-        };
+        if (user) {
+            await sql`UPDATE users SET (cataxp, oldxp, lastUpdated) = (${cataxp}, ${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
+        } else {
+            await sql`INSERT INTO users(uuid, cataxp, oldxp, lastUpdated) VALUES (${uuid}, ${cataxp}, ${cataxp}, ${date.getTime()})`;
+        }
     } else {
-        storage[uuid] = {
-            lastUpdated: date.getTime(),
-            cataxp: cataxp
-        };
+        if (user) {
+            await sql`UPDATE users SET (cataxp, lastUpdated) = (${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
+        } else {
+            await sql`INSERT INTO users(uuid, cataxp, oldxp, lastUpdated) VALUES (${uuid}, ${cataxp}, null, ${date.getTime()})`;
+        }
     }
-    fs.writeFileSync(__dirname + '/../../utils/cataxp.json', JSON.stringify(storage));
 
-    if (user?.oldxp) {
+    if (user?.oldxp != null) {
         return {
             success: true,
             level: calcCataLevel(cataxp - user.oldxp)
