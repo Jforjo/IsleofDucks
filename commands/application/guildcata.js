@@ -48,9 +48,8 @@ async function getCurrentCataLevel(uuid) {
         }
     });
 
-    let catalvl = 0;
+    let catalvl = -1;
     for (const [key, value] of Object.entries(catalevels)) {
-        if (cataexp == 0) break;
         if (cataexp < value) {
             catalvl += (cataexp - catalevels[key - 1]) / (value - catalevels[key - 1]);
             break;
