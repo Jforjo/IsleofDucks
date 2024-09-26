@@ -168,7 +168,7 @@ export default async (req, res) => {
         fieldArray.push(
             {
                 name: '\u200b',
-                value: result.slice(i, i + chunkSize).map((field) => `\`${field[0].rank}\` ${field[0].name}: ${Math.round((field[0].cataLevel + Number.EPSILON) * 100) / 100}`).join('\n'),
+                value: result.slice(i, i + chunkSize).map((field) => `\`${field.rank}\` ${field.name}: ${Math.round((field.cataLevel + Number.EPSILON) * 100) / 100}`).join('\n'),
                 inline: true
             }
         );
