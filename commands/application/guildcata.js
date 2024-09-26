@@ -114,7 +114,7 @@ export default async (req, res) => {
         });
     }
     const result = await Promise.all(guild.guild.members.map(async (member) => {
-        const mojang = await getUsername(member.uuid ?? "");
+        const mojang = await getUsername(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         const cataLevel = await getCurrentCataLevel(member.uuid);
         if (!cataLevel.success) throw new Error(cataLevel.message);
@@ -138,7 +138,10 @@ export default async (req, res) => {
                     {
                         title: "Something went wrong!",
                         description: result.message,
-                        color: parseInt("B00020", 16)
+                        color: parseInt("B00020", 16),
+                        footer: {
+                            text: "Promise.all() Catch"
+                        }
                     }
                 ],
             },
