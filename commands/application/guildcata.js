@@ -2,6 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-ap
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID, getUsername } from "../../utils/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage } from "../../utils/discordUtils";
+import fs from 'fs';
 
 const catalevels = {
     1: 50, 2: 125, 3: 235, 4: 395, 5: 625, 6: 955, 7: 1425, 8: 2095, 9: 3045,
@@ -24,6 +25,23 @@ const catalevels = {
     97: 9967809640, 98: 10167809640, 99: 10367809640, 100: 10567809640,
 }
 async function getCurrentCataLevel(uuid) {
+    const date = new Date();
+
+    const storage = JSON.parse(fs.readFileSync('../../utils/cataxp.json', 'utf8'));
+    const user = storage[uuid];
+    if (user && user.lastUpdated < date.getTime() + 1000 * 60 * 5) {
+        if (user.oldxp) {
+            return {
+                success: true,
+                level: calcCataLevel(user.cataxp - user.oldxp)
+            }
+        }
+        return {
+            success: true,
+            level: calcCataLevel(user.cataxp)
+        }
+    }
+
     const response = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`, {
         method: 'GET',
         headers: {
@@ -56,6 +74,26 @@ async function getCurrentCataLevel(uuid) {
             if (cataxp < temp) cataxp = temp;
         }
     });
+    if (!user.oldxp && date.getTime() > 1727755200000) {
+        storage[uuid] = {
+            lastUpdated: date.getTime(),
+            cataxp: cataxp,
+            oldxp: cataxp
+        };
+    } else {
+        storage[uuid] = {
+            lastUpdated: date.getTime(),
+            cataxp: cataxp
+        };
+    }
+    fs.writeFileSync('../../utils/cataxp.json', JSON.stringify(storage));
+
+    if (user.oldxp) {
+        return {
+            success: true,
+            level: calcCataLevel(cataxp - user.oldxp)
+        }
+    }
     return {
         success: true,
         level: calcCataLevel(cataxp)
