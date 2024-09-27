@@ -14,7 +14,7 @@ import { CommandData as Superlative } from "../commands/application/superlative.
 
 
 export default async (req, res) => {
-    await InstallGlobalCommands([Superlative]);
+    const result = await InstallGlobalCommands([Superlative]);
     // const result = await InstallGuildCommands("997893922607087636", [CheckAPI, GuildCata]);
     // await DeleteGlobalCommands([{ id: "" }]);
     // await DeleteGuildCommands("997893922607087636", [{ id: "1288787008252018711" }, { id: "1288787008252018710" }]);
