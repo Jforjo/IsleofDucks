@@ -28,9 +28,9 @@ async function getCurrentCataLevel(uuid) {
     const date = new Date();
 
     const { rows } = await sql`SELECT * from users where uuid=${uuid}`;
-    let user;
+    let user = null;
     if (rows.length > 0) user = rows[0];
-    if (user && user.lastUpdated < date.getTime() + 1000 * 60 * 5) {
+    if (user != null && user.lastupdated < date.getTime() - 1000 * 60 * 5) {
         if (user?.oldxp != null) {
             return {
                 success: true,
@@ -77,15 +77,15 @@ async function getCurrentCataLevel(uuid) {
     });
     if (user?.oldxp == null && date.getTime() > 1727755200000) {
         if (user) {
-            await sql`UPDATE users SET (cataxp, oldxp, lastUpdated) = (${cataxp}, ${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
+            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${cataxp}, ${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         } else {
-            await sql`INSERT INTO users(uuid, cataxp, oldxp, lastUpdated) VALUES (${uuid}, ${cataxp}, ${cataxp}, ${date.getTime()})`;
+            await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${cataxp}, ${cataxp}, ${date.getTime()})`;
         }
     } else {
         if (user) {
-            await sql`UPDATE users SET (cataxp, lastUpdated) = (${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
+            await sql`UPDATE users SET (cataxp, lastupdated) = (${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         } else {
-            await sql`INSERT INTO users(uuid, cataxp, oldxp, lastUpdated) VALUES (${uuid}, ${cataxp}, null, ${date.getTime()})`;
+            await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${cataxp}, null, ${date.getTime()})`;
         }
     }
 
