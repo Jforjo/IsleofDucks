@@ -4,7 +4,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-ap
 export default async (req, res) => {
     const interaction = req.body;
     const DISCORD_EPOCH = 14200070400000;
-    const timestamp = parseInt((interaction.id >>> 0).toString(2).slice(0,42), 2) + DISCORD_EPOCH;
+    const timestamp = parseInt(interaction.id.toString(2).slice(0,42), 2) + DISCORD_EPOCH;
     const date = new Date();
     return res.status(200).send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
