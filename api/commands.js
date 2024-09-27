@@ -1,4 +1,4 @@
-import { InstallGlobalCommands, InstallGuildCommands, DeleteGlobalCommands, DeleteGuildCommands } from "../utils/discordUtils";
+import { InstallGlobalCommands, InstallGuildCommands, DeleteGlobalCommands, DeleteGuildCommands } from "../utils/discordUtils.js";
 import { CommandData as CheckAPI } from "../commands/application/checkapi.js";
 import { CommandData as GuildCata } from "../commands/application/guildcata.js";
 import { CommandData as Superlative } from "../commands/application/superlative.js";
