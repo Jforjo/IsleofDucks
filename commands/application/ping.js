@@ -1,4 +1,5 @@
 import { InteractionResponseType } from "discord-interactions";
+import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 
 export default async (req, res) => {
     const interaction = req.body;
