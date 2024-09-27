@@ -7,18 +7,14 @@ export default async (req, res) => {
     return res.status(200).send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-            content: `
-                \`\`\`json
-                ${JSON.stringify(interaction, null, 4)}
-                \`\`\`
-            `,
+            content: null,
             embeds: [
                 {
                     title: "Pong!",
                     color: parseInt("FF69B4", 16),
-                    // footer: {
-                    //     text: `Response time: ${date.getTime() - interaction.timestamp}ms`,
-                    // },
+                    footer: {
+                        text: `Response time: ${date.getTime() - interaction.timestamp}ms`,
+                    },
                     timestamp: date.toISOString()
                 }
             ],
