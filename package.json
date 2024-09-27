@@ -1,6 +1,7 @@
 {
     "name": "isle-of-ducks",
     "version": "1.0.0",
+    "type": "module",
     "dependencies": {
         "discord-api-types": "^0.37.101",
         "discord-interactions": "^4.1.0",
