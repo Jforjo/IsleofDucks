@@ -15,7 +15,7 @@ export default async (req, res) => {
                     title: "Pong!",
                     color: parseInt("FF69B4", 16),
                     footer: {
-                        text: `Response time: ${date.getTime() - timestamp}ms`,
+                        text: `Response time: ${interaction.id}ms`,
                     },
                     timestamp: date.toISOString()
                 }
