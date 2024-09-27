@@ -30,7 +30,7 @@ async function getCurrentCataLevel(uuid) {
     const { rows } = await sql`SELECT * from users where uuid=${uuid}`;
     let user = null;
     if (rows.length > 0) user = rows[0];
-    if (user != null && user.lastupdated < date.getTime() - 1000 * 60 * 5) {
+    if (user != null && user.lastupdated > date.getTime() - 1000 * 60 * 5) {
         if (user?.oldxp != null) {
             return {
                 success: true,
