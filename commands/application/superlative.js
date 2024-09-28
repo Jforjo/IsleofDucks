@@ -168,7 +168,7 @@ export default async (req, res) => {
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
-                    timestamp: new Date.toISOString()
+                    timestamp: new Date().toISOString()
                 }
             ],
         });
@@ -203,7 +203,7 @@ export default async (req, res) => {
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
-                    timestamp: new Date.toISOString()
+                    timestamp: new Date().toISOString()
                 }
             ],
         });
@@ -241,7 +241,7 @@ export default async (req, res) => {
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
-                timestamp: new Date.toISOString()
+                timestamp: new Date().toISOString()
             }
         ],
     });
