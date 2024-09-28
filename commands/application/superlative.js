@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID, getUsername } from "../../utils/hypixelUtils.js";
-import { CreateInteractionResponse, FollowupMessage } from "../../utils/discordUtils.js";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate } from "../../utils/discordUtils.js";
 
 const catalevels = {
     1: 50, 2: 125, 3: 235, 4: 395, 5: 625, 6: 955, 7: 1425, 8: 2095, 9: 3045,
@@ -150,7 +150,7 @@ function sleep(ms) {
 
 export default async (req, res) => {
     const interaction = req.body;
-    const date = new Date();
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
@@ -164,7 +164,11 @@ export default async (req, res) => {
                 {
                     title: "Something went wrong!",
                     description: guild.message,
-                    color: parseInt("B00020", 16)
+                    color: parseInt("B00020", 16),
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date.toISOString()
                 }
             ],
         });
@@ -195,7 +199,11 @@ export default async (req, res) => {
                 {
                     title: "Something went wrong!",
                     description: result.message,
-                    color: parseInt("B00020", 16)
+                    color: parseInt("B00020", 16),
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date.toISOString()
                 }
             ],
         });
@@ -229,7 +237,11 @@ export default async (req, res) => {
                 title: 'Superlative - Cata level',
                 // description: ``,
                 color: parseInt("FB9B00", 16),
-                fields: fieldArray
+                fields: fieldArray,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date.toISOString()
             }
         ],
     });

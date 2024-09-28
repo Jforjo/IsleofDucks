@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID } from "../../utils/hypixelUtils.js";
+import { ConvertSnowflakeToDate } from "../../utils/discordUtils.js";
 
 async function isInventoryAPI(profiledata) {
     return "inventory" in profiledata && "inv_contents" in profiledata.inventory;
@@ -67,7 +68,7 @@ async function checkAPI(uuid, profilename) {
 
 export default async (req, res) => {
     const interaction = req.body;
-    const date = new Date();
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
     const options = Object.fromEntries(interaction.data.options.map(option => [option.name, option.value]));
     const username = options.username;
     const profile = options.profile;
@@ -84,11 +85,10 @@ export default async (req, res) => {
                         title: "Something went wrong!",
                         description: mojang.message,
                         color: parseInt("B00020", 16),
-                        // footer: {
-                        //     text: "https://ko-fi.com/jforjo",
-                        //     icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
-                        // },
-                        // timestamp: date.toISOString()
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date.toISOString()
                     }
                 ],
             },
@@ -105,11 +105,10 @@ export default async (req, res) => {
                         title: "Something went wrong!",
                         description: message,
                         color: parseInt("B00020", 16),
-                        // footer: {
-                        //     text: "https://ko-fi.com/jforjo",
-                        //     icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
-                        // },
-                        // timestamp: date.toISOString()
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date.toISOString()
                     }
                 ],
             },
@@ -134,11 +133,10 @@ export default async (req, res) => {
                         ${vault ? yes : no} Personal Vault API
                     `,
                     color: parseInt("FB9B00", 16),
-                    // footer: {
-                    //     text: "https://ko-fi.com/jforjo",
-                    //     icon_url: "https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png"
-                    // },
-                    // timestamp: date.toISOString()
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date.toISOString()
                 }
             ],
         },
