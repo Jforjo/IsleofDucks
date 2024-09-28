@@ -1,3 +1,13 @@
+export const DISCORD_EPOCH = 1420070400000
+
+// Converts a snowflake ID string into a JS Date object using the provided epoch (in ms), or Discord's epoch if not provided
+export function ConvertSnowflakeToDate(snowflake, epoch = DISCORD_EPOCH) {
+	// Convert snowflake to BigInt to extract timestamp bits
+	// https://discord.com/developers/docs/reference#snowflakes
+	const milliseconds = BigInt(snowflake) >> 22n
+	return new Date(Number(milliseconds) + epoch)
+}
+
 export async function DiscordRequest(endpoint, options) {
     // append endpoint to root API URL
     const url = 'https://discord.com/api/v10/' + endpoint;
