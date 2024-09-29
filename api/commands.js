@@ -17,9 +17,9 @@ import { CommandData as Test } from "../commands/application/test.js";
 
 export default async (req, res) => {
     // const result = await InstallGlobalCommands([CheckAPI, Superlative]);
-    const result = await InstallGuildCommands("997893922607087636", [Test, GuildCata]);
+    // const result = await InstallGuildCommands("997893922607087636", [Test, GuildCata]);
     // await DeleteGlobalCommands([{ id: "" }]);
     // await DeleteGuildCommands("997893922607087636", [{ id: "1288791933543649432" }]);
-    return res.json({ message: result });
-    // return res.json({ message: "Hello, World!" });
+    // return res.json({ message: result });
+    return res.json({ message: "Hello, World!" });
 }

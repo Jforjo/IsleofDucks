@@ -11,12 +11,7 @@ export default async (req, res) => {
             content: null,
             embeds: [
                 {
-                    title: `
-                        # Heading (#)
-                        ## Subheading (##)
-                        ### Sub-subheading (###)
-                        -# Small text (-#)
-                    `,
+                    title: `test\n# Heading (#)\n## Subheading (##)\n### Sub-subheading (###)\n-# Small text (-#)\ntest`,
                     color: parseInt("FF69B4", 16),
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
