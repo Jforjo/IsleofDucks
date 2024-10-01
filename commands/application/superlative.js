@@ -24,6 +24,17 @@ const catalevels = {
     92: 8967809640, 93: 9167809640, 94: 9367809640, 95: 9567809640, 96: 9767809640,
     97: 9967809640, 98: 10167809640, 99: 10367809640, 100: 10567809640,
 };
+function calcCataLevel(cataxp) {
+    let catalvl = 0;
+    for (const [key, value] of Object.entries(catalevels)) {
+        if (cataxp < value) {
+            catalvl += (cataxp - (catalevels[key - 1] ?? 0)) / (value - (catalevels[key - 1] ?? 0));
+            break;
+        }
+        catalvl++;
+    }
+    return catalvl;
+}
 async function getCurrentCataLevel(uuid) {
     uuid = uuid.toString();
     const date = new Date();
@@ -35,15 +46,14 @@ async function getCurrentCataLevel(uuid) {
         if (user?.oldxp != null) {
             return {
                 success: true,
-                level: calcCataLevel(user.cataxp - user.oldxp)
+                level: user.cataxp - user.oldxp
             }
         }
         return {
             success: true,
-            level: calcCataLevel(user.cataxp)
+            level: user.cataxp
         }
     }
-    console.log(rows);
 
     const response = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`, {
         method: 'GET',
@@ -77,37 +87,27 @@ async function getCurrentCataLevel(uuid) {
             if (cataxp < temp) cataxp = temp;
         }
     });
+    let catalvl = calcCataLevel(cataxp);
     if (user == null) {
-        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${cataxp}, ${cataxp}, ${date.getTime()})`;
+        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${catalvl}, ${catalvl}, ${date.getTime()})`;
     } else {
         if (user?.oldxp == null) {
-            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${cataxp}, ${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
+            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${catalvl}, ${catalvl}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         } else {
-            await sql`UPDATE users SET (cataxp, lastupdated) = (${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
+            await sql`UPDATE users SET (cataxp, lastupdated) = (${catalvl}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         }
     }
 
     if (user?.oldxp == null) {
         return {
             success: true,
-            level: calcCataLevel(cataxp)
+            level: catalvl
         }
     }
     return {
         success: true,
-        level: calcCataLevel(cataxp - user.oldxp)
+        level: catalvl - user.oldxp
     }
-}
-function calcCataLevel(cataxp) {
-    let catalvl = 0;
-    for (const [key, value] of Object.entries(catalevels)) {
-        if (cataxp < value) {
-            catalvl += (cataxp - (catalevels[key - 1] ?? 0)) / (value - (catalevels[key - 1] ?? 0));
-            break;
-        }
-        catalvl++;
-    }
-    return catalvl;
 }
 
 async function getGuildData(name) {
