@@ -50,7 +50,6 @@ async function UpdateDatabase() {
 }
 
 export default async (req, res) => {
-    await UpdateDatabase();
     const interaction = req.body;
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     return res.status(200).send({
