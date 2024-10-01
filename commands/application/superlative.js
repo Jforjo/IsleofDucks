@@ -27,7 +27,7 @@ const catalevels = {
 async function getCurrentCataLevel(uuid) {
     const date = new Date();
 
-    const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
+    const { rows } = await sql`SELECT * FROM users WHERE uuid='${uuid}'`;
     let user = null;
     if (rows.length > 0) user = rows[0];
     if (user != null && user.lastupdated > date.getTime() - 1000 * 60 * 5) {
