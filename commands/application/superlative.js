@@ -27,7 +27,7 @@ const catalevels = {
 async function getCurrentCataLevel(uuid) {
     const date = new Date();
 
-    const { rows } = await sql`SELECT * from users where uuid=${uuid}`;
+    const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
     let user = null;
     if (rows.length > 0) user = rows[0];
     if (user != null && user.lastupdated > date.getTime() - 1000 * 60 * 5) {
@@ -76,13 +76,13 @@ async function getCurrentCataLevel(uuid) {
         }
     });
     if (user?.oldxp == null && date.getTime() > 1727755200000) {
-        if (user) {
+        if (user != null) {
             await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${cataxp}, ${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         } else {
             await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${cataxp}, ${cataxp}, ${date.getTime()})`;
         }
     } else {
-        if (user) {
+        if (user != null) {
             await sql`UPDATE users SET (cataxp, lastupdated) = (${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         } else {
             await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${cataxp}, null, ${date.getTime()})`;
@@ -144,17 +144,14 @@ async function getGuildData(name) {
     };
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
-
 export default async (req, res) => {
     const interaction = req.body;
-    const timestamp = ConvertSnowflakeToDate(interaction.id);
-
+    // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
     });
+    // Date object of the timestamp on the interaction
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
