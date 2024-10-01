@@ -43,6 +43,7 @@ async function getCurrentCataLevel(uuid) {
             level: calcCataLevel(user.cataxp)
         }
     }
+    console.log(rows);
 
     const response = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`, {
         method: 'GET',
