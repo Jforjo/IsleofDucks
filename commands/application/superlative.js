@@ -86,15 +86,15 @@ async function getCurrentCataLevel(uuid) {
         }
     }
 
-    if (user?.oldxp != null) {
+    if (user?.oldxp == null) {
         return {
             success: true,
-            level: calcCataLevel(cataxp - user.oldxp)
+            level: calcCataLevel(cataxp)
         }
     }
     return {
         success: true,
-        level: calcCataLevel(cataxp)
+        level: calcCataLevel(cataxp - user.oldxp)
     }
 }
 function calcCataLevel(cataxp) {
