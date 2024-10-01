@@ -75,7 +75,7 @@ async function getCurrentCataLevel(uuid) {
             if (cataxp < temp) cataxp = temp;
         }
     });
-    if (user?.oldxp == null && date.getTime() > 1727755200000) {
+    if (user?.oldxp == null) {
         if (user != null) {
             await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${cataxp}, ${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         } else {
@@ -85,7 +85,7 @@ async function getCurrentCataLevel(uuid) {
         if (user != null) {
             await sql`UPDATE users SET (cataxp, lastupdated) = (${cataxp}, ${date.getTime()}) WHERE uuid = ${uuid}`;
         } else {
-            await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${cataxp}, null, ${date.getTime()})`;
+            await sql`INSERT INTO users(uuid, cataxp, lastupdated) VALUES (${uuid}, ${cataxp}, ${date.getTime()})`;
         }
     }
 
