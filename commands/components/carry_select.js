@@ -1,5 +1,5 @@
 import { InteractionResponseType, MessageComponentTypes } from "discord-interactions";
-import { encodeCarrierData } from "../../utils/discordUtils";
+import { encodeCarrierData } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;

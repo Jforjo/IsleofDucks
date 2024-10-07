@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
-import { IsleofDucks, CreateInteractionResponse, SendMessage, FollowupMessage } from "../../utils/discordUtils";
+import { IsleofDucks, CreateInteractionResponse, SendMessage, FollowupMessage } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;

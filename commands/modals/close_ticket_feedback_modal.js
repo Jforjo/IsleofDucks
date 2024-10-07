@@ -1,5 +1,5 @@
 import { InteractionResponseType } from "discord-interactions";
-import { EditChannel, SendMessage } from "../../utils/discordUtils";
+import { EditChannel, SendMessage, ToPermissions } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;

@@ -1,5 +1,5 @@
 import { InteractionResponseType } from "discord-interactions";
-import { EditChannel, IsleofDucks } from "../../utils/discordUtils";
+import { EditChannel, IsleofDucks } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;

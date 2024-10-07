@@ -1,4 +1,4 @@
-import { IsleofDucks } from "../utils/discordUtils";
+import { IsleofDucks } from "../utils/discordUtils.js";
 
 export default {
     content: null,

@@ -1,5 +1,5 @@
 import { InteractionResponseType } from "discord-interactions";
-import { EditChannel } from "../../utils/discordUtils";
+import { EditChannel, IsleofDucks } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;
@@ -51,7 +51,7 @@ export default async (req, res) => {
             },
         });
     }
-    
+
     await EditChannel(interaction.channel_id, {
         permission_overwrites: [
             {

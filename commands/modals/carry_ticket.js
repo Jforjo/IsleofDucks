@@ -1,6 +1,5 @@
 import { InteractionResponseType, MessageComponentTypes, ButtonStyleTypes } from "discord-interactions";
-import { CreateChannel, SendMessage, ToPermissions } from "../../utils";
-import { decodeCarrierData, IsleofDucks } from "../../utils/discordUtils";
+import { decodeCarrierData, IsleofDucks, CreateChannel, SendMessage, ToPermissions } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;
