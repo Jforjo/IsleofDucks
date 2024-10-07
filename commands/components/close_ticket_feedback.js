@@ -7,13 +7,13 @@ export default async (req, res) => {
     const permToClose = false;
     
     interaction.member.roles.forEach(role => {
-        if (role.id === IsleofDucks.roles.admin) permToClose = true;
-        else if (role.id === IsleofDucks.roles.mod_duck) permToClose = true;
-        else if (role.id === IsleofDucks.roles.mod_duckling) permToClose = true;
-        else if (role.id === IsleofDucks.roles.service_management) permToClose = true;
+        if (role.id == IsleofDucks.roles.admin) permToClose = true;
+        else if (role.id == IsleofDucks.roles.mod_duck) permToClose = true;
+        else if (role.id == IsleofDucks.roles.mod_duckling) permToClose = true;
+        else if (role.id == IsleofDucks.roles.service_management) permToClose = true;
     });
 
-    if (ticketOwner === interaction.member.user.id) permToClose = true;
+    if (ticketOwner == interaction.member.user.id) permToClose = true;
 
     if (!permToClose) {
         return res.status(200).send({
@@ -25,7 +25,7 @@ export default async (req, res) => {
         });
     }
 
-    if (ticketOwner === interaction.member.user.id) {
+    if (ticketOwner == interaction.member.user.id) {
         return res.status(200).send({
             type: InteractionResponseType.MODAL,
             data: {
