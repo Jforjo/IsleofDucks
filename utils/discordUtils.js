@@ -113,6 +113,17 @@ export async function CreateChannel(guildId, options) {
         console.error(err);
     }
 }
+export async function EditChannel(channelId, options) {
+    // https://discord.com/developers/docs/resources/guild#create-guild-channel
+    const endpoint = `channels/${channelId}`;
+    const body = options;
+    try {
+        const res = await DiscordRequest(endpoint, { method: 'PATCH', body: body });
+        return res.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
 export async function SendMessage(channelId, data) {
     // https://discord.com/developers/docs/resources/message#create-message
     const endpoint = `channels/${channelId}/messages`;
@@ -199,4 +210,162 @@ export function ToPermissions(permissions) {
     if (permissions.send_polls === true)                             perms |= 0x2000000000000;
     if (permissions.use_external_apps === true)                      perms |= 0x4000000000000;
     return perms;
+}
+
+export const IsleofDucks = {
+    staticIDs: {
+        Jforjo: "791380888197660722",
+        Ducksicle: "474770139363934219"
+    },
+    channels: {
+        support: "910160132233658408"
+    },
+    channelGroups: {
+        carrytickets: "1004180629551845466"
+    },
+    roles: {
+        admin: "824393734921650247",
+        mod_duck: "886312078611206144",
+        mod_duckling: "997610270262296717",
+        service_management: "1021284854626779136",
+        verified: "1287098228067664004",
+        carrier_f1_4: "1004131288023830638",
+        carrier_f5_6: "1004131419553005710",
+        carrier_f7: "1004131451077406750",
+        carrier_m1: "1004131476650070036",
+        carrier_m2: "1004131503640420424",
+        carrier_m3: "1004131520656707686",
+        carrier_m4: "1004131539539468369",
+        carrier_m5: "1004131565124730991",
+        carrier_m6: "1004131581696422109",
+        carrier_m7: "1004131601971675246",
+        carrier_rev: "1004131669487403078",
+        carrier_tara: "1004131737795833936",
+        carrier_sven: "1004131758616367225",
+        carrier_eman1_3: "1004131780682596352",
+        carrier_eman4: "1004131845266493500",
+        carrier_inferno1_3: "1004131871774494842",
+        carrier_inferno4: "1004131911263854713",
+        carrier_kuudra1_2: "1119807379903623258",
+        carrier_kuudra3_4: "1119807706841235496",
+        carrier_kuudra5: "1119807771458670654",
+    },
+}
+export function encodeCarrierData(data) {
+    let bitfield = 0;
+    if (data.f1_4 === true)              bitfield |= 0x1;
+    if (data.f5_6 === true)              bitfield |= 0x2;
+    if (data.f7 === true)                bitfield |= 0x4;
+    if (data.m1 === true)                bitfield |= 0x8;
+    if (data.m2 === true)                bitfield |= 0x10;
+    if (data.m3 === true)                bitfield |= 0x20;
+    if (data.m4 === true)                bitfield |= 0x40;
+    if (data.m5 === true)                bitfield |= 0x80;
+    if (data.m6 === true)                bitfield |= 0x100;
+    if (data.m7 === true)                bitfield |= 0x200;
+    if (data.rev === true)               bitfield |= 0x400;
+    if (data.tara === true)              bitfield |= 0x800;
+    if (data.sven === true)              bitfield |= 0x1000;
+    if (data.eman === true)              bitfield |= 0x2000;
+    if (data.eman4 === true)             bitfield |= 0x4000;
+    if (data.inferno === true)           bitfield |= 0x8000;
+    if (data.inferno4 === true)          bitfield |= 0x10000;
+    if (data.kuudrabasic === true)       bitfield |= 0x20000;
+    if (data.kuudrahot === true)         bitfield |= 0x40000;
+    if (data.kuudraburning === true)     bitfield |= 0x80000;
+    if (data.kuudrafiery === true)       bitfield |= 0x100000;
+    if (data.kuudrainfernal === true)    bitfield |= 0x200000;
+    return bitfield;
+}
+export function decodeCarrierData(bitfield) {
+    return {
+        f1_4: {
+            value: (bitfield & 0x1) !== 0,
+            role: IsleofDucks.roles.carrier_f1_4
+        },
+        f5_6: {
+            value: (bitfield & 0x2) !== 0,
+            role: IsleofDucks.roles.carrier_f5_6
+        },
+        f7: {
+            value: (bitfield & 0x4) !== 0,
+            role: IsleofDucks.roles.carrier_f7
+        },
+        m1: {
+            value: (bitfield & 0x8) !== 0,
+            role: IsleofDucks.roles.carrier_m1
+        },
+        m2: {
+            value: (bitfield & 0x10) !== 0,
+            role: IsleofDucks.roles.carrier_m2
+        },
+        m3: {
+            value: (bitfield & 0x20) !== 0,
+            role: IsleofDucks.roles.carrier_m3
+        },
+        m4: {
+            value: (bitfield & 0x40) !== 0,
+            role: IsleofDucks.roles.carrier_m4
+        },
+        m5: {
+            value: (bitfield & 0x80) !== 0,
+            role: IsleofDucks.roles.carrier_m5
+        },
+        m6: {
+            value: (bitfield & 0x100) !== 0,
+            role: IsleofDucks.roles.carrier_m6
+        },
+        m7: {
+            value: (bitfield & 0x200) !== 0,
+            role: IsleofDucks.roles.carrier_m7
+        },
+        rev: {
+            value: (bitfield & 0x400) !== 0,
+            role: IsleofDucks.roles.carrier_rev
+        },
+        tara: {
+            value: (bitfield & 0x800) !== 0,
+            role: IsleofDucks.roles.carrier_tara
+        },
+        sven: {
+            value: (bitfield & 0x1000) !== 0,
+            role: IsleofDucks.roles.carrier_sven
+        },
+        eman: {
+            value: (bitfield & 0x2000) !== 0,
+            role: IsleofDucks.roles.carrier_eman1_3
+        },
+        eman4: {
+            value: (bitfield & 0x4000) !== 0,
+            role: IsleofDucks.roles.carrier_eman4
+        },
+        inferno: {
+            value: (bitfield & 0x8000) !== 0,
+            role: IsleofDucks.roles.carrier_inferno1_3
+        },
+        inferno4: {
+            value: (bitfield & 0x10000) !== 0,
+            role: IsleofDucks.roles.carrier_inferno4
+        },
+        kuudrabasic: {
+            value: (bitfield & 0x20000) !== 0,
+            role: IsleofDucks.roles.carrier_kuudra1_2
+        },
+        kuudrahot: {
+            value: (bitfield & 0x40000) !== 0,
+            role: IsleofDucks.roles.carrier_kuudra1_2
+        },
+        kuudraburning: {
+            value: (bitfield & 0x80000) !== 0,
+            role: IsleofDucks.roles.carrier_kuudra3_4
+        },
+        kuudrafiery: {
+            value: (bitfield & 0x100000) !== 0,
+            role: IsleofDucks.roles.carrier_kuudra3_4
+        },
+        kuudrainfernal: {
+            value: (bitfield & 0x200000) !== 0,
+            role: IsleofDucks.roles.carrier_kuudra5
+        },
+    }
 }

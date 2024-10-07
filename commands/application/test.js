@@ -45,7 +45,7 @@ async function UpdateDatabase() {
         if (row.oldxp != null) {
             oldlvl = calcCataLevel(row.oldxp);
         }
-        await sql`UPDATE users SET (cataxp, oldxp) = (${catalvl}, ${catalvl}) WHERE uuid = ${row.uuid}`;
+        await sql`UPDATE users SET (cataxp, oldxp) = (${catalvl}, ${oldxp}) WHERE uuid = ${row.uuid}`;
     }
 }
 

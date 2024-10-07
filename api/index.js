@@ -35,7 +35,7 @@ export default async (req, res) => {
                 return res.status(400).send({ error: 'Unknown Command' });
             }
         } else if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
-            const { default: command } = await import(`../commands/components/${interaction.data.custom_id.toLowerCase()}.js`);
+            const { default: command } = await import(`../commands/components/${interaction.data.custom_id.toLowerCase().split('_data_')[0]}.js`);
             if (command) {
                 // console.log(`Handling Command: ${interaction.data.custom_id}`);
                 await command(req, res);
@@ -44,7 +44,7 @@ export default async (req, res) => {
                 return res.status(400).send({ error: 'Unknown Component' });
             }
         } else if (interaction.type === InteractionType.MODAL_SUBMIT) {
-            const { default: command } = await import(`../commands/modals/${interaction.data.custom_id.toLowerCase()}.js`);
+            const { default: command } = await import(`../commands/modals/${interaction.data.custom_id.toLowerCase().split('_data_')[0]}.js`);
             if (command) {
                 // console.log(`Handling Command: ${interaction.data.custom_id}`);
                 await command(req, res);

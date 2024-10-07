@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID } from "../../utils/hypixelUtils.js";
-import { ConvertSnowflakeToDate } from "../../utils/discordUtils.js";
+import { ConvertSnowflakeToDate, IsleofDucks } from "../../utils/discordUtils.js";
 
 async function isInventoryAPI(profiledata) {
     return "inventory" in profiledata && "inv_contents" in profiledata.inventory;
@@ -31,18 +31,21 @@ async function checkAPI(uuid, profilename) {
         if (data && data.cause) {
             return {
                 success: false,
-                message: data.cause
+                message: data.cause,
+                ping: data.cause === "Invalid API key"
             };
         }
         return {
             success: false,
-            message: 'Bad response from Hypixel'
+            message: 'Bad response from Hypixel',
+            ping: false
         };
     }
     if (data.profiles.length === 0) {
         return {
             success: false,
-            message: 'User has no profiles'
+            message: 'User has no profiles',
+            ping: false
         };
     }
     let profile = data.profiles.find((p) => p.cute_name === profilename);
@@ -50,7 +53,8 @@ async function checkAPI(uuid, profilename) {
     if (!profile) {
         return {
             success: false,
-            message: 'User has no selected profile'
+            message: 'User has no selected profile',
+            ping: false
         };
     }
     const profiledata = profile.members[uuid];
@@ -94,12 +98,14 @@ export default async (req, res) => {
             },
         });
     }
-    const { success, message, name, inventory, collection, banking, vault, skills } = await checkAPI(mojang.uuid, profile);
+    const { success, message, ping, name, inventory, collection, banking, vault, skills } = await checkAPI(mojang.uuid, profile);
     if (!success) {
+        const content = null;
+        if (ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         return res.status(200).send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
-                content: null,
+                content: content,
                 embeds: [
                     {
                         title: "Something went wrong!",

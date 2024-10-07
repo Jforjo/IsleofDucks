@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID, getUsername } from "../../utils/hypixelUtils.js";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate } from "../../utils/discordUtils.js";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks } from "../../utils/discordUtils.js";
 
 const catalevels = {
     1: 50, 2: 125, 3: 235, 4: 395, 5: 625, 6: 955, 7: 1425, 8: 2095, 9: 3045,
@@ -183,13 +183,16 @@ export default async (req, res) => {
         console.log(err.message);
         return {
             success: false,
-            message: err.message
+            message: err.message,
+            ping: data.cause === "Invalid API key"
         };
     });
     
     if (result?.success === false) {
+        const content = null;
+        if (ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         return await FollowupMessage(interaction.token, {
-            content: null,
+            content: content,
             embeds: [
                 {
                     title: "Something went wrong!",
