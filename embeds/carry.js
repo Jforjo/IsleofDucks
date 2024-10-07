@@ -7,7 +7,7 @@ export default {
         {
             title: "Temporary Carry Embed",
             description: "Use this to create a carry ticket. Not the embed above.",
-            color: parseInt("FF69B4", 16),
+            color: parseInt("FB9B00", 16),
             fields: [
                 {
                     name: "Encountered an error?",
