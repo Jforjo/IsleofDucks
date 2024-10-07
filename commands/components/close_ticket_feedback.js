@@ -3,7 +3,7 @@ import { EditChannel, IsleofDucks } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;
-    const ticketOwner = interaction.custom_id.split('_data_')[1];
+    const ticketOwner = interaction.data.custom_id.split('_data_')[1];
     const permToClose = false;
     
     interaction.member.roles.forEach(role => {

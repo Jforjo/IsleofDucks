@@ -3,7 +3,7 @@ import { EditChannel } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;
-    const carriedID = interaction.custom_id.split('_data_')[1];
+    const carriedID = interaction.data.custom_id.split('_data_')[1];
 
     if (carriedID === interaction.member.user.id) {
         return res.status(200).send({
