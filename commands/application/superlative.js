@@ -66,7 +66,8 @@ async function getCurrentCataLevel(uuid) {
         if (data && data.cause) {
             return {
                 success: false,
-                message: data.cause
+                message: data.cause,
+                ping: data.cause === "Invalid API key"
             };
         }
         return {
@@ -122,7 +123,8 @@ async function getGuildData(name) {
         if (data && data.cause) {
             return {
                 success: false,
-                message: data.cause
+                message: data.cause,
+                ping: data.cause === "Invalid API key"
             };
         }
         return {
@@ -184,13 +186,13 @@ export default async (req, res) => {
         return {
             success: false,
             message: err.message,
-            ping: data.cause === "Invalid API key"
+            ping: err.message === "Invalid API key"
         };
     });
     
     if (result?.success === false) {
         const content = null;
-        if (ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        if (result?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         return await FollowupMessage(interaction.token, {
             content: content,
             embeds: [
