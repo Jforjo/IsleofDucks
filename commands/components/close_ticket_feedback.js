@@ -6,7 +6,7 @@ export default async (req, res) => {
     const ticketOwner = interaction.data.custom_id.split('_data_')[1];
     const permToClose = false;
     
-    if (ticketOwner == interaction.member.user.id) return await feedbackModal();
+    if (ticketOwner == interaction.member.user.id) return await feedbackModal(res);
 
     interaction.member.roles.forEach(role => {
         if (role.id == IsleofDucks.roles.admin) permToClose = true;
@@ -15,7 +15,7 @@ export default async (req, res) => {
         else if (role.id == IsleofDucks.roles.service_management) permToClose = true;
     });
 
-    if (permToClose) return await closeTicket(interaction);
+    if (permToClose) return await closeTicket(res, interaction);
 
     return res.status(200).send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -25,7 +25,7 @@ export default async (req, res) => {
         }
     });
 }
-async function feedbackModal() {
+async function feedbackModal(res) {
     return res.status(200).send({
         type: InteractionResponseType.MODAL,
         data: {
@@ -51,7 +51,7 @@ async function feedbackModal() {
         },
     });
 }
-async function closeTicket(interaction) {
+async function closeTicket(res, interaction) {
     await EditChannel(interaction.channel_id, {
         permission_overwrites: [
             {
