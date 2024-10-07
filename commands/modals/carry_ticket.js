@@ -102,33 +102,33 @@ export default async (req, res) => {
                         value: `\`\`\`${notes ?? " "}\`\`\``,
                     },
                 ],
+            },
+        ],
+        components: [
+            {
+                type: MessageComponentTypes.ACTION_ROW,
                 components: [
                     {
-                        type: MessageComponentTypes.ACTION_ROW,
-                        components: [
-                            {
-                                type: MessageComponentTypes.BUTTON,
-                                label: "Accept",
-                                style: ButtonStyleTypes.SUCCESS,
-                                custom_id: `accept_carry_data_${user.id}`,
-                                emoji: {
-                                    name: "✅",
-                                    id: null
-                                }
-                            },
-                            {
-                                type: MessageComponentTypes.BUTTON,
-                                label: "Close",
-                                style: ButtonStyleTypes.DANGER,
-                                custom_id: "close_ticket",
-                                emoji: {
-                                    name: "🔒",
-                                    id: null
-                                }
-                            }
-                        ]
+                        type: MessageComponentTypes.BUTTON,
+                        label: "Accept",
+                        style: ButtonStyleTypes.SUCCESS,
+                        custom_id: `accept_carry_data_${user.id}`,
+                        emoji: {
+                            name: "✅",
+                            id: null
+                        }
+                    },
+                    {
+                        type: MessageComponentTypes.BUTTON,
+                        label: "Close",
+                        style: ButtonStyleTypes.DANGER,
+                        custom_id: "close_ticket",
+                        emoji: {
+                            name: "🔒",
+                            id: null
+                        }
                     }
-                ],
+                ]
             }
         ],
     });
