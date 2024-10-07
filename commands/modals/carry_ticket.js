@@ -71,7 +71,7 @@ export default async (req, res) => {
         return res.status(200).send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
-                content: "Failed to create the apply ticket.",
+                content: "Failed to create the carry ticket.",
                 flags: 1 << 6
             },
         });
