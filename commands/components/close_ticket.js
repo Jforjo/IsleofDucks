@@ -13,7 +13,7 @@ export default async (req, res) => {
         else if (role.id == IsleofDucks.roles.service_management) permToClose = true;
     });
 
-    if (ticketOwner == interaction.user.id) permToClose = true;
+    if (ticketOwner == interaction.member.user.id) permToClose = true;
 
     if (!permToClose) {
         return res.status(200).send({
