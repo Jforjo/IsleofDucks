@@ -7,7 +7,7 @@ export default async (req, res) => {
     await EditChannel(interaction.channel_id, {
         permission_overwrites: [
             {
-                id: interaction.guild.id,
+                id: interaction.guild_id,
                 type: 0,
                 allow: null,
                 deny: ToPermissions({

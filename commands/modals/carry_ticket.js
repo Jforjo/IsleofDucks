@@ -14,15 +14,7 @@ export default async (req, res) => {
 
     const channelPermissions = [
         {
-            id: interaction.guild.id,
-            type: 0,
-            allow: null,
-            deny: ToPermissions({
-                view_channel: true
-            })
-        },
-        {
-            id: IsleofDucks.roles.verified,
+            id: interaction.guild_id,
             type: 0,
             allow: null,
             deny: ToPermissions({
@@ -38,6 +30,25 @@ export default async (req, res) => {
             deny: ToPermissions({
                 send_messages: true
             })
+        },
+        {
+            id: IsleofDucks.roles.staff,
+            type: 0,
+            allow: ToPermissions({
+                view_channel: true
+            }),
+            deny: ToPermissions({
+                send_messages: true
+            })
+        },
+        {
+            id: IsleofDucks.roles.service_management,
+            type: 0,
+            allow: ToPermissions({
+                view_channel: true,
+                send_messages: true
+            }),
+            deny: null
         }
     ];
     const carrierIDs = [];

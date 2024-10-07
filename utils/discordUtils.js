@@ -228,6 +228,8 @@ export const IsleofDucks = {
         mod_duck: "886312078611206144",
         mod_duckling: "997610270262296717",
         service_management: "1021284854626779136",
+        staff: "1004180925606805614",
+        trainee: "992638050377142392",
         verified: "1287098228067664004",
         carrier_f1_4: "1004131288023830638",
         carrier_f5_6: "1004131419553005710",
