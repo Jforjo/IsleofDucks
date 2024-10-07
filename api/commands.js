@@ -17,10 +17,10 @@ import { CommandData as Embed } from "../commands/application/embed.js";
 
 
 export default async (req, res) => {
-    const result = await InstallGlobalCommands([CheckAPI, Superlative, Ping, Embed]);
+    // const result = await InstallGlobalCommands([CheckAPI, Superlative, Ping, Embed]);
     // const result = await InstallGuildCommands("997893922607087636", [Test, GuildCata]);
     // await DeleteGlobalCommands([{ id: "" }]);
     // await DeleteGuildCommands("997893922607087636", [{ id: "1288791933543649432" }]);
-    return res.json({ message: result });
-    // return res.json({ message: "Hello, World!" });
+    // return res.json({ message: result });
+    return res.json({ message: "Hello, World!" });
 }
