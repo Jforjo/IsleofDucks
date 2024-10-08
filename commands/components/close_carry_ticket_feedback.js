@@ -55,7 +55,8 @@ async function closeTicket(res, interaction) {
     await SendMessage(interaction.channel_id, {
         content: null,
         embeds: [{
-            title: "Closed Ticket"
+            title: "Closed Ticket",
+            color: parseInt("FB9B00", 16),
         }]
     });
 

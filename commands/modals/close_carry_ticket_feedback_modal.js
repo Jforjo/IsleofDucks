@@ -22,7 +22,8 @@ export default async (req, res) => {
         content: null,
         embeds: [{
             title: "Feedback",
-            description: interaction.data.components[0].components[0].value
+            description: interaction.data.components[0].components[0].value,
+            color: parseInt("FB9B00", 16),
         }]
     });
 
