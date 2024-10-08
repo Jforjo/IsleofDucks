@@ -27,6 +27,13 @@ export default async (req, res) => {
 }
 
 async function closeTicket(res, interaction) {
+    await SendMessage(interaction.channel_id, {
+        content: null,
+        embeds: [{
+            title: "Closed Ticket"
+        }]
+    });
+
     await EditChannel(interaction.channel_id, {
         permission_overwrites: [
             {
