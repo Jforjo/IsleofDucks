@@ -24,7 +24,7 @@ export default {
                     type: MessageComponentTypes.BUTTON,
                     label: "Click here to apply",
                     style: ButtonStyleTypes.PRIMARY,
-                    custom_id: "carry_application",
+                    custom_id: "carrier_application",
                     emoji: {
                         name: "📜",
                         id: null
