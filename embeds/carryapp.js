@@ -1,4 +1,4 @@
-import { MessageComponentTypes } from "discord-interactions";
+import { MessageComponentTypes, ButtonStyleTypes } from "discord-interactions";
 import { IsleofDucks } from "../utils/discordUtils.js";
 
 export default {
