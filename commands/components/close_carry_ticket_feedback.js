@@ -1,5 +1,5 @@
 import { InteractionResponseType } from "discord-interactions";
-import { EditChannel, IsleofDucks, ToPermissions } from "../../utils/discordUtils.js";
+import { EditChannel, IsleofDucks, ToPermissions, SendMessage } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;
@@ -52,6 +52,13 @@ async function feedbackModal(res) {
     });
 }
 async function closeTicket(res, interaction) {
+    await SendMessage(interaction.channel_id, {
+        content: null,
+        embeds: [{
+            title: "Closed Ticket"
+        }]
+    });
+
     await EditChannel(interaction.channel_id, {
         permission_overwrites: [
             {

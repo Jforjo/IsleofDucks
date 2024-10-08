@@ -1,5 +1,5 @@
 import { InteractionResponseType, MessageComponentTypes, ButtonStyleTypes } from "discord-interactions";
-import { decodeCarrierData, IsleofDucks, CreateChannel, SendMessage, ToPermissions } from "../../utils/discordUtils.js";
+import { IsleofDucks, CreateChannel, SendMessage, ToPermissions } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
     const interaction = req.body;
@@ -11,7 +11,7 @@ export default async (req, res) => {
 
     const channelPermissions = [
         {
-            id: interaction.guild_id,
+            id: process.env.GUILD_ID,
             type: 0,
             allow: null,
             deny: ToPermissions({
@@ -67,7 +67,7 @@ export default async (req, res) => {
     }
     // Sends a message in the newly created channel
     await SendMessage(channel.id, {
-        content: `<@${user.id}> requested help from <&${IsleofDucks.roles.service_management}>`,
+        content: `<@${user.id}> requested help from <@&${IsleofDucks.roles.service_management}>`,
         embeds: [
             {
                 title: "Carrier Application",

@@ -14,7 +14,7 @@ export default async (req, res) => {
 
     const channelPermissions = [
         {
-            id: interaction.guild_id,
+            id: process.env.GUILD_ID,
             type: 0,
             allow: null,
             deny: ToPermissions({
