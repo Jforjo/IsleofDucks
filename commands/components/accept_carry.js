@@ -60,7 +60,7 @@ export default async (req, res) => {
                             type: MessageComponentTypes.BUTTON,
                             label: "Close",
                             style: ButtonStyleTypes.DANGER,
-                            custom_id: `close_ticket_feedback_data_${carriedID}`,
+                            custom_id: `close_carry_ticket_feedback_data_${carriedID}`,
                             emoji: {
                                 name: "🔒",
                                 id: null

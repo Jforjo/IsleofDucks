@@ -3,14 +3,11 @@ import { decodeCarrierData, IsleofDucks, CreateChannel, SendMessage, ToPermissio
 
 export default async (req, res) => {
     const interaction = req.body;
-    const encodedCarrierData = interaction.data.custom_id.split('_data_')[1];
-    const carryData = decodeCarrierData(encodedCarrierData);
     const user = interaction.member.user;
 
     const username = interaction.data.components[0].components[0].value;
-    const carries = interaction.data.components[1].components[0].value;
-    const timezone = interaction.data.components[2].components[0].value;
-    const notes = interaction.data.components[3].components[0].value === "" ? null : interaction.data.components[3].components[0].value;
+    const timezone = interaction.data.components[1].components[0].value;
+    const details = interaction.data.components[2].components[0].value;
 
     const channelPermissions = [
         {
@@ -25,11 +22,10 @@ export default async (req, res) => {
             id: user.id,
             type: 1,
             allow: ToPermissions({
-                view_channel: true
-            }),
-            deny: ToPermissions({
+                view_channel: true,
                 send_messages: true
-            })
+            }),
+            deny: null
         },
         {
             id: IsleofDucks.roles.staff,
@@ -51,30 +47,12 @@ export default async (req, res) => {
             deny: null
         }
     ];
-    const carrierIDs = [];
-
-    for (const [key, value] of Object.entries(carryData)) {
-        if (value && value.value === true) {
-            channelPermissions.push({
-                id: value.role,
-                type: 0,
-                allow: ToPermissions({
-                    view_channel: true
-                }),
-                deny: ToPermissions({
-                    send_messages: true
-                })
-            });
-            carrierIDs.push(`<@&${value.role}>`);
-        }
-    }
     
     const channel = await CreateChannel(process.env.GUILD_ID, {
         type: 0,
-        name: `carry-${interaction.member.nick ?? user.username}`,
-        topic: `Carry ticket for ${user.username} - ${user.id}`,
-        parent_id: IsleofDucks.channelGroups.carrytickets,
-        nsfw: false,
+        name: `carrier-${interaction.member.nick ?? user.username}`,
+        topic: `Carry application for ${user.username} - ${user.id}`,
+        parent_id: IsleofDucks.channelGroups.tickets,
         permission_overwrites: channelPermissions
     });
 
@@ -89,10 +67,10 @@ export default async (req, res) => {
     }
     // Sends a message in the newly created channel
     await SendMessage(channel.id, {
-        content: `<@${user.id}> has requested help from ${carrierIDs.join(', ')}`,
+        content: `<@${user.id}> requested help from <&${IsleofDucks.roles.service_management}>`,
         embeds: [
             {
-                title: "Carry Request",
+                title: "Carrier Application",
                 description: `Hello, <@${user.id}>! 👋`,
                 color: parseInt("FB9B00", 16),
                 fields: [
@@ -101,18 +79,19 @@ export default async (req, res) => {
                         value: `\`\`\`${username}\`\`\``,
                     },
                     {
-                        name: "Number of Carries",
-                        value: `\`\`\`${carries}\`\`\``,
-                    },
-                    {
                         name: "Timezone",
                         value: `\`\`\`${timezone}\`\`\``,
                     },
                     {
-                        name: "Extra Information",
-                        value: `\`\`\`${notes ?? " "}\`\`\``,
+                        name: "Roles",
+                        value: `\`\`\`${details}\`\`\``,
                     },
                 ],
+            },
+            {
+                title: "Provide Screenshot Proof",
+                description: `* Must be fullscreen, **not** cropped\n* Must show you meeting the requirements of the role(s) found in <#${IsleofDucks.channels.carrierapps}>`,
+                color: parseInt("FB9B00", 16),
             },
         ],
         components: [
@@ -121,19 +100,9 @@ export default async (req, res) => {
                 components: [
                     {
                         type: MessageComponentTypes.BUTTON,
-                        label: "Accept",
-                        style: ButtonStyleTypes.SUCCESS,
-                        custom_id: `accept_carry_data_${user.id}`,
-                        emoji: {
-                            name: "✅",
-                            id: null
-                        }
-                    },
-                    {
-                        type: MessageComponentTypes.BUTTON,
                         label: "Close",
                         style: ButtonStyleTypes.DANGER,
-                        custom_id: "close_carry_ticket",
+                        custom_id: `close_carrierapp_ticket_data_${user.id}`,
                         emoji: {
                             name: "🔒",
                             id: null

@@ -218,9 +218,11 @@ export const IsleofDucks = {
         Ducksicle: "474770139363934219"
     },
     channels: {
-        support: "910160132233658408"
+        support: "910160132233658408",
+        carrierapps: "1004135601534152755",
     },
     channelGroups: {
+        tickets: "988883238292451378",
         carrytickets: "1004180629551845466"
     },
     roles: {
