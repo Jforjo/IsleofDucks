@@ -5,8 +5,8 @@ export default {
     content: null,
     embeds: [
         {
-            title: "Temporary Carry Application Embed",
-            description: "Use this to create a carry application. Not the embed above.",
+            title: "Temporary Carrier Application Embed",
+            description: "Use this to create a carrier application. Not the embed above.",
             color: parseInt("FB9B00", 16),
             fields: [
                 {
