@@ -155,7 +155,7 @@ export default async (req, res) => {
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
-        const content = null;
+        let content = null;
         if (guild?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         return await FollowupMessage(interaction.token, {
             content: content,
@@ -193,7 +193,7 @@ export default async (req, res) => {
     });
     
     if (result?.success === false) {
-        const content = null;
+        let content = null;
         if (result?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         return await FollowupMessage(interaction.token, {
             content: content,

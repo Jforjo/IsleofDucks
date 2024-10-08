@@ -100,7 +100,7 @@ export default async (req, res) => {
     }
     const { success, message, ping, name, inventory, collection, banking, vault, skills } = await checkAPI(mojang.uuid, profile);
     if (!success) {
-        const content = null;
+        let content = null;
         if (ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         return res.status(200).send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
