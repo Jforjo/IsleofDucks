@@ -102,7 +102,7 @@ async function getCurrentCataLevel(uuid) {
     if (user?.oldxp == null) {
         return {
             success: true,
-            level: catalvl
+            level: 0
         }
     }
     return {
