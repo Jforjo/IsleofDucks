@@ -15,7 +15,7 @@ export default async (req, res) => {
         else if (role.id == IsleofDucks.roles.service_management) permToClose = true;
     });
 
-    if (!permToClose) return await closeTicket(res, interaction);
+    if (permToClose) return await closeTicket(res, interaction);
 
     return res.status(200).send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
