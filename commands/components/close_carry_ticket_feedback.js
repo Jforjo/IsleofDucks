@@ -7,8 +7,16 @@ export default async (req, res) => {
     
     if (ticketOwner == interaction.member.user.id) return await feedbackModal(res);
     
+    return res.status(200).send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+            content: JSON.stringify(interaction.member.roles),
+            flags: 1 << 6
+        }
+    });
+
     let permToClose = false;
-    
+
     interaction.member.roles.forEach(role => {
         if (role.id == IsleofDucks.roles.admin) permToClose = true;
         else if (role.id == IsleofDucks.roles.mod_duck) permToClose = true;
