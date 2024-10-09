@@ -6,22 +6,14 @@ export default async (req, res) => {
     const ticketOwner = interaction.data.custom_id.split('_data_')[1];
     
     if (ticketOwner == interaction.member.user.id) return await feedbackModal(res);
-    
-    return res.status(200).send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-            content: JSON.stringify(interaction.member.roles),
-            flags: 1 << 6
-        }
-    });
 
     let permToClose = false;
 
     interaction.member.roles.forEach(role => {
-        if (role.id == IsleofDucks.roles.admin) permToClose = true;
-        else if (role.id == IsleofDucks.roles.mod_duck) permToClose = true;
-        else if (role.id == IsleofDucks.roles.mod_duckling) permToClose = true;
-        else if (role.id == IsleofDucks.roles.service_management) permToClose = true;
+        if (role == IsleofDucks.roles.admin) permToClose = true;
+        else if (role == IsleofDucks.roles.mod_duck) permToClose = true;
+        else if (role == IsleofDucks.roles.mod_duckling) permToClose = true;
+        else if (role == IsleofDucks.roles.service_management) permToClose = true;
     });
 
     if (permToClose) return await closeTicket(res, interaction);

@@ -10,10 +10,10 @@ export default async (req, res) => {
     let permToClose = false;
     
     interaction.member.roles.forEach(role => {
-        if (role.id == IsleofDucks.roles.admin) permToClose = true;
-        else if (role.id == IsleofDucks.roles.mod_duck) permToClose = true;
-        else if (role.id == IsleofDucks.roles.mod_duckling) permToClose = true;
-        else if (role.id == IsleofDucks.roles.service_management) permToClose = true;
+        if (role == IsleofDucks.roles.admin) permToClose = true;
+        else if (role == IsleofDucks.roles.mod_duck) permToClose = true;
+        else if (role == IsleofDucks.roles.mod_duckling) permToClose = true;
+        else if (role == IsleofDucks.roles.service_management) permToClose = true;
     });
 
     if (permToClose) return await closeTicket(res, interaction);
