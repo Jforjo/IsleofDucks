@@ -1,4 +1,4 @@
-import { InteractionResponseType } from "discord-interactions";
+import { InteractionResponseType, MessageComponentTypes, ButtonStyleTypes } from "discord-interactions";
 import { EditChannel, ToPermissions } from "../../utils/discordUtils.js";
 
 export default async (req, res) => {
