@@ -47,6 +47,10 @@ export default async (req, res) => {
         ]
     });
 
+    await SendMessage(interaction.channel_id, {
+        content: `<@${carriedID}>, your ticket has been accepted by ${interaction.member.nick ?? interaction.member.user.username}!`,
+    });
+
     return res.status(200).send({
         type: InteractionResponseType.UPDATE_MESSAGE,
         data: {
