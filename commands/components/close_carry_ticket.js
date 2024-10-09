@@ -4,7 +4,7 @@ import { EditChannel, IsleofDucks, ToPermissions, SendMessage } from "../../util
 export default async (req, res) => {
     const interaction = req.body;
     const ticketOwner = interaction.data.custom_id.split('_data_')[1];
-    const permToClose = false;
+    let permToClose = false;
     
     if (ticketOwner == interaction.member.user.id) return await closeTicket(res, interaction);
 
