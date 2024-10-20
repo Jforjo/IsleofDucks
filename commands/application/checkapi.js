@@ -3,19 +3,19 @@ import { InteractionResponseType } from "discord-interactions";
 import { getUUID } from "../../utils/hypixelUtils.js";
 import { ConvertSnowflakeToDate, IsleofDucks } from "../../utils/discordUtils.js";
 
-async function isInventoryAPI(profiledata) {
+function isInventoryAPI(profiledata) {
     return "inventory" in profiledata && "inv_contents" in profiledata.inventory;
 }
-async function isCollectionAPI(profiledata) {
+function isCollectionAPI(profiledata) {
     return "collection" in profiledata;
 }
-async function isBankingAPI(profile) {
+function isBankingAPI(profile) {
     return "banking" in profile && "balance" in profile.banking && profile.banking.balance !== -1;
 }
-async function isPersonalVaultAPI(profiledata) {
+function isPersonalVaultAPI(profiledata) {
     return "inventory" in profiledata && "personal_vault_contents" in profiledata.inventory;
 }
-async function isSkillsAPI(profiledata) {
+function isSkillsAPI(profiledata) {
     return "experience" in profiledata.player_data;
 }
 
@@ -62,11 +62,11 @@ async function checkAPI(uuid, profilename) {
     return {
         success: true,
         name: profile.cute_name,
-        inventory: await isInventoryAPI(profiledata),
-        collection: await isCollectionAPI(profiledata),
-        banking: await isBankingAPI(profile),
-        vault: await isPersonalVaultAPI(profiledata),
-        skills: await isSkillsAPI(profiledata)
+        inventory: isInventoryAPI(profiledata),
+        collection: isCollectionAPI(profiledata),
+        banking: isBankingAPI(profile),
+        vault: isPersonalVaultAPI(profiledata),
+        skills: isSkillsAPI(profiledata)
     };
 }
 
