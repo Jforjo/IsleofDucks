@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { getUUID } from "../../utils/hypixelUtils.js";
-import { ConvertSnowflakeToDate, IsleofDucks } from "../../utils/discordUtils.js";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "../../utils/discordUtils.js";
 
 function isInventoryAPI(profiledata) {
     return "inventory" in profiledata && "inv_contents" in profiledata.inventory;
@@ -72,15 +72,23 @@ async function checkAPI(uuid, profilename) {
 
 export default async (req, res) => {
     const interaction = req.body;
+
+    // User sees the "[bot] is thinking..." message
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+    });
+
     const timestamp = ConvertSnowflakeToDate(interaction.id);
+
     const options = Object.fromEntries(interaction.data.options.map(option => [option.name, option.value]));
     const username = options.username;
     const profile = options.profile;
     const yes = "<:yes:1288141736756908113>";
     const no = "<:no:1288141853018951811>";
     const mojang = await getUUID(username);
+
     if (!mojang.success) {
-        return res.status(200).send({
+        return await FollowupMessage(interaction.token, {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
                 content: null,
@@ -102,7 +110,7 @@ export default async (req, res) => {
     if (!success) {
         let content = null;
         if (ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
-        return res.status(200).send({
+        return await FollowupMessage(interaction.token, {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
                 content: content,
@@ -120,7 +128,7 @@ export default async (req, res) => {
             },
         });
     }
-    return res.status(200).send({
+    return await FollowupMessage(interaction.token, {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
             content: null,
