@@ -89,21 +89,18 @@ export default async (req, res) => {
 
     if (!mojang.success) {
         return await FollowupMessage(interaction.token, {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: null,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: mojang.message,
-                        color: parseInt("B00020", 16),
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
+            content: null,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: mojang.message,
+                    color: parseInt("B00020", 16),
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
                 ],
-            },
         });
     }
     const { success, message, ping, name, inventory, collection, banking, vault, skills } = await checkAPI(mojang.uuid, profile);
@@ -111,49 +108,43 @@ export default async (req, res) => {
         let content = null;
         if (ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         return await FollowupMessage(interaction.token, {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: content,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: message,
-                        color: parseInt("B00020", 16),
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ],
-            },
-        });
-    }
-    return await FollowupMessage(interaction.token, {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-            content: null,
+            content: content,
             embeds: [
                 {
-                    title: mojang.name,
-                    thumbnail: {
-                        url: `https://mineskin.eu/helm/${username}/100.png`
-                    },
-                    url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${name}`,
-                    description: `
-                        ${inventory ? yes : no} Inventory API
-                        ${banking ? yes : no} Banking API
-                        ${collection ? yes : no} Collection API
-                        ${skills ? yes : no} Skills API
-                        ${vault ? yes : no} Personal Vault API
-                    `,
-                    color: parseInt("FB9B00", 16),
+                    title: "Something went wrong!",
+                    description: message,
+                    color: parseInt("B00020", 16),
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
                     timestamp: new Date().toISOString()
                 }
             ],
-        },
+        });
+    }
+    return await FollowupMessage(interaction.token, {
+        content: null,
+        embeds: [
+            {
+                title: mojang.name,
+                thumbnail: {
+                    url: `https://mineskin.eu/helm/${username}/100.png`
+                },
+                url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${name}`,
+                description: `
+                    ${inventory ? yes : no} Inventory API
+                    ${banking ? yes : no} Banking API
+                    ${collection ? yes : no} Collection API
+                    ${skills ? yes : no} Skills API
+                    ${vault ? yes : no} Personal Vault API
+                `,
+                color: parseInt("FB9B00", 16),
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
     });
 }
 export const CommandData = {
