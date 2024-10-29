@@ -64,7 +64,7 @@ export default async (req, res) => {
         embeds: [
             {
                 title: "Immune Players",
-                description: immunePlayers.players.map(player => player.name).join('\n'),
+                description: immunePlayers.players.map(player => player.name).join('\n').replace('_', '\\_'),
                 color: parseInt("FB9B00", 16),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
