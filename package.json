@@ -5,6 +5,7 @@
     "dependencies": {
         "discord-api-types": "^0.37.101",
         "discord-interactions": "^4.1.0",
-        "@vercel/postgres": "^0.10.0"
+        "@vercel/postgres": "^0.10.0",
+        "@vercel/edge-config": "^1.3.0"
     }
 }
