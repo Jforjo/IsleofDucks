@@ -4,7 +4,7 @@ import { getUsername } from "../../utils/hypixelUtils.js";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage } from "../../utils/discordUtils.js";
 
 async function getImmunePlayers() {
-    const res = await fetch('/api/immune');
+    const res = await fetch('https://isle-of-ducks.vercel.app/api/immune');
     const data = await res.json();
     if (!res.ok) {
         return {
