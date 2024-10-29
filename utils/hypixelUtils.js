@@ -64,3 +64,29 @@ export async function getUsername(uuid) {
         name: data.name
     };
 }
+
+export async function getImmunePlayers() {
+    const res = await fetch('https://isle-of-ducks.vercel.app/api/immune');
+    const data = await res.json();
+    if (!res.ok) {
+        return {
+            success: false,
+            message: 'Bad response',
+            ping: false
+        };
+    }
+    // const data = await get('immune');
+    const players = [];
+    await Promise.all(data.map(async id => {
+        const username = await getUsername(id);
+        if (username.success) {
+            players.push({
+                id: id, name: username.name
+            });
+        }
+    }));
+    return {
+        success: true,
+        players: players
+    };
+}

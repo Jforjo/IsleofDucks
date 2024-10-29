@@ -1,34 +1,8 @@
 import { ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
-import { getUsername } from "../../utils/hypixelUtils.js";
+import { getImmunePlayers } from "../../utils/hypixelUtils.js";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage } from "../../utils/discordUtils.js";
 // import { get } from '@vercel/edge-config';
-
-async function getImmunePlayers() {
-    const res = await fetch('https://isle-of-ducks.vercel.app/api/immune');
-    const data = await res.json();
-    if (!res.ok) {
-        return {
-            success: false,
-            message: 'Bad response',
-            ping: false
-        };
-    }
-    // const data = await get('immune');
-    const players = [];
-    await Promise.all(data.map(async id => {
-        const username = await getUsername(id);
-        if (username.success) {
-            players.push({
-                id: id, name: username.name
-            });
-        }
-    }));
-    return {
-        success: true,
-        players: players
-    };
-}
 
 export default async (req, res) => {
     const interaction = req.body;
