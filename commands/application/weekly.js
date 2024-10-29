@@ -1,6 +1,6 @@
 import { ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
-import { getUsername } from "../../utils/hypixelUtils.js";
+import { getUsername, getImmunePlayers } from "../../utils/hypixelUtils.js";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks } from "../../utils/discordUtils.js";
 
 async function getGuildData(name) {
