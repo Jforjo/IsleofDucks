@@ -14,14 +14,14 @@ async function getImmunePlayers() {
         };
     }
     const players = [];
-    data.forEach(id => {
-        const username = getUsername(id);
+    Promise.all(data.map(async id => {
+        const username = await getUsername(id);
         if (username.success) {
             players.push({
                 id: id, name: username.name
             });
         }
-    });
+    }));
     return {
         success: true,
         players: players
