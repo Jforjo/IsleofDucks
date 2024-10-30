@@ -87,14 +87,18 @@ export default async (req, res) => {
         });
     }
 
+    const weekAgo = Date.now() - 1000 * 60 * 60 * 24 * 7;
+
     let result = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsername(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         const gexp = Object.values(member.expHistory).reduce((a, b) => a + b, 0);
+        const isNew = member.joined > weekAgo;
         return {
             uuid: member.uuid,
             name: mojang.name,
-            gexp: gexp
+            gexp: gexp,
+            isNew: isNew
         };
     })).catch((err) => {
         console.log(err.message);
@@ -113,6 +117,7 @@ export default async (req, res) => {
             uuid: member.uuid,
             name: member.name,
             gexp: member.gexp,
+            isNew: member.isNew,
             immune: immunePlayerIDs.includes(member.uuid),
         };
     });
@@ -122,7 +127,7 @@ export default async (req, res) => {
         fieldArray.push(
             {
                 name: '\u200b',
-                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\`${field.immune ? ' 🛡️' : ''} ${field.name.replace('_', '\\_')}: ${field.gexp}`).join('\n'),
+                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\`${field.isNew ? ' 🆕' : ''}${field.immune ? ' 🛡️' : ''} ${field.name.replace('_', '\\_')}: ${field.gexp}`).join('\n'),
                 inline: true
             }
         );
