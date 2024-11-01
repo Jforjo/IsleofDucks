@@ -90,7 +90,7 @@ async function getCurrentCataLevel(uuid) {
     let cataxp = 0;
     data.profiles.forEach((profile) => {
         // let temp = profile.members[uuid]?.dungeons?.dungeon_types?.catacombs?.experience;
-        let temp = profile.members[uuid]?.slayer?.enderman?.xp;
+        let temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
         if (temp && temp > 0) {
             if (cataxp < temp) cataxp = temp;
         }
