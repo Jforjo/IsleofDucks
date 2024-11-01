@@ -1,6 +1,6 @@
 import { InteractionResponseType } from "discord-interactions";
 import { ApplicationCommandOptionType, ApplicationCommandType } from "discord-api-types/v10";
-import { ConvertSnowflakeToDate, FollowupMessage } from "../../utils/discordUtils.js";
+import { ConvertSnowflakeToDate, FollowupMessage, CreateInteractionResponse, IsleofDucks } from "../../utils/discordUtils.js";
 import { getUUID } from "../../utils/hypixelUtils.js";
 // import { sql } from "@vercel/postgres";
 
