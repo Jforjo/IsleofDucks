@@ -35,6 +35,12 @@ function calcCataLevel(cataxp) {
     }
     return catalvl;
 }
+function numberFormat(num) {
+    if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2) + 'B';
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(2) + 'M';
+    if (num >= 1_000) return (num / 1_000).toFixed(2) + 'K';
+    return num;
+}
 async function getCurrentCataLevel(uuid) {
     uuid = uuid.toString();
     const date = new Date();
@@ -83,12 +89,14 @@ async function getCurrentCataLevel(uuid) {
     }
     let cataxp = 0;
     data.profiles.forEach((profile) => {
-        let temp = profile.members[uuid]?.dungeons?.dungeon_types?.catacombs?.experience;
+        // let temp = profile.members[uuid]?.dungeons?.dungeon_types?.catacombs?.experience;
+        let temp = profile.members[uuid]?.slayer?.enderman?.xp;
         if (temp && temp > 0) {
             if (cataxp < temp) cataxp = temp;
         }
     });
-    let catalvl = calcCataLevel(cataxp);
+    // let catalvl = calcCataLevel(cataxp);
+    let catalvl = cataxp;
     if (user == null) {
         await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${catalvl}, ${catalvl}, ${date.getTime()})`;
     } else {
@@ -181,7 +189,7 @@ export default async (req, res) => {
         return {
             uuid: member.uuid,
             name: mojang.name,
-            cataLevel: cataLevel.level
+            cataLevel: numberFormat(cataLevel.level)
         };
     })).catch((err) => {
         console.log(err.message);
@@ -236,7 +244,7 @@ export default async (req, res) => {
         content: null,
         embeds: [
             {
-                title: 'Superlative - Cata level',
+                title: 'Superlative - Enderman Slayer Experience',
                 // description: ``,
                 color: parseInt("FB9B00", 16),
                 fields: fieldArray,
@@ -250,6 +258,6 @@ export default async (req, res) => {
 }
 export const CommandData = {
     name: "superlative",
-    description: "Displays the change in a user's Catacombs level for Isle of Ducks",
+    description: "Displays the superlative data for Isle of Ducks",
     type: ApplicationCommandType.ChatInput,
 }
