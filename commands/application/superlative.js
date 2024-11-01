@@ -189,7 +189,7 @@ export default async (req, res) => {
         return {
             uuid: member.uuid,
             name: mojang.name,
-            cataLevel: numberFormat(cataLevel.level)
+            cataLevel: cataLevel.level
         };
     })).catch((err) => {
         console.log(err.message);
@@ -234,7 +234,7 @@ export default async (req, res) => {
         fieldArray.push(
             {
                 name: '\u200b',
-                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replace('_', '\\_')}: ${Math.round((field.cataLevel + Number.EPSILON) * 100) / 100}`).join('\n'),
+                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replace('_', '\\_')}: ${numberFormat(field.cataLevel)}`).join('\n'),
                 inline: true
             }
         );
