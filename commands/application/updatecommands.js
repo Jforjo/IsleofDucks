@@ -2,14 +2,14 @@ import { ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, InstallGlobalCommands, InstallGuildCommands, DeleteGlobalCommands, DeleteGuildCommands } from "../../utils/discordUtils.js";
 
-import { CommandData as CheckAPI } from "../commands/application/checkapi.js";
-import { CommandData as GuildCata } from "../commands/application/guildcata.js";
-import { CommandData as Superlative } from "../commands/application/superlative.js";
-import { CommandData as Ping } from "../commands/application/ping.js";
-import { CommandData as Test } from "../commands/application/test.js";
-import { CommandData as Embed } from "../commands/application/embed.js";
-import { CommandData as Immune } from "../commands/application/immune.js";
-import { CommandData as Weekly } from "../commands/application/weekly.js";
+import { CommandData as CheckAPI } from "./checkapi.js";
+import { CommandData as GuildCata } from "./guildcata.js";
+import { CommandData as Superlative } from "./superlative.js";
+import { CommandData as Ping } from "./ping.js";
+import { CommandData as Test } from "./test.js";
+import { CommandData as Embed } from "./embed.js";
+import { CommandData as Immune } from "./immune.js";
+import { CommandData as Weekly } from "./weekly.js";
 
 export default async (req, res) => {
     const interaction = req.body;
