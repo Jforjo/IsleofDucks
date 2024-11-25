@@ -37,12 +37,10 @@ export default async (req, res) => {
         Weekly
     ]);
 
+    console.log(result);
+
     return await FollowupMessage(interaction.token, {
-        content: `
-            \`\`\`javascript
-            ${JSON.stringify(result)}
-            \`\`\`
-        `,
+        content: "Done! Check Vercel's logs for any errors.",
     });
 }
 export const CommandData = {
