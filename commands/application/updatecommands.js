@@ -38,7 +38,11 @@ export default async (req, res) => {
     ]);
 
     return await FollowupMessage(interaction.token, {
-        content: result,
+        content: `
+            \`\`\`javascript
+            JSON.stringify(result)
+            \`\`\`
+        `,
     });
 }
 export const CommandData = {
