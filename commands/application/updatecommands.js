@@ -40,7 +40,7 @@ export default async (req, res) => {
     return await FollowupMessage(interaction.token, {
         content: `
             \`\`\`javascript
-            JSON.stringify(result)
+            ${JSON.stringify(result)}
             \`\`\`
         `,
     });
