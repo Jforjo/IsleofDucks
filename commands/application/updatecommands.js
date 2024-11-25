@@ -45,4 +45,5 @@ export const CommandData = {
     name: "updatecommands",
     description: "Updates the bot's global commands.",
     type: ApplicationCommandType.ChatInput,
+    default_member_permissions: "0",
 }
