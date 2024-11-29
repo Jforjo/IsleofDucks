@@ -202,10 +202,13 @@ export async function ListGuildMembers(guildId, options) {
 export async function GetAllGuildMembers(guildId) {
     const members = [];
     while (true) {
-        const res = await ListGuildMembers(guildId, {
+        const options = members[members.length - 1]?.user.id ? {
             limit: 1000,
             after: members[members.length - 1]?.user.id
-        });
+        } : {
+            limit: 1000
+        };
+        const res = await ListGuildMembers(guildId, options);
         console.log(res);
         members.push(...res.members);
         if (res.members.length < 1000) break;
