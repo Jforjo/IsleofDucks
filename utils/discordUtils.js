@@ -30,8 +30,9 @@ export async function DiscordRequest(endpoint, options) {
     });
     // throw API errors
     if (!res.ok) {
+        console.log("res",res);
+        console.log("res status",res.status);
         const data = await res.json();
-        console.log(res.status);
         throw new Error(JSON.stringify(data));
     }
     // return original response
