@@ -180,6 +180,7 @@ export async function AddGuildMemberRole(guildId, memberId, roleId, options) {
     const body = options;
     try {
         const res = await DiscordRequest(endpoint, { method: 'PUT', body: body });
+        console.log("AddGuildMemberRole res", res);
         return res.json();
     } catch (err) {
         console.error(err);
