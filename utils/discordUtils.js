@@ -11,10 +11,15 @@ export function ConvertSnowflakeToDate(snowflake, epoch = DISCORD_EPOCH) {
 }
 
 export async function DiscordRequest(endpoint, options) {
-    // append endpoint to root API URL
-    const url = 'https://discord.com/api/v10/' + endpoint;
+    // GET requests cannot have a body
+    if (options.method === 'GET') {
+        endpoint += `?${new URLSearchParams(options.body).toString()}`;
+        delete options.body;
+    }
     // Stringify payloads
     if (options.body) options.body = JSON.stringify(options.body);
+    // append endpoint to root API URL
+    const url = 'https://discord.com/api/v10/' + endpoint;
     // Use node-fetch to make requests
     const res = await fetch(url, {
         headers: {
@@ -182,11 +187,12 @@ export async function RemoveGuildMemberRole(guildId, memberId, roleId, options) 
     }
 }
 
-export async function ListGuildMembers(guildId) {
+export async function ListGuildMembers(guildId, options) {
     // https://discord.com/developers/docs/resources/guild#list-guild-members
     const endpoint = `guilds/${guildId}/members`;
+    const body = options;
     try {
-        const res = await DiscordRequest(endpoint, { method: 'GET' });
+        const res = await DiscordRequest(endpoint, { method: 'GET', body: body });
         return res.json();
     } catch (err) {
         console.error(err);
