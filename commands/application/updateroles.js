@@ -33,7 +33,9 @@ export default async (req, res) => {
     let rolesRemoved = 0;
 
     const members = await GetAllGuildMembers(interaction.guild.id);
-    await Promise.all(members.map(async (member) => {
+    // Not a Promise.all since the functions inside can get rate limited
+    for (let i = 0; i < members.length; i++) {
+        const member = members[i];
         if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
             if (!member.roles.includes(tempRole)) {
                 await AddGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
@@ -47,7 +49,7 @@ export default async (req, res) => {
                 usersHadRolesRemoved++;
             }
         }
-    }));
+    }
 
     return await FollowupMessage(interaction.token, {
         content: null,
