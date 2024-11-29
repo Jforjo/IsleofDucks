@@ -10,6 +10,7 @@ import { CommandData as Test } from "./test.js";
 import { CommandData as Embed } from "./embed.js";
 import { CommandData as Immune } from "./immune.js";
 import { CommandData as Weekly } from "./weekly.js";
+import { CommandData as UpdateRoles } from "./updateroles.js";
 
 export default async (req, res) => {
     const interaction = req.body;
@@ -34,7 +35,8 @@ export default async (req, res) => {
         Ping,
         Embed,
         Immune,
-        Weekly
+        Weekly,
+        UpdateRoles
     ]);
 
     console.log(result);

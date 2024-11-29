@@ -1,3 +1,5 @@
+import { getProfiles } from "./hypixelUtils";
+
 export const DISCORD_EPOCH = 1420070400000
 
 // Converts a snowflake ID string into a JS Date object using the provided epoch (in ms), or Discord's epoch if not provided
@@ -157,6 +159,54 @@ export async function FollowupMessage(token, data) {
     }
 }
 
+export async function AddGuildMemberRole(guildId, memberId, roleId, options) {
+    // https://discord.com/developers/docs/resources/guild#add-guild-member-role
+    const endpoint = `guilds/${guildId}/members/${memberId}/roles/${roleId}`;
+    const body = options;
+    try {
+        const res = await DiscordRequest(endpoint, { method: 'PUT', body: body });
+        return res.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+export async function RemoveGuildMemberRole(guildId, memberId, roleId, options) {
+    // https://discord.com/developers/docs/resources/guild#remove-guild-member-role
+    const endpoint = `guilds/${guildId}/members/${memberId}/roles/${roleId}`;
+    const body = options;
+    try {
+        const res = await DiscordRequest(endpoint, { method: 'DELETE', body: body });
+        return res.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function ListGuildMembers(guildId, options) {
+    // https://discord.com/developers/docs/resources/guild#list-guild-members
+    const endpoint = `guilds/${guildId}/members`;
+    const body = options;
+    try {
+        const res = await DiscordRequest(endpoint, { method: 'GET', body: body });
+        return res.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function GetAllGuildMembers(guildId) {
+    const members = [];
+    while (true) {
+        const res = await ListGuildMembers(guildId, {
+            limit: 1000,
+            after: members[members.length - 1]?.user.id
+        });
+        members.push(...res.members);
+        if (res.members.length < 1000) break;
+    }
+    return members;
+}
+
 export function ToPermissions(permissions) {
     // https://discord.com/developers/docs/topics/permissions
     let perms = 0;
@@ -212,6 +262,14 @@ export function ToPermissions(permissions) {
     return perms;
 }
 
+export function formatNumber(num) {
+    if (num >= 1_000_000_000_000) return (num / 1_000_000_000_000).toFixed(2) + 'T';
+    if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2) + 'B';
+    if (num >= 1_000_000) return (num / 1_000_000).toFixed(2) + 'M';
+    if (num >= 1_000) return (num / 1_000).toFixed(2) + 'K';
+    return num;
+}
+
 export const IsleofDucks = {
     staticIDs: {
         Jforjo: "791380888197660722",
@@ -233,6 +291,8 @@ export const IsleofDucks = {
         staff: "1004180925606805614",
         trainee: "992638050377142392",
         verified: "1287098228067664004",
+        duck_guild_member: "933258162931400764",
+        duckling_guild_member: "998380474407846000",
         carrier_f1_4: "1004131288023830638",
         carrier_f5_6: "1004131419553005710",
         carrier_f7: "1004131451077406750",
@@ -254,6 +314,56 @@ export const IsleofDucks = {
         carrier_kuudra3_4: "1119807706841235496",
         carrier_kuudra5: "1119807771458670654",
     },
+    superlative: [
+        {
+            id: "oct24",
+            title: "",
+            start: new Date("1 October 2024").getTime(),
+            callback: undefined
+        },
+        {
+            id: "nov24",
+            title: "Enderman Slayer Experience",
+            start: new Date("1 November 2024").getTime(),
+            callback: async function(uuid) {
+                const profiles = await getProfiles(uuid);
+                if (profiles.success === false) return profiles;
+                let value = 0;
+                profiles.forEach((profile) => {
+                    let temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
+                    if (temp && temp > 0) {
+                        if (value < temp) value = temp;
+                    }
+                });
+                return {
+                    success: true,
+                    value: value,
+                    formattedValue: formatNumber(value)
+                };
+            }
+        },
+        {
+            id: "dec24",
+            title: "SkyBlock Level",
+            start: new Date("1 December 2024").getTime(),
+            callback: async function(uuid) {
+                const profiles = await getProfiles(uuid);
+                if (profiles.success === false) return profiles;
+                let value = 0;
+                profiles.forEach((profile) => {
+                    let temp = profile.members[uuid]?.leveling?.experience;
+                    if (temp && temp > 0) {
+                        if (value < temp) value = temp;
+                    }
+                });
+                return {
+                    success: true,
+                    value: value,
+                    formattedValue: value / 100
+                };
+            }
+        }
+    ]
 }
 export function encodeCarrierData(data) {
     let bitfield = 0;
