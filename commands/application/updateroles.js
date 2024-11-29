@@ -1,7 +1,6 @@
 import { ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, AddGuildMemberRole, RemoveGuildMemberRole } from "../../utils/discordUtils.js";
-import embed from "./embed.js";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, AddGuildMemberRole, RemoveGuildMemberRole, ConvertSnowflakeToDate } from "../../utils/discordUtils.js";
 
 const tempRole = "1311851831361671168";
 
