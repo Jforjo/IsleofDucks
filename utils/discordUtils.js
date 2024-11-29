@@ -11,22 +11,24 @@ export function ConvertSnowflakeToDate(snowflake, epoch = DISCORD_EPOCH) {
 }
 
 export async function DiscordRequest(endpoint, options) {
+    let newEndpoint = endpoint;
+    let newOptions = options;
     // GET requests cannot have a body
-    if (options.method === 'GET') {
-        endpoint += `?${new URLSearchParams(options.body).toString()}`;
-        delete options.body;
+    if (newOptions.method === 'GET') {
+        newEndpoint += `?${new URLSearchParams(newOptions.body).toString()}`;
+        delete newOptions.body;
     }
     // Stringify payloads
-    if (options.body) options.body = JSON.stringify(options.body);
+    if (newOptions.body) newOptions.body = JSON.stringify(newOptions.body);
     // append endpoint to root API URL
-    const url = 'https://discord.com/api/v10/' + endpoint;
+    const url = 'https://discord.com/api/v10/' + newEndpoint;
     // Use node-fetch to make requests
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
             'Content-Type': 'application/json; charset=UTF-8',
         },
-        ...options
+        ...newOptions
     });
     // throw API errors
     if (!res.ok) {
