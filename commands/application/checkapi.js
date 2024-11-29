@@ -100,7 +100,7 @@ export default async (req, res) => {
                     },
                     timestamp: new Date().toISOString()
                 }
-                ],
+            ],
         });
     }
     const { success, message, ping, name, inventory, collection, banking, vault, skills } = await checkAPI(mojang.uuid, profile);

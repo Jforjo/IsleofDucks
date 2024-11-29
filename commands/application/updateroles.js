@@ -1,11 +1,13 @@
 import { ApplicationCommandType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, AddGuildMemberRole, RemoveGuildMemberRole } from "../../utils/discordUtils.js";
+import embed from "./embed.js";
 
 const tempRole = "1311851831361671168";
 
 export default async (req, res) => {
     const interaction = req.body;
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -49,7 +51,18 @@ export default async (req, res) => {
     }));
 
     return await FollowupMessage(interaction.token, {
-        content: `Added ${rolesAdded} roles to ${usersHadRolesAdded} users.\nRemoved ${rolesRemoved} roles from ${usersHadRolesRemoved} users.`,
+        content: null,
+        embeds: [
+            {
+                title: "Done!",
+                description: `Added ${rolesAdded} roles to ${usersHadRolesAdded} users.\nRemoved ${rolesRemoved} roles from ${usersHadRolesRemoved} users.`,
+                color: parseInt("FB9B00", 16),
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
     });
 }
 export const CommandData = {
