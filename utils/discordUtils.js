@@ -36,7 +36,7 @@ export async function DiscordRequest(endpoint, options) {
             const retryAfter = res.headers.get('retry-after');
             if (retryAfter) {
                 await new Promise(res => setTimeout(res, retryAfter * 1000));
-                return DiscordRequest(endpoint, options);
+                return await DiscordRequest(endpoint, options);
             }
         }
         console.log("res", res);
