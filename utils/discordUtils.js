@@ -30,8 +30,15 @@ export async function DiscordRequest(endpoint, options) {
     });
     // throw API errors
     if (!res.ok) {
-        console.log("res",res);
-        console.log("res status",res.status);
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter) {
+                await new Promise(res => setTimeout(res, retryAfter * 1000));
+                return DiscordRequest(endpoint, options);
+            }
+        }
+        console.log("res", res);
+        console.log("res status", res.status);
         const data = await res.json();
         throw new Error(JSON.stringify(data));
     }
