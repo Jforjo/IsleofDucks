@@ -26,21 +26,30 @@ export default async (req, res) => {
         });
     }
 
+    let usersHadRolesAdded = 0;
+    let usersHadRolesRemoved = 0;
     let rolesAdded = 0;
     let rolesRemoved = 0;
+
     const members = await GetAllGuildMembers(interaction.guild.id);
     await Promise.all(members.map(async (member) => {
         if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
-            await AddGuildMemberRole(interaction.guild.id, member.id, tempRole);
-            rolesAdded++;
+            if (!member.roles.includes(tempRole)) {
+                await AddGuildMemberRole(interaction.guild.id, member.id, tempRole);
+                rolesAdded++;
+                usersHadRolesAdded++;
+            }
         } else {
-            await RemoveGuildMemberRole(interaction.guild.id, member.id, tempRole);
-            rolesRemoved++;
+            if (member.roles.includes(tempRole)) {
+                await RemoveGuildMemberRole(interaction.guild.id, member.id, tempRole);
+                rolesRemoved++;
+                usersHadRolesRemoved++;
+            }
         }
     }));
 
     return await FollowupMessage(interaction.token, {
-        content: `Added roles to ${rolesAdded} users.\nRemoved roles from ${rolesRemoved} users.`,
+        content: `Added ${rolesAdded} roles to ${usersHadRolesAdded} users.\nRemoved ${rolesRemoved} roles from ${usersHadRolesRemoved} users.`,
     });
 }
 export const CommandData = {
