@@ -179,9 +179,7 @@ export async function AddGuildMemberRole(guildId, memberId, roleId, options) {
     const endpoint = `guilds/${guildId}/members/${memberId}/roles/${roleId}`;
     const body = options;
     try {
-        const res = await DiscordRequest(endpoint, { method: 'PUT', body: body });
-        console.log("AddGuildMemberRole res", res);
-        return res.json();
+        await DiscordRequest(endpoint, { method: 'PUT', body: body });
     } catch (err) {
         console.error(err);
     }
@@ -191,8 +189,7 @@ export async function RemoveGuildMemberRole(guildId, memberId, roleId, options) 
     const endpoint = `guilds/${guildId}/members/${memberId}/roles/${roleId}`;
     const body = options;
     try {
-        const res = await DiscordRequest(endpoint, { method: 'DELETE', body: body });
-        return res.json();
+        await DiscordRequest(endpoint, { method: 'DELETE', body: body });
     } catch (err) {
         console.error(err);
     }
