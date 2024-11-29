@@ -182,12 +182,11 @@ export async function RemoveGuildMemberRole(guildId, memberId, roleId, options) 
     }
 }
 
-export async function ListGuildMembers(guildId, options) {
+export async function ListGuildMembers(guildId) {
     // https://discord.com/developers/docs/resources/guild#list-guild-members
     const endpoint = `guilds/${guildId}/members`;
-    const body = options;
     try {
-        const res = await DiscordRequest(endpoint, { method: 'GET', body: body });
+        const res = await DiscordRequest(endpoint, { method: 'GET' });
         return res.json();
     } catch (err) {
         console.error(err);
@@ -201,6 +200,7 @@ export async function GetAllGuildMembers(guildId) {
             limit: 1000,
             after: members[members.length - 1]?.user.id
         });
+        console.log(res);
         members.push(...res.members);
         if (res.members.length < 1000) break;
     }
