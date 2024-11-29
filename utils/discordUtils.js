@@ -10,6 +10,8 @@ export function ConvertSnowflakeToDate(snowflake, epoch = DISCORD_EPOCH) {
 	return new Date(Number(milliseconds) + epoch)
 }
 
+const rateLimits = {};
+
 export async function DiscordRequest(endpoint, options) {
     let newEndpoint = endpoint;
     let newOptions = options;
@@ -35,10 +37,6 @@ export async function DiscordRequest(endpoint, options) {
         if (res.status === 429) {
             const retryAfter = res.headers.get('retry-after');
             if (retryAfter) {
-                console.log(`Rate limited, retrying in ${retryAfter} seconds`, {
-                    endpoint: newEndpoint,
-                    options: newOptions
-                });
                 await new Promise(res => setTimeout(res, retryAfter * 1000));
                 return await DiscordRequest(endpoint, options);
             }
