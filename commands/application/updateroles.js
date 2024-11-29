@@ -37,13 +37,13 @@ export default async (req, res) => {
     await Promise.all(members.map(async (member) => {
         if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
             if (!member.roles.includes(tempRole)) {
-                await AddGuildMemberRole(interaction.guild.id, member.id, tempRole);
+                await AddGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
                 rolesAdded++;
                 usersHadRolesAdded++;
             }
         } else {
             if (member.roles.includes(tempRole)) {
-                await RemoveGuildMemberRole(interaction.guild.id, member.id, tempRole);
+                await RemoveGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
                 rolesRemoved++;
                 usersHadRolesRemoved++;
             }
