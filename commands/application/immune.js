@@ -205,7 +205,6 @@ export default async (req, res) => {
 export const CommandData = {
     name: "immune",
     description: "List or edit immune players.",
-    type: ApplicationCommandType.ChatInput,
     options: [
         {
             name: "add",
