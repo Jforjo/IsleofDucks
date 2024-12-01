@@ -181,7 +181,10 @@ async function viewImmune(interaction) {
     }
 
     const fieldArray = [];
-    for (const [key, value] of Object.entries(Object.groupBy(immunePlayers.players, ({ reason }) => reason))) {
+    for (const [key, value] of Object.entries(immunePlayers.players.reduce((x, y) => {
+        (x[y.reason] = x[y.reason] || []).push(y);
+        return x;
+    }, {}))) {
         fieldArray.push({
             name: key,
             value: value.map(player => player.name).join('\n').replace('_', '\\_'),
