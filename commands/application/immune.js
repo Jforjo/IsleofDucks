@@ -208,7 +208,7 @@ async function viewImmune(interaction) {
 
 export default async (req, res) => {
     const interaction = req.body;
-    const options = Object.fromEntries(interaction.data.options.map(option => [option.name, option.value]));
+    const options = Object.fromEntries(interaction.data.options.map(option => [option.name, option.value ?? option.options]));
 
     if (options.add) {
         return await addImmune(interaction, options.add.name, options.add.reason);
