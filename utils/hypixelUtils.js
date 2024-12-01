@@ -65,32 +65,6 @@ export async function getUsername(uuid) {
     };
 }
 
-export async function getImmunePlayers() {
-    const res = await fetch('https://isle-of-ducks.vercel.app/api/immune');
-    const data = await res.json();
-    if (!res.ok) {
-        return {
-            success: false,
-            message: 'Bad response',
-            ping: false
-        };
-    }
-    // const data = await get('immune');
-    const players = [];
-    await Promise.all(data.map(async id => {
-        const username = await getUsername(id);
-        if (username.success) {
-            players.push({
-                id: id, name: username.name
-            });
-        }
-    }));
-    return {
-        success: true,
-        players: players
-    };
-}
-
 export async function getProfiles(uuid) {
     const response = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`, {
         method: 'GET',
