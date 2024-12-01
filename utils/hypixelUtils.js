@@ -154,3 +154,35 @@ export function calcCataLevel(cataxp) {
     }
     return catalvl;
 }
+export async function getGuildData(name) {
+    const response = await fetch(`https://api.hypixel.net/guild?name=${encodeURIComponent(name)}`, {
+        method: 'GET',
+        headers: {
+            'API-Key': process.env.HYPIXEL_API_KEY
+        }
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        if (data && data.cause) {
+            return {
+                success: false,
+                message: data.cause,
+                ping: data.cause === "Invalid API key"
+            };
+        }
+        return {
+            success: false,
+            message: 'Bad response from Hypixel'
+        };
+    }
+    if (data.guild === null) {
+        return {
+            success: false,
+            message: 'Guild not found'
+        };
+    }
+    return {
+        success: true,
+        guild: data.guild
+    };
+}

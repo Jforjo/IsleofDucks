@@ -1,3 +1,4 @@
+import { sql } from "@vercel/postgres";
 import { getProfiles } from "./hypixelUtils.js";
 
 export const DISCORD_EPOCH = 1420070400000
@@ -332,7 +333,7 @@ export const IsleofDucks = {
         carrier_kuudra3_4: "1119807706841235496",
         carrier_kuudra5: "1119807771458670654",
     },
-    superlative: [
+    superlatives: [
         {
             id: "oct24",
             title: "",
@@ -344,15 +345,40 @@ export const IsleofDucks = {
             title: "Enderman Slayer Experience",
             start: new Date("1 November 2024").getTime(),
             callback: async function(uuid) {
-                const profiles = await getProfiles(uuid);
-                if (profiles.success === false) return profiles;
                 let value = 0;
-                profiles.forEach((profile) => {
-                    let temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
-                    if (temp && temp > 0) {
-                        if (value < temp) value = temp;
+                let user = null;
+                const timestamp = Date.now();
+                let updateDB = false;
+
+                const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
+                if (rows.length > 0) user = rows[0];
+                if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
+                    if (user?.oldxp != null) value = user.cataxp - user.oldxp
+                    else value = user.cataxp
+                } else {
+                    const profiles = await getProfiles(uuid);
+                    if (profiles.success === false) return profiles;
+                    profiles.forEach((profile) => {
+                        let temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
+                        if (temp && temp > 0) {
+                            if (value < temp) value = temp;
+                        }
+                    });
+                    updateDB = true;
+                }
+
+                if (updateDB) {
+                    if (user == null) {
+                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${catalvl}, ${catalvl}, ${timestamp})`;
+                    } else {
+                        if (user?.oldxp == null) {
+                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${catalvl}, ${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                        } else {
+                            await sql`UPDATE users SET (cataxp, lastupdated) = (${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                        }
                     }
-                });
+                }
+
                 return {
                     success: true,
                     value: value,
@@ -365,22 +391,53 @@ export const IsleofDucks = {
             title: "SkyBlock Level",
             start: new Date("1 December 2024").getTime(),
             callback: async function(uuid) {
-                const profiles = await getProfiles(uuid);
-                if (profiles.success === false) return profiles;
                 let value = 0;
-                profiles.forEach((profile) => {
-                    let temp = profile.members[uuid]?.leveling?.experience;
-                    if (temp && temp > 0) {
-                        if (value < temp) value = temp;
+                let user = null;
+                const timestamp = Date.now();
+                let updateDB = false;
+
+                const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
+                if (rows.length > 0) user = rows[0];
+                if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
+                    if (user?.oldxp != null) value = user.cataxp - user.oldxp;
+                    else value = user.cataxp;
+                } else {
+                    const profiles = await getProfiles(uuid);
+                    if (profiles.success === false) return profiles;
+                    profiles.forEach((profile) => {
+                        let temp = profile.members[uuid]?.leveling?.experience;
+                        if (temp && temp > 0) {
+                            if (value < temp) value = temp;
+                        }
+                    });
+                    updateDB = true;
+                }
+
+                if (updateDB) {
+                    if (user == null) {
+                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${catalvl}, ${catalvl}, ${timestamp})`;
+                    } else {
+                        if (user?.oldxp == null) {
+                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${catalvl}, ${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                        } else {
+                            await sql`UPDATE users SET (cataxp, lastupdated) = (${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                        }
                     }
-                });
+                }
+
                 return {
                     success: true,
                     value: value,
                     formattedValue: value / 100
                 };
             }
-        }
+        },
+        {
+            id: "jan25",
+            title: "",
+            start: new Date("1 January 2025").getTime(),
+            callback: undefined
+        },
     ]
 }
 export function encodeCarrierData(data) {
