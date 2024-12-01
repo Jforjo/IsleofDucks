@@ -414,7 +414,6 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
-                    value -= user?.oldxp ?? 0;
                 }
 
                 if (updateDB) {
