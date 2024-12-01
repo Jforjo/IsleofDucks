@@ -369,12 +369,12 @@ export const IsleofDucks = {
 
                 if (updateDB) {
                     if (user == null) {
-                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${catalvl}, ${catalvl}, ${timestamp})`;
+                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
                     } else {
                         if (user?.oldxp == null) {
-                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${catalvl}, ${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                         } else {
-                            await sql`UPDATE users SET (cataxp, lastupdated) = (${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                         }
                     }
                 }
@@ -415,12 +415,12 @@ export const IsleofDucks = {
 
                 if (updateDB) {
                     if (user == null) {
-                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${catalvl}, ${catalvl}, ${timestamp})`;
+                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
                     } else {
                         if (user?.oldxp == null) {
-                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${catalvl}, ${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                         } else {
-                            await sql`UPDATE users SET (cataxp, lastupdated) = (${catalvl}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                         }
                     }
                 }
