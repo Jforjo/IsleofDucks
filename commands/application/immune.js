@@ -165,6 +165,22 @@ async function viewImmune(interaction) {
         });
     }
 
+    if (immunePlayers.players.length === 0) {
+        return await FollowupMessage(interaction.token, {
+            content: null,
+            embeds: [
+                {
+                    title: "There are no immune players!",
+                    color: parseInt("FB9B00", 16),
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+    }
+
     const fieldArray = [];
     for (const [key, value] of Object.entries(Object.groupBy(immunePlayers.players, ({ reason }) => reason))) {
         fieldArray.push({
