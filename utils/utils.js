@@ -4,10 +4,11 @@ import { getUsername } from './hypixelUtils.js';
 export async function getImmunePlayers() {
     const { rows } = await sql`SELECT uuid, discord, reason FROM immune`;
 
-    const players = await Promise.all(rows.map(async row => {
+    const players = await Promise.all(rows.map(async (row) => {
+        const name = await getUsername(row.uuid);
         return {
             uuid: row.uuid,
-            name: await getUsername(row.uuid),
+            name: name.name ?? null,
             discord: row.discord,
             reason: row.reason
         }
