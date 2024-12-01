@@ -8,8 +8,7 @@ async function addImmune(interaction, name, reason) {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-        data: { flags: 1 << 6 }
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
     });
 
     const user = interaction.member.user;
@@ -44,7 +43,7 @@ async function addImmune(interaction, name, reason) {
             content: null,
             embeds: [
                 {
-                    title: "That player is already immune!",
+                    title: `\`${name}\` is already immune!`,
                     color: parseInt("FB9B00", 16),
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -61,7 +60,8 @@ async function addImmune(interaction, name, reason) {
         content: null,
         embeds: [
             {
-                title: "Player added to the immune list!",
+                title: `\`${name}\` was added to the immune list!`,
+                description: `Reason: ${reason}`,
                 color: parseInt("FB9B00", 16),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -76,8 +76,7 @@ async function removeImmune(interaction, name) {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-        data: { flags: 1 << 6 }
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
     });
 
     const user = interaction.member.user;
@@ -112,7 +111,7 @@ async function removeImmune(interaction, name) {
             content: null,
             embeds: [
                 {
-                    title: "That player is not immune!",
+                    title: `\`${name}\` is not immune!`,
                     color: parseInt("FB9B00", 16),
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -129,7 +128,7 @@ async function removeImmune(interaction, name) {
         content: null,
         embeds: [
             {
-                title: "Player removed from the immune list!",
+                title: `\`${name}\` was removed from the immune list!`,
                 color: parseInt("FB9B00", 16),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -208,7 +207,13 @@ async function viewImmune(interaction) {
 
 export default async (req, res) => {
     const interaction = req.body;
-    const options = Object.fromEntries(interaction.data.options.map(option => [option.name, option.value ?? option.options]));
+    const options = Object.fromEntries(interaction.data.options.map(option => [
+        option.name,
+        option.value ?? Object.fromEntries(option.options.map(option => [
+            option.name,
+            option.value
+        ]))
+    ]));
 
     if (options.add) {
         return await addImmune(interaction, options.add.name, options.add.reason);
