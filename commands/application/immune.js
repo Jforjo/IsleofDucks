@@ -11,7 +11,6 @@ async function addImmune(interaction, name, reason) {
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
     });
 
-    const user = interaction.member.user;
     if (!interaction.member.roles.contains(IsleofDucks.roles.admin)) {
         return await FollowupMessage(interaction.token, {
             content: "You can't use this command!"
@@ -223,16 +222,24 @@ export default async (req, res) => {
         return await removeImmune(interaction, options.remove.name);
     } else if (options.view) {
         return await viewImmune(interaction);
-    } else {
-        console.log('interaction', interaction);
-        console.log('interaction.data', interaction.data);
-        console.log('interaction.data.options', interaction.data.options);
-        console.log('options object', options);
-        return res.status(200).send({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: "⚠️ Check Logs!" },
-        });
     }
+
+    return res.status(200).send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+            content: `<@${IsleofDucks.staticIDs.Jforjo}>`,
+            embeds: [
+                {
+                    title: "Something went very wrong!",
+                    color: parseInt("B00020", 16),
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        },
+    });
 }
 export const CommandData = {
     name: "immune",
