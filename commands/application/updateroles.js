@@ -11,7 +11,6 @@ export default async (req, res) => {
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-        data: { flags: 1 << 6 },
     });
 
     let perm = false;
