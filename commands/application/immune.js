@@ -209,7 +209,7 @@ export const CommandData = {
         {
             name: "add",
             description: "Add a player to the immune list.",
-            type: ApplicationCommandOptionType.SubcommandGroup,
+            type: 1, // 1 is type SUB_COMMAND
             options: [
                 {
                     name: "name",
@@ -238,7 +238,7 @@ export const CommandData = {
         {
             name: "remove",
             description: "Remove a player from the immune list.",
-            type: ApplicationCommandOptionType.SubcommandGroup,
+            type: 1,
             options: [
                 {
                     name: "name",
@@ -251,7 +251,7 @@ export const CommandData = {
         {
             name: "view",
             description: "View the immune list.",
-            type: ApplicationCommandOptionType.Subcommand
+            type: 1
         }
     ]
 }
