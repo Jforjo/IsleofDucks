@@ -181,10 +181,10 @@ async function viewImmune(interaction) {
     }
 
     const fieldArray = [];
-    for (const [key, value] of Object.entries(immunePlayers.players.reduce((x, y) => {
-        (x[y.reason] = x[y.reason] || []).push(y);
-        return x;
-    }, {}))) {
+    for (const [key, value] of Object.entries(immunePlayers.players.reduce((accumlator, current) => {
+        (accumlator[current.reason] = accumlator[current.reason] || []).push(current);
+        return accumlator;
+    }, []))) {
         fieldArray.push({
             name: key,
             value: value.map(player => player.name).join('\n').replace('_', '\\_'),
