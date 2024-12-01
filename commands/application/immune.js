@@ -220,6 +220,7 @@ export default async (req, res) => {
         console.log('interaction', interaction);
         console.log('interaction.data', interaction.data);
         console.log('interaction.data.options', interaction.data.options);
+        console.log('options object', options);
         return res.status(200).send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: { content: "⚠️ Check Logs!" },
