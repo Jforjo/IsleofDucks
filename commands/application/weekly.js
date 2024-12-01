@@ -128,7 +128,7 @@ export default async (req, res) => {
         fieldArray.push(
             {
                 name: '\u200b',
-                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\`${field.isNew ? ' 🆕' : ''}${field.immune ? ' 🛡️' : ''} ${field.name.replace('_', '\\_')}: ${field.gexp}`).join('\n'),
+                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\`${field.isNew ? ' 🆕' : ''}${field.immune ? ' 🛡️' : ''} ${field.name.replaceAll('_', '\\_')}: ${field.gexp}`).join('\n'),
                 inline: true
             }
         );

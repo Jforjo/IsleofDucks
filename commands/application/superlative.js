@@ -143,7 +143,7 @@ export default async (req, res) => {
         fieldArray.push(
             {
                 name: '\u200b',
-                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replace('_', '\\_')}: ${field.formattedValue}`).join('\n'),
+                value: result.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}`).join('\n'),
                 inline: true
             }
         );

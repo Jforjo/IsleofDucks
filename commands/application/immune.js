@@ -187,7 +187,7 @@ async function viewImmune(interaction) {
     }, []))) {
         fieldArray.push({
             name: key,
-            value: value.map(player => player.name).join('\n').replace('_', '\\_'),
+            value: value.map(player => player.name).join('\n').replaceAll('_', '\\_'),
             inline: true
         });
     }
