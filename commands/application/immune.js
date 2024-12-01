@@ -1,6 +1,6 @@
-import { ApplicationCommandType, ApplicationCommandOptionType } from "discord-api-types/v10";
+import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import { InteractionResponseType } from "discord-interactions";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage } from "../../utils/discordUtils.js";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "../../utils/discordUtils.js";
 import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer } from "../../utils/utils.js";
 import { getUUID } from "../../utils/hypixelUtils.js";
 
