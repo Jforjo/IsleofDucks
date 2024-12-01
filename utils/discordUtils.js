@@ -358,7 +358,7 @@ export const IsleofDucks = {
                 } else {
                     const profiles = await getProfiles(uuid);
                     if (profiles.success === false) return profiles;
-                    profiles.forEach((profile) => {
+                    profiles.profiles.forEach((profile) => {
                         let temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
                         if (temp && temp > 0) {
                             if (value < temp) value = temp;
@@ -404,7 +404,7 @@ export const IsleofDucks = {
                 } else {
                     const profiles = await getProfiles(uuid);
                     if (profiles.success === false) return profiles;
-                    profiles.forEach((profile) => {
+                    profiles.profiles.forEach((profile) => {
                         let temp = profile.members[uuid]?.leveling?.experience;
                         if (temp && temp > 0) {
                             if (value < temp) value = temp;
