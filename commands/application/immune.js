@@ -12,7 +12,7 @@ async function addImmune(interaction, name, reason) {
     });
 
     const user = interaction.member.user;
-    if (user.id != IsleofDucks.staticIDs.Jforjo && user.id != IsleofDucks.staticIDs.Ducksicle) {
+    if (!interaction.member.roles.contains(IsleofDucks.roles.admin)) {
         return await FollowupMessage(interaction.token, {
             content: "You can't use this command!"
         });
@@ -79,8 +79,7 @@ async function removeImmune(interaction, name) {
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
     });
 
-    const user = interaction.member.user;
-    if (user.id != IsleofDucks.staticIDs.Jforjo && user.id != IsleofDucks.staticIDs.Ducksicle) {
+    if (!interaction.member.roles.contains(IsleofDucks.roles.admin)) {
         return await FollowupMessage(interaction.token, {
             content: "You can't use this command!"
         });
