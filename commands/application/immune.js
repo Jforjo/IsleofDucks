@@ -209,13 +209,34 @@ async function viewImmune(interaction) {
 export default async (req, res) => {
     const interaction = req.body;
     const options = Object.fromEntries(interaction.data.options.map(option => [option.name, option.value]));
-    
+
     if (options.add) {
         return await addImmune(interaction, options.add.name, options.add.reason);
     } else if (options.remove) {
         return await removeImmune(interaction, options.remove.name);
-    } else {
+    } else if (options.view) {
         return await viewImmune(interaction);
+    } else {
+        console.log('interaction', interaction);
+        console.log('interaction.data', interaction.data);
+        console.log('interaction.data.options', interaction.data.options);
+        return res.status(200).send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                content: null,
+                embeds: [
+                    {
+                        title: "Something went wrong!",
+                        description: "Check Vercel logs for more info.",
+                        color: parseInt("FF69B4", 16),
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            },
+        });
     }
 }
 export const CommandData = {
