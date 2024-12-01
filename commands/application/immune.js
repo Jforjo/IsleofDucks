@@ -222,20 +222,7 @@ export default async (req, res) => {
         console.log('interaction.data.options', interaction.data.options);
         return res.status(200).send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: null,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: "Check Vercel logs for more info.",
-                        color: parseInt("FF69B4", 16),
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ],
-            },
+            data: { content: "⚠️ Check Logs!" },
         });
     }
 }
