@@ -365,6 +365,7 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
+                    value -= user?.oldxp ?? 0;
                 }
 
                 if (updateDB) {
@@ -384,7 +385,13 @@ export const IsleofDucks = {
                     value: value,
                     formattedValue: formatNumber(value)
                 };
-            }
+            },
+            ranks: [
+                {
+                    id: "GR",
+                    requirement: 0,
+                },
+            ]
         },
         {
             id: "dec24",
@@ -411,6 +418,7 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
+                    value -= user?.oldxp ?? 0;
                 }
 
                 if (updateDB) {
