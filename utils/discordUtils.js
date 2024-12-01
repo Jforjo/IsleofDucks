@@ -365,17 +365,19 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
-                    value -= user?.oldxp ?? 0;
                 }
 
                 if (updateDB) {
                     if (user == null) {
                         await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
+                        value = 0;
                     } else {
                         if (user?.oldxp == null) {
                             await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            value = 0;
                         } else {
                             await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            value -= user.oldxp;
                         }
                     }
                 }
@@ -386,12 +388,6 @@ export const IsleofDucks = {
                     formattedValue: formatNumber(value)
                 };
             },
-            ranks: [
-                {
-                    id: "GR",
-                    requirement: 0,
-                },
-            ]
         },
         {
             id: "dec24",
@@ -424,11 +420,14 @@ export const IsleofDucks = {
                 if (updateDB) {
                     if (user == null) {
                         await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
+                        value = 0;
                     } else {
                         if (user?.oldxp == null) {
                             await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            value = 0;
                         } else {
                             await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            value -= user.oldxp;
                         }
                     }
                 }
@@ -438,7 +437,25 @@ export const IsleofDucks = {
                     value: value,
                     formattedValue: value / 100
                 };
-            }
+            },
+            ranks: [
+                {
+                    id: "GRINCH",
+                    requirement: 0,
+                },
+                {
+                    id: "ELF",
+                    requirement: 32000,
+                },
+                {
+                    id: "FROSTY",
+                    requirement: 36000,
+                },
+                {
+                    id: "SANTA",
+                    requirement: 40000,
+                },
+            ]
         },
         {
             id: "jan25",
