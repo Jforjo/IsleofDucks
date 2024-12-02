@@ -264,11 +264,11 @@ export const CommandData = {
                     choices: [
                         {
                             name: "Level",
-                            value: "level"
+                            value: "Level"
                         },
                         {
                             name: "Loyalty",
-                            value: "loyalty"
+                            value: "Loyalty"
                         }
                     ]
                 }
