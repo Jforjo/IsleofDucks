@@ -67,7 +67,7 @@ export default async (req, res) => {
     }
 
     const immunePlayers = await getImmunePlayers();
-    const immunePlayerIDs = immunePlayers?.players.map(player => player.id);
+    const immunePlayerIDs = immunePlayers?.players.map(player => player.uuid);
     
     if (immunePlayers?.success === false) {
         let content = null;
