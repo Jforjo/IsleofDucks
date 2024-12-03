@@ -9,6 +9,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@vercel/postgres": "^0.10.0",
 		"@zikeji/hypixel": "^4.1.4",
 		"discord-api-types": "^0.37.110",
 		"discord-interactions": "^4.1.0",
