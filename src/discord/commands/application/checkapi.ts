@@ -1,6 +1,6 @@
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID } from "../../hypixelUtils";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "../../discordUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, Emojis } from "../../discordUtils";
 import { NextRequest, NextResponse } from "next/server.js";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember.js";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile.js";
@@ -199,8 +199,8 @@ export default async function(
     }));
     const username = options.username;
     const profile = options.profile;
-    const yes = "<:yes:1288141736756908113>";
-    const no = "<:no:1288141853018951811>";
+    const yes = Emojis.yes;
+    const no = Emojis.no;
     const mojang = await getUsernameOrUUID(username);
 
     if (!mojang.success) {

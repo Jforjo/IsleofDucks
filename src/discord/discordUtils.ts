@@ -892,3 +892,8 @@ export function decodeCarrierData(data: string): {
         },
     }
 }
+
+export const Emojis = {
+    yes: "<:yes:1288141736756908113>",
+    no: "<:no:1288141853018951811>"
+}
