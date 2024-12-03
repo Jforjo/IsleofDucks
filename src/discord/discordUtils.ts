@@ -415,7 +415,7 @@ export async function ListGuildMembers(
     if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
 
     const endpoint = Routes.guildMembers(guildId);
-    const url = RouteBases.api + endpoint + new URLSearchParams(Object.entries(options)).toString();
+    const url = RouteBases.api + endpoint + '?' + new URLSearchParams(Object.entries(options)).toString();
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
@@ -451,7 +451,7 @@ export async function GetAllGuildMembers(
 ): Promise<APIGuildMember[]> {
     const members: APIGuildMember[] = [];
     while (true) {
-        const options = members[members.length - 1].user.id ? {
+        const options = members[members.length - 1]?.user?.id ? {
             limit: 1000,
             after: members[members.length - 1].user.id
         } : {
@@ -543,6 +543,7 @@ export const IsleofDucks = {
         carrytickets: "1004180629551845466"
     },
     roles: {
+        owner: "823071305795633163",
         admin: "824393734921650247",
         mod_duck: "886312078611206144",
         mod_duckling: "997610270262296717",
