@@ -28,10 +28,12 @@ export async function getUsernameOrUUID(
 ): Promise<
 {
     success: false;
+    status: number;
     message: string;
     ping?: boolean;
 } | {
     success: true;
+    status: number;
     uuid: string;
     name: string;
 }
@@ -47,6 +49,7 @@ export async function getUsernameOrUUID(
         console.error("res", res);
         return {
             success: false,
+            status: res.status,
             message: 'Bad response from Minetools'
         };
     }
@@ -54,24 +57,29 @@ export async function getUsernameOrUUID(
         if (data && data.errorMessage) {
             return {
                 success: false,
-                message: data.errorMessage
+                status: res.status,
+                message: data.errorMessage,
             };
         }
         return {
             success: false,
+            status: res.status,
             message: 'Bad response from Minetools'
         };
     }
     if (data.name === null) return {
         success: false,
+        status: res.status,
         message: "Invalid UUID"
     }
     if (data.id === null) return {
         success: false,
+        status: res.status,
         message: "Invalid Username"
     }
     return {
         success: true,
+        status: res.status,
         uuid: data.id,
         name: data.name
     };
@@ -94,10 +102,12 @@ export async function getProfiles(
 ): Promise<
     {
         success: false;
+        status?: number;
         message: string;
         ping?: boolean;
     } | {
         success: true;
+        status: number;
         profiles: SkyBlockProfile[];
     }
 > {
@@ -122,6 +132,7 @@ export async function getProfiles(
         console.error("res", res);
         return {
             success: false,
+            status: res.status,
             message: 'Bad response from Hypixel'
         };
     }
@@ -129,23 +140,27 @@ export async function getProfiles(
         if (data && data.cause) {
             return {
                 success: false,
+                status: res.status,
                 message: typeof data.cause === "string" ? data.cause : "Unknown error",
                 ping: data.cause === "Invalid API key"
             };
         }
         return {
             success: false,
+            status: res.status,
             message: 'Bad response from Hypixel'
         };
     }
     if (data.profiles.length === 0) {
         return {
             success: false,
+            status: res.status,
             message: 'User has no profiles'
         };
     }
     return {
         success: true,
+        status: res.status,
         profiles: data.profiles
     };
 }
@@ -207,10 +222,12 @@ export async function getGuildData(
 ): Promise<
     {
         success: false;
+        status?: number;
         message: string;
         ping?: boolean;
     } | {
         success: true;
+        status: number;
         guild: Guild;
     }
 > {
@@ -235,6 +252,7 @@ export async function getGuildData(
         console.error("res", res);
         return {
             success: false,
+            status: res.status,
             message: 'Bad response from Hypixel'
         };
     }
@@ -242,23 +260,27 @@ export async function getGuildData(
         if (data && data.cause) {
             return {
                 success: false,
+                status: res.status,
                 message: typeof data.cause === "string" ? data.cause : "Unknown error",
                 ping: data.cause === "Invalid API key"
             };
         }
         return {
             success: false,
+            status: res.status,
             message: 'Bad response from Hypixel'
         };
     }
     if (data.guild === null) {
         return {
             success: false,
+            status: res.status,
             message: 'Guild not found'
         };
     }
     return {
         success: true,
+        status: res.status,
         guild: data.guild
     };
 }
