@@ -529,6 +529,7 @@ export function formatNumber(num: number, decimals: number = 2): string {
 }
 
 export const IsleofDucks = {
+    serverID: "823061629812867113",
     staticIDs: {
         Jforjo: "791380888197660722",
         Ducksicle: "474770139363934219"
