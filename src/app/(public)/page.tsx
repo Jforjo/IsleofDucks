@@ -1,24 +1,12 @@
-"use client";
-// import Image from "next/image";
-import { useSession } from "next-auth/react";
-// import duckbg from "../../public/images/duckbg.gif";
+import { currentUser } from '@clerk/nextjs/server'
 
-export default function Home() {
-    const session = useSession();
+export default async function Home() {
+    const user = await currentUser();
+    if (!user) return <div>Not signed in</div>
     return (
         <>
-            <section className="h-screen">
-                {/* <Image
-                    src={duckbg}
-                    width={1920}
-                    height={1080}
-                    alt="Duck"
-                    priority
-                /> */}
-
-            </section>
-            <section className="bg-gray-800 p-4 m-8">
-                { JSON.stringify(session) }
+            <section className="mt-8">
+                { JSON.stringify(user.externalAccounts[0].externalId) }
             </section>
         </>
     );
