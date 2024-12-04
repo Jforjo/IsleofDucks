@@ -1,11 +1,11 @@
-import { APIApplicationCommandInteractionDataOption, APIChatInputApplicationCommandInteractionData, APIInteraction, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils.js";
 import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer } from "@/discord/utils.js";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextRequest, NextResponse } from "next/server";
 
 async function addImmune(
-    interaction: APIInteraction,
+    interaction: APIChatInputApplicationCommandInteraction,
     name: string,
     reason: string
 ): Promise<
@@ -105,7 +105,7 @@ async function addImmune(
 }
 
 async function removeImmune(
-    interaction: APIInteraction,
+    interaction: APIChatInputApplicationCommandInteraction,
     name: string
 ): Promise<
     NextResponse<
@@ -203,7 +203,7 @@ async function removeImmune(
 }
 
 async function viewImmune(
-    interaction: APIInteraction
+    interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
         {
@@ -299,7 +299,7 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = req.body as APIInteraction | null;
+    const interaction = req.body as APIChatInputApplicationCommandInteraction | null;
     if (!interaction) {
         return NextResponse.json(
             { success: false, error: 'Missing request body' },

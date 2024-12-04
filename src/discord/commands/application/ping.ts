@@ -1,4 +1,4 @@
-import { APIInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage } from "../../discordUtils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,7 +12,7 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = req.body as APIInteraction | null;
+    const interaction = req.body as APIChatInputApplicationCommandInteraction | null;
     if (!interaction) {
         return NextResponse.json(
             { success: false, error: 'Missing request body' },
