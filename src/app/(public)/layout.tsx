@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import Header from "../components/Header";
+import Header from "@/components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
@@ -17,10 +17,10 @@ export default async function RootLayout({
         <ClerkProvider>
             <html lang="en">
                 <body
-                    className={`flex flex-col min-h-screen`}
+                    className="flex flex-col min-h-screen dark:bg-neutral-950"
                 >
                     <Header />
-                    <main>
+                    <main className="flex-grow">
                         {children}
                     </main>
                 </body>

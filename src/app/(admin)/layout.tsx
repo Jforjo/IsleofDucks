@@ -1,20 +1,6 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "../globals.css";
-import SessionProvider from "../components/SessionProvider";
-import { getServerSession } from "next-auth";
-import Header from "../components/Header";
-
-const geistSans = localFont({
-    src: "../fonts/GeistVF.woff",
-    variable: "--font-geist-sans",
-    weight: "100 900",
-});
-const geistMono = localFont({
-    src: "../fonts/GeistMonoVF.woff",
-    variable: "--font-geist-mono",
-    weight: "100 900",
-});
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -26,22 +12,16 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await getServerSession();
     
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+                className={`flex flex-col min-h-screen`}
             >
-                <SessionProvider session={session}>
+                <main>
                     <Header />
-                    <section className="bg-gray-800 p-4 mt-28 mb-8">
-                        { JSON.stringify(session) }
-                    </section>
-                    <main>
-                        {children}
-                    </main>
-                </SessionProvider>
+                    {children}
+                </main>
             </body>
         </html>
     );
