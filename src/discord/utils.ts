@@ -6,7 +6,7 @@ export async function getImmunePlayers(): Promise<{
     players: Array<{
         uuid: string;
         name?: string;
-        discord: string;
+        discord: string | null;
         reason: string;
     }>;
 }> {

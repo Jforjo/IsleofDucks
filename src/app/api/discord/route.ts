@@ -68,7 +68,7 @@ export async function POST(
             );
         }
     } else if (interaction.type === InteractionType.MessageComponent) {
-        const { default: command } = await import(`@/discord/commands/component/${interaction.data.custom_id.toLowerCase()}.ts`);
+        const { default: command } = await import(`@/discord/commands/component/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
         if (command) {
             return await command(req);
         } else {
@@ -78,7 +78,7 @@ export async function POST(
             );
         }
     } else if (interaction.type === InteractionType.ModalSubmit) {
-        const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.toLowerCase()}.ts`);
+        const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
         if (command) {
             return await command(req);
         } else {
