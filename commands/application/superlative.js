@@ -29,8 +29,8 @@ async function getSuperlative() {
                 await sql`UPDATE settings SET value = ${superlative.id} WHERE key = 'superlative'`;
                 await sql`UPDATE settings SET value = ${"true"} WHERE key = 'superlativeReset'`;
                 // Return the previous superlative to get the final results
-                if (superlative[i + 1] != null) {
-                    return superlative[i + 1];
+                if (superlativeList[i + 1] != null) {
+                    return superlativeList[i + 1];
                 }
             }
             return superlative;
