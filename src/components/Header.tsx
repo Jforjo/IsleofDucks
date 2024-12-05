@@ -11,7 +11,7 @@ export default function Header(): React.JSX.Element {
     const pathname = usePathname();
     
     return (
-        <header className="relative flex justify-between items-center p-3 gap-6 dark:bg-neutral-900">
+        <header className="relative flex justify-between items-center p-3 gap-6 dark:bg-neutral-800">
             <Link href="/" className="text-2xl font-bold text-nowrap flex items-center gap-3">
                 <HoverImage className="rounded-full" srcOriginal={icon.src} srcHover={iconhover.src} width={40} height={40} alt="Isle of Ducks" />
                 Isle of Ducks
