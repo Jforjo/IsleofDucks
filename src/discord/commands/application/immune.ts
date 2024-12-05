@@ -257,7 +257,7 @@ async function viewImmune(
     }
 
     const fieldArray = [];
-    for (const [key, value] of Object.entries(immunePlayers.players.reduce<{ [key: string]: { uuid: string, name?: string, discord: string | null, reason: string }[] }>((accumlator: { [key: string]: { uuid: string, name?: string, discord: string | null, reason: string }[] }, current: { uuid: string, name?: string, discord: string | null, reason: string }) => {
+    for (const [key, value] of Object.entries(immunePlayers.players.reduce<Record<string, { uuid: string, name?: string, discord: string | null, reason: string }[]>>((accumlator: Record<string, { uuid: string, name?: string, discord: string | null, reason: string }[]>, current: { uuid: string, name?: string, discord: string | null, reason: string }) => {
         (accumlator[current.reason] = accumlator[current.reason] || []).push(current);
         return accumlator;
     }, {}))) {

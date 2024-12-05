@@ -2,7 +2,7 @@ import { Guild } from "@zikeji/hypixel/dist/types/Augmented/Guild";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
 import { GuildResponse, SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
 
-export type MinetoolsResponse = {
+export interface MinetoolsResponse {
     id: string | null;
     name: string | null;
     status: string;

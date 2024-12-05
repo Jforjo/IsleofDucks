@@ -3,7 +3,7 @@ import { Permissions, Snowflake } from "discord-api-types/globals"
 import { APIGuildMember, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 
-export type DiscordPermissions = {
+export interface DiscordPermissions {
     create_instant_invite?: boolean;
     kick_members?: boolean;
     ban_members?: boolean;
@@ -55,7 +55,7 @@ export type DiscordPermissions = {
     use_external_apps?: boolean;
 }
 
-export const DISCORD_EPOCH: number = 1420070400000
+export const DISCORD_EPOCH = 1420070400000
 
 /**
  * Converts a snowflake ID string into a JS Date object using the provided epoch (in ms), or Discord's epoch if not provided
@@ -520,7 +520,7 @@ export function ToPermissions(permissions: DiscordPermissions): Permissions {
     return perms.toString();
 }
 
-export function formatNumber(num: number, decimals: number = 2): string {
+export function formatNumber(num: number, decimals = 2): string {
     if (num >= 1_000_000_000_000) return (num / 1_000_000_000_000).toFixed(decimals) + 'T';
     if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(decimals) + 'B';
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(decimals) + 'M';
@@ -612,7 +612,7 @@ export const IsleofDucks = {
                     const profiles = await getProfiles(uuid);
                     if (profiles.success === false) return profiles;
                     profiles.profiles.forEach((profile) => {
-                        let temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
+                        const temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
                         if (temp && temp > 0) {
                             if (value < temp) value = temp;
                         }
@@ -673,7 +673,7 @@ export const IsleofDucks = {
                     const profiles = await getProfiles(uuid);
                     if (profiles.success === false) return profiles;
                     profiles.profiles.forEach((profile) => {
-                        let temp = profile.members[uuid]?.leveling?.experience;
+                        const temp = profile.members[uuid]?.leveling?.experience;
                         if (temp && temp > 0) {
                             if (value < temp) value = temp;
                         }
@@ -729,7 +729,7 @@ export const IsleofDucks = {
         },
     ]
 }
-export type Superlative = {
+export interface Superlative {
     id: string;
     title: string;
     start: number;

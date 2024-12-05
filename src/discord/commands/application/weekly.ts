@@ -82,7 +82,7 @@ export default async function(
     let result = await Promise.all(guildResponse.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
-        const gexp = Object.values(member.expHistory).reduce((a, b) => ( a ?? 0 ) + ( b ?? 0 ), 0);
+        const gexp = Object.values(member.expHistory).reduce((a, b) => ( a ?? 0 ) + ( b ?? 0 ), 0) ?? 0;
         const isNew = member.joined > weekAgo;
         return {
             uuid: member.uuid,
@@ -128,7 +128,7 @@ export default async function(
         gexp: number;
         isNew: boolean;
     }[];
-    result.sort((a, b) => b.gexp! - a.gexp!);
+    result.sort((a, b) => b.gexp - a.gexp);
     result = result.map((member, index) => {
         return {
             rank: index + 1,
@@ -147,7 +147,7 @@ export default async function(
         isNew: boolean;
         immune: boolean;
     }[];
-    let fieldArray = [];
+    const fieldArray = [];
     const chunkSize = 21;
     for (let i = 0; i < finalResult.length; i += chunkSize) {
         fieldArray.push(

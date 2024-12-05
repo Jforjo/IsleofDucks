@@ -49,8 +49,7 @@ export default async function(
         );
     }
     let perm = false;
-    for (let i = 0; i < interaction.member.roles.length; i++) {
-        const role = interaction.member.roles[i];
+    for (const role of interaction.member.roles) {
         if (role === IsleofDucks.roles.admin) perm = true;
         else if (role === IsleofDucks.roles.mod_duck) perm = true;
         else if (role === IsleofDucks.roles.mod_duckling) perm = true;
@@ -74,8 +73,7 @@ export default async function(
 
     const members = await GetAllGuildMembers(interaction.guild.id);
     // Not a Promise.all since the functions inside can get rate limited
-    for (let i = 0; i < members.length; i++) {
-        const member = members[i];
+    for (const member of members) {
         if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
             if (!member.roles.includes(tempRole)) {
                 await AddGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
@@ -90,6 +88,7 @@ export default async function(
             }
         }
     }
+
 
     await FollowupMessage(interaction.token, {
         content: null,

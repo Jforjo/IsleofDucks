@@ -3,12 +3,12 @@ import { getUsernameOrUUID } from './hypixelUtils';
 
 export async function getImmunePlayers(): Promise<{
     success: boolean;
-    players: Array<{
+    players: {
         uuid: string;
         name?: string;
         discord: string | null;
         reason: string;
-    }>;
+    }[];
 }> {
     const { rows } = await sql`SELECT uuid, discord, reason FROM immune`;
 

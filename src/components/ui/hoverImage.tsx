@@ -8,14 +8,14 @@ export default function HoverImage({
     width,
     height,
     alt,
-    ...rest
+    className
 }: {
     srcOriginal: string;
     srcHover: string;
     width: number;
     height: number;
     alt: string;
-    [key: string]: any;
+    className?: string;
 }): React.JSX.Element {
     const [hover, setHover] = useState(false);
     return (
@@ -26,7 +26,7 @@ export default function HoverImage({
             width={width}
             height={height}
             alt={alt}
-            {...rest}
+            className={className}
         />
     );
 }

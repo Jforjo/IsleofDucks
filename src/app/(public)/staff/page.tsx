@@ -15,7 +15,7 @@ export default async function Staff() {
         if (member.roles.includes(IsleofDucks.roles.mod_duck)) return { name: username, role: 'Moderator', order: 2 };
         if (member.roles.includes(IsleofDucks.roles.mod_duckling)) return { name: username, role: 'Moderator', order: 2 };
         if (member.roles.includes(IsleofDucks.roles.trainee)) return { name: username, role: 'Trainee', order: 3 };
-    }).sort((a, b) => (a?.order || 0) - (b?.order || 0)).reduce<{ [key: string]: string[] }>((accumlator: { [key: string]: string[] }, current) => {
+    }).sort((a, b) => (a?.order || 0) - (b?.order || 0)).reduce<Record<string, string[]>>((accumlator: Record<string, string[]>, current) => {
         if (!current || !current.name) return accumlator;
         (accumlator[current.role] = accumlator[current.role] || []).push(current.name);
         return accumlator;

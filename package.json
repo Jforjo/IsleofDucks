@@ -10,13 +10,15 @@
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^6.5.2",
+		"@eslint/js": "^9.16.0",
 		"@vercel/postgres": "^0.10.0",
 		"@zikeji/hypixel": "^4.1.4",
 		"discord-api-types": "^0.37.110",
 		"discord-interactions": "^4.1.0",
 		"next": "15.0.3",
 		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react-dom": "^18.3.1",
+		"typescript-eslint": "^8.17.0"
 	},
 	"devDependencies": {
 		"typescript": "^5.7.2",

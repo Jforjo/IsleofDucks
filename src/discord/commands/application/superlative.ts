@@ -114,7 +114,9 @@ export default async function(
     let result = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
-        const superlativeData = await superlative.callback!(member.uuid);
+        // THis should never happen, but Typescript/eslint was complaining
+        if (!superlative.callback) throw new Error("Superlative callback is not defined");
+        const superlativeData = await superlative.callback(member.uuid);
         if (!superlativeData.success) throw new Error(superlativeData.message);
         return {
             uuid: member.uuid,
@@ -179,7 +181,7 @@ export default async function(
         value: number;
         formattedValue: string;
     }[];
-    let fieldArray = [];
+    const fieldArray = [];
     const chunkSize = 21;
     for (let i = 0; i < finalResult.length; i += chunkSize) {
         fieldArray.push(
