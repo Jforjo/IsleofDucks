@@ -6,7 +6,7 @@ import React, { useState } from "react";
 async function addImmune(username: string, discord: string, reason: string) {
     const uuidResponse = await getUsernameOrUUID(username);
     if (uuidResponse.success === true) {
-        await addImmunePlayer(uuidResponse.uuid, discord, reason);
+        await addImmunePlayer(uuidResponse.uuid, discord == "" ? null : discord, reason);
     }
 }
 
@@ -70,7 +70,7 @@ export default function QuickImmunity() {
                         onClick={async (e) => {
                             e.currentTarget.disabled = true;
                             e.currentTarget.textContent = "Adding...";
-                            await addImmune(username, discord, reason);
+                            void addImmune(username, discord, reason);
                             setUsername("");
                             setDiscord("");
                             setReason("");
