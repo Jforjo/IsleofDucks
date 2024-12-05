@@ -93,3 +93,11 @@ export async function POST(
         { status: 404 }
     );
 };
+
+export function GET() {
+    return NextResponse.json({
+        success: true,
+        message: "This is the API endpoint for Discord interactions.",
+        discord_invite: "https://discord.gg/IsleofDucks",
+    }, { status: 200 });
+}

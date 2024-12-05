@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    async redirects() {
+        return [
+            {
+                source: '/discord',
+                destination: 'https://discord.gg/rvaHetaFHV',
+                permanent: true,
+            },
+        ];
+    },
     images: {
         remotePatterns: [
             {
