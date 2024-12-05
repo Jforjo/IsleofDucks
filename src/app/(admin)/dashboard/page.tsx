@@ -1,5 +1,9 @@
-export default function Dashboard() {
+"use client";
+import React from "react";
+import QuickImmunity from "../_components/quickImmunity";
+
+export default function Dashboard(): React.JSX.Element {
     return (
-        <h1>Dashboard</h1>
+        <QuickImmunity />
     );
 }
