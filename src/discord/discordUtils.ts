@@ -729,6 +729,28 @@ export const IsleofDucks = {
         },
     ]
 }
+export type Superlative = {
+    id: string;
+    title: string;
+    start: number;
+    callback?: (
+        uuid: string
+    ) => Promise<
+        {
+            success: false;
+            message: string;
+            ping?: boolean;
+        } | {
+            success: true;
+            value: number;
+            formattedValue: string;
+        }
+    >;
+    ranks?: {
+        id: string;
+        requirement: number;
+    }[]
+}
 export function encodeCarrierData(data: {
     f1_4: boolean;
     f5_6: boolean;
