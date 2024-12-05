@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { getUsernameOrUUID } from './hypixelUtils.js';
+import { getUsernameOrUUID } from './hypixelUtils';
 
 export async function getImmunePlayers(): Promise<{
     success: boolean;

@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
-import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils.js";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative } from "@/discord/discordUtils.js";
+import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative } from "@/discord/discordUtils";
 import { NextRequest, NextResponse } from "next/server";
 
 async function getSuperlative(): Promise<Superlative | null> {

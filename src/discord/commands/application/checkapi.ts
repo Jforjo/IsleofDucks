@@ -1,10 +1,10 @@
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { getUsernameOrUUID } from "../../hypixelUtils";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, Emojis } from "../../discordUtils";
-import { NextRequest, NextResponse } from "next/server.js";
-import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember.js";
-import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile.js";
-import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes.js";
+import { NextRequest, NextResponse } from "next/server";
+import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
+import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
+import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
 
 function isInventoryAPI(profiledata: SkyBlockProfileMember): boolean {
     if (!profiledata) return false;

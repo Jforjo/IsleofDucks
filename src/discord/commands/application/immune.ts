@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils.js";
-import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer } from "@/discord/utils.js";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextRequest, NextResponse } from "next/server";
 

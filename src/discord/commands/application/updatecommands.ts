@@ -1,6 +1,6 @@
 import { APIApplicationCommand, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody, RESTPutAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, InstallGlobalCommands } from "@/discord/discordUtils";
-import { NextRequest, NextResponse } from "next/server.js";
+import { NextRequest, NextResponse } from "next/server";
 
 import { CommandData as CheckAPI } from "./checkapi";
 // import { CommandData as GuildCata } from "./guildcata";
