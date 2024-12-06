@@ -1,5 +1,4 @@
 import { GetAllGuildMembers, IsleofDucks } from "@/discord/discordUtils";
-import fallbackImg from "@/public/images/profile.png";
 import ImageWithFallback from "@/components/ui/fallbackImage";
 import React from "react";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
@@ -34,7 +33,7 @@ export default async function Staff() {
                             if (uuidRes.success === true) uuid = uuidRes.uuid;
                             return <div key={name} className="flex flex-col dark:bg-neutral-800 p-4 items-center gap-2">
                                 {/* <ImageWithFallback fallbackSrc={fallbackImg.src} src={`https://mineskin.eu/helm/${name}/100.png`} width={100} height={100} alt={name}/> */}
-                                <ImageWithFallback fallbackSrc={fallbackImg.src} src={`https://crafatar.com/avatars/${uuid}?size=96`} width={96} height={96} alt={name}/>
+                                <ImageWithFallback fallbackSrc="/images/profile.png" src={`https://crafatar.com/avatars/${uuid}?size=96`} width={96} height={96} alt={name}/>
                                 <span>
                                     { name }
                                 </span>
