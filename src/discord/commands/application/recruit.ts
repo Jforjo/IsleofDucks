@@ -1,42 +1,21 @@
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
-import { getUsernameOrUUID } from "../../hypixelUtils";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, Emojis } from "../../discordUtils";
-import { NextRequest, NextResponse } from "next/server";
-import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
-import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { NextRequest, NextResponse } from "next/server";
+import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
+import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
+import { getBannedPlayer } from "@/discord/utils";
 
-export function isInventoryAPI(profiledata: SkyBlockProfileMember): boolean {
-    if (!profiledata) return false;
-    if (!profiledata.inventory) return false;
-    if (!profiledata.inventory.inv_contents) return false;
-    return true;
-}
-export function isCollectionAPI(profiledata: SkyBlockProfileMember): boolean {
-    if (!profiledata) return false;
-    if (!profiledata.collection) return false;
-    return true;
-}
-export function isBankingAPI(profile: SkyBlockProfile): boolean {
-    if (!profile) return false;
-    if (!profile.banking) return false;
-    if (!profile.banking.balance) return false;
-    if (profile.banking.balance === -1) return false;
-    return true;
-}
-export function isPersonalVaultAPI(profiledata: SkyBlockProfileMember): boolean {
-    if (!profiledata) return false;
-    if (!profiledata.inventory) return false;
-    if (!profiledata.inventory.personal_vault_contents) return false;
-    return true;
-}
-export function isSkillsAPI(profiledata: SkyBlockProfileMember): boolean {
-    if (!profiledata) return false;
-    if (!profiledata.player_data) return false;
-    return true;
+function getGuildRequirements(profileData: SkyBlockProfileMember): { ducks: boolean, ducklings: boolean } {
+    const level = profileData.leveling.experience ?? 0;
+    return {
+        ducks: level > 30000,
+        ducklings: level > 20000,
+    }
 }
 
-async function checkAPI(
+async function checkPlayer(
     uuid: string,
     profilename: string
 ): Promise<
@@ -53,7 +32,8 @@ async function checkAPI(
         collection: boolean;
         banking: boolean;
         vault: boolean;
-        skills: boolean
+        skills: boolean;
+        guildRequirements: { ducks: boolean, ducklings: boolean };
     }
 > {
     if (!process.env.HYPIXEL_API_KEY) {
@@ -123,7 +103,8 @@ async function checkAPI(
         collection: isCollectionAPI(profiledata),
         banking: isBankingAPI(profile),
         vault: isPersonalVaultAPI(profiledata),
-        skills: isSkillsAPI(profiledata)
+        skills: isSkillsAPI(profiledata),
+        guildRequirements: getGuildRequirements(profiledata),
     };
 }
 
@@ -223,7 +204,32 @@ export default async function(
             { status: mojang.status }
         );
     }
-    const profileAPIResponse = await checkAPI(mojang.uuid, profile);
+
+    const guildResponse = await isPlayerInGuild(mojang.uuid);
+    if (!guildResponse.success) {
+        let content = undefined;
+        if (guildResponse.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        await FollowupMessage(interaction.token, {
+            content: content,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: guildResponse.message,
+                    color: parseInt("B00020", 16),
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: guildResponse.message },
+            { status: guildResponse.status }
+        );
+    }
+
+    const profileAPIResponse = await checkPlayer(mojang.uuid, profile);
     if (!profileAPIResponse.success) {
         let content = undefined;
         if (profileAPIResponse.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
@@ -246,6 +252,9 @@ export default async function(
             { status: profileAPIResponse.status }
         );
     }
+
+    const bannedResponse = await getBannedPlayer(mojang.uuid);
+
     await FollowupMessage(interaction.token, {
         content: undefined,
         embeds: [
@@ -262,6 +271,37 @@ export default async function(
                     ${profileAPIResponse.skills ? yes : no} Skills API
                     ${profileAPIResponse.vault ? yes : no} Personal Vault API
                 `,
+                fields: [
+                    {
+                        name: "Guild",
+                        value: guildResponse.isInGuild ? `${no} ${guildResponse.guild.name}` : `${yes} They are not in a guild`,
+                        inline: false
+                    },
+                    {
+                        name: "Guild Requirements",
+                        value: [
+                            `${profileAPIResponse.guildRequirements.ducks ? yes : no} Ducks`,
+                            `${profileAPIResponse.guildRequirements.ducklings ? yes : no} Ducklings`,
+                        ].join('\n'),
+                        inline: false
+                    },
+                    {
+                        name: "APIs",
+                        value: [
+                            `${profileAPIResponse.inventory ? yes : no} Inventory API`,
+                            `${profileAPIResponse.banking ? yes : no} Banking API`,
+                            `${profileAPIResponse.collection ? yes : no} Collection API`,
+                            `${profileAPIResponse.skills ? yes : no} Skills API`,
+                            `${profileAPIResponse.vault ? yes : no} Personal Vault API`,
+                        ].join('\n'),
+                        inline: false
+                    },
+                    {
+                        name: "Banned",
+                        value: bannedResponse ? `${no} ${bannedResponse.reason}` : `${yes} They are not in my ban list`,
+                        inline: false
+                    }
+                ],
                 color: parseInt("FB9B00", 16),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -276,8 +316,8 @@ export default async function(
     );
 }
 export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
-    name: "checkapi",
-    description: "Checks if a user has their APIs enabled on Hypixel Skyblock",
+    name: "recruit",
+    description: "Checks if a user passes all guild requirements.",
     type: ApplicationCommandType.ChatInput,
     options: [
         {

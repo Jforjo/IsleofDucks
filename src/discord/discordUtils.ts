@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIGuildMember, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 
 export interface DiscordPermissions {
@@ -463,6 +463,45 @@ export async function GetAllGuildMembers(
         if (res.length < 1000) break;
     }
     return members;
+}
+
+export async function GetGuildMember(
+    guildId: Snowflake,
+    userId: Snowflake
+): Promise<RESTGetAPIGuildMemberResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.guildMember(guildId, userId);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'application/json; charset=UTF-8',
+        },
+        method: 'GET',
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTGetAPIGuildMemberResult;
+    } catch (err) {
+        console.error(err);
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await GetGuildMember(guildId, userId);
+            }
+        }
+        console.error(data);
+    }
+
+    return data;
 }
 
 export function ToPermissions(permissions: DiscordPermissions): Permissions {

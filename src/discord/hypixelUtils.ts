@@ -284,3 +284,77 @@ export async function getGuildData(
         guild: data.guild
     };
 }
+
+export async function isPlayerInGuild(
+    uuid: string
+): Promise<
+    {
+        success: false;
+        status?: number;
+        message: string;
+        ping?: boolean;
+    } | {
+        success: true;
+        status: number;
+        isInGuild: false;
+    } | {
+        success: true;
+        status: number;
+        isInGuild: true;
+        guild: Guild;
+    }
+> {
+    if (!process.env.HYPIXEL_API_KEY) {
+        return {
+            success: false,
+            message: 'Missing HYPIXEL_API_KEY',
+            ping: true
+        };
+    }
+    const res = await fetch(`https://api.hypixel.net/guild?player=${encodeURIComponent(uuid)}`, {
+        method: 'GET',
+        headers: {
+            'API-Key': process.env.HYPIXEL_API_KEY
+        }
+    });
+    let data;
+    try {
+        data = await res.json() as GuildResponse;
+    } catch (e) {
+        console.error(e);
+        console.error("res", res);
+        return {
+            success: false,
+            status: res.status,
+            message: 'Bad response from Hypixel'
+        };
+    }
+    if (!res.ok) {
+        if (data && data.cause) {
+            return {
+                success: false,
+                status: res.status,
+                message: typeof data.cause === "string" ? data.cause : "Unknown error",
+                ping: data.cause === "Invalid API key"
+            };
+        }
+        return {
+            success: false,
+            status: res.status,
+            message: 'Bad response from Hypixel'
+        };
+    }
+    if (data.guild === null) {
+        return {
+            success: true,
+            status: res.status,
+            isInGuild: false
+        };
+    }
+    return {
+        success: true,
+        status: res.status,
+        isInGuild: true,
+        guild: data.guild
+    };
+}

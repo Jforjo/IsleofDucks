@@ -4,7 +4,7 @@ import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative } from "@/discord/discordUtils";
 import { NextRequest, NextResponse } from "next/server";
 
-async function getSuperlative(): Promise<Superlative | null> {
+export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
     const superlativeList = IsleofDucks.superlatives.sort((a, b) => b.start - a.start);
     let currentSuperlative;
