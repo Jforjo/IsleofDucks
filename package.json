@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^6.5.2",
+		"@clerk/themes": "^2.1.53",
 		"@eslint/js": "^9.16.0",
 		"@vercel/postgres": "^0.10.0",
 		"@zikeji/hypixel": "^4.1.4",

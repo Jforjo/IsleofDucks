@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import Header from "@/components/header";
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import Header from "./_components/header";
 import Sidebar from "./_components/sidebar";
 
 export const metadata: Metadata = {
@@ -16,15 +17,15 @@ export default async function RootLayout({
 }>) {
     
     return (
-        <ClerkProvider>
+        <ClerkProvider appearance={{ baseTheme: dark }}>
             <html lang="en">
                 <body
-                    className={`flex flex-col min-h-screen dark:bg-neutral-950`}
+                    className={`flex flex-col min-h-screen dark:bg-neutral-800`}
                 >
                     <Header />
                     <div className="flex flex-grow">
                         <Sidebar />
-                        <main className="flex flex-grow">
+                        <main className="flex flex-col flex-grow gap-4 m-8">
                             {children}
                         </main>
                     </div>

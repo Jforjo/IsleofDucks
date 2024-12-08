@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+    /* interpolate-size: 'allow-keywords'; */
 	--background: #ffffff;
 	--foreground: #171717;
 }
