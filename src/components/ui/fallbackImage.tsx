@@ -5,8 +5,11 @@ import Image from 'next/image';
 interface Props extends React.ComponentProps<typeof Image> {
     fallbackSrc: string
 }
-export default function ImageWithFallback(props: Props): React.JSX.Element {
-    const { src, fallbackSrc, ...rest } = props;
+export default function ImageWithFallback({
+    src,
+    fallbackSrc,
+    ...rest
+}: Props): React.JSX.Element {
     const [imgSrc, setImgSrc] = useState(src);
 
     return (

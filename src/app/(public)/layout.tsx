@@ -3,13 +3,15 @@ import "../globals.css";
 import Header from "@/components/header";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { Suspense } from "react";
+import Loading from "@/components/ui/loading";
 
 export const metadata: Metadata = {
     title: "🦆 Isle of Ducks",
     description: "Isle of Ducks",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -22,7 +24,9 @@ export default async function RootLayout({
                 >
                     <Header />
                     <main className="flex-grow">
-                        {children}
+                        <Suspense fallback={<Loading />}>
+                            {children}
+                        </Suspense>
                     </main>
                 </body>
             </html>

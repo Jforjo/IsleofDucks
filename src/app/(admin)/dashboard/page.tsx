@@ -8,13 +8,14 @@ const allowedPerms = new Set([
     "admin",
     "mod",
     "trainee",
-])
+]);
 
 export default async function Dashboard(): Promise<React.JSX.Element> {
     const userRoles = await ClerkGetUserRoles();
     if (!userRoles) redirect("/");
     if (!userRoles.intersection(allowedPerms).size) redirect("/");
     const isAdmin = userRoles.has("admin");
+    
     return (
         <>
             { isAdmin && 

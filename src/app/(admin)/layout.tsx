@@ -4,6 +4,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Header from "./_components/header";
 import Sidebar from "./_components/sidebar";
+import { Suspense } from "react";
+import Loading from "@/components/ui/loading";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -26,7 +28,9 @@ export default async function RootLayout({
                     <div className="flex flex-grow">
                         <Sidebar />
                         <main className="flex flex-col flex-grow gap-4 m-8">
-                            {children}
+                            <Suspense fallback={<Loading />}>
+                                {children}
+                            </Suspense>
                         </main>
                     </div>
                 </body>
