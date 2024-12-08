@@ -22,6 +22,11 @@ export default function HeaderNav({
                         <span className={pathname === "/staff" ? "font-bold dark:text-neutral-200" : "dark:text-neutral-400 dark:hover:text-neutral-300"}>Staff</span>
                     </Link>
                 </li>
+                <li>
+                    <Link href="/discord">
+                        <span className={pathname === "/discord" ? "font-bold dark:text-neutral-200" : "dark:text-neutral-400 dark:hover:text-neutral-300"}>Discord</span>
+                    </Link>
+                </li>
                 {isStaff && (
                     <li>
                         <Link href="/dashboard">
