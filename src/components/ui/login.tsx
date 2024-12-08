@@ -75,7 +75,12 @@ export default function DiscordLogin() {
                 </button>
             </SignedOut>
             <SignedIn>
-                <UserButton />
+                <UserButton appearance={{
+                    elements: {
+                        userButtonAvatarBox: "h-10 w-10",
+                        userButtonPopoverCard: "mt-4",
+                    }
+                }} />
             </SignedIn>
         </>
     );
