@@ -25,4 +25,11 @@ body {
 	.text-balance {
 		text-wrap: balance;
 	}
+    /* Putting them here since extending tsconfig doesn't seem to work */
+    .justify-left {
+        justify-content: left;
+    }
+    .justify-right {
+        justify-content: right;
+    }
 }

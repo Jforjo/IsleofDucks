@@ -1,12 +1,12 @@
-import { currentUser } from '@clerk/nextjs/server'
+import React from "react";
 
-export default async function Home() {
-    const user = await currentUser();
-    if (!user) return <div>Not signed in</div>
+export default function Home(): React.JSX.Element {
     return (
         <>
-            <section className="mt-8">
-                { JSON.stringify(user.externalAccounts[0].externalId) }
+            <section className="flex justify-center align-middle max-w-3xl mx-auto my-64">
+                <h1 className="text-6xl font-bold">
+                    Isle of Ducks
+                </h1>
             </section>
         </>
     );

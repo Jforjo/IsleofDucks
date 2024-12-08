@@ -10,11 +10,11 @@ export default function Header(): React.JSX.Element {
     
     return (
         <header className="relative flex justify-between items-center p-3 gap-6 dark:bg-neutral-800">
-            <Link href="/" className="text-2xl font-bold text-nowrap flex items-center gap-3">
+            <Link href="/" className="w-52 text-2xl font-bold text-nowrap flex items-center gap-3">
                 <HoverImage className="rounded-full" srcOriginal="/images/icon.png" srcHover="/images/icon.gif" width={40} height={40} alt="Isle of Ducks" />
                 Isle of Ducks
             </Link>
-            <nav className="">
+            <nav className="flex-grow flex justify-center">
                 <ul className="flex flex-row gap-5">
                     <li>
                         <Link href="/">
@@ -33,7 +33,9 @@ export default function Header(): React.JSX.Element {
                     </li>
                 </ul>
             </nav>
-            <DiscordLogin />
+            <div className="w-52 flex justify-right">
+                <DiscordLogin />
+            </div>
         </header>
     );
 }
