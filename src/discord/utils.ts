@@ -61,12 +61,20 @@ export async function isBannedPlayer(uuid: string): Promise<boolean> {
     return rows.length > 0;
 }
 export async function getBannedPlayer(uuid: string): Promise<
-    { uuid: string; discord: string | null; reason: string }[] |
     { uuid: string; discord: string | null; reason: string } |
     null
 > {
     const { rows } = await sql`SELECT * FROM banlist WHERE uuid = ${uuid}`;
     if (rows.length == 0) return null;
-    if (rows.length == 1) return rows[0] as { uuid: string; discord: string | null; reason: string };
-    return rows as { uuid: string; discord: string | null; reason: string }[];
+    return rows[0] as { uuid: string; discord: string | null; reason: string };
 }
+// export async function getBannedPlayer(uuid: string): Promise<
+//     { uuid: string; discord: string | null; reason: string }[] |
+//     { uuid: string; discord: string | null; reason: string } |
+//     null
+// > {
+//     const { rows } = await sql`SELECT * FROM banlist WHERE uuid = ${uuid}`;
+//     if (rows.length == 0) return null;
+//     if (rows.length == 1) return rows[0] as { uuid: string; discord: string | null; reason: string };
+//     return rows as { uuid: string; discord: string | null; reason: string }[];
+// }
