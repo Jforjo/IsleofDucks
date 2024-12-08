@@ -17,7 +17,7 @@ export default async function RootLayout({
         <ClerkProvider>
             <html lang="en">
                 <body
-                    className="flex flex-col min-h-screen dark:bg-neutral-950"
+                    className="flex flex-col min-h-screen dark:bg-neutral-900"
                 >
                     <Header />
                     <main className="flex-grow">

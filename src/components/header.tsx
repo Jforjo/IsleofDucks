@@ -22,11 +22,6 @@ export default function Header(): React.JSX.Element {
                         </Link>
                     </li>
                     <li>
-                        <Link href="/about">
-                            <span className={pathname === "/about" ? "font-bold dark:text-neutral-200" : "dark:text-neutral-400 dark:hover:text-neutral-300"}>About</span>
-                        </Link>
-                    </li>
-                    <li>
                         <Link href="/staff">
                             <span className={pathname === "/staff" ? "font-bold dark:text-neutral-200" : "dark:text-neutral-400 dark:hover:text-neutral-300"}>Staff</span>
                         </Link>
