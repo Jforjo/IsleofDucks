@@ -29,7 +29,7 @@ export async function POST(
         );
     }
 
-    const interaction = req.body as APIInteraction | null;
+    const interaction = await req.json() as APIInteraction | null;
     if (!interaction) {
         return NextResponse.json(
             { success: false, error: 'Missing request body' },
@@ -43,13 +43,6 @@ export async function POST(
         timestamp,
         process.env.DISCORD_PUBLIC_KEY
     );
-
-    try { console.log("request", req); } catch(e) { console.log("request error", e); }
-    try { console.log("req.json()", await req.json()); } catch(e) { console.log("req.json() error", e); }
-    try { console.log("req.text()", await req.text()); } catch(e) { console.log("req.text() error", e); }
-    try { console.log("interaction", interaction); } catch(e) { console.log("interaction error", e); }
-    try { console.log("interaction stringify", JSON.stringify(interaction)); } catch(e) { console.log("interaction stringify error", e); }
-    try { console.log("isValidRequest", isValidRequest); } catch(e) { console.log("isValidRequest error", e); }
 
     if (!isValidRequest) {
         return NextResponse.json(
