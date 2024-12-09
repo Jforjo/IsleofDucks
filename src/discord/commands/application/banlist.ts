@@ -257,17 +257,17 @@ async function viewBanned(
         )
     }
 
-    const fieldArray = [];
-    for (const [key, value] of Object.entries(bannedPlayers.players.reduce<Record<string, { uuid: string, name?: string, discord: string | null, reason: string }[]>>((accumlator: Record<string, { uuid: string, name?: string, discord: string | null, reason: string }[]>, current: { uuid: string, name?: string, discord: string | null, reason: string }) => {
-        (accumlator[current.reason] = accumlator[current.reason] || []).push(current);
-        return accumlator;
-    }, {}))) {
-        fieldArray.push({
-            name: key,
-            value: value.map(player => player.name ?? player.uuid).join('\n').replaceAll('_', '\\_'),
-            inline: true
-        });
-    }
+    // const fieldArray = [];
+    // for (const [key, value] of Object.entries(bannedPlayers.players.reduce<Record<string, { uuid: string, name?: string, discord: string | null, reason: string }[]>>((accumlator: Record<string, { uuid: string, name?: string, discord: string | null, reason: string }[]>, current: { uuid: string, name?: string, discord: string | null, reason: string }) => {
+    //     (accumlator[current.reason] = accumlator[current.reason] || []).push(current);
+    //     return accumlator;
+    // }, {}))) {
+    //     fieldArray.push({
+    //         name: key,
+    //         value: value.map(player => player.name ?? player.uuid).join('\n').replaceAll('_', '\\_'),
+    //         inline: true
+    //     });
+    // }
 
     await FollowupMessage(interaction.token, {
         content: undefined,
@@ -275,7 +275,9 @@ async function viewBanned(
             {
                 title: "Banned Players",
                 color: parseInt("FB9B00", 16),
-                fields: fieldArray,
+                description: bannedPlayers.players.map(player => {
+                    return `${player.name?.replaceAll('_', '\\_') ?? player.uuid} (${player.reason})`;
+                }).join('\n'),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
