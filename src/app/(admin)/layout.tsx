@@ -20,7 +20,7 @@ export default async function RootLayout({
     
     return (
         <ClerkProvider appearance={{ baseTheme: dark }}>
-            <html lang="en">
+            <html lang="en" suppressHydrationWarning>
                 <body
                     className={`flex flex-col min-h-screen dark:bg-neutral-800`}
                 >
