@@ -45,7 +45,8 @@ export async function POST(
     );
 
     try { console.log("request", req); } catch(e) { console.log("request error", e); }
-    try { console.log("req.json()", req.json()); } catch(e) { console.log("req.json() error", e); }
+    try { console.log("req.json()", await req.json()); } catch(e) { console.log("req.json() error", e); }
+    try { console.log("req.text()", await req.text()); } catch(e) { console.log("req.text() error", e); }
     try { console.log("interaction", interaction); } catch(e) { console.log("interaction error", e); }
     try { console.log("interaction stringify", JSON.stringify(interaction)); } catch(e) { console.log("interaction stringify error", e); }
     try { console.log("isValidRequest", isValidRequest); } catch(e) { console.log("isValidRequest error", e); }
