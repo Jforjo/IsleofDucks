@@ -54,6 +54,8 @@ export async function getUsernameOrUUID(
         };
     }
     if (!res.ok || data.status !== 'OK') {
+        console.log("Minetools response", res);
+        console.log("Minetools data", data);
         if (data && data.errorMessage) {
             return {
                 success: false,
