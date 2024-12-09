@@ -6,8 +6,8 @@ import { NextResponse } from "next/server";
 
 async function addBanned(
     interaction: APIChatInputApplicationCommandInteraction,
-    discord: string | null,
     name: string,
+    discord: string | null,
     reason: string
 ): Promise<
     NextResponse<

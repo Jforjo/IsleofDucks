@@ -63,6 +63,13 @@ export async function getUsernameOrUUID(
                 message: data.errorMessage,
             };
         }
+        if (data && data.error) {
+            return {
+                success: false,
+                status: res.status,
+                message: data.error,
+            };
+        }
         return {
             success: false,
             status: res.status,
