@@ -4,13 +4,14 @@ import { NextResponse } from "next/server";
 
 import { CommandData as CheckAPI } from "./checkapi";
 // import { CommandData as GuildCata } from "./guildcata";
-// import { CommandData as Superlative } from "./superlative";
+import { CommandData as Superlative } from "./superlative";
 import { CommandData as Ping } from "./ping";
 // import { CommandData as Test } from "./test";
 // import { CommandData as Embed } from "./embed";
-// import { CommandData as Immune } from "./immune";
-// import { CommandData as Weekly } from "./weekly";
-// import { CommandData as UpdateRoles } from "./updateroles";
+import { CommandData as Immune } from "./immune";
+import { CommandData as Weekly } from "./weekly";
+import { CommandData as UpdateRoles } from "./updateroles";
+import { CommandData as Recruit } from "./recruit";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -53,12 +54,13 @@ export default async function(
     const result = await InstallGlobalCommands([
         CommandData,
         CheckAPI,
-        // Superlative,
+        Superlative,
         Ping,
         // Embed,
-        // Immune,
-        // Weekly,
-        // UpdateRoles
+        Immune,
+        Weekly,
+        UpdateRoles,
+        Recruit
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
