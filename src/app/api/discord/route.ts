@@ -44,7 +44,7 @@ export async function POST(
         process.env.DISCORD_PUBLIC_KEY
     );
 
-    console.log("interaction", interaction);
+    console.log("interaction", JSON.stringify(interaction));
     console.log("isValidRequest", isValidRequest);
 
     if (!isValidRequest) {
