@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "../globals.css";
-import SessionProvider from "../components/SessionProvider";
-import { getServerSession } from "next-auth";
-import Header from "../components/Header";
-
-const geistSans = localFont({
-    src: "../fonts/GeistVF.woff",
-    variable: "--font-geist-sans",
-    weight: "100 900",
-});
-const geistMono = localFont({
-    src: "../fonts/GeistMonoVF.woff",
-    variable: "--font-geist-mono",
-    weight: "100 900",
-});
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import Header from "./_components/header";
+import Sidebar from "./_components/sidebar";
+import { Suspense } from "react";
+import Loading from "@/components/ui/loading";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -26,23 +17,24 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await getServerSession();
     
     return (
-        <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
-            >
-                <SessionProvider session={session}>
+        <ClerkProvider appearance={{ baseTheme: dark }}>
+            <html lang="en">
+                <body
+                    className={`flex flex-col min-h-screen dark:bg-neutral-800`}
+                >
                     <Header />
-                    <section className="bg-gray-800 p-4 mt-28 mb-8">
-                        { JSON.stringify(session) }
-                    </section>
-                    <main>
-                        {children}
-                    </main>
-                </SessionProvider>
-            </body>
-        </html>
+                    <div className="flex flex-grow">
+                        <Sidebar />
+                        <main className="flex flex-col flex-grow gap-4 m-8">
+                            <Suspense fallback={<Loading />}>
+                                {children}
+                            </Suspense>
+                        </main>
+                    </div>
+                </body>
+            </html>
+        </ClerkProvider>
     );
 }
