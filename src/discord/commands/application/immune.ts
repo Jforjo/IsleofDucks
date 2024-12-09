@@ -299,7 +299,7 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = req.body as APIChatInputApplicationCommandInteraction | null;
+    const interaction = await req.json() as APIChatInputApplicationCommandInteraction | null;
     if (!interaction) {
         return NextResponse.json(
             { success: false, error: 'Missing request body' },
