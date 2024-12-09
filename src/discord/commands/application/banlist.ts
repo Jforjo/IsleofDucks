@@ -1,4 +1,4 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
+import { APIApplicationCommandUserOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, APIUser, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 
 async function addBanned(
     interaction: APIChatInputApplicationCommandInteraction,
+    discord: APIUser | null,
     name: string,
     reason: string
 ): Promise<
@@ -81,7 +82,7 @@ async function addBanned(
         );
     }
 
-    await addBannedPlayer(uuid, null, reason);
+    await addBannedPlayer(uuid, discord ? discord.id : null, reason);
 
     await FollowupMessage(interaction.token, {
         content: null,
@@ -369,7 +370,7 @@ export default async function(
     }));
 
     if (options.add) {
-        return await addBanned(interaction, options.add.name, options.add.reason);
+        return await addBanned(interaction, options.add.name, options.add.discord, options.add.reason);
     } else if (options.remove) {
         return await removeBanned(interaction, options.remove.name);
     } else if (options.view) {
@@ -415,6 +416,12 @@ export const CommandData = {
                     description: "The reason why the player is banned.",
                     type: ApplicationCommandOptionType.String,
                     required: true,
+                },
+                {
+                    name: "discord",
+                    description: "The Discord account of the player.",
+                    type: ApplicationCommandOptionType.User,
+                    required: false
                 }
             ]
         },
