@@ -1,4 +1,4 @@
-import { APIApplicationCommandUserOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, APIUser, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, APIUser, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
