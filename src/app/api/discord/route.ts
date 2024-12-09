@@ -44,8 +44,10 @@ export async function POST(
         process.env.DISCORD_PUBLIC_KEY
     );
 
-    console.log("interaction", JSON.stringify(interaction));
-    console.log("isValidRequest", isValidRequest);
+    try { console.log("request", req); } catch(e) { console.log("request error", e); }
+    try { console.log("req.json()", req.json()); } catch(e) { console.log("req.json() error", e); }
+    try { console.log("interaction stringify", JSON.stringify(interaction)); } catch(e) { console.log("interaction stringify error", e); }
+    try { console.log("isValidRequest", isValidRequest); } catch(e) { console.log("isValidRequest error", e); }
 
     if (!isValidRequest) {
         return NextResponse.json(
