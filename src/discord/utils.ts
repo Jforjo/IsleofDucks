@@ -45,10 +45,33 @@ export async function getImmunePlayer(uuid: string): Promise<{ uuid: string; dis
     return null;
 }
 
-export async function getBannedPlayers(): Promise<{ uuid: string; discord: string | null; reason: string }[] | null> {
+export async function getBannedPlayers(): Promise<{
+    success: boolean;
+    players: {
+        uuid: string;
+        name?: string;
+        discord: string | null;
+        reason: string;
+    }[];
+}> {
     const { rows } = await sql`SELECT uuid, discord, reason FROM banlist`;
-    if (rows.length == 0) return null;
-    return rows as { uuid: string; discord: string | null; reason: string }[];
+
+    const players = await Promise.all(rows.map(async (row) => {
+        const nameRes = await getUsernameOrUUID(row.uuid);
+        let name = undefined;
+        if (nameRes.success === true) name = nameRes.name;
+        return {
+            uuid: row.uuid,
+            name: name,
+            discord: row.discord,
+            reason: row.reason
+        }
+    }));
+
+    return {
+        success: true,
+        players: players
+    };
 }
 export async function addBannedPlayer(uuid: string, discord: string | null, reason: string): Promise<void> {
     await sql`INSERT INTO banlist (uuid, discord, reason) VALUES (${uuid}, ${discord}, ${reason})`;
