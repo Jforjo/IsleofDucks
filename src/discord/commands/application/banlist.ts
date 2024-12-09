@@ -1,4 +1,4 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, APIUser, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 
 async function addBanned(
     interaction: APIChatInputApplicationCommandInteraction,
-    discord: APIUser | null,
+    discord: string | null,
     name: string,
     reason: string
 ): Promise<
@@ -82,7 +82,7 @@ async function addBanned(
         );
     }
 
-    await addBannedPlayer(uuid, discord ? discord.id : null, reason);
+    await addBannedPlayer(uuid, discord ?? null, reason);
 
     await FollowupMessage(interaction.token, {
         content: null,
@@ -419,8 +419,8 @@ export const CommandData = {
                 },
                 {
                     name: "discord",
-                    description: "The Discord account of the player.",
-                    type: ApplicationCommandOptionType.User,
+                    description: "The Discord ID of the player.",
+                    type: ApplicationCommandOptionType.String,
                     required: false
                 }
             ]
