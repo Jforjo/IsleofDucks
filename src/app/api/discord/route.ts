@@ -60,7 +60,7 @@ export async function POST(
     } else if (interaction.type === InteractionType.ApplicationCommand) {
         const { default: command } = await import(`@/discord/commands/application/${interaction.data.name.toLowerCase()}.ts`);
         if (command) {
-            return await command(req);
+            return await command(interaction);
         } else {
             return NextResponse.json(
                 { success: false, error: 'Unknown Command', },
@@ -70,7 +70,7 @@ export async function POST(
     } else if (interaction.type === InteractionType.MessageComponent) {
         const { default: command } = await import(`@/discord/commands/component/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
         if (command) {
-            return await command(req);
+            return await command(interaction);
         } else {
             return NextResponse.json(
                 { success: false, error: 'Unknown Command', },
@@ -80,7 +80,7 @@ export async function POST(
     } else if (interaction.type === InteractionType.ModalSubmit) {
         const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
         if (command) {
-            return await command(req);
+            return await command(interaction);
         } else {
             return NextResponse.json(
                 { success: false, error: 'Unknown Command', },

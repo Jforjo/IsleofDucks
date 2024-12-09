@@ -2,7 +2,7 @@ import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, FollowupMess
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { getBannedPlayer } from "@/discord/utils";
@@ -109,7 +109,7 @@ async function checkPlayer(
 }
 
 export default async function(
-    req: NextRequest
+    interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
         {
@@ -118,14 +118,6 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = await req.json() as APIChatInputApplicationCommandInteraction | null;
-    if (!interaction) {
-        return NextResponse.json(
-            { success: false, error: 'Missing request body' },
-            { status: 400 }
-        );
-    }
-
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,

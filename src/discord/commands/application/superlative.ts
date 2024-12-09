@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative } from "@/discord/discordUtils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
@@ -41,7 +41,7 @@ export async function getSuperlative(): Promise<Superlative | null> {
 }
 
 export default async function(
-    req: NextRequest
+    interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
         {
@@ -50,14 +50,6 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = await req.json() as APIChatInputApplicationCommandInteraction | null;
-    if (!interaction) {
-        return NextResponse.json(
-            { success: false, error: 'Missing request body' },
-            { status: 400 }
-        );
-    }
-
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,

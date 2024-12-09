@@ -1,7 +1,7 @@
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { getUsernameOrUUID } from "../../hypixelUtils";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, Emojis } from "../../discordUtils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
@@ -128,7 +128,7 @@ async function checkAPI(
 }
 
 export default async function(
-    req: NextRequest
+    interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
         {
@@ -137,14 +137,6 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = await req.json() as APIChatInputApplicationCommandInteraction | null;
-    if (!interaction) {
-        return NextResponse.json(
-            { success: false, error: 'Missing request body' },
-            { status: 400 }
-        );
-    }
-
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,

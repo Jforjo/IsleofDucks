@@ -2,10 +2,10 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { getImmunePlayers } from "@/discord/utils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks } from "@/discord/discordUtils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export default async function(
-    req: NextRequest
+    interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
         {
@@ -14,14 +14,6 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = await req.json() as APIChatInputApplicationCommandInteraction | null;
-    if (!interaction) {
-        return NextResponse.json(
-            { success: false, error: 'Missing request body' },
-            { status: 400 }
-        );
-    }
-
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,

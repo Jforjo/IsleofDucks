@@ -2,7 +2,7 @@ import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationComma
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 async function addImmune(
     interaction: APIChatInputApplicationCommandInteraction,
@@ -290,7 +290,7 @@ async function viewImmune(
 }
 
 export default async function(
-    req: NextRequest
+    interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
         {
@@ -299,14 +299,6 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const interaction = await req.json() as APIChatInputApplicationCommandInteraction | null;
-    if (!interaction) {
-        return NextResponse.json(
-            { success: false, error: 'Missing request body' },
-            { status: 400 }
-        );
-    }
-
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
