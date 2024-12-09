@@ -256,13 +256,13 @@ export default async function(
                     url: `https://mineskin.eu/helm/${username}/100.png`
                 },
                 url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${profileAPIResponse.name}`,
-                description: `
-                    ${profileAPIResponse.inventory ? yes : no} Inventory API
-                    ${profileAPIResponse.banking ? yes : no} Banking API
-                    ${profileAPIResponse.collection ? yes : no} Collection API
-                    ${profileAPIResponse.skills ? yes : no} Skills API
-                    ${profileAPIResponse.vault ? yes : no} Personal Vault API
-                `,
+                description: 
+                    profileAPIResponse.inventory &&
+                    profileAPIResponse.collection &&
+                    profileAPIResponse.skills &&
+                    profileAPIResponse.vault &&
+                    !guildResponse.isInGuild &&
+                    !bannedResponse ? `\`\`\`/g invite ${mojang.name}\`\`\`` : undefined,
                 fields: [
                     {
                         name: "Guild",
