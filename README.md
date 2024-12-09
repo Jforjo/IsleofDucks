@@ -1,1 +1,1 @@
-# Isle of Ducks Bot
+# Isle of Ducks Website & Discord Bot
