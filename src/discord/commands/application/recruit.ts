@@ -4,14 +4,17 @@ import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTy
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
-import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { getBannedPlayer } from "@/discord/utils";
 
-function getGuildRequirements(profileData: SkyBlockProfileMember): { ducks: boolean, ducklings: boolean } {
-    const level = profileData.leveling.experience ?? 0;
+const GUILD_REQUIREMENT = {
+    "ducks": 30000,
+    "ducklings": 20000
+}
+
+function getGuildRequirements(level: number): { ducks: boolean, ducklings: boolean } {
     return {
-        ducks: level > 30000,
-        ducklings: level > 20000,
+        ducks: level > GUILD_REQUIREMENT.ducks,
+        ducklings: level > GUILD_REQUIREMENT.ducks,
     }
 }
 
@@ -34,6 +37,7 @@ async function checkPlayer(
         vault: boolean;
         skills: boolean;
         guildRequirements: { ducks: boolean, ducklings: boolean };
+        experience: number;
     }
 > {
     if (!process.env.HYPIXEL_API_KEY) {
@@ -94,6 +98,7 @@ async function checkPlayer(
         };
     }
     const profiledata = profile.members[uuid];
+    const exp = profiledata.leveling.experience ?? 0;
 
     return {
         success: true,
@@ -104,7 +109,8 @@ async function checkPlayer(
         banking: isBankingAPI(profile),
         vault: isPersonalVaultAPI(profiledata),
         skills: isSkillsAPI(profiledata),
-        guildRequirements: getGuildRequirements(profiledata),
+        guildRequirements: getGuildRequirements(exp),
+        experience: exp
     };
 }
 
@@ -272,8 +278,8 @@ export default async function(
                     {
                         name: "Guild Requirements",
                         value: [
-                            `${profileAPIResponse.guildRequirements.ducks ? yes : no} Ducks`,
-                            `${profileAPIResponse.guildRequirements.ducklings ? yes : no} Ducklings`,
+                            `${profileAPIResponse.guildRequirements.ducks ? yes : no} Ducks (${Math.floor(profileAPIResponse.experience / 100)}/${Math.floor(GUILD_REQUIREMENT.ducks / 100)})`,
+                            `${profileAPIResponse.guildRequirements.ducklings ? yes : no} Ducklings (${Math.floor(profileAPIResponse.experience / 100)}/${Math.floor(GUILD_REQUIREMENT.ducklings / 100)})`,
                         ].join('\n'),
                         inline: false
                     },
