@@ -101,3 +101,12 @@ export async function getBannedPlayer(uuid: string): Promise<
 //     if (rows.length == 1) return rows[0] as { uuid: string; discord: string | null; reason: string };
 //     return rows as { uuid: string; discord: string | null; reason: string }[];
 // }
+
+export async function getSettingValue(key: string): Promise<string | null> {
+    const { rows } = await sql`SELECT value FROM settings WHERE key = ${key}`;
+    if (rows.length == 0) return null;
+    return rows[0]?.value;
+}
+export async function setSettingValue(key: string, value: string): Promise<void> {
+    await sql`UPDATE settings SET value = ${value} WHERE key = ${key}`;
+}
