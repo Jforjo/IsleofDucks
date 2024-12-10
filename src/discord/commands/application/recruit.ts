@@ -4,19 +4,7 @@ import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTy
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
-import { getBannedPlayer } from "@/discord/utils";
-
-const GUILD_REQUIREMENT = {
-    "ducks": 30000,
-    "ducklings": 20000
-}
-
-function getGuildRequirements(level: number): { ducks: boolean, ducklings: boolean } {
-    return {
-        ducks: level > GUILD_REQUIREMENT.ducks,
-        ducklings: level > GUILD_REQUIREMENT.ducklings,
-    }
-}
+import { getBannedPlayer, getSettingValue } from "@/discord/utils";
 
 async function checkPlayer(
     uuid: string,
@@ -36,7 +24,8 @@ async function checkPlayer(
         banking: boolean;
         vault: boolean;
         skills: boolean;
-        guildRequirements: { ducks: boolean, ducklings: boolean };
+        duckReq: number;
+        ducklingReq: number;
         experience: number;
     }
 > {
@@ -109,7 +98,8 @@ async function checkPlayer(
         banking: isBankingAPI(profile),
         vault: isPersonalVaultAPI(profiledata),
         skills: isSkillsAPI(profiledata),
-        guildRequirements: getGuildRequirements(exp),
+        duckReq: Number(await getSettingValue("duck_req") ?? "0"),
+        ducklingReq: Number(await getSettingValue("duckling_req") ?? "0"),
         experience: exp
     };
 }
@@ -278,8 +268,8 @@ export default async function(
                     {
                         name: "Guild Requirements",
                         value: [
-                            `${profileAPIResponse.guildRequirements.ducks ? yes : no} Ducks (${Math.floor(profileAPIResponse.experience / 100)}/${Math.floor(GUILD_REQUIREMENT.ducks / 100)})`,
-                            `${profileAPIResponse.guildRequirements.ducklings ? yes : no} Ducklings (${Math.floor(profileAPIResponse.experience / 100)}/${Math.floor(GUILD_REQUIREMENT.ducklings / 100)})`,
+                            `${profileAPIResponse.experience < profileAPIResponse.duckReq ? no : yes} Ducks (${Math.floor(profileAPIResponse.experience / 100)}/${Math.floor(profileAPIResponse.duckReq / 100)})`,
+                            `${profileAPIResponse.experience < profileAPIResponse.ducklingReq ? no : yes} Ducklings (${Math.floor(profileAPIResponse.experience / 100)}/${Math.floor(profileAPIResponse.ducklingReq / 100)})`,
                         ].join('\n'),
                         inline: false
                     },
