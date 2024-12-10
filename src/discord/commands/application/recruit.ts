@@ -14,7 +14,7 @@ const GUILD_REQUIREMENT = {
 function getGuildRequirements(level: number): { ducks: boolean, ducklings: boolean } {
     return {
         ducks: level > GUILD_REQUIREMENT.ducks,
-        ducklings: level > GUILD_REQUIREMENT.ducks,
+        ducklings: level > GUILD_REQUIREMENT.ducklings,
     }
 }
 
