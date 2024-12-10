@@ -257,6 +257,7 @@ export default async function(
                     profileAPIResponse.collection &&
                     profileAPIResponse.skills &&
                     profileAPIResponse.vault &&
+                    ( profileAPIResponse.experience >= profileAPIResponse.duckReq || profileAPIResponse.experience >= profileAPIResponse.ducklingReq ) &&
                     !guildResponse.isInGuild &&
                     !bannedResponse ? `\`\`\`/g invite ${mojang.name}\`\`\`` : undefined,
                 fields: [
