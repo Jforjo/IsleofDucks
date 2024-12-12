@@ -276,7 +276,7 @@ async function viewBanned(
                 title: "Banned Players",
                 color: parseInt("FB9B00", 16),
                 description: bannedPlayers.players.map(player => {
-                    return `${player.name?.replaceAll('_', '\\_') ?? player.uuid} (${player.reason})`;
+                    return `**${player.name?.replaceAll('_', '\\_') ?? player.uuid}** (${player.reason})`;
                 }).join('\n'),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
