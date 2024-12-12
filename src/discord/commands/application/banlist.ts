@@ -28,7 +28,11 @@ async function addBanned(
             { status: 400 }
         );
     }
-    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+    if (!(
+        interaction.member.roles.includes(IsleofDucks.roles.admin) ||
+        interaction.member.roles.includes(IsleofDucks.roles.mod_duck) ||
+        interaction.member.roles.includes(IsleofDucks.roles.mod_duckling)
+    )) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
