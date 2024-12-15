@@ -263,7 +263,7 @@ export default async function(
                 fields: [
                     {
                         name: "Guild",
-                        value: guildResponse.isInGuild ? `${no} ${guildResponse.guild.name}` : `${yes} They are not in a guild`,
+                        value: guildResponse.isInGuild ? `${no} ${guildResponse.guild.name} (${guildResponse.guild.members.length}/125)` : `${yes} They are not in a guild`,
                         inline: false
                     },
                     {
