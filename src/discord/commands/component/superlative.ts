@@ -56,11 +56,38 @@ export default async function(
     });
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
+    const buttonID = interaction.data.custom_id.split("-")[1];
+
+    // Disable all buttons while it loads, since people could spam it
+    await FollowupMessage(interaction.token, {
+        content: undefined,
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: "superlative-ducks",
+                        type: ComponentType.Button,
+                        label: "Ducks",
+                        style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: true
+                    },
+                    {
+                        custom_id: "superlative-ducklings",
+                        type: ComponentType.Button,
+                        label: "Ducklings",
+                        style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: true
+                    }
+                ]
+            }
+        ]
+    })
 
     const superlative = await getSuperlative();
     if (superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
         await FollowupMessage(interaction.token, {
-            content: null,
+            content: undefined,
             embeds: [
                 {
                     title: "Superlative - None",
@@ -79,14 +106,13 @@ export default async function(
         );
     }
 
-    const buttonID = interaction.data.custom_id.split("-")[1];
     // Default to Ducks
     const guildName = buttonID === "ducks" ? "Isle of Ducks" :
         buttonID === "ducklings" ? "Isle of Ducklings" :
         "Isle of Ducks";
     const guild = await getGuildData(guildName);  
     if (!guild.success) {
-        let content = null;
+        let content = undefined;
         if (guild?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
@@ -131,7 +157,7 @@ export default async function(
     });
     
     if ("success" in result && result.success === false) {
-        let content = null;
+        let content = undefined;
         if (result.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
@@ -191,7 +217,7 @@ export default async function(
     }
 
     await FollowupMessage(interaction.token, {
-        content: null,
+        content: undefined,
         embeds: [
             {
                 title: `Superlative - ${superlative.title}`,

@@ -60,7 +60,7 @@ export default async function(
     const superlative = await getSuperlative();
     if (superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
         await FollowupMessage(interaction.token, {
-            content: null,
+            content: undefined,
             embeds: [
                 {
                     title: "Superlative - None",
@@ -81,7 +81,7 @@ export default async function(
 
     const guild = await getGuildData("Isle of Ducks");  
     if (!guild.success) {
-        let content = null;
+        let content = undefined;
         if (guild?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
@@ -126,7 +126,7 @@ export default async function(
     });
     
     if ("success" in result && result.success === false) {
-        let content = null;
+        let content = undefined;
         if (result.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
@@ -186,7 +186,7 @@ export default async function(
     }
 
     await FollowupMessage(interaction.token, {
-        content: null,
+        content: undefined,
         embeds: [
             {
                 title: `Superlative - ${superlative.title}`,
