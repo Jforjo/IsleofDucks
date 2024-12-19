@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
@@ -41,7 +41,7 @@ export async function getSuperlative(): Promise<Superlative | null> {
 }
 
 export default async function(
-    interaction: APIChatInputApplicationCommandInteraction
+    interaction: APIMessageComponentButtonInteraction
 ): Promise<
     NextResponse<
         {
@@ -50,9 +50,9 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    // User sees the "[bot] is thinking..." message
+    // ACK response and update the original message
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
+        type: InteractionResponseType.DeferredMessageUpdate,
     });
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
@@ -79,7 +79,12 @@ export default async function(
         );
     }
 
-    const guild = await getGuildData("Isle of Ducks");  
+    const buttonID = interaction.data.custom_id.split("-")[1];
+    // Default to Ducks
+    const guildName = buttonID === "ducks" ? "Isle of Ducks" :
+        buttonID === "ducklings" ? "Isle of Ducklings" :
+        "Isle of Ducks";
+    const guild = await getGuildData(guildName);  
     if (!guild.success) {
         let content = null;
         if (guild?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
@@ -207,15 +212,15 @@ export default async function(
                         custom_id: "superlative-ducks",
                         type: ComponentType.Button,
                         label: "Ducks",
-                        style: ButtonStyle.Success,
-                        disabled: true
+                        style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: buttonID === "ducks"
                     },
                     {
                         custom_id: "superlative-ducklings",
                         type: ComponentType.Button,
                         label: "Ducklings",
-                        style: ButtonStyle.Primary,
-                        disabled: false
+                        style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: buttonID === "ducklings"
                     }
                 ]
             }
@@ -226,9 +231,4 @@ export default async function(
         { success: true },
         { status: 200 }
     );
-}
-export const CommandData = {
-    name: "superlative",
-    description: "Displays the superlative data for Isle of Ducks",
-    type: ApplicationCommandType.ChatInput,
 }
