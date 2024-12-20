@@ -635,24 +635,24 @@ export const IsleofDucks = {
                     success: true;
                     value: number;
                     formattedValue: string;
-                    original: number;
+                    current: number;
                 }
             > {
                 let value = 0;
                 let user = null;
                 const timestamp = Date.now();
                 let updateDB = false;
-                let originalXP = 0;
+                let currentXP = 0;
 
                 const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
                 if (rows.length > 0) user = rows[0];
                 if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
                     if (user?.oldxp != null) {
                         value = user.cataxp - user.oldxp;
-                        originalXP = user.oldxp;
+                        currentXP = user.cataxp;
                     } else {
                         value = user.cataxp;
-                        originalXP = user.cataxp;
+                        currentXP = user.cataxp;
                     }
                 } else {
                     const profiles = await getProfiles(uuid);
@@ -664,7 +664,7 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
-                    originalXP = value;
+                    currentXP = value;
                 }
 
                 if (updateDB) {
@@ -678,7 +678,6 @@ export const IsleofDucks = {
                         } else {
                             await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                             value -= user.oldxp;
-                            originalXP = user.oldxp;
                         }
                     }
                 }
@@ -687,7 +686,7 @@ export const IsleofDucks = {
                     success: true,
                     value: value,
                     formattedValue: formatNumber(value),
-                    original: originalXP
+                    current: currentXP
                 };
             },
         },
@@ -706,24 +705,24 @@ export const IsleofDucks = {
                     success: true;
                     value: number;
                     formattedValue: string;
-                    original: number;
+                    current: number;
                 }
             > {
                 let value = 0;
                 let user = null;
                 const timestamp = Date.now();
                 let updateDB = false;
-                let originalXP = 0;
+                let currentXP = 0;
 
                 const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
                 if (rows.length > 0) user = rows[0];
                 if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
                     if (user?.oldxp != null) {
                         value = user.cataxp - user.oldxp;
-                        originalXP = user.oldxp;
+                        currentXP = user.cataxp;
                     } else {
                         value = user.cataxp;
-                        originalXP = user.cataxp;
+                        currentXP = user.cataxp;
                     }
                 } else {
                     const profiles = await getProfiles(uuid);
@@ -735,7 +734,7 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
-                    originalXP = value;
+                    currentXP = value;
                 }
 
                 if (updateDB) {
@@ -749,7 +748,6 @@ export const IsleofDucks = {
                         } else {
                             await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                             value -= user.oldxp;
-                            originalXP = user.oldxp;
                         }
                     }
                 }
@@ -758,7 +756,7 @@ export const IsleofDucks = {
                     success: true,
                     value: value,
                     formattedValue: formatNumber(value / 100),
-                    original: originalXP
+                    current: currentXP
                 };
             },
             ranks: {
@@ -823,7 +821,7 @@ export interface Superlative {
             success: true;
             value: number;
             formattedValue: string;
-            original: number;
+            current: number;
         }
     >;
     ranks?: {

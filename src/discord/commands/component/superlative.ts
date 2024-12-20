@@ -147,7 +147,7 @@ export default async function(
         let bracketShould = 0
         if (buttonID === "ducks" || buttonID === "ducklings") {
             superlative.ranks?.[buttonID].forEach((rank, index) => {
-                if (rank.requirement <= superlativeData.original) bracketShould = index;
+                if (rank.requirement <= superlativeData.current) bracketShould = index;
                 if (rank.id.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
             });
         }
