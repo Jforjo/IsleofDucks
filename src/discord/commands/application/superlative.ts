@@ -115,7 +115,7 @@ export default async function(
         let bracketCurrent = -1;
         let bracketShould = 0;
         superlative.ranks?.ducks.forEach((rank, index) => {
-            if (rank.requirement <= superlativeData.value) bracketShould = index;
+            if (rank.requirement <= superlativeData.original) bracketShould = index;
             if (rank.id.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
         });
         if (bracketCurrent !== -1) {
