@@ -635,18 +635,25 @@ export const IsleofDucks = {
                     success: true;
                     value: number;
                     formattedValue: string;
+                    original: number;
                 }
             > {
                 let value = 0;
                 let user = null;
                 const timestamp = Date.now();
                 let updateDB = false;
+                let originalXP = 0;
 
                 const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
                 if (rows.length > 0) user = rows[0];
                 if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
-                    if (user?.oldxp != null) value = user.cataxp - user.oldxp
-                    else value = user.cataxp
+                    if (user?.oldxp != null) {
+                        value = user.cataxp - user.oldxp;
+                        originalXP = user.oldxp;
+                    } else {
+                        value = user.cataxp;
+                        originalXP = user.cataxp;
+                    }
                 } else {
                     const profiles = await getProfiles(uuid);
                     if (profiles.success === false) return profiles;
@@ -657,6 +664,7 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
+                    originalXP = value;
                 }
 
                 if (updateDB) {
@@ -670,6 +678,7 @@ export const IsleofDucks = {
                         } else {
                             await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                             value -= user.oldxp;
+                            originalXP = user.oldxp;
                         }
                     }
                 }
@@ -677,7 +686,8 @@ export const IsleofDucks = {
                 return {
                     success: true,
                     value: value,
-                    formattedValue: formatNumber(value)
+                    formattedValue: formatNumber(value),
+                    original: originalXP
                 };
             },
         },
@@ -696,18 +706,25 @@ export const IsleofDucks = {
                     success: true;
                     value: number;
                     formattedValue: string;
+                    original: number;
                 }
             > {
                 let value = 0;
                 let user = null;
                 const timestamp = Date.now();
                 let updateDB = false;
+                let originalXP = 0;
 
                 const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
                 if (rows.length > 0) user = rows[0];
                 if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
-                    if (user?.oldxp != null) value = user.cataxp - user.oldxp;
-                    else value = user.cataxp;
+                    if (user?.oldxp != null) {
+                        value = user.cataxp - user.oldxp;
+                        originalXP = user.oldxp;
+                    } else {
+                        value = user.cataxp;
+                        originalXP = user.cataxp;
+                    }
                 } else {
                     const profiles = await getProfiles(uuid);
                     if (profiles.success === false) return profiles;
@@ -718,6 +735,7 @@ export const IsleofDucks = {
                         }
                     });
                     updateDB = true;
+                    originalXP = value;
                 }
 
                 if (updateDB) {
@@ -731,6 +749,7 @@ export const IsleofDucks = {
                         } else {
                             await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
                             value -= user.oldxp;
+                            originalXP = user.oldxp;
                         }
                     }
                 }
@@ -738,27 +757,48 @@ export const IsleofDucks = {
                 return {
                     success: true,
                     value: value,
-                    formattedValue: formatNumber(value / 100)
+                    formattedValue: formatNumber(value / 100),
+                    original: originalXP
                 };
             },
-            ranks: [
-                {
-                    id: "GRINCH",
-                    requirement: 0,
-                },
-                {
-                    id: "ELF",
-                    requirement: 32000,
-                },
-                {
-                    id: "FROSTY",
-                    requirement: 36000,
-                },
-                {
-                    id: "SANTA",
-                    requirement: 40000,
-                },
-            ]
+            ranks: {
+                ducks: [
+                    {
+                        id: "GRINCH",
+                        requirement: 0,
+                    },
+                    {
+                        id: "ELF",
+                        requirement: 32000,
+                    },
+                    {
+                        id: "FROSTY",
+                        requirement: 36000,
+                    },
+                    {
+                        id: "SANTA",
+                        requirement: 40000,
+                    },
+                ],
+                ducklings: [
+                    {
+                        id: "GRINCH",
+                        requirement: 0,
+                    },
+                    {
+                        id: "ELF",
+                        requirement: 22000,
+                    },
+                    {
+                        id: "FROSTY",
+                        requirement: 26000,
+                    },
+                    {
+                        id: "SANTA",
+                        requirement: 30000,
+                    },
+                ]
+            }
         },
         {
             id: "jan25",
@@ -783,12 +823,19 @@ export interface Superlative {
             success: true;
             value: number;
             formattedValue: string;
+            original: number;
         }
     >;
     ranks?: {
-        id: string;
-        requirement: number;
-    }[]
+        ducks: {
+            id: string;
+            requirement: number;
+        }[],
+        ducklings: {
+            id: string;
+            requirement: number;
+        }[],
+    }
 }
 export function encodeCarrierData(data: {
     f1_4: boolean;
@@ -958,5 +1005,7 @@ export function decodeCarrierData(data: string): {
 
 export const Emojis = {
     yes: "<:yes:1288141736756908113>",
-    no: "<:no:1288141853018951811>"
+    no: "<:no:1288141853018951811>",
+    up: "<:up:1319369863323451502>",
+    down: "<:down:1319369715780423691>",
 }

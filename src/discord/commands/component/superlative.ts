@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export async function getSuperlative(): Promise<Superlative | null> {
@@ -141,11 +141,28 @@ export default async function(
         if (!superlative.callback) throw new Error("Superlative callback is not defined");
         const superlativeData = await superlative.callback(member.uuid);
         if (!superlativeData.success) throw new Error(superlativeData.message);
+        
+        let rankUp = null;
+        let bracketCurrent = -1;
+        let bracketShould = 0
+        if (buttonID === "ducks" || buttonID === "ducklings") {
+            superlative.ranks?.[buttonID].forEach((rank, index) => {
+                if (rank.requirement <= superlativeData.value) bracketShould = index;
+                if (rank.id.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
+            });
+        }
+        if (bracketCurrent !== -1) {
+            // Otherwise, GM and staff will always have a green/red arrow
+            if (bracketShould > bracketCurrent) rankUp = Emojis.up;
+            if (bracketShould < bracketCurrent) rankUp = Emojis.down;
+        }
+
         return {
             uuid: member.uuid,
             name: mojang.name,
             value: superlativeData.value,
-            formattedValue: superlativeData.formattedValue
+            formattedValue: superlativeData.formattedValue,
+            rankUp: rankUp
         };
     })).catch((err) => {
         console.log(err.message);
@@ -185,6 +202,7 @@ export default async function(
         name: string;
         value: number;
         formattedValue: string;
+        rankUp: string | null;
     }[];
     // b - a = bigger number first
     result.sort((a, b) => b.value - a.value);
@@ -194,7 +212,8 @@ export default async function(
             uuid: member.uuid,
             name: member.name,
             value: member.value,
-            formattedValue: member.formattedValue
+            formattedValue: member.formattedValue,
+            rankUp: member.rankUp
         };
     });
     const finalResult = result as {
@@ -203,6 +222,7 @@ export default async function(
         name: string;
         value: number;
         formattedValue: string;
+        rankUp: string | null;
     }[];
     const fieldArray = [];
     const chunkSize = 21;
@@ -210,7 +230,7 @@ export default async function(
         fieldArray.push(
             {
                 name: '\u200b',
-                value: finalResult.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}`).join('\n'),
+                value: finalResult.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`).join('\n'),
                 inline: true
             }
         );
