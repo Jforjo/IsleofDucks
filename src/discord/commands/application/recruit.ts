@@ -4,11 +4,11 @@ import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTy
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
-import { getBannedPlayer, getSettingValue } from "@/discord/utils";
+import { getBannedPlayer, getSettingValue, isOnOldScammerList } from "@/discord/utils";
 
-async function checkPlayer(
+export async function checkPlayer(
     uuid: string,
-    profilename: string
+    profilename: string = ""
 ): Promise<
     {
         success: false;
@@ -242,6 +242,7 @@ export default async function(
     }
 
     const bannedResponse = await getBannedPlayer(mojang.uuid);
+    const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
 
     await FollowupMessage(interaction.token, {
         content: undefined,
@@ -288,6 +289,11 @@ export default async function(
                     {
                         name: "Banned",
                         value: bannedResponse ? `${no} ${bannedResponse.reason}` : `${yes} They are not in my ban list`,
+                        inline: false
+                    },
+                    {
+                        name: "Old Jerry Scammer List",
+                        value: oldScammerResponse.success && oldScammerResponse.scammer ? `${no} ${oldScammerResponse.reason}` : `${yes} They are not in the old Jerry scammer list`,
                         inline: false
                     }
                 ],

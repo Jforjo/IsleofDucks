@@ -76,6 +76,9 @@ export async function getBannedPlayers(): Promise<{
 export async function addBannedPlayer(uuid: string, discord: string | null, reason: string): Promise<void> {
     await sql`INSERT INTO banlist (uuid, discord, reason) VALUES (${uuid}, ${discord}, ${reason})`;
 }
+export async function updateBannedPlayerDiscord(uuid: string, discord: string | null): Promise<void> {
+    await sql`UPDATE banlist SET discord = ${discord} WHERE uuid = ${uuid}`;
+}
 export async function removeBannedPlayer(uuid: string): Promise<void> {
     await sql`DELETE FROM banlist WHERE uuid = ${uuid}`;
 }
@@ -109,4 +112,71 @@ export async function getSettingValue(key: string): Promise<string | null> {
 }
 export async function setSettingValue(key: string, value: string): Promise<void> {
     await sql`UPDATE settings SET value = ${value} WHERE key = ${key}`;
+}
+
+export async function isOnOldScammerList(
+    uuid: string
+): Promise<
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+        scammer: false;
+    } | {
+        success: true;
+        scammer: true;
+        reason: string;
+    }
+> {
+    const res = await fetch('https://raw.githubusercontent.com/skyblockz/pricecheckbot/master/scammer.json', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!res.ok) {
+        return {
+            success: false,
+            message: 'Failed to fetch scammer list'
+        };
+    }
+
+    let data;
+    try {
+        data = await res.json() as {
+            [key: string]: {
+                operated_staff: string;
+                uuid: string;
+                reason: string;
+            }
+        };
+    } catch (e) {
+        return {
+            success: false,
+            message: 'Failed to fetch scammer list'
+        };
+    }
+
+    // let players = [];
+    // for (const [uuid, value] of Object.entries(data)) {
+    //     players.push({
+    //         uuid: uuid,
+    //         reason: value.reason
+    //     });
+    // }
+
+    if (data.hasOwnProperty(uuid)) {
+        return {
+            success: true,
+            scammer: true,
+            reason: data[uuid].reason
+        };
+    } else {
+        return {
+            success: true,
+            scammer: false
+        };
+    }
 }
