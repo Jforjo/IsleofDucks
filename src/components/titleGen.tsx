@@ -10,6 +10,7 @@ function SVG({
     lineThickness,
     text,
     gap,
+    fontSize,
     leftLineColor,
     rightLineColor,
     titleColor
@@ -20,6 +21,7 @@ function SVG({
     lineThickness: number;
     text: string;
     gap: number;
+    fontSize: number;
     leftLineColor: string;
     rightLineColor: string;
     titleColor: string;
@@ -34,7 +36,7 @@ function SVG({
         if (ref.current) {
             setbbox(ref.current.getBBox());
         }
-    }, [text, width, height, lineThickness, gap]);
+    }, [text, width, height, lineThickness, gap, fontSize]);
 
     useEffect(() => {
         if (bbox) {
@@ -63,7 +65,7 @@ function SVG({
                 d={`M ${rightLinePos} ${height / 2} q 0 -${lineThickness} ${lineSize} 0 q -${lineSize} ${lineThickness} -${lineSize} 0 z`}
                 fill="url(#gradientRight)"
             />
-            <text ref={ref} x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill={titleColor} fontWeight="bold" fontFamily="Arial, Helvetica, sans-serif">{text}</text>
+            <text ref={ref} x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fill={titleColor} fontWeight="bold" fontFamily="Arial, Helvetica, sans-serif" fontSize={`${fontSize}px`}>{text}</text>
         </svg>
     );
 }
@@ -150,6 +152,7 @@ export default function TitleGenerator(): React.JSX.Element {
     const [ height, setHeight ] = useState(32);
     const [ text, setText ] = useState("Isle of Ducks");
     const [ gap, setGap ] = useState(16);
+    const [ fontSize, setFontSize ] = useState(16);
     const [ lineThickness, setLineThickness ] = useState(16);
     const [ leftLineColor, setLeftLineColor ] = useState("#FB9B00");
     const [ rightLineColor, setRightLineColor ] = useState("#FB9B00");
@@ -167,6 +170,7 @@ export default function TitleGenerator(): React.JSX.Element {
                     lineThickness={lineThickness}
                     text={text}
                     gap={gap}
+                    fontSize={fontSize}
                     leftLineColor={leftLineColor}
                     rightLineColor={rightLineColor}
                     titleColor={titleColor}
@@ -218,6 +222,17 @@ export default function TitleGenerator(): React.JSX.Element {
                         step="1"
                         value={gap}
                         onChange={(e) => setGap(parseInt(e.target.value))}
+                    />
+                </label>
+                <label className="flex flex-col gap-1">
+                    <span>Text size - {fontSize}</span>
+                    <input
+                        type="range"
+                        min="1"
+                        max="128"
+                        step="1"
+                        value={fontSize}
+                        onChange={(e) => setFontSize(parseInt(e.target.value))}
                     />
                 </label>
                 <label className="flex flex-col gap-1">
