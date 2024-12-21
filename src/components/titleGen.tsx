@@ -148,12 +148,12 @@ function SaveAsPngButton({
 export default function TitleGenerator(): React.JSX.Element {
     const [ width, setWidth ] = useState(512);
     const [ height, setHeight ] = useState(32);
-    const [ text, setText ] = useState("Guild");
+    const [ text, setText ] = useState("Isle of Ducks");
     const [ gap, setGap ] = useState(16);
     const [ lineThickness, setLineThickness ] = useState(16);
-    const [ leftLineColor, setLeftLineColor ] = useState("#ff0000");
-    const [ rightLineColor, setRightLineColor ] = useState("#ff0000");
-    const [ titleColor, setTitleColor ] = useState("#ff0000");
+    const [ leftLineColor, setLeftLineColor ] = useState("#FB9B00");
+    const [ rightLineColor, setRightLineColor ] = useState("#FB9B00");
+    const [ titleColor, setTitleColor ] = useState("#FB9B00");
 
     const svgRef = useRef<SVGSVGElement | null>(null);
 
