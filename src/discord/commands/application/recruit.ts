@@ -8,7 +8,7 @@ import { getBannedPlayer, getSettingValue, isOnOldScammerList } from "@/discord/
 
 export async function checkPlayer(
     uuid: string,
-    profilename: string = ""
+    profilename = ""
 ): Promise<
     {
         success: false;

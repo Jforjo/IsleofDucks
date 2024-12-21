@@ -167,7 +167,7 @@ export async function isOnOldScammerList(
     //     });
     // }
 
-    if (data.hasOwnProperty(uuid)) {
+    if (Object.hasOwn(data, uuid)) {
         return {
             success: true,
             scammer: true,
