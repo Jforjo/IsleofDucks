@@ -145,14 +145,13 @@ export async function isOnOldScammerList(
 
     let data;
     try {
-        data = await res.json() as {
-            [key: string]: {
-                operated_staff: string;
-                uuid: string;
-                reason: string;
-            }
-        };
+        data = await res.json() as Record<string, {
+            operated_staff: string;
+            uuid: string;
+            reason: string;
+        }>;
     } catch (e) {
+        console.error(e);
         return {
             success: false,
             message: 'Failed to fetch scammer list'
