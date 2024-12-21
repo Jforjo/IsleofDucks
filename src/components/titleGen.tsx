@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 
-type BBox = { x: number; y: number; width: number; height: number };
+interface BBox { x: number; y: number; width: number; height: number };
 
 function SVG({
     svgRef,
