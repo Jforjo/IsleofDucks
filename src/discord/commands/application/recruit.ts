@@ -260,7 +260,7 @@ export default async function(
                     profileAPIResponse.vault &&
                     ( profileAPIResponse.experience >= profileAPIResponse.duckReq || profileAPIResponse.experience >= profileAPIResponse.ducklingReq ) &&
                     !guildResponse.isInGuild &&
-                    ( oldScammerResponse.success && oldScammerResponse.scammer ) &&
+                    ( oldScammerResponse.success && !oldScammerResponse.scammer ) &&
                     !bannedResponse ? `\`\`\`/g invite ${mojang.name}\`\`\`` : undefined,
                 fields: [
                     {
