@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
+import { url } from "inspector";
 
 export function isInventoryAPI(profiledata: SkyBlockProfileMember): boolean {
     if (!profiledata) return false;
@@ -244,7 +245,7 @@ export default async function(
             {
                 title: mojang.name,
                 thumbnail: {
-                    url: `https://mineskin.eu/helm/${username}/100.png`
+                    url: `attachments://${mojang.name}.png`
                 },
                 url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${profileAPIResponse.name}`,
                 description: `
@@ -261,7 +262,21 @@ export default async function(
                 timestamp: new Date().toISOString()
             }
         ],
-    });
+        attachments: [
+            {
+                id: 0,
+                title: `Minecraft head skin of ${mojang.name}`,
+                description: `Minecraft head skin of ${mojang.name}`,
+                filename: `${mojang.name}.png`,
+            }
+        ]
+    }, [
+        {
+            id: 0,
+            url: `https://mineskin.eu/helm/${mojang.name}/100.png`,
+            filename: `${mojang.name}.png`
+        }
+    ]);
     return NextResponse.json(
         { success: true },
         { status: 200 }
