@@ -53,7 +53,17 @@ export default async function(
     const userRoles = new Set(interaction.member.roles);
     const ticketOwnerID = interaction.data.custom_id.split('-')[2];
 
-    if (userRoles.intersection(canClose).size === 0 && interaction.member.user.id !== ticketOwnerID) {
+    // Typescript complains at the intersection
+    // const hasRoles = userRoles.intersection(canClose).size > 0;
+    let hasRoles = false;
+    userRoles.forEach(role => {
+        if (canClose.has(role)) {
+            hasRoles = true;
+            return;
+        }
+    })
+
+    if (!hasRoles && interaction.member.user.id !== ticketOwnerID) {
         await FollowupMessage(interaction.token, {
             content: "You do not have permission to close this ticket!"
         });
