@@ -85,7 +85,7 @@ export async function InstallGlobalCommands(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
         },
         method: 'PUT',
         body: formData,
@@ -129,6 +129,7 @@ export async function InstallGuildCommands(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'application/json',
         },
         method: 'PUT',
         body: formData,
@@ -172,6 +173,7 @@ export async function CreateChannel(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'application/json',
         },
         method: 'POST',
         body: formData,
@@ -214,6 +216,7 @@ export async function EditChannel(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'application/json',
         },
         method: 'PATCH',
         body: formData,
