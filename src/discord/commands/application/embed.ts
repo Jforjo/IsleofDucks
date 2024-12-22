@@ -1,5 +1,5 @@
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody, RESTPutAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, InstallGlobalCommands, CheckEmbedExists, GetEmbedData, SendMessage } from "@/discord/discordUtils";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, CheckEmbedExists, GetEmbedData, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
