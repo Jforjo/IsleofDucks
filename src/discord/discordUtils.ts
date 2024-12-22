@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIBaseComponent, APIGuildMember, ComponentType, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIBaseComponent, APIGuildMember, APIMessage, ComponentType, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 
 export interface DiscordPermissions {
@@ -560,6 +560,57 @@ export async function BanGuildMember(guildId: Snowflake, userId: Snowflake, reas
     return res.status === 204;
 }
 
+export async function GetChannelMessages(channelId: Snowflake, options: RESTGetAPIChannelMessagesQuery): Promise<RESTGetAPIChannelMessagesResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.channelMessages(channelId);
+    const url = RouteBases.api + endpoint + '?' + new URLSearchParams(Object.entries(options)).toString();
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        },
+        method: 'GET',
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTGetAPIChannelMessagesResult;
+    } catch (err) {
+        console.error(err);
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await GetChannelMessages(channelId, options);
+            }
+        }
+        console.error(data);
+    }
+
+    return data;
+}
+export async function GetAllChannelMessages(channelId: Snowflake): Promise<APIMessage[]> {
+    const messages: APIMessage[] = [];
+    while (true) {
+        const options = messages[messages.length - 1]?.id ? {
+            limit: 100,
+            after: messages[messages.length - 1].id
+        } : {
+            limit: 100
+        };
+        const res = await GetChannelMessages(channelId, options);
+        if (!res) break;
+        messages.push(...res);
+        if (res.length < 100) break;
+    }
+    return messages;
+}
+
 export function ToPermissions(permissions: DiscordPermissions): Permissions {
     // https://discord.com/developers/docs/topics/permissions
     let perms = 0;
@@ -863,6 +914,21 @@ export const IsleofDucks = {
         },
     ]
 }
+export const CloseTicketPermissions = {
+    duckapp: new Set([
+        IsleofDucks.roles.admin,
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.service_management,
+    ]),
+    ducklingapp: new Set([
+        IsleofDucks.roles.admin,
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.service_management,
+    ]),
+}
+
 export interface Superlative {
     id: string;
     title: string;
