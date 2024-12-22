@@ -1,7 +1,6 @@
-import { sql } from "@vercel/postgres";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, APIModalSubmitInteraction, APIUser, ApplicationCommandPermissionType, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, RESTAPIGuildCreateOverwrite, RESTPutAPIChannelPermissionJSONBody } from "discord-api-types/v10";
-import { getUsernameOrUUID, getGuildData, isPlayerInGuild } from "@/discord/hypixelUtils";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember } from "@/discord/discordUtils";
+import { APIInteractionResponse, APIModalSubmitInteraction, ApplicationCommandPermissionType, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
+import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "../application/recruit";
 import { getBannedPlayer, isOnOldScammerList, updateBannedPlayerDiscord } from "@/discord/utils";
