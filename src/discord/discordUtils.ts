@@ -316,7 +316,10 @@ export async function CreateInteractionResponse(
     const formData = new FormData();
     for (const [key, value] of Object.entries(messageData)) {
         formData.append(key, JSON.stringify(value));
+        console.log("key", key);
+        console.log("value", value);
     }
+    console.log("formData", formData);
 
     const res = await fetch(url, {
         headers: {
