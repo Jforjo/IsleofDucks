@@ -198,7 +198,7 @@ const COMPONENTS = JSON.stringify([
                 }
             },
             {
-                custom_id: "ticket-duckling",
+                custom_id: "ticket-ducklingapp",
                 type: ComponentType.Button,
                 label: "Apply for Isle of Ducklings",
                 style: ButtonStyle.Primary,
