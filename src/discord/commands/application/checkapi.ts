@@ -244,7 +244,7 @@ export default async function(
             {
                 title: mojang.name,
                 thumbnail: {
-                    url: `attachments://${mojang.name}.png`
+                    url: `attachments://${mojang.name.toLowerCase()}.png`
                 },
                 url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${profileAPIResponse.name}`,
                 description: [
@@ -261,19 +261,11 @@ export default async function(
                 timestamp: new Date().toISOString()
             }
         ],
-        attachments: [
-            {
-                id: 0,
-                title: `Minecraft head skin of ${mojang.name}`,
-                description: `Minecraft head skin of ${mojang.name}`,
-                filename: `${mojang.name}.png`,
-            }
-        ]
     }, [
         {
             id: 0,
             url: `https://mineskin.eu/helm/${mojang.name}/100.png`,
-            filename: `${mojang.name}.png`
+            filename: `${mojang.name.toLowerCase()}.png`
         }
     ]);
     return NextResponse.json(
