@@ -80,9 +80,7 @@ export async function InstallGlobalCommands(
     const url = RouteBases.api + endpoint;
 
     const formData = new FormData();
-    for (const [key, value] of Object.entries(commands)) {
-        formData.append(key, JSON.stringify(value));
-    }
+    formData.append('payload_json', JSON.stringify(commands));
 
     const res = await fetch(url, {
         headers: {
@@ -125,9 +123,7 @@ export async function InstallGuildCommands(
     const url = RouteBases.api + endpoint;
 
     const formData = new FormData();
-    for (const [key, value] of Object.entries(commands)) {
-        formData.append(key, JSON.stringify(value));
-    }
+    formData.append('payload_json', JSON.stringify(commands));
 
     const res = await fetch(url, {
         headers: {
@@ -170,9 +166,7 @@ export async function CreateChannel(
     const url = RouteBases.api + endpoint;
 
     const formData = new FormData();
-    for (const [key, value] of Object.entries(options)) {
-        formData.append(key, JSON.stringify(value));
-    }
+    formData.append('payload_json', JSON.stringify(options));
 
     const res = await fetch(url, {
         headers: {
@@ -214,9 +208,7 @@ export async function EditChannel(
     const url = RouteBases.api + endpoint;
 
     const formData = new FormData();
-    for (const [key, value] of Object.entries(options)) {
-        formData.append(key, JSON.stringify(value));
-    }
+    formData.append('payload_json', JSON.stringify(options));
 
     const res = await fetch(url, {
         headers: {
@@ -263,9 +255,7 @@ export async function SendMessage(
     const url = RouteBases.api + endpoint;
 
     const formData = new FormData();
-    for (const [key, value] of Object.entries(messageData)) {
-        formData.append(key, JSON.stringify(value));
-    }
+    formData.append('payload_json', JSON.stringify(messageData));
     if (attachmentURLs) {
         await Promise.all(attachmentURLs.map(async (attachment) => {
             const blob = await fetch(attachment.url).then(res => res.blob());
@@ -314,9 +304,7 @@ export async function CreateInteractionResponse(
     const url = RouteBases.api + endpoint;
 
     const formData = new FormData();
-    for (const [key, value] of Object.entries(messageData)) {
-        formData.append(key, JSON.stringify(value));
-    }
+    formData.append('payload_json', JSON.stringify(messageData));
 
     const res = await fetch(url, {
         headers: {
@@ -363,9 +351,7 @@ export async function FollowupMessage(
     const url = RouteBases.api + endpoint;
 
     const formData = new FormData();
-    for (const [key, value] of Object.entries(messageData)) {
-        formData.append(key, JSON.stringify(value));
-    }
+    formData.append('payload_json', JSON.stringify(messageData));
     if (attachmentURLs) {
         await Promise.all(attachmentURLs.map(async (attachment) => {
             const blob = await fetch(attachment.url).then(res => res.blob());
