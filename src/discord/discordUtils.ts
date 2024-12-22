@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIBaseComponent, APIGuildMember, ComponentType, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RESTPutAPIGuildBanJSONBody, RESTPutAPIGuildBanResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 
 export interface DiscordPermissions {
@@ -78,13 +78,18 @@ export async function InstallGlobalCommands(
     
     const endpoint = Routes.applicationCommands(process.env.DISCORD_CLIENT_ID);
     const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(commands)) {
+        formData.append(key, JSON.stringify(value));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'PUT',
-        body: JSON.stringify(commands),
+        body: formData,
     });
 
     let data;
@@ -118,13 +123,18 @@ export async function InstallGuildCommands(
     
     const endpoint = Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId);
     const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(commands)) {
+        formData.append(key, JSON.stringify(value));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'PUT',
-        body: JSON.stringify(commands),
+        body: formData,
     });
 
     let data;
@@ -158,13 +168,18 @@ export async function CreateChannel(
     
     const endpoint = Routes.guildChannels(guildId);
     const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(options)) {
+        formData.append(key, JSON.stringify(value));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'POST',
-        body: JSON.stringify(options),
+        body: formData,
     });
 
     let data;
@@ -197,13 +212,18 @@ export async function EditChannel(
     
     const endpoint = Routes.channel(channelId);
     const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(options)) {
+        formData.append(key, JSON.stringify(value));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'PATCH',
-        body: JSON.stringify(options),
+        body: formData,
     });
 
     let data;
@@ -229,20 +249,35 @@ export async function EditChannel(
 }
 export async function SendMessage(
     channelId: Snowflake,
-    messageData: RESTPostAPIChannelMessageJSONBody
+    messageData: RESTPostAPIChannelMessageJSONBody,
+    attachmentURLs?: {
+        id: number,
+        url: string
+    }[]
 ): Promise<RESTPostAPIChannelMessageResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
     if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
 
     const endpoint = Routes.channelMessages(channelId);
     const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(messageData)) {
+        formData.append(key, JSON.stringify(value));
+    }
+    if (attachmentURLs) {
+        await Promise.all(attachmentURLs.map(async (attachment) => {
+            const blob = await fetch(attachment.url).then(res => res.blob());
+            formData.append(`files[${attachment.id}]`, blob);
+        }));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'POST',
-        body: JSON.stringify(messageData),
+        body: formData,
     });
 
     let data;
@@ -276,13 +311,18 @@ export async function CreateInteractionResponse(
 
     const endpoint = Routes.interactionCallback(id, token);
     const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(messageData)) {
+        formData.append(key, JSON.stringify(value));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'POST',
-        body: JSON.stringify(messageData),
+        body: formData,
     });
 
     let data;
@@ -308,20 +348,35 @@ export async function CreateInteractionResponse(
 }
 export async function FollowupMessage(
     token: Snowflake,
-    messageData: RESTPatchAPIWebhookWithTokenMessageJSONBody
+    messageData: RESTPatchAPIWebhookWithTokenMessageJSONBody,
+    attachmentURLs?: {
+        id: number,
+        url: string
+    }[]
 ): Promise<RESTPatchAPIWebhookWithTokenMessageResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
     if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
 
     const endpoint = Routes.webhookMessage(process.env.DISCORD_CLIENT_ID, token, "@original");
     const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(messageData)) {
+        formData.append(key, JSON.stringify(value));
+    }
+    if (attachmentURLs) {
+        await Promise.all(attachmentURLs.map(async (attachment) => {
+            const blob = await fetch(attachment.url).then(res => res.blob());
+            formData.append(`files[${attachment.id}]`, blob);
+        }));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'PATCH',
-        body: JSON.stringify(messageData),
+        body: formData,
     });
 
     let data;
@@ -359,7 +414,6 @@ export async function AddGuildMemberRole(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'PUT',
     });
@@ -389,7 +443,6 @@ export async function RemoveGuildMemberRole(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'DELETE',
     });
@@ -419,7 +472,6 @@ export async function ListGuildMembers(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'GET',
     });
@@ -477,7 +529,6 @@ export async function GetGuildMember(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json; charset=UTF-8',
         },
         method: 'GET',
     });
@@ -502,6 +553,23 @@ export async function GetGuildMember(
     }
 
     return data;
+}
+
+export async function BanGuildMember(guildId: Snowflake, userId: Snowflake, reason: string): Promise<boolean> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.guildBan(guildId, userId);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'X-Audit-Log-Reason': reason
+        },
+        method: 'PUT',
+    });
+
+    return res.status === 204;
 }
 
 export function ToPermissions(permissions: DiscordPermissions): Permissions {
@@ -574,6 +642,7 @@ export const IsleofDucks = {
         Ducksicle: "474770139363934219"
     },
     channels: {
+        staffgeneral: "823077540654612492",
         support: "910160132233658408",
         carrierapps: "1004135601534152755",
     },
@@ -1006,4 +1075,56 @@ export const Emojis = {
     no: "<:no:1288141853018951811>",
     up: "<:up:1319369863323451502>",
     down: "<:down:1319369715780423691>",
+}
+
+
+export interface Embed {
+    title?: string;
+    description?: string;
+    fields?: {
+        name: string;
+        value: string;
+        inline?: boolean;
+    }[];
+    color: number;
+    footer?: {
+        text: string;
+    };
+    timestamp?: string;
+}
+export async function CheckEmbedExists(embedID: string): Promise<boolean> {
+    const { rows } = await sql`SELECT name FROM embeds WHERE name = ${embedID}`;
+    return rows.length > 0;
+}
+export async function GetEmbedData(embedID: string): Promise<{
+    success: false;
+    message: string;
+} | {
+    success: true;
+    content: string | undefined;
+    embeds: Embed[];
+    components?: APIBaseComponent<ComponentType>[];
+}> {
+    const { rows } = await sql`SELECT * FROM embeds WHERE name = ${embedID}`;
+    if (rows.length === 0) {
+        return {
+            success: false,
+            message: "Embed not found",
+        };
+    }
+    return {
+        success: true,
+        content: rows[0].content === null ? undefined : rows[0].content,
+        embeds: rows[0].data,
+        components: rows[0].components
+    }
+}
+export async function EditEmbedData(embedID: string, content: string | null, embeds: Embed[], components?: APIBaseComponent<ComponentType>[]): Promise<void> {
+    await sql`UPDATE embeds SET content = ${content}, data = ${JSON.stringify(embeds)}, components = ${JSON.stringify(components)} WHERE name = ${embedID}`;
+}
+export async function CreateEmbedData(embedID: string, content: string | null, embeds: Embed[], components?: APIBaseComponent<ComponentType>[]): Promise<void> {
+    await sql`INSERT INTO embeds (name, content, data, components) VALUES (${embedID}, ${content}, ${JSON.stringify(embeds)}, ${JSON.stringify(components)})`;
+}
+export async function DeleteEmbedData(embedID: string): Promise<void> {
+    await sql`DELETE FROM embeds WHERE name = ${embedID}`;
 }
