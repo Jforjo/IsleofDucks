@@ -1,4 +1,4 @@
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, CheckEmbedExists, GetEmbedData, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
@@ -99,8 +99,15 @@ export default async function(
     )
 }
 export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
-    name: "updatecommands",
-    description: "Updates the bot's global commands.",
+    name: "embed",
+    description: "Sends an embed to the current channel.",
     type: ApplicationCommandType.ChatInput,
-    default_member_permissions: "0",
+    options: [
+        {
+            name: "name",
+            description: "Name of the embed",
+            type: ApplicationCommandOptionType.String,
+            required: true
+        }
+    ],
 }
