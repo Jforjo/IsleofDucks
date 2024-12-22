@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { url } from "inspector";
 
 export function isInventoryAPI(profiledata: SkyBlockProfileMember): boolean {
     if (!profiledata) return false;
@@ -248,14 +247,14 @@ export default async function(
                     url: `attachments://${mojang.name}.png`
                 },
                 url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${profileAPIResponse.name}`,
-                description: `
-                    ${profileAPIResponse.inventory ? yes : no} Inventory API
-                    ${profileAPIResponse.banking ? yes : no} Banking API
-                    ${profileAPIResponse.collection ? yes : no} Collection API
-                    ${profileAPIResponse.skills ? yes : no} Skills API
-                    ${profileAPIResponse.vault ? yes : no} Personal Vault API
-                `,
-                color: parseInt("FB9B00", 16),
+                description: [
+                    `${profileAPIResponse.inventory ? yes : no} Inventory API`,
+                    `${profileAPIResponse.banking ? yes : no} Banking API`,
+                    `${profileAPIResponse.collection ? yes : no} Collection API`,
+                    `${profileAPIResponse.skills ? yes : no} Skills API`,
+                    `${profileAPIResponse.vault ? yes : no} Personal Vault API`
+                ].join('\n'),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
