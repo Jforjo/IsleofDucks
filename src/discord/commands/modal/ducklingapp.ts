@@ -201,7 +201,7 @@ export default async function(
             { status: guildResponse.status }
         );
     }
-
+    
     const channelPermissions = [
         {
             id: guildID,
@@ -213,7 +213,7 @@ export default async function(
         },
         {
             id: member.user.id,
-            type: ApplicationCommandPermissionType.User,
+            type: 1,
             allow: ToPermissions({
                 view_channel: true
             }),
@@ -223,7 +223,7 @@ export default async function(
         },
         {
             id: IsleofDucks.roles.staff,
-            type: ApplicationCommandPermissionType.Role,
+            type: 0,
             allow: ToPermissions({
                 view_channel: true,
                 send_messages: true
