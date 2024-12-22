@@ -252,7 +252,8 @@ export async function SendMessage(
     messageData: RESTPostAPIChannelMessageJSONBody,
     attachmentURLs?: {
         id: number,
-        url: string
+        url: string,
+        name: string
     }[]
 ): Promise<RESTPostAPIChannelMessageResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
@@ -268,7 +269,7 @@ export async function SendMessage(
     if (attachmentURLs) {
         await Promise.all(attachmentURLs.map(async (attachment) => {
             const blob = await fetch(attachment.url).then(res => res.blob());
-            formData.append(`files[${attachment.id}]`, blob);
+            formData.append(`files[${attachment.id}]`, blob, attachment.name);
         }));
     }
 
@@ -351,7 +352,8 @@ export async function FollowupMessage(
     messageData: RESTPatchAPIWebhookWithTokenMessageJSONBody,
     attachmentURLs?: {
         id: number,
-        url: string
+        url: string,
+        name: string
     }[]
 ): Promise<RESTPatchAPIWebhookWithTokenMessageResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
@@ -367,7 +369,7 @@ export async function FollowupMessage(
     if (attachmentURLs) {
         await Promise.all(attachmentURLs.map(async (attachment) => {
             const blob = await fetch(attachment.url).then(res => res.blob());
-            formData.append(`files[${attachment.id}]`, blob);
+            formData.append(`files[${attachment.id}]`, blob, attachment.name);
         }));
     }
 
