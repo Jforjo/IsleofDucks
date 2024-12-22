@@ -24,7 +24,7 @@ export default async function(
         embeds: [
             {
                 title: "Pong!",
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },

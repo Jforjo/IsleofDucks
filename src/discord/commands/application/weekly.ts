@@ -31,7 +31,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: guildResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -55,7 +55,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Failed to fetch the immune players",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -100,7 +100,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: result.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -157,7 +157,7 @@ export default async function(
             {
                 title: 'Weekly Guild Experience',
                 // description: ``,
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 fields: fieldArray,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,

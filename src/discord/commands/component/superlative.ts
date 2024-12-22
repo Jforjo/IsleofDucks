@@ -92,7 +92,7 @@ export default async function(
                 {
                     title: "Superlative - None",
                     description: "There is no superlative right now!",
-                    color: parseInt("FB9B00", 16),
+                    color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -120,7 +120,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: guild.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -182,7 +182,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: result.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -242,7 +242,7 @@ export default async function(
             {
                 title: `Superlative - ${superlative.title}`,
                 // description: ``,
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 fields: fieldArray,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,

@@ -151,7 +151,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -171,7 +171,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -202,7 +202,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: mojang.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -225,7 +225,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: profileAPIResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },

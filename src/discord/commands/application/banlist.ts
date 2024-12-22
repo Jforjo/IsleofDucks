@@ -50,7 +50,7 @@ async function addBanned(
                 {
                     title: "Something went wrong!",
                     description: uuidResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -72,7 +72,7 @@ async function addBanned(
             embeds: [
                 {
                     title: `\`${uuidResponse.name}\` is already on my ban list!`,
-                    color: parseInt("FB9B00", 16),
+                    color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -94,7 +94,7 @@ async function addBanned(
             {
                 title: `\`${uuidResponse.name}\` was added to my ban list!`,
                 description: `Reason: ${reason}`,
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -149,7 +149,7 @@ async function removeBanned(
                 {
                     title: "Something went wrong!",
                     description: uuidResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -171,7 +171,7 @@ async function removeBanned(
             embeds: [
                 {
                     title: `\`${uuidResponse.name}\` is not on my ban list!`,
-                    color: parseInt("FB9B00", 16),
+                    color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -192,7 +192,7 @@ async function removeBanned(
         embeds: [
             {
                 title: `\`${uuidResponse.name}\` was removed from my ban list!`,
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -227,7 +227,7 @@ async function viewBanned(
                 {
                     title: "Something went wrong!",
                     description: "Could not get banned players",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -247,7 +247,7 @@ async function viewBanned(
             embeds: [
                 {
                     title: "There are no banned players!",
-                    color: parseInt("FB9B00", 16),
+                    color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -278,7 +278,7 @@ async function viewBanned(
         embeds: [
             {
                 title: "Banned Players",
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 description: bannedPlayers.players.map(player => {
                     return `**${player.name?.replaceAll('_', '\\_') ?? player.uuid}** (${player.reason})`;
                 }).join('\n'),
@@ -320,7 +320,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -341,7 +341,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data options",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -389,7 +389,7 @@ export default async function(
             {
                 title: "Something went wrong!",
                 description: "Unknown command",
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },

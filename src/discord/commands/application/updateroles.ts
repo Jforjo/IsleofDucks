@@ -88,7 +88,7 @@ export default async function(
             {
                 title: "Done!",
                 description: `Added ${rolesAdded} roles to ${usersHadRolesAdded} users.\nRemoved ${rolesRemoved} roles from ${usersHadRolesRemoved} users.`,
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },

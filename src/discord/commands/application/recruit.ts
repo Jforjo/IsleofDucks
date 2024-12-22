@@ -128,7 +128,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -148,7 +148,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -179,7 +179,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: mojang.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -203,7 +203,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: guildResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -227,7 +227,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: profileAPIResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -245,12 +245,11 @@ export default async function(
     const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
 
     await FollowupMessage(interaction.token, {
-        content: undefined,
         embeds: [
             {
                 title: mojang.name,
                 thumbnail: {
-                    url: `https://mineskin.eu/helm/${username}/100.png`
+                    url: `attachment://${mojang.name}.png`
                 },
                 url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${profileAPIResponse.name}`,
                 description: 
@@ -298,14 +297,20 @@ export default async function(
                         inline: false
                     }
                 ],
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
                 timestamp: new Date().toISOString()
             }
         ],
-    });
+    }, [
+        {
+            id: 0,
+            url: `https://mineskin.eu/helm/${mojang.name}/100.png`,
+            filename: `${mojang.name}.png`
+        }
+    ]);
     return NextResponse.json(
         { success: true },
         { status: 200 }

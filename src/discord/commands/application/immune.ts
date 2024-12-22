@@ -45,7 +45,7 @@ async function addImmune(
                 {
                     title: "Something went wrong!",
                     description: uuidResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -67,7 +67,7 @@ async function addImmune(
             embeds: [
                 {
                     title: `\`${uuidResponse.name}\` is already immune!`,
-                    color: parseInt("FB9B00", 16),
+                    color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -89,7 +89,7 @@ async function addImmune(
             {
                 title: `\`${uuidResponse.name}\` was added to the immune list!`,
                 description: `Reason: ${reason}`,
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -144,7 +144,7 @@ async function removeImmune(
                 {
                     title: "Something went wrong!",
                     description: uuidResponse.message,
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -166,7 +166,7 @@ async function removeImmune(
             embeds: [
                 {
                     title: `\`${uuidResponse.name}\` is not immune!`,
-                    color: parseInt("FB9B00", 16),
+                    color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -187,7 +187,7 @@ async function removeImmune(
         embeds: [
             {
                 title: `\`${uuidResponse.name}\` was removed from the immune list!`,
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -222,7 +222,7 @@ async function viewImmune(
                 {
                     title: "Something went wrong!",
                     description: "Could not get immune players",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -242,7 +242,7 @@ async function viewImmune(
             embeds: [
                 {
                     title: "There are no immune players!",
-                    color: parseInt("FB9B00", 16),
+                    color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -273,7 +273,7 @@ async function viewImmune(
         embeds: [
             {
                 title: "Immune Players",
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 fields: fieldArray,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -313,7 +313,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -334,7 +334,7 @@ export default async function(
                 {
                     title: "Something went wrong!",
                     description: "Missing interaction data options",
-                    color: parseInt("B00020", 16),
+                    color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -382,7 +382,7 @@ export default async function(
             {
                 title: "Something went wrong!",
                 description: "Unknown command",
-                color: parseInt("FB9B00", 16),
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
