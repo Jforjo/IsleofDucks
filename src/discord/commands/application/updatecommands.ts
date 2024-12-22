@@ -7,7 +7,7 @@ import { CommandData as CheckAPI } from "./checkapi";
 import { CommandData as Superlative } from "./superlative";
 import { CommandData as Ping } from "./ping";
 // import { CommandData as Test } from "./test";
-// import { CommandData as Embed } from "./embed";
+import { CommandData as Embed } from "./embed";
 import { CommandData as Immune } from "./immune";
 import { CommandData as Weekly } from "./weekly";
 import { CommandData as UpdateRoles } from "./updateroles";
@@ -58,7 +58,7 @@ export default async function(
         CheckAPI,
         Superlative,
         Ping,
-        // Embed,
+        Embed,
         Immune,
         Weekly,
         UpdateRoles,
