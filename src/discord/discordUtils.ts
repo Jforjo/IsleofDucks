@@ -55,7 +55,7 @@ export interface DiscordPermissions {
     use_external_apps?: boolean;
 }
 
-export const DISCORD_EPOCH = 1420070400000
+export const DISCORD_EPOCH = 1420070400000;
 
 /**
  * Converts a snowflake ID string into a JS Date object using the provided epoch (in ms), or Discord's epoch if not provided
@@ -93,6 +93,7 @@ export async function InstallGlobalCommands(
         data = await res.json() as RESTPutAPIApplicationCommandsResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -105,6 +106,7 @@ export async function InstallGlobalCommands(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -134,6 +136,7 @@ export async function InstallGuildCommands(
         data = await res.json() as RESTPutAPIApplicationGuildCommandsResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -146,6 +149,7 @@ export async function InstallGuildCommands(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -175,6 +179,7 @@ export async function CreateChannel(
         data = await res.json() as RESTPostAPIGuildChannelResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -187,6 +192,7 @@ export async function CreateChannel(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -215,6 +221,7 @@ export async function EditChannel(
         data = await res.json() as RESTPatchAPIChannelResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -227,6 +234,7 @@ export async function EditChannel(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -268,6 +276,7 @@ export async function SendMessage(
         data = await res.json() as RESTPostAPIChannelMessageResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -280,6 +289,7 @@ export async function SendMessage(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -311,6 +321,7 @@ export async function CreateInteractionResponse(
     //     data = await res.json() as RESTPostAPIInteractionCallbackWithResponseResult;
     // } catch (err) {
     //     console.error(err);
+    //     console.error(JSON.stringify(err));
     //     console.error("res", res);
     // }
     
@@ -323,6 +334,7 @@ export async function CreateInteractionResponse(
             }
         }
         // console.error(data);
+        // console.error(JSON.stringify(data));
     }
 
     return data;
@@ -364,6 +376,7 @@ export async function FollowupMessage(
         data = await res.json() as RESTPatchAPIWebhookWithTokenMessageResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -376,6 +389,7 @@ export async function FollowupMessage(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -461,6 +475,7 @@ export async function ListGuildMembers(
         data = await res.json() as RESTGetAPIGuildMembersResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -473,6 +488,7 @@ export async function ListGuildMembers(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -518,6 +534,7 @@ export async function GetGuildMember(
         data = await res.json() as RESTGetAPIGuildMemberResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -530,6 +547,7 @@ export async function GetGuildMember(
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
@@ -570,6 +588,7 @@ export async function GetChannelMessages(channelId: Snowflake, options: RESTGetA
         data = await res.json() as RESTGetAPIChannelMessagesResult;
     } catch (err) {
         console.error(err);
+        console.error(JSON.stringify(err));
         console.error("res", res);
     }
     
@@ -582,6 +601,7 @@ export async function GetChannelMessages(channelId: Snowflake, options: RESTGetA
             }
         }
         console.error(data);
+        console.error(JSON.stringify(data));
     }
 
     return data;
