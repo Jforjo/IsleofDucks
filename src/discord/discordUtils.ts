@@ -85,6 +85,7 @@ export async function InstallGlobalCommands(
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'multipart/form-data',
         },
         method: 'PUT',
         body: formData,
