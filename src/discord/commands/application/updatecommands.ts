@@ -13,6 +13,7 @@ import { CommandData as Weekly } from "./weekly";
 import { CommandData as UpdateRoles } from "./updateroles";
 import { CommandData as Recruit } from "./recruit";
 import { CommandData as BanList } from "./banlist";
+import { CommandData as InsertEmbed } from "./insertembed";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -62,7 +63,8 @@ export default async function(
         Weekly,
         UpdateRoles,
         Recruit,
-        BanList
+        BanList,
+        InsertEmbed
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);

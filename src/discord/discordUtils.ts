@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIBaseComponent, APIGuildMember, APIMessage, ComponentType, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIAttachment, APIBaseComponent, APIGuildMember, APIMessage, ComponentType, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 
 export interface DiscordPermissions {
@@ -1145,6 +1145,12 @@ export interface Embed {
         text: string;
     };
     timestamp?: string;
+    image?: {
+        url: string;
+    };
+    thumbnail?: {
+        url: string;
+    }
 }
 export async function CheckEmbedExists(embedID: string): Promise<boolean> {
     const { rows } = await sql`SELECT name FROM embeds WHERE name = ${embedID}`;
@@ -1156,8 +1162,9 @@ export async function GetEmbedData(embedID: string): Promise<{
 } | {
     success: true;
     content: string | undefined;
-    embeds: Embed[];
-    components?: APIBaseComponent<ComponentType>[];
+    embeds: string;
+    components?: string;
+    attachments?: string;
 }> {
     const { rows } = await sql`SELECT * FROM embeds WHERE name = ${embedID}`;
     if (rows.length === 0) {
@@ -1170,14 +1177,15 @@ export async function GetEmbedData(embedID: string): Promise<{
         success: true,
         content: rows[0].content === null ? undefined : rows[0].content,
         embeds: rows[0].data,
-        components: rows[0].components
+        components: rows[0].components,
+        attachments: rows[0].attachments
     }
 }
-export async function EditEmbedData(embedID: string, content: string | null, embeds: Embed[], components?: APIBaseComponent<ComponentType>[]): Promise<void> {
-    await sql`UPDATE embeds SET content = ${content}, data = ${JSON.stringify(embeds)}, components = ${JSON.stringify(components)} WHERE name = ${embedID}`;
+export async function EditEmbedData(embedID: string, content: string | null, embeds: string, components?: string, attachments?: string): Promise<void> {
+    await sql`UPDATE embeds SET content = ${content}, data = ${embeds}, components = ${components ?? null}, attachments = ${attachments ?? null} WHERE name = ${embedID}`;
 }
-export async function CreateEmbedData(embedID: string, content: string | null, embeds: Embed[], components?: APIBaseComponent<ComponentType>[]): Promise<void> {
-    await sql`INSERT INTO embeds (name, content, data, components) VALUES (${embedID}, ${content}, ${JSON.stringify(embeds)}, ${JSON.stringify(components)})`;
+export async function CreateEmbedData(embedID: string, content: string | null, embeds: string, components?: string, attachments?: string): Promise<void> {
+    await sql`INSERT INTO embeds (name, content, data, components, attachments) VALUES (${embedID}, ${content}, ${embeds}, ${components ?? null}, ${attachments ?? null})`;
 }
 export async function DeleteEmbedData(embedID: string): Promise<void> {
     await sql`DELETE FROM embeds WHERE name = ${embedID}`;
