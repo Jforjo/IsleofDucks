@@ -239,12 +239,11 @@ export default async function(
         );
     }
     await FollowupMessage(interaction.token, {
-        content: undefined,
         embeds: [
             {
                 title: mojang.name,
                 thumbnail: {
-                    url: `attachments://${mojang.name.toLowerCase()}.png`
+                    url: `attachment://${mojang.name}.png`
                 },
                 url: `https://sky.shiiyu.moe/stats/${mojang.uuid}/${profileAPIResponse.name}`,
                 description: [
@@ -265,7 +264,7 @@ export default async function(
         {
             id: 0,
             url: `https://mineskin.eu/helm/${mojang.name}/100.png`,
-            filename: `${mojang.name.toLowerCase()}.png`
+            filename: `${mojang.name}.png`
         }
     ]);
     return NextResponse.json(
