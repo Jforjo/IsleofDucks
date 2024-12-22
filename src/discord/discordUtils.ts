@@ -79,16 +79,13 @@ export async function InstallGlobalCommands(
     const endpoint = Routes.applicationCommands(process.env.DISCORD_CLIENT_ID);
     const url = RouteBases.api + endpoint;
 
-    const formData = new FormData();
-    formData.append('payload_json', JSON.stringify(commands));
-
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
             'Content-Type': 'application/json',
         },
         method: 'PUT',
-        body: formData,
+        body: JSON.stringify(commands),
     });
 
     let data;
@@ -123,16 +120,13 @@ export async function InstallGuildCommands(
     const endpoint = Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId);
     const url = RouteBases.api + endpoint;
 
-    const formData = new FormData();
-    formData.append('payload_json', JSON.stringify(commands));
-
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
             'Content-Type': 'application/json',
         },
         method: 'PUT',
-        body: formData,
+        body: JSON.stringify(commands),
     });
 
     let data;
@@ -167,16 +161,13 @@ export async function CreateChannel(
     const endpoint = Routes.guildChannels(guildId);
     const url = RouteBases.api + endpoint;
 
-    const formData = new FormData();
-    formData.append('payload_json', JSON.stringify(options));
-
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
             'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: formData,
+        body: JSON.stringify(options),
     });
 
     let data;
@@ -210,16 +201,13 @@ export async function EditChannel(
     const endpoint = Routes.channel(channelId);
     const url = RouteBases.api + endpoint;
 
-    const formData = new FormData();
-    formData.append('payload_json', JSON.stringify(options));
-
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
             'Content-Type': 'application/json',
         },
         method: 'PATCH',
-        body: formData,
+        body: JSON.stringify(options),
     });
 
     let data;
