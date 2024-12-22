@@ -68,6 +68,10 @@ export default async function(
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
+    if (result && "errors" in result) {
+        console.error("errors:",result.errors);
+        console.log("Stringified errors:", JSON.stringify(result.errors));
+    }
 
     await FollowupMessage(interaction.token, {
         content: "Done! Check Vercel's logs for any errors.",
