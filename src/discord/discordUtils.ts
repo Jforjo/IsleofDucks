@@ -719,7 +719,15 @@ export async function CreateThread(channelId: Snowflake, options: RESTPostAPIGui
     return data;
 }
 
-export async function ExecuteWebhook(queryParms: RESTPostAPIWebhookWithTokenQuery, options: RESTPostAPIWebhookWithTokenJSONBody): Promise<RESTPostAPIWebhookWithTokenResult | undefined> {
+export async function ExecuteWebhook(
+    queryParms: RESTPostAPIWebhookWithTokenQuery,
+    options: RESTPostAPIWebhookWithTokenJSONBody,
+    attachmentURLs?: {
+        id: number,
+        url: string,
+        filename: string
+    }[]
+): Promise<RESTPostAPIWebhookWithTokenResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
     if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
     if (!process.env.TICKET_TRANSCRIPT_WEBHOOK_ID) throw new Error('TICKET_TRANSCRIPT_WEBHOOK_ID is not defined');
@@ -727,13 +735,22 @@ export async function ExecuteWebhook(queryParms: RESTPostAPIWebhookWithTokenQuer
 
     const endpoint = Routes.webhook(process.env.TICKET_TRANSCRIPT_WEBHOOK_ID, process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN);
     const url = RouteBases.api + endpoint + '?' + new URLSearchParams(Object.entries(queryParms)).toString();
+
+    const formData = new FormData();
+    formData.append('payload_json', JSON.stringify(options));
+    if (attachmentURLs) {
+        await Promise.all(attachmentURLs.map(async (attachment) => {
+            const blob = await fetch(attachment.url).then(res => res.blob());
+            formData.append(`files[${attachment.id}]`, blob, attachment.filename);
+        }));
+    }
+
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-            'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify(options),
+        body: formData,
     });
 
     if (res.status === 204) return undefined;

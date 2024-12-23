@@ -114,11 +114,11 @@ export default async function(
         )
     }
 
-    console.log(JSON.stringify(thread));
-    if (!thread.id) return NextResponse.json(
-        { success: true },
-        { status: 200 }
-    )
+    // console.log(JSON.stringify(thread));
+    // if (!thread.id) return NextResponse.json(
+    //     { success: true },
+    //     { status: 200 }
+    // )
 
     for await (const message of GetMessagesAfterGenerator(interaction.channel.id, firstMessageID)) {
         if (!message) continue;
@@ -132,7 +132,11 @@ export default async function(
             embeds: message.embeds,
             attachments: message.attachments,
             poll: message.poll,
-        });
+        }, message.attachments.map(attachment => ({
+            id: parseInt(attachment.id),
+            url: attachment.url,
+            filename: attachment.filename
+        })));
     }
     
     await EditChannel(thread.id, {
