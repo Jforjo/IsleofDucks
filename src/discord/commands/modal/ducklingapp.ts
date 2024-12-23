@@ -171,7 +171,7 @@ export default async function(
             { status: profileAPIResponse.status }
         );
     }
-    if (profileAPIResponse.highestExperience < profileAPIResponse.ducklingReq) {
+    if (profileAPIResponse.experience < profileAPIResponse.ducklingReq) {
         await FollowupMessage(interaction.token, {
             content: `You do not meet the level requirements to join either guild!`,
         });
