@@ -27,6 +27,7 @@ export async function checkPlayer(
         duckReq: number;
         ducklingReq: number;
         experience: number;
+        highestExperience: number;
     }
 > {
     if (!process.env.HYPIXEL_API_KEY) {
@@ -89,6 +90,13 @@ export async function checkPlayer(
     const profiledata = profile.members[uuid];
     const exp = profiledata.leveling.experience ?? 0;
 
+    let totalExp = 0;
+    for (const profile of data.profiles) {
+        const member = profile.members[uuid];
+        if (!member.leveling.experience) continue;
+        if (totalExp < member.leveling.experience) totalExp = member.leveling.experience;
+    }
+
     return {
         success: true,
         status: res.status,
@@ -100,7 +108,8 @@ export async function checkPlayer(
         skills: isSkillsAPI(profiledata),
         duckReq: Number(await getSettingValue("duck_req") ?? "0"),
         ducklingReq: Number(await getSettingValue("duckling_req") ?? "0"),
-        experience: exp
+        experience: exp,
+        highestExperience: totalExp
     };
 }
 
