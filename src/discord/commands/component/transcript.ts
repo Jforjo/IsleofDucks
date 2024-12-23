@@ -141,7 +141,6 @@ export default async function(
             url: attachment.url,
             filename: attachment.filename
         })));
-        console.log(JSON.stringify(message.attachments));
     }
     
     await EditChannel(thread.id, {

@@ -251,8 +251,7 @@ export default async function(
     const yes = Emojis.yes;
     const no = Emojis.no;
     await SendMessage(channel.id, {
-        content: `<@${member.user.id}> is requesting help from 'removed the ping for testing'`,
-        // content: `<@${member.user.id}> is requesting help from <@&${IsleofDucks.roles.mod_duck}>`,
+        content: `<@${member.user.id}> is requesting help from <@&${IsleofDucks.roles.mod_duck}>`,
         embeds: [
             {
                 title: "Duck Application",
