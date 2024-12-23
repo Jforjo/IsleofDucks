@@ -215,11 +215,10 @@ export default async function(
             id: member.user.id,
             type: 1,
             allow: ToPermissions({
-                view_channel: true
-            }),
-            deny: ToPermissions({
+                view_channel: true,
                 send_messages: true
-            })
+            }),
+            deny: null
         },
         {
             id: IsleofDucks.roles.staff,
