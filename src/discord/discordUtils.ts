@@ -689,6 +689,7 @@ export async function CreateThread(channelId: Snowflake, options: RESTPostAPIGui
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'application/json'
         },
         method: 'POST',
         body: JSON.stringify(options),
@@ -729,6 +730,7 @@ export async function ExecuteWebhook(queryParms: RESTPostAPIWebhookWithTokenQuer
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'application/json',
         },
         method: 'POST',
         body: JSON.stringify(options),

@@ -114,6 +114,12 @@ export default async function(
         )
     }
 
+    console.log(JSON.stringify(thread));
+    if (!thread.id) return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    )
+
     for await (const message of GetMessagesAfterGenerator(interaction.channel.id, firstMessageID)) {
         if (!message) continue;
         const avatarURL = message.author.avatar ? RouteBases.cdn + CDNRoutes.userAvatar(message.author.id, message.author.avatar, ImageFormat.PNG ) : undefined;
