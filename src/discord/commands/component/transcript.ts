@@ -93,7 +93,7 @@ export default async function(
                             inline: true
                         },
                         {
-                            name: "Closed by:",
+                            name: "Transcript saved by:",
                             value: `<@${interaction.member.user.id}>`,
                             inline: true
                         }
