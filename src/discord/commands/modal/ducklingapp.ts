@@ -171,15 +171,6 @@ export default async function(
             { status: profileAPIResponse.status }
         );
     }
-    if (!("experience" in profileAPIResponse) || !profileAPIResponse.experience) {
-        await FollowupMessage(interaction.token, {
-            content: `Could not retrieve your experience!`,
-        });
-        return NextResponse.json(
-            { success: false, error: "Could not retrieve your experience" },
-            { status: 200 }
-        );
-    }
     if (profileAPIResponse.experience < profileAPIResponse.ducklingReq) {
         await FollowupMessage(interaction.token, {
             content: `You do not meet the level requirements to join either guild!`,

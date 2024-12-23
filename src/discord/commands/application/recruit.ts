@@ -91,6 +91,7 @@ export async function checkPlayer(
     let totalExp = 0;
     for (const profile of data.profiles) {
         const member = profile.members[uuid];
+        if (!("experience" in member.leveling)) continue;
         if (!member.leveling.experience) continue;
         if (totalExp < member.leveling.experience) totalExp = member.leveling.experience;
     }
