@@ -723,7 +723,7 @@ export async function ExecuteWebhook(
     queryParms: RESTPostAPIWebhookWithTokenQuery,
     options: RESTPostAPIWebhookWithTokenJSONBody,
     attachmentURLs?: {
-        id: number,
+        id: number | string,
         url: string,
         filename: string
     }[]
