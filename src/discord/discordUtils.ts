@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, APIMessage, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 
 export interface DiscordPermissions {
@@ -231,6 +231,43 @@ export async function EditChannel(
             if (retryAfter && !isNaN(Number(retryAfter))) {
                 await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
                 return await EditChannel(channelId, options);
+            }
+        }
+        console.error(data);
+        console.error(JSON.stringify(data));
+    }
+
+    return data;
+}
+export async function DeleteChannel(channelId: Snowflake): Promise<RESTDeleteAPIChannelResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+    
+    const endpoint = Routes.channel(channelId);
+    const url = RouteBases.api + endpoint;
+
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        },
+        method: 'DELETE',
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTDeleteAPIChannelResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await DeleteChannel(channelId);
             }
         }
         console.error(data);
@@ -606,6 +643,7 @@ export async function GetChannelMessages(channelId: Snowflake, options: RESTGetA
 
     return data;
 }
+// TODO: Create a yield version of this
 export async function GetAllChannelMessages(channelId: Snowflake): Promise<APIMessage[]> {
     const messages: APIMessage[] = [];
     while (true) {
@@ -621,6 +659,105 @@ export async function GetAllChannelMessages(channelId: Snowflake): Promise<APIMe
         if (res.length < 100) break;
     }
     return messages;
+}
+export async function* GetMessagesAfterGenerator(channelId: Snowflake, messageId: Snowflake): AsyncGenerator<APIMessage | undefined, undefined, void> {
+    let messages = await GetChannelMessages(channelId, {
+        limit: 100,
+        after: messageId
+    });
+    let count = messages ? messages.length : 0;
+    
+    while (messages) {
+        yield messages.pop();
+        if (messages.length === 0) {
+            if (count < 100) break;
+            messages = await GetChannelMessages(channelId, {
+                limit: 100,
+                after: messages[messages.length - 1].id
+            });
+            count = messages ? messages.length : 0;
+        }
+    }
+}
+
+export async function CreateThread(channelId: Snowflake, options: RESTPostAPIGuildForumThreadsJSONBody): Promise<RESTPostAPIChannelMessagesThreadsResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.threads(channelId);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        },
+        method: 'POST',
+        body: JSON.stringify(options),
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTPostAPIChannelMessagesThreadsResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await CreateThread(channelId, options);
+            }
+        }
+        console.error(data);
+        console.error(JSON.stringify(data));
+    }
+
+    return data;
+}
+
+export async function ExecuteWebhook(queryParms: RESTPostAPIWebhookWithTokenQuery, options: RESTPostAPIWebhookWithTokenJSONBody): Promise<RESTPostAPIWebhookWithTokenResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+    if (!process.env.TICKET_TRANSCRIPT_WEBHOOK_ID) throw new Error('TICKET_TRANSCRIPT_WEBHOOK_ID is not defined');
+    if (!process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN) throw new Error('TICKET_TRANSCRIPT_WEBHOOK_TOKEN is not defined');
+
+    const endpoint = Routes.webhook(process.env.TICKET_TRANSCRIPT_WEBHOOK_ID, process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN);
+    const url = RouteBases.api + endpoint + '?' + new URLSearchParams(Object.entries(queryParms)).toString();
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        },
+        method: 'POST',
+        body: JSON.stringify(options),
+    });
+
+    if (res.status === 204) return undefined;
+
+    let data;
+    try {
+        data = await res.json() as RESTPostAPIWebhookWithTokenResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await ExecuteWebhook(queryParms, options);
+            }
+        }
+        console.error(data);
+        console.error(JSON.stringify(data));
+    }
+
+    return data;
 }
 
 export function ToPermissions(permissions: DiscordPermissions): Permissions {
@@ -696,10 +833,23 @@ export const IsleofDucks = {
         staffgeneral: "823077540654612492",
         support: "910160132233658408",
         carrierapps: "1004135601534152755",
+        transcriptForum: "1320673392801878036",
     },
     channelGroups: {
         tickets: "988883238292451378",
-        carrytickets: "1004180629551845466"
+        carrytickets: "1004180629551845466",
+    },
+    transcriptForum: {
+        tags: [
+            {
+                id: "1320673664441782313",
+                name: "duckapp",
+            },
+            {
+                id: "1320673729675788428",
+                name: "ducklingapp",
+            }
+        ]
     },
     roles: {
         owner: "823071305795633163",

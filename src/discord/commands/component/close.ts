@@ -1,5 +1,5 @@
 import { CloseTicketPermissions, ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, FollowupMessage, SendMessage, ToPermissions } from "@/discord/discordUtils";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -132,6 +132,25 @@ export default async function(
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
                 timestamp: new Date().toISOString()
+            }
+        ],
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: `transcript-${ticketID}-${interaction.message.id}-${ticketOwnerID}`,
+                        type: ComponentType.Button,
+                        label: "Save Transcript",
+                        style: ButtonStyle.Primary,
+                    },
+                    {
+                        custom_id: `delete-${ticketID}`,
+                        type: ComponentType.Button,
+                        label: "Delete Ticket",
+                        style: ButtonStyle.Danger,
+                    }
+                ]
             }
         ]
     });
