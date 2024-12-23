@@ -53,7 +53,7 @@ export async function getUsernameOrUUID(
             message: 'Bad response from Minetools'
         };
     }
-    if (!res.ok || data.status !== 'OK') {
+    if (!res.ok) {
         console.log("Minetools response", res);
         console.log("Minetools data", data);
         if (data && data.errorMessage) {
