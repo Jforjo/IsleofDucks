@@ -70,7 +70,7 @@ export async function checkPlayer(
             message: 'Bad response from Hypixel',
         };
     }
-    if (data.profiles.length === 0) {
+    if (!data.profiles || data.profiles.length === 0) {
         return {
             success: false,
             status: res.status,
