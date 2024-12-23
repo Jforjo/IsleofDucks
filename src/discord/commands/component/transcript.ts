@@ -123,6 +123,10 @@ export default async function(
     for await (const message of GetMessagesAfterGenerator(interaction.channel.id, firstMessageID)) {
         if (!message) continue;
         const avatarURL = message.author.avatar ? RouteBases.cdn + CDNRoutes.userAvatar(message.author.id, message.author.avatar, ImageFormat.PNG ) : undefined;
+        const attachments = message.attachments.map((attachment, index) => ({
+            ...attachment,
+            id: index,
+        }));
         await ExecuteWebhook({
             thread_id: thread.id,
         }, {
@@ -130,10 +134,10 @@ export default async function(
             avatar_url: avatarURL,
             content: message.content,
             embeds: message.embeds,
-            attachments: message.attachments,
+            attachments: attachments,
             poll: message.poll,
-        }, message.attachments.map(attachment => ({
-            id: parseInt(attachment.id),
+        }, attachments.map(attachment => ({
+            id: attachment.id,
             url: attachment.url,
             filename: attachment.filename
         })));
