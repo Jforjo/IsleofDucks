@@ -881,6 +881,7 @@ export const IsleofDucks = {
         verified: "1287098228067664004",
         duck_guild_member: "933258162931400764",
         duckling_guild_member: "998380474407846000",
+        immune: "1276013765405704266",
         carrier_f1_4: "1004131288023830638",
         carrier_f5_6: "1004131419553005710",
         carrier_f7: "1004131451077406750",

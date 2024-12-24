@@ -1,6 +1,7 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, AddGuildMemberRole, RemoveGuildMemberRole, ConvertSnowflakeToDate } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { isImmunePlayer } from "@/discord/utils";
 
 const tempRole = "1311851831361671168";
 
@@ -63,22 +64,28 @@ export default async function(
     let rolesAdded = 0;
     let rolesRemoved = 0;
 
+    // Should probably change this to use a generator function
     const members = await GetAllGuildMembers(interaction.guild.id);
     // Not a Promise.all since the functions inside can get rate limited
     for (const member of members) {
+        let userRoleAdded = false;
+        let userRoleRemoved = false;
         if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
             if (!member.roles.includes(tempRole)) {
                 await AddGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
                 rolesAdded++;
-                usersHadRolesAdded++;
+                userRoleAdded = true;
             }
         } else {
             if (member.roles.includes(tempRole)) {
                 await RemoveGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
                 rolesRemoved++;
-                usersHadRolesRemoved++;
+                userRoleRemoved = true;
             }
         }
+
+        if (userRoleAdded) usersHadRolesAdded++;
+        if (userRoleRemoved) usersHadRolesRemoved++;
     }
 
 
