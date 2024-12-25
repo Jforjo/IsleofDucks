@@ -1,7 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, AddGuildMemberRole, RemoveGuildMemberRole, ConvertSnowflakeToDate } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { isImmunePlayer } from "@/discord/utils";
 
 const tempRole = "1311851831361671168";
 
