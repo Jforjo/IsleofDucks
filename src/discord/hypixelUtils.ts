@@ -2,93 +2,111 @@ import { Guild } from "@zikeji/hypixel/dist/types/Augmented/Guild";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
 import { GuildResponse, SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
 
-export interface MinetoolsResponse {
-    id: string | null;
-    name: string | null;
-    status: string;
-    error?: string;
-    errorMessage?: string;
-}
 
-/**
- * Fetches the Minecraft UUID and username from the Minetools API
- * based on the provided query, which can be either a UUID or a username.
- *
- * @param query - The Minecraft username or UUID to retrieve information for.
- * @returns A promise that resolves to an object:
- *          - If unsuccessful, contains an error message and optional ping flag.
- *          - If successful, contains the UUID and username.
- *
- * The function makes an API request to Minetools, and handles errors such as
- * bad responses or missing data. It returns an error message if the response
- * is unsuccessful or if the UUID or username is invalid.
- */
 export async function getUsernameOrUUID(
     query: string
 ): Promise<
-{
-    success: false;
-    status: number;
-    message: string;
-    ping?: boolean;
-} | {
-    success: true;
-    status: number;
-    uuid: string;
-    name: string;
-}
-> {
-    const res = await fetch(`https://api.minetools.eu/uuid/${encodeURIComponent(query)}`, {
-        mode: 'no-cors'
-    });
-    let data;
-    try {
-        data = await res.json() as MinetoolsResponse;
-    } catch (e) {
-        console.error(e);
-        console.error("res", res);
-        return {
-            success: false,
-            status: res.status,
-            message: 'Bad response from Minetools'
-        };
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+        uuid: string;
+        name: string;
     }
+> {
+    let res = await getUsernameOrUUIDFromMinetools(query);
+    if (res !== false) return res;
+    res = await getUsernameOrUUIDFromPlayerDB(query);
+    if (res !== false) return res;
+    return {
+        success: false,
+        message: "Could not find player"
+    };
+}
+
+
+async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+        uuid: string;
+        name: string;
+    } | false
+> {
+    const res = await fetch(`https://playerdb.co/api/player/minecraft/${encodeURIComponent(query)}`);
+    if (!res.ok) {
+        console.log("PlayerDB response", res);
+        console.log("PlayerDB body", res.text());
+        return false;
+    }
+    // It returns other stuff, but I don't care
+    const data = await res.json() as {
+        code: string;
+        message: string;
+        data: {
+            player?: {
+                username: string;
+                id: string;
+                raw_id: string;
+            }
+        };
+        success: boolean;
+    }
+    if (!data.success) return {
+        success: false,
+        message: data.message
+    }
+    if (!data.data.player) return false;
+    return {
+        success: true,
+        uuid: data.data.player.id,
+        name: data.data.player.username
+    }
+}
+async function getUsernameOrUUIDFromMinetools(query: string): Promise<
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+        uuid: string;
+        name: string;
+    } | false
+> {
+    // const res = await fetch(`https://api.minetools.eu/uuid/${encodeURIComponent(query)}`, {
+    //     mode: 'no-cors'
+    // });
+    const res = await fetch(`https://api.minetools.eu/uuid/${encodeURIComponent(query)}`);
     if (!res.ok) {
         console.log("Minetools response", res);
+        console.log("Minetools body", res.text());
+        return false;
+    }
+    const data = await res.json() as {
+        id: string | null;
+        name: string | null;
+        status: string;
+        error?: string;
+        errorMessage?: string;
+    };
+    if (data.error || data.errorMessage) {
         console.log("Minetools data", data);
-        if (data && data.errorMessage) {
-            return {
-                success: false,
-                status: res.status,
-                message: data.errorMessage,
-            };
-        }
-        if (data && data.error) {
-            return {
-                success: false,
-                status: res.status,
-                message: data.error,
-            };
-        }
-        return {
-            success: false,
-            status: res.status,
-            message: 'Bad response from Minetools'
-        };
+        console.log("Minetools data", JSON.stringify(data));
+        return false;
     }
     if (data.name === null) return {
         success: false,
-        status: res.status,
         message: "Invalid UUID"
     }
     if (data.id === null) return {
         success: false,
-        status: res.status,
         message: "Invalid Username"
     }
     return {
         success: true,
-        status: res.status,
         uuid: data.id,
         name: data.name
     };

@@ -199,7 +199,7 @@ export default async function(
         });
         return NextResponse.json(
             { success: false, error: mojang.message },
-            { status: mojang.status }
+            { status: 400 }
         );
     }
 
