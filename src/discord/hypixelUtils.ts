@@ -63,7 +63,7 @@ async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
     if (!data.data.player) return false;
     return {
         success: true,
-        uuid: data.data.player.id,
+        uuid: data.data.player.raw_id,
         name: data.data.player.username
     }
 }
