@@ -643,7 +643,6 @@ export async function GetChannelMessages(channelId: Snowflake, options: RESTGetA
 
     return data;
 }
-// TODO: Create a yield version of this
 export async function GetAllChannelMessages(channelId: Snowflake): Promise<APIMessage[]> {
     const messages: APIMessage[] = [];
     while (true) {
@@ -1090,9 +1089,111 @@ export const IsleofDucks = {
         },
         {
             id: "jan25",
-            title: "",
+            title: "Bestiary Milestone",
             start: new Date("1 January 2025").getTime(),
-            callback: undefined
+            callback: async function(
+                uuid: string
+            ): Promise<
+                {
+                    success: false;
+                    message: string;
+                    ping?: boolean;
+                } | {
+                    success: true;
+                    value: number;
+                    formattedValue: string;
+                    current: number;
+                }
+            > {
+                let value = 0;
+                let user = null;
+                const timestamp = Date.now();
+                let updateDB = false;
+                let currentXP = 0;
+
+                const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
+                if (rows.length > 0) user = rows[0];
+                if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
+                    if (user?.oldxp != null) {
+                        value = user.cataxp - user.oldxp;
+                        currentXP = user.cataxp;
+                    } else {
+                        value = user.cataxp;
+                        currentXP = user.cataxp;
+                    }
+                } else {
+                    const profiles = await getProfiles(uuid);
+                    if (profiles.success === false) return profiles;
+                    profiles.profiles.forEach((profile) => {
+                        const temp = profile.members[uuid]?.bestiary?.milestone?.last_claimed_milestone;
+                        if (temp && temp > 0) {
+                            if (value < temp) value = temp;
+                        }
+                    });
+                    updateDB = true;
+                    currentXP = value;
+                }
+
+                if (updateDB) {
+                    if (user == null) {
+                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
+                        value = 0;
+                    } else {
+                        if (user?.oldxp == null) {
+                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            value = 0;
+                        } else {
+                            await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
+                            value -= user.oldxp;
+                        }
+                    }
+                }
+
+                return {
+                    success: true,
+                    value: value,
+                    formattedValue: value.toString(),
+                    current: currentXP
+                };
+            },
+            ranks: {
+                ducks: [
+                    {
+                        id: "PREY",
+                        requirement: 0,
+                    },
+                    {
+                        id: "NOVICE",
+                        requirement: 200,
+                    },
+                    {
+                        id: "HUNTER",
+                        requirement: 250,
+                    },
+                    {
+                        id: "MASTER",
+                        requirement: 300,
+                    },
+                ],
+                ducklings: [
+                    {
+                        id: "PREY",
+                        requirement: 0,
+                    },
+                    {
+                        id: "NOVICE",
+                        requirement: 150,
+                    },
+                    {
+                        id: "HUNTER",
+                        requirement: 200,
+                    },
+                    {
+                        id: "MASTER",
+                        requirement: 250,
+                    },
+                ]
+            }
         },
     ]
 }

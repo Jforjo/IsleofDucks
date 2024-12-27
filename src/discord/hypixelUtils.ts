@@ -19,6 +19,7 @@ export async function getUsernameOrUUID(
     if (res !== false) return res;
     res = await getUsernameOrUUIDFromPlayerDB(query);
     if (res !== false) return res;
+    // TODO: Implement more backups
     return {
         success: false,
         message: "Could not find player"
