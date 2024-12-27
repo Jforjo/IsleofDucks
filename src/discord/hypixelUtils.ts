@@ -15,9 +15,9 @@ export async function getUsernameOrUUID(
         name: string;
     }
 > {
-    let res = await getUsernameOrUUIDFromMinetools(query);
+    let res = await getUsernameOrUUIDFromPlayerDB(query);
     if (res !== false) return res;
-    res = await getUsernameOrUUIDFromPlayerDB(query);
+    res = await getUsernameOrUUIDFromMinetools(query);
     if (res !== false) return res;
     // TODO: Implement more backups
     return {
