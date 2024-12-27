@@ -1,6 +1,6 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
-import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer } from "@/discord/utils";
+import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer, getBannedPlayersCount, getBannedPlayer, searchBannedPlayers } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
@@ -219,7 +219,8 @@ async function viewBanned(
 > {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    const bannedPlayers = await getBannedPlayers();
+    const bannedPlayers = await getBannedPlayers(0, 25);
+    const bannedCount = await getBannedPlayersCount();
     if (!bannedPlayers.success) {
         await FollowupMessage(interaction.token, {
             content: null,
@@ -241,7 +242,7 @@ async function viewBanned(
         )
     }
 
-    if (bannedPlayers.players.length === 0) {
+    if (bannedPlayers.players.length === 0 || bannedCount === 0) {
         await FollowupMessage(interaction.token, {
             content: null,
             embeds: [
@@ -288,6 +289,217 @@ async function viewBanned(
                 timestamp: new Date().toISOString()
             }
         ],
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: 'banlist-page_0',
+                        type: ComponentType.Button,
+                        label: '◀️',
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    },
+                    {
+                        custom_id: 'banlist-search',
+                        type: ComponentType.Button,
+                        label: `Page 1/${Math.ceil(bannedCount / 25)}`,
+                        style: ButtonStyle.Secondary,
+                        disabled: false
+                    },
+                    {
+                        custom_id: 'banlist-page_2',
+                        type: ComponentType.Button,
+                        label: '▶️',
+                        style: ButtonStyle.Primary,
+                        disabled: Math.ceil(bannedCount / 25) < 2
+                    }
+                ]
+            }
+        ]
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
+async function checkBanned(
+    interaction: APIChatInputApplicationCommandInteraction,
+    name: string
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    const uuid = await getUsernameOrUUID(name);
+    if (!uuid.success) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: uuid.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        });
+        return NextResponse.json(
+            { success: false, error: uuid.message },
+            { status: 400 }
+        )
+    }
+
+    const banned = await getBannedPlayer(uuid.uuid);
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: uuid.name.replaceAll('_', '\\_'),
+                color: 0xFB9B00,
+                description: banned ? [
+                    `**UUID**: ${uuid.uuid}`,
+                    `**Reason**: ${banned.reason}`
+                ].join('\n') : "This player is not on my ban list!",
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
+async function searchBanned(
+    interaction: APIChatInputApplicationCommandInteraction,
+    query: string
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    if (query.length < 3) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "The search query must be at least 3 characters long",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        });
+        return NextResponse.json(
+            { success: false, error: "The search query must be at least 3 characters long" },
+            { status: 400 }
+        )
+    }
+
+    const bannedPlayers = await searchBannedPlayers(query, 0, 25);
+    if (!bannedPlayers.success) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Failed to search for banned players",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        });
+        return NextResponse.json(
+            { success: false, error: "Failed to search for banned players" },
+            { status: 400 }
+        )
+    }
+
+    if (bannedPlayers.players.length === 0 || bannedPlayers.count === 0) {
+        await FollowupMessage(interaction.token, {
+            content: null,
+            embeds: [
+                {
+                    title: "There are no banned players!",
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "There are no banned players" },
+            { status: 400 }
+        )
+    }
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Banned Players",
+                color: 0xFB9B00,
+                description: bannedPlayers.players.map(player => {
+                    return `**${player.name?.replaceAll('_', '\\_') ?? player.uuid}** (${player.reason})`;
+                }).join('\n'),
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: `banlist-page_0-${query}`,
+                        type: ComponentType.Button,
+                        label: '◀️',
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    },
+                    {
+                        custom_id: `banlist-search`,
+                        type: ComponentType.Button,
+                        label: `Page 1/${Math.ceil(bannedPlayers.count / 25)}`,
+                        style: ButtonStyle.Secondary,
+                        disabled: false
+                    },
+                    {
+                        custom_id: `banlist-page_2-${query}`,
+                        type: ComponentType.Button,
+                        label: '▶️',
+                        style: ButtonStyle.Primary,
+                        disabled: Math.ceil(bannedPlayers.count / 25) < 2
+                    }
+                ]
+            }
+        ]
     });
 
     return NextResponse.json(
@@ -381,6 +593,10 @@ export default async function(
         return await removeBanned(interaction, options.remove.name);
     } else if (options.view) {
         return await viewBanned(interaction);
+    } else if (options.check) {
+        return await checkBanned(interaction, options.check.name);
+    } else if (options.search) {
+        return await searchBanned(interaction, options.search.query);
     }
 
     await FollowupMessage(interaction.token, {
@@ -448,6 +664,32 @@ export const CommandData = {
             name: "view",
             description: "View the ban list.",
             type: ApplicationCommandOptionType.Subcommand
+        },
+        {
+            name: "check",
+            description: "Check if a player is banned.",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "name",
+                    description: "The name of the player.",
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                }
+            ]
+        },
+        {
+            name: "search",
+            description: "Search the ban list.",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "query",
+                    description: "The search query.",
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                }
+            ]
         }
     ]
 }

@@ -45,7 +45,10 @@ export async function getImmunePlayer(uuid: string): Promise<{ uuid: string; dis
     return null;
 }
 
-export async function getBannedPlayers(): Promise<{
+export async function getBannedPlayers(
+    offset = 0,
+    limit = 100
+): Promise<{
     success: boolean;
     players: {
         uuid: string;
@@ -54,7 +57,7 @@ export async function getBannedPlayers(): Promise<{
         reason: string;
     }[];
 }> {
-    const { rows } = await sql`SELECT uuid, discord, reason FROM banlist`;
+    const { rows } = await sql`SELECT uuid, discord, reason FROM banlist LIMIT ${limit} OFFSET ${offset}`;
 
     const players = await Promise.all(rows.map(async (row) => {
         const nameRes = await getUsernameOrUUID(row.uuid);
@@ -73,6 +76,10 @@ export async function getBannedPlayers(): Promise<{
         players: players
     };
 }
+export async function getBannedPlayersCount(): Promise<number> {
+    const { rows } = await sql`SELECT COUNT(*) FROM banlist`;
+    return rows[0].count;
+}
 export async function addBannedPlayer(uuid: string, discord: string | null, reason: string): Promise<void> {
     await sql`INSERT INTO banlist (uuid, discord, reason) VALUES (${uuid}, ${discord}, ${reason})`;
 }
@@ -85,6 +92,38 @@ export async function removeBannedPlayer(uuid: string): Promise<void> {
 export async function isBannedPlayer(uuid: string): Promise<boolean> {
     const { rows } = await sql`SELECT * FROM banlist WHERE uuid = ${uuid}`;
     return rows.length > 0;
+}
+export async function searchBannedPlayers(
+    query: string,
+    offset = 0,
+    limit = 100
+): Promise<{
+    success: boolean;
+    players: {
+        uuid: string;
+        name?: string;
+        discord: string | null;
+        reason: string;
+    }[];
+    count: number;
+}> {
+    const players = await getBannedPlayers();
+    if (!players.success) return {
+        success: false,
+        players: [],
+        count: 0
+    }
+
+    const filteredPlayers = players.players.filter((player) => {
+        if (!player.name) return false;
+        return player.name.toLowerCase().includes(query.toLowerCase()) || player.reason.toLowerCase().includes(query.toLowerCase());
+    });
+
+    return {
+        success: true,
+        players: filteredPlayers.slice(offset, offset + limit),
+        count: filteredPlayers.length
+    };
 }
 export async function getBannedPlayer(uuid: string): Promise<
     { uuid: string; discord: string | null; reason: string } |
