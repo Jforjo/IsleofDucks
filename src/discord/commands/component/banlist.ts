@@ -245,20 +245,24 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    // ACK response and update the original message
-    await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredMessageUpdate,
-    });
-    
     if (interaction.data.custom_id === 'banlist-search') {
-        await FollowupMessage(interaction.token, {
-            content: "o/"
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "o/",
+                flags: 1 << 6
+            }
         });
         return NextResponse.json(
             { success: false, error: "Unknown command" },
             { status: 404 }
         );
     }
+
+    // ACK response and update the original message
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DeferredMessageUpdate,
+    });
 
     if (interaction.data.custom_id.split('-').length === 3) {
         return await searchBanned(interaction);
