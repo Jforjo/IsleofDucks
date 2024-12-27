@@ -40,7 +40,7 @@ async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
     const res = await fetch(`https://playerdb.co/api/player/minecraft/${encodeURIComponent(query)}`);
     if (!res.ok) {
         console.log("PlayerDB response", res);
-        console.log("PlayerDB body", res.text());
+        console.log("PlayerDB body", await res.text());
         return false;
     }
     // It returns other stuff, but I don't care
@@ -83,7 +83,7 @@ async function getUsernameOrUUIDFromMinetools(query: string): Promise<
     const res = await fetch(`https://api.minetools.eu/uuid/${encodeURIComponent(query)}`);
     if (!res.ok) {
         console.log("Minetools response", res);
-        console.log("Minetools body", res.text());
+        console.log("Minetools body", await res.text());
         return false;
     }
     const data = await res.json() as {
