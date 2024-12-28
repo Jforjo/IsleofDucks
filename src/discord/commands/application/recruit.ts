@@ -257,7 +257,7 @@ export default async function(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: mojang.name,
+                title: mojang.name.replaceAll('_', '\\_'),
                 thumbnail: {
                     url: `attachment://${mojang.name}.png`
                 },

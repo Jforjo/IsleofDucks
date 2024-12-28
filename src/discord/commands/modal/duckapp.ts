@@ -259,7 +259,7 @@ export default async function(
                 color: 0xFB9B00,
             },
             {
-                title: mojang.name,
+                title: mojang.name.replaceAll('_', '\\_'),
                 thumbnail: {
                     url: `attachment://${mojang.name}.png`
                 },
