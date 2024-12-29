@@ -71,13 +71,13 @@ export default async function(
         let userRoleRemoved = false;
         if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
             if (!member.roles.includes(tempRole)) {
-                await AddGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
+                // await AddGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
                 rolesAdded++;
                 userRoleAdded = true;
             }
         } else {
             if (member.roles.includes(tempRole)) {
-                await RemoveGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
+                // await RemoveGuildMemberRole(interaction.guild.id, member.user.id, tempRole);
                 rolesRemoved++;
                 userRoleRemoved = true;
             }
