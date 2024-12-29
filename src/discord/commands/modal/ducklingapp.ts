@@ -3,7 +3,8 @@ import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "../application/recruit";
-import { getBannedPlayer, isOnOldScammerList, updateBannedPlayerDiscord } from "@/discord/utils";
+import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
+import { getScammerFromUUID } from "@/discord/jerry";
 
 export default async function(
     interaction: APIModalSubmitInteraction
@@ -115,14 +116,15 @@ export default async function(
             { status: 200 }
         );
     }
-    const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
-    if (oldScammerResponse.success && oldScammerResponse.scammer) {
-        await BanGuildMember(guildID, member.user.id, "Automatic ban for being on Old Jerry Scammer List. Detected through Duckling Application.");
+    // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
+        const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
+    if (scammerResponse.success && scammerResponse.scammer) {
+        await BanGuildMember(guildID, member.user.id, "Automatic ban for being on the Jerry Scammer List. Detected through Duckling Application.");
         await SendMessage(IsleofDucks.channels.staffgeneral, {
             embeds: [
                 {
                     title: "Automatic Ban Log",
-                    description: "Automatic ban for being on old scammer list. Detected through Duckling Application.",
+                    description: "Automatic ban for being on the Jerry Scammer List. Detected through Duckling Application.",
                     fields: [
                         {
                             name: "Minecraft UUID",
@@ -134,7 +136,7 @@ export default async function(
                         },
                         {
                             name: "Banlist Reason",
-                            value: `${oldScammerResponse.reason.replaceAll('_', '\\_')}`
+                            value: `${scammerResponse.details ? scammerResponse.details.reason.replaceAll('_', '\\_') : "Unknown reason"}`
                         }
                     ],
                     color: 0xFB9B00,
@@ -271,7 +273,7 @@ export default async function(
                     profileAPIResponse.vault &&
                     ( profileAPIResponse.experience >= profileAPIResponse.duckReq || profileAPIResponse.experience >= profileAPIResponse.ducklingReq ) &&
                     !guildResponse.isInGuild &&
-                    ( oldScammerResponse.success && !oldScammerResponse.scammer ) &&
+                    ( scammerResponse.success && !scammerResponse.scammer ) &&
                     !bannedResponse ? `\`\`\`/g invite ${mojang.name}\`\`\`` : undefined,
                 fields: [
                     {
@@ -304,8 +306,8 @@ export default async function(
                         inline: false
                     },
                     {
-                        name: "Old Jerry Scammer List",
-                        value: `${yes} They are not in the old Jerry scammer list`,
+                        name: "Jerry Scammer List (by SkyblockZ)",
+                        value: `${yes} They are not in the Jerry scammer list`,
                         inline: false
                     }
                 ],

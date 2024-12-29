@@ -4,7 +4,8 @@ import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTy
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
-import { getBannedPlayer, getSettingValue, isOnOldScammerList } from "@/discord/utils";
+import { getBannedPlayer, getSettingValue } from "@/discord/utils";
+import { getScammerFromUUID } from "@/discord/jerry";
 
 export async function checkPlayer(
     uuid: string,
@@ -252,7 +253,8 @@ export default async function(
     }
 
     const bannedResponse = await getBannedPlayer(mojang.uuid);
-    const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
+    // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
+    const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
 
     await FollowupMessage(interaction.token, {
         embeds: [
@@ -269,7 +271,7 @@ export default async function(
                     profileAPIResponse.vault &&
                     ( profileAPIResponse.experience >= profileAPIResponse.duckReq || profileAPIResponse.experience >= profileAPIResponse.ducklingReq ) &&
                     !guildResponse.isInGuild &&
-                    ( oldScammerResponse.success && !oldScammerResponse.scammer ) &&
+                    ( scammerResponse.success && !scammerResponse.scammer ) &&
                     !bannedResponse ? `\`\`\`/g invite ${mojang.name}\`\`\`` : undefined,
                 fields: [
                     {
@@ -302,8 +304,14 @@ export default async function(
                         inline: false
                     },
                     {
-                        name: "Old Jerry Scammer List",
-                        value: oldScammerResponse.success && oldScammerResponse.scammer ? `${no} ${oldScammerResponse.reason}` : `${yes} They are not in the old Jerry scammer list`,
+                        name: "Jerry Scammer List (by SkyblockZ)",
+                        value: [
+                            scammerResponse.success && scammerResponse.scammer ? (
+                                scammerResponse.details === null ?
+                                    `${no} They are a scammer!` :
+                                    `${no} ${scammerResponse.details.reason}`
+                            ) : `${yes} They are not in the Jerry scammer list`,
+                        ].join('\n'),
                         inline: false
                     }
                 ],

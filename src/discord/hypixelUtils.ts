@@ -12,6 +12,7 @@ export async function getUsernameOrUUID(
     } | {
         success: true;
         uuid: string;
+        uuiddashes: string;
         name: string;
     }
 > {
@@ -34,6 +35,7 @@ async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
     } | {
         success: true;
         uuid: string;
+        uuiddashes: string;
         name: string;
     } | false
 > {
@@ -64,6 +66,7 @@ async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
     return {
         success: true,
         uuid: data.data.player.raw_id,
+        uuiddashes: data.data.player.id,
         name: data.data.player.username
     }
 }
@@ -74,6 +77,7 @@ async function getUsernameOrUUIDFromMinetools(query: string): Promise<
     } | {
         success: true;
         uuid: string;
+        uuiddashes: string;
         name: string;
     } | false
 > {
@@ -109,8 +113,17 @@ async function getUsernameOrUUIDFromMinetools(query: string): Promise<
     return {
         success: true,
         uuid: data.id,
+        uuiddashes: addDashesToUUID(data.id),
         name: data.name
     };
+}
+
+export function addDashesToUUID(uuid: string): string {
+    return uuid.slice(0,8) + "-" +
+        uuid.slice(8,12) + "-" +
+        uuid.slice(12,16) + "-" +
+        uuid.slice(16,20) + "-" +
+        uuid.slice(20);
 }
 
 /**
