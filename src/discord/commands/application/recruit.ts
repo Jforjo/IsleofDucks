@@ -304,7 +304,7 @@ export default async function(
                         inline: false
                     },
                     {
-                        name: "Jerry Scammer List (by SkyblockZ)",
+                        name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
                         value: [
                             scammerResponse.success && scammerResponse.scammer ? (
                                 scammerResponse.details === null ?

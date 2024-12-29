@@ -320,7 +320,7 @@ export default async function(
                         inline: false
                     },
                     {
-                        name: "Jerry Scammer List (by SkyblockZ)",
+                        name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
                         value: `${yes} They are not in the Jerry scammer list`,
                         inline: false
                     }
