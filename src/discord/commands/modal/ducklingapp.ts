@@ -1,6 +1,6 @@
 import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember, CheckChannelExists } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "../application/recruit";
 import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
@@ -44,6 +44,20 @@ export default async function(
         });
         return NextResponse.json(
             { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+
+    const hasTicket = await CheckChannelExists.name(guildID, `duckling-${member.user.username}`);
+    if (hasTicket.exists) {
+        await FollowupMessage(interaction.token, {
+            content: [
+                `You already have a ticket open here: <#${hasTicket.channelID}>`,
+                `Please close the existing ticket before opening a new one.`
+            ].join("\n"),
+        });
+        return NextResponse.json(
+            { success: false, error: "You already have a ticket open" },
             { status: 400 }
         );
     }
@@ -235,7 +249,7 @@ export default async function(
 
     const channel = await CreateChannel(guildID, {
         type: ChannelType.GuildText,
-        name: `duckling-${member.nick ?? member.user.username}`,
+        name: `duckling-${member.user.username}`,
         topic: `Duckling Application for ${member.nick ?? member.user.username} - ${member.user.id}`,
         parent_id: IsleofDucks.channelGroups.tickets,
         permission_overwrites: channelPermissions

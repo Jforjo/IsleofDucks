@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 
 export interface DiscordPermissions {
@@ -776,6 +776,78 @@ export async function ExecuteWebhook(
     }
 
     return data;
+}
+
+export async function GetGuildChannels(guildId: Snowflake): Promise<RESTGetAPIGuildChannelsResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.guildChannels(guildId);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        },
+        method: 'GET',
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTGetAPIGuildChannelsResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await GetGuildChannels(guildId);
+            }
+        }
+        console.error(data);
+        console.error(JSON.stringify(data));
+    }
+
+    return data;
+}
+
+export const CheckChannelExists = {
+    id: async function (guildId: Snowflake, channelID: Snowflake): Promise<
+        {
+            exists: false;
+        } | {
+            exists: true;
+            channelID: Snowflake;
+        }
+    > {
+        const channels = await GetGuildChannels(guildId);
+        if (!channels) return { exists: false };
+
+        const channel = channels.find(c => c.id === channelID);
+        if (!channel) return { exists: false };
+
+        return { exists: true, channelID: channel.id };
+    },
+    name: async function (guildId: Snowflake, channelName: string): Promise<
+        {
+            exists: false;
+        } | {
+            exists: true;
+            channelID: Snowflake;
+        }
+    > {
+        const channels = await GetGuildChannels(guildId);
+        if (!channels) return { exists: false };
+
+        const channel = channels.find(c => c.name === channelName);
+        if (!channel) return { exists: false };
+
+        return { exists: true, channelID: channel.id };
+    }
 }
 
 export function ToPermissions(permissions: DiscordPermissions): Permissions {
