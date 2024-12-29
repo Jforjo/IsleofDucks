@@ -107,7 +107,7 @@ export async function searchBannedPlayers(
     }[];
     count: number;
 }> {
-    const players = await getBannedPlayers();
+    const players = await getBannedPlayers(0, 9999);
     if (!players.success) return {
         success: false,
         players: [],
