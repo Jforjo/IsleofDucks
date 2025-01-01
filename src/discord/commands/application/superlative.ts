@@ -3,7 +3,7 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-// import { progressPromise } from "@/discord/utils";
+import { progressPromise } from "@/discord/utils";
 
 export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
@@ -146,63 +146,14 @@ export default async function(
             }
         ]
     });
-    // const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
-    let result = [] as {
-        uuid: string;
-        name: string;
-        value: number;
-        formattedValue: string;
-        rankUp: string | null;
-    }[];
-    let error = null as null | {
-        success: false;
-        message: string;
-        ping: boolean;
-    }
-    guild.guild.members.forEach(async (member, index) => {
-        if (index % 25 === 0) {
-            await FollowupMessage(interaction.token, {
-                embeds: [
-                    {
-                        title: "Superlative - Updating",
-                        description: `Fetching player data... (${index}/${guild.guild.members.length})`,
-                        color: 0xFB9B00,
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            });
-        }
 
+    const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
-        if (!mojang.success) {
-            error = {
-                success: false,
-                message: mojang.message,
-                ping: mojang.message === "Invalid API key"
-            };
-            return;
-        }
+        if (!mojang.success) throw new Error(mojang.message);
         // This should never happen, but Typescript/eslint was complaining
-        if (!superlative.callback) {
-            error = {
-                success: false,
-                message: "Superlative callback is not defined",
-                ping: false
-            };
-            return;
-        }
+        if (!superlative.callback) throw new Error("Superlative callback is not defined");
         const superlativeData = await superlative.callback(member.uuid);
-        if (!superlativeData.success) {
-            error = {
-                success: false,
-                message: superlativeData.message,
-                ping: superlativeData.message === "Invalid API key"
-            };
-            return;
-        }
+        if (!superlativeData.success) throw new Error(superlativeData.message);
 
         let rankUp = null;
         let bracketCurrent = -1;
@@ -217,24 +168,48 @@ export default async function(
             if (bracketShould < bracketCurrent) rankUp = Emojis.down;
         }
 
-        result.push({
+        return {
             uuid: member.uuid,
             name: mojang.name,
             value: superlativeData.value,
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
-        });
+        };
+    }), async (completed, length) => {
+        if (completed % 20 === 0) {
+            // await FollowupMessage(interaction.token, {
+            //     embeds: [
+            //         {
+            //             title: "Superlative - Updating",
+            //             description: `Fetching player data... (${completed}/${length})`,
+            //             color: 0xFB9B00,
+            //             footer: {
+            //                 text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+            //             },
+            //             timestamp: new Date().toISOString()
+            //         }
+            //     ]
+            // });
+        }
+        console.log(`Completed/Length: ${completed}/${length}`);
+    }).catch((err) => {
+        console.log(err.message);
+        return {
+            success: false,
+            message: err.message,
+            ping: err.message === "Invalid API key"
+        };
     });
     
-    if (error && error.success === false) {
+    if ("success" in superlativeResult && superlativeResult.success === false) {
         let content = undefined;
-        if (error.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        if (superlativeResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: error.message,
+                    description: superlativeResult.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -244,18 +219,18 @@ export default async function(
             ],
         });
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, error: superlativeResult.message },
             { status: 400 }
         );
     }
     
-    // let result = superlativeResult as {
-    //     uuid: string;
-    //     name: string;
-    //     value: number;
-    //     formattedValue: string;
-    //     rankUp: string | null;
-    // }[];
+    let result = superlativeResult as {
+        uuid: string;
+        name: string;
+        value: number;
+        formattedValue: string;
+        rankUp: string | null;
+    }[];
     // b - a = bigger number first
     result.sort((a, b) => b.value - a.value);
     result = result.map((member, index) => {
