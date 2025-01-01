@@ -1,5 +1,6 @@
 import { sql } from '@vercel/postgres';
-import { getUsernameOrUUID } from './hypixelUtils';
+import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
+import { getSuperlative } from './commands/application/superlative';
 
 export async function getImmunePlayers(): Promise<{
     success: boolean;
@@ -233,4 +234,36 @@ export function progressPromise(promises: Promise<unknown>[], tickCallback: (pro
     }
 
     return Promise.all(promises.map(tick));
+}
+export async function updateGuildSuperlative(guildName: string): Promise<Response> {
+    const superlative = await getSuperlative();
+    if (superlative == null) return Response.json({ success: true });
+
+    const guild = await getGuildData(guildName);
+    if (!guild.success) return new Response(guild.message, { status: 400 });
+
+    const result = await Promise.all(guild.guild.members.map(async (member) => {
+        // This should never happen, but Typescript/eslint was complaining
+        if (!superlative.update) throw new Error("Superlative update function is not defined");
+        const updated = await superlative.update(member.uuid);
+
+        const { rows } = await sql`SELECT * FROM users WHERE uuid = ${member.uuid}`;
+        if (rows.length === 0) {
+            await sql`INSERT INTO users(uuid, oldxp, lastupdated) VALUES (${member.uuid}, ${updated}, ${Date.now()})`;
+            return;
+        }
+
+        await sql`UPDATE users SET (cataxp, lastupdated) = (${updated}, ${Date.now()}) WHERE uuid = ${member.uuid}`;
+    })).catch((error) => {
+        return {
+            success: false,
+            message: error.message,
+            error: JSON.stringify(error)
+        }
+    });
+
+    if ("success" in result && !result.success) return new Response(`Error: ${result.error}`, { status: 400 });
+
+    console.log(`Superlative update for ${guildName} complete`);
+    return Response.json({ success: true });
 }

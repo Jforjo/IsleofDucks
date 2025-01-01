@@ -1,5 +1,5 @@
+import { updateGuildSuperlative } from "@/discord/utils";
 import type { NextRequest } from "next/server";
-import { updateGuildSuperlative } from "../route";
 
 export async function GET(request: NextRequest) {
     const authHeader = request.headers.get("authorization");
