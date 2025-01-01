@@ -133,7 +133,7 @@ export default async function(
         );
     }
 
-    let result = await progressPromise(guild.guild.members.map(async (member) => {
+    const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         // This should never happen, but Typescript/eslint was complaining
@@ -186,15 +186,15 @@ export default async function(
         };
     });
     
-    if ("success" in result && result.success === false) {
+    if ("success" in superlativeResult && superlativeResult.success === false) {
         let content = undefined;
-        if (result.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        if (superlativeResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: result.message,
+                    description: superlativeResult.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -204,13 +204,13 @@ export default async function(
             ],
         });
         return NextResponse.json(
-            { success: false, error: result.message },
+            { success: false, error: superlativeResult.message },
             { status: 400 }
         );
     }
     
     
-    result = result as {
+    let result = superlativeResult as {
         uuid: string;
         name: string;
         value: number;

@@ -220,11 +220,11 @@ export async function isOnOldScammerList(
 }
 
 
-export function progressPromise(promises: Promise<any>[], tickCallback: (progress: number, len: number) => void) {
-    var len = promises.length;
-    var progress = 0;
+export function progressPromise(promises: Promise<unknown>[], tickCallback: (progress: number, len: number) => void): Promise<unknown[]> {
+    const len = promises.length;
+    let progress = 0;
 
-    function tick(promise: Promise<any>) {
+    function tick(promise: Promise<unknown>) {
         promise.then(function () {
             progress++;
             tickCallback(progress, len);
