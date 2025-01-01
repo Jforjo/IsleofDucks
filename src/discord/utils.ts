@@ -218,3 +218,19 @@ export async function isOnOldScammerList(
         };
     }
 }
+
+
+export function progressPromise(promises: Promise<any>[], tickCallback: (progress: number, len: number) => void) {
+    var len = promises.length;
+    var progress = 0;
+
+    function tick(promise: Promise<any>) {
+        promise.then(function () {
+            progress++;
+            tickCallback(progress, len);
+        });
+        return promise;
+    }
+
+    return Promise.all(promises.map(tick));
+}

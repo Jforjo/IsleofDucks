@@ -3,6 +3,7 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { progressPromise } from "@/discord/utils";
 
 export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
@@ -132,36 +133,13 @@ export default async function(
         );
     }
 
-    let membersCalculated = 0;
-    let result = await Promise.all(guild.guild.members.map(async (member) => {
-        membersCalculated++;
-        let resultUpdateResponse = null;
-        if (membersCalculated % 10 === 0) {
-            resultUpdateResponse = FollowupMessage(interaction.token, {
-                embeds: [
-                    {
-                        title: "Superlative - Updating",
-                        description: `Fetching player data... (${membersCalculated}/${guild.guild.members.length})`,
-                        color: 0xFB9B00,
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            });
-        }
-
+    let result = await progressPromise(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         // This should never happen, but Typescript/eslint was complaining
         if (!superlative.callback) throw new Error("Superlative callback is not defined");
         const superlativeData = await superlative.callback(member.uuid);
         if (!superlativeData.success) throw new Error(superlativeData.message);
-
-        if (membersCalculated % 10 === 0) {
-            await resultUpdateResponse;
-        }
 
         let rankUp = null;
         let bracketCurrent = -1;
@@ -183,7 +161,23 @@ export default async function(
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
         };
-    })).catch((err) => {
+    }), async (completed, length) => {
+        if (completed % 10 === 0) {
+            await FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Superlative - Updating",
+                        description: `Fetching player data... (${completed}/${length})`,
+                        color: 0xFB9B00,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            });
+        }
+    }).catch((err) => {
         console.log(err.message);
         return {
             success: false,
