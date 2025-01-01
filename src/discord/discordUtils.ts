@@ -423,7 +423,7 @@ export async function FollowupMessage(
             console.log('FollowupMessage Retrying', retryAfter);
             if (retryAfter && !isNaN(Number(retryAfter))) {
                 await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
-                return await FollowupMessage(token, messageData);
+                return await FollowupMessage(token, messageData, attachmentURLs);
             }
         }
         console.error(data);

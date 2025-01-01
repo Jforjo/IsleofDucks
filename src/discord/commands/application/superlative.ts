@@ -162,7 +162,7 @@ export default async function(
             rankUp: rankUp
         };
     }), async (completed, length) => {
-        if (completed % 10 === 0) {
+        if (completed % 20 === 0) {
             await FollowupMessage(interaction.token, {
                 embeds: [
                     {
