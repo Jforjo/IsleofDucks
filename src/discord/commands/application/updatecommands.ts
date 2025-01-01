@@ -14,6 +14,7 @@ import { CommandData as UpdateRoles } from "./updateroles";
 import { CommandData as Recruit } from "./recruit";
 import { CommandData as BanList } from "./banlist";
 import { CommandData as InsertEmbed } from "./insertembed";
+import { CommandData as UpdateSuperlative } from "./updatesuperlative";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -64,7 +65,8 @@ export default async function(
         UpdateRoles,
         Recruit,
         BanList,
-        InsertEmbed
+        InsertEmbed,
+        UpdateSuperlative
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);

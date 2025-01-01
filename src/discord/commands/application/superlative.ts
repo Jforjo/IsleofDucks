@@ -3,6 +3,7 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { progressPromise } from "@/discord/utils";
 
 export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
@@ -146,7 +147,7 @@ export default async function(
         ]
     });
 
-    const superlativeResult = await Promise.all(guild.guild.members.map(async (member) => {
+    const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         // This should never happen, but Typescript/eslint was complaining
@@ -174,7 +175,23 @@ export default async function(
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
         };
-    })).catch((err) => {
+    }), async (completed, total) => {
+        if (completed % 20 === 0) {
+            await FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Superlative - Updating",
+                        description: `Fetching player data... (${completed}/${total})`,
+                        color: 0xFB9B00,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()                    
+                    }
+                ]
+            });
+        }
+    }).catch((err) => {
         console.log(err.message);
         return {
             success: false,

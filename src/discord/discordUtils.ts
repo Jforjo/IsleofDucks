@@ -2,6 +2,7 @@ import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
 import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
+import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -916,6 +917,54 @@ export function formatNumber(num: number, decimals = 2): string {
     return num.toFixed(decimals);
 }
 
+export interface SuperlativeCallbackSuccess {
+    success: true;
+    value: number;
+    formattedValue: string;
+    current: number;
+}
+
+export interface SuperlativeCallbackError {
+    success: false;
+    message: string;
+    ping?: boolean;
+}
+
+async function getSuperlativeValue(
+    uuid: string
+): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+    let user = null;
+    const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
+    if (rows.length > 0) user = rows[0];
+    if (user === null) return {
+        success: false,
+        message: "User not found"
+    };
+    let value = user.oldxp;
+    if (user.cataxp != null) value = user.cataxp - user.oldxp;
+    return {
+        success: true,
+        value: value,
+        formattedValue: formatNumber(value),
+        current: user.cataxp != null ? user.cataxp : user.oldxp
+    }
+}
+async function updateSuperlativeValue(
+    uuid: string,
+    func: (profile: SkyBlockProfileMember) => number | undefined
+): Promise<number | null> {
+    let value = 0;
+    const profiles = await getProfiles(uuid);
+    if (profiles.success === false) return null;
+    profiles.profiles.forEach((profile) => {
+        const temp = func(profile.members[uuid]);
+        if (temp && temp > 0) {
+            if (value < temp) value = temp;
+        }
+    });
+    return value;
+}
+
 export const IsleofDucks = {
     serverID: "823061629812867113",
     staticIDs: {
@@ -990,69 +1039,14 @@ export const IsleofDucks = {
             start: new Date("1 November 2024").getTime(),
             callback: async function(
                 uuid: string
-            ): Promise<
-                {
-                    success: false;
-                    message: string;
-                    ping?: boolean;
-                } | {
-                    success: true;
-                    value: number;
-                    formattedValue: string;
-                    current: number;
-                }
-            > {
-                let value = 0;
-                let user = null;
-                const timestamp = Date.now();
-                let updateDB = false;
-                let currentXP = 0;
-
-                const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
-                if (rows.length > 0) user = rows[0];
-                if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
-                    if (user?.oldxp != null) {
-                        value = user.cataxp - user.oldxp;
-                        currentXP = user.cataxp;
-                    } else {
-                        value = user.cataxp;
-                        currentXP = user.cataxp;
-                    }
-                } else {
-                    const profiles = await getProfiles(uuid);
-                    if (profiles.success === false) return profiles;
-                    profiles.profiles.forEach((profile) => {
-                        const temp = profile.members[uuid]?.slayer?.slayer_bosses?.enderman?.xp;
-                        if (temp && temp > 0) {
-                            if (value < temp) value = temp;
-                        }
-                    });
-                    updateDB = true;
-                    currentXP = value;
-                }
-
-                if (updateDB) {
-                    if (user == null) {
-                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
-                        value = 0;
-                    } else {
-                        if (user?.oldxp == null) {
-                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
-                            value = 0;
-                        } else {
-                            await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
-                            value -= user.oldxp;
-                        }
-                    }
-                }
-
-                return {
-                    success: true,
-                    value: value,
-                    formattedValue: formatNumber(value),
-                    current: currentXP
-                };
+            ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+                return await getSuperlativeValue(uuid);
             },
+            update: async function(uuid: string): Promise<number | null> {
+                return await updateSuperlativeValue(uuid, (profile) => {
+                    return profile?.slayer?.slayer_bosses?.enderman?.xp;
+                });
+            }
         },
         {
             id: "dec24",
@@ -1060,68 +1054,13 @@ export const IsleofDucks = {
             start: new Date("1 December 2024").getTime(),
             callback: async function(
                 uuid: string
-            ): Promise<
-                {
-                    success: false;
-                    message: string;
-                    ping?: boolean;
-                } | {
-                    success: true;
-                    value: number;
-                    formattedValue: string;
-                    current: number;
-                }
-            > {
-                let value = 0;
-                let user = null;
-                const timestamp = Date.now();
-                let updateDB = false;
-                let currentXP = 0;
-
-                const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
-                if (rows.length > 0) user = rows[0];
-                if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
-                    if (user?.oldxp != null) {
-                        value = user.cataxp - user.oldxp;
-                        currentXP = user.cataxp;
-                    } else {
-                        value = user.cataxp;
-                        currentXP = user.cataxp;
-                    }
-                } else {
-                    const profiles = await getProfiles(uuid);
-                    if (profiles.success === false) return profiles;
-                    profiles.profiles.forEach((profile) => {
-                        const temp = profile.members[uuid]?.leveling?.experience;
-                        if (temp && temp > 0) {
-                            if (value < temp) value = temp;
-                        }
-                    });
-                    updateDB = true;
-                    currentXP = value;
-                }
-
-                if (updateDB) {
-                    if (user == null) {
-                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
-                        value = 0;
-                    } else {
-                        if (user?.oldxp == null) {
-                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
-                            value = 0;
-                        } else {
-                            await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
-                            value -= user.oldxp;
-                        }
-                    }
-                }
-
-                return {
-                    success: true,
-                    value: value,
-                    formattedValue: formatNumber(value / 100),
-                    current: currentXP
-                };
+            ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+                return await getSuperlativeValue(uuid);
+            },
+            update: async function(uuid: string): Promise<number | null> {
+                return await updateSuperlativeValue(uuid, (profile) => {
+                    return profile?.leveling?.experience;
+                });
             },
             ranks: {
                 ducks: [
@@ -1168,68 +1107,13 @@ export const IsleofDucks = {
             start: new Date("1 January 2025").getTime(),
             callback: async function(
                 uuid: string
-            ): Promise<
-                {
-                    success: false;
-                    message: string;
-                    ping?: boolean;
-                } | {
-                    success: true;
-                    value: number;
-                    formattedValue: string;
-                    current: number;
-                }
-            > {
-                let value = 0;
-                let user = null;
-                const timestamp = Date.now();
-                let updateDB = false;
-                let currentXP = 0;
-
-                const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
-                if (rows.length > 0) user = rows[0];
-                if (user != null && user.lastupdated > timestamp - 1000 * 60 * 5) {
-                    if (user?.oldxp != null) {
-                        value = user.cataxp - user.oldxp;
-                        currentXP = user.cataxp;
-                    } else {
-                        value = user.cataxp;
-                        currentXP = user.cataxp;
-                    }
-                } else {
-                    const profiles = await getProfiles(uuid);
-                    if (profiles.success === false) return profiles;
-                    profiles.profiles.forEach((profile) => {
-                        const temp = profile.members[uuid]?.bestiary?.milestone?.last_claimed_milestone;
-                        if (temp && temp > 0) {
-                            if (value < temp) value = temp;
-                        }
-                    });
-                    updateDB = true;
-                    currentXP = value;
-                }
-
-                if (updateDB) {
-                    if (user == null) {
-                        await sql`INSERT INTO users(uuid, cataxp, oldxp, lastupdated) VALUES (${uuid}, ${value}, ${value}, ${timestamp})`;
-                        value = 0;
-                    } else {
-                        if (user?.oldxp == null) {
-                            await sql`UPDATE users SET (cataxp, oldxp, lastupdated) = (${value}, ${value}, ${timestamp}) WHERE uuid = ${uuid}`;
-                            value = 0;
-                        } else {
-                            await sql`UPDATE users SET (cataxp, lastupdated) = (${value}, ${timestamp}) WHERE uuid = ${uuid}`;
-                            value -= user.oldxp;
-                        }
-                    }
-                }
-
-                return {
-                    success: true,
-                    value: value,
-                    formattedValue: value.toString(),
-                    current: currentXP
-                };
+            ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+                return await getSuperlativeValue(uuid);
+            },
+            update: async function(uuid: string): Promise<number | null> {
+                return await updateSuperlativeValue(uuid, (profile) => {
+                    return profile?.bestiary?.milestone?.last_claimed_milestone;
+                });
             },
             ranks: {
                 ducks: [
@@ -1293,18 +1177,10 @@ export interface Superlative {
     start: number;
     callback?: (
         uuid: string
-    ) => Promise<
-        {
-            success: false;
-            message: string;
-            ping?: boolean;
-        } | {
-            success: true;
-            value: number;
-            formattedValue: string;
-            current: number;
-        }
-    >;
+    ) => Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess>;
+    update?: (
+        uuid: string
+    ) => Promise<number | null>;
     ranks?: {
         ducks: {
             id: string;
@@ -1314,7 +1190,7 @@ export interface Superlative {
             id: string;
             requirement: number;
         }[],
-    }
+    };
 }
 export function encodeCarrierData(data: {
     f1_4: boolean;
