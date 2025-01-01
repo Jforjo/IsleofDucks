@@ -164,7 +164,20 @@ export default async function(
             { status: 400 }
         );
     }
-
+    
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Updating",
+                description: `Fetching player data... (0/${guild.guild.members.length})`,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
     const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
@@ -196,7 +209,7 @@ export default async function(
             rankUp: rankUp
         };
     }), async (completed, length) => {
-        if (completed % 20 === 0) {
+        if (completed % 25 === 0) {
             await FollowupMessage(interaction.token, {
                 embeds: [
                     {
