@@ -132,13 +132,36 @@ export default async function(
         );
     }
 
-    const resultPromise = Promise.all(guild.guild.members.map(async (member) => {
+    let membersCalculated = 0;
+    let result = await Promise.all(guild.guild.members.map(async (member) => {
+        membersCalculated++;
+        let resultUpdateResponse = null;
+        if (membersCalculated % 10 === 0) {
+            resultUpdateResponse = FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Superlative - Updating",
+                        description: `Fetching player data... (${membersCalculated}/${guild.guild.members.length})`,
+                        color: 0xFB9B00,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            });
+        }
+
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         // This should never happen, but Typescript/eslint was complaining
         if (!superlative.callback) throw new Error("Superlative callback is not defined");
         const superlativeData = await superlative.callback(member.uuid);
         if (!superlativeData.success) throw new Error(superlativeData.message);
+
+        if (membersCalculated % 10 === 0) {
+            await resultUpdateResponse;
+        }
 
         let rankUp = null;
         let bracketCurrent = -1;
@@ -168,21 +191,6 @@ export default async function(
             ping: err.message === "Invalid API key"
         };
     });
-    const resultUpdateResponse = FollowupMessage(interaction.token, {
-        embeds: [
-            {
-                title: "Superlative - Updating",
-                description: "Fetching player data...",
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ]
-    });
-    let result = await resultPromise;
-    await resultUpdateResponse;
     
     if ("success" in result && result.success === false) {
         let content = undefined;
