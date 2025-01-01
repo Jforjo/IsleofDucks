@@ -427,6 +427,8 @@ export async function FollowupMessage(
         }
         console.error(data);
         console.error(JSON.stringify(data));
+        console.error("res", res);
+        console.error("res", JSON.stringify(res));
     }
 
     return data;
