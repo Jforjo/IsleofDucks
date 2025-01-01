@@ -132,7 +132,7 @@ export default async function(
         );
     }
 
-    let resultPromise = Promise.all(guild.guild.members.map(async (member) => {
+    const resultPromise = Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         // This should never happen, but Typescript/eslint was complaining
