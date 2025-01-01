@@ -420,6 +420,7 @@ export async function FollowupMessage(
     if (!res.ok) {
         if (res.status === 429) {
             const retryAfter = res.headers.get('retry-after');
+            console.log('FollowupMessage Retrying', retryAfter);
             if (retryAfter && !isNaN(Number(retryAfter))) {
                 await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
                 return await FollowupMessage(token, messageData);
