@@ -146,13 +146,63 @@ export default async function(
             }
         ]
     });
-    const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
+    // const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
+    let result = [] as {
+        uuid: string;
+        name: string;
+        value: number;
+        formattedValue: string;
+        rankUp: string | null;
+    }[];
+    let error = null as null | {
+        success: false;
+        message: string;
+        ping: boolean;
+    }
+    guild.guild.members.forEach(async (member, index) => {
+        if (index % 25 === 0) {
+            await FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Superlative - Updating",
+                        description: `Fetching player data... (${index}/${guild.guild.members.length})`,
+                        color: 0xFB9B00,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            });
+        }
+
         const mojang = await getUsernameOrUUID(member.uuid);
-        if (!mojang.success) throw new Error(mojang.message);
+        if (!mojang.success) {
+            error = {
+                success: false,
+                message: mojang.message,
+                ping: mojang.message === "Invalid API key"
+            };
+            return;
+        }
         // This should never happen, but Typescript/eslint was complaining
-        if (!superlative.callback) throw new Error("Superlative callback is not defined");
+        if (!superlative.callback) {
+            error = {
+                success: false,
+                message: "Superlative callback is not defined",
+                ping: false
+            };
+            return;
+        }
         const superlativeData = await superlative.callback(member.uuid);
-        if (!superlativeData.success) throw new Error(superlativeData.message);
+        if (!superlativeData.success) {
+            error = {
+                success: false,
+                message: superlativeData.message,
+                ping: superlativeData.message === "Invalid API key"
+            };
+            return;
+        }
 
         let rankUp = null;
         let bracketCurrent = -1;
@@ -167,49 +217,24 @@ export default async function(
             if (bracketShould < bracketCurrent) rankUp = Emojis.down;
         }
 
-        return {
+        result.push({
             uuid: member.uuid,
             name: mojang.name,
             value: superlativeData.value,
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
-        };
-    }), async (completed, length) => {
-        if (completed % 25 === 0) {
-            await FollowupMessage(interaction.token, {
-                embeds: [
-                    {
-                        title: "Superlative - Updating",
-                        description: `Fetching player data... (${completed}/${length})`,
-                        color: 0xFB9B00,
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            });
-        }
-        console.log("Completed:", completed);
-    }).catch((err) => {
-        console.log(err.message);
-        return {
-            success: false,
-            message: err.message,
-            ping: err.message === "Invalid API key"
-        };
+        });
     });
-    console.log("After progressPromise");
     
-    if ("success" in superlativeResult && superlativeResult.success === false) {
+    if (error && error.success === false) {
         let content = undefined;
-        if (superlativeResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        if (error.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: superlativeResult.message,
+                    description: error.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -219,18 +244,18 @@ export default async function(
             ],
         });
         return NextResponse.json(
-            { success: false, error: superlativeResult.message },
+            { success: false, error: error.message },
             { status: 400 }
         );
     }
     
-    let result = superlativeResult as {
-        uuid: string;
-        name: string;
-        value: number;
-        formattedValue: string;
-        rankUp: string | null;
-    }[];
+    // let result = superlativeResult as {
+    //     uuid: string;
+    //     name: string;
+    //     value: number;
+    //     formattedValue: string;
+    //     rankUp: string | null;
+    // }[];
     // b - a = bigger number first
     result.sort((a, b) => b.value - a.value);
     result = result.map((member, index) => {
