@@ -57,10 +57,24 @@ export default async function(
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    const superlative = await getSuperlative();
+    const superlativePromise = getSuperlative();
+    const superlativeUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Updating",
+                description: "Fetching current superlative...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    const superlative = await superlativePromise;
+    await superlativeUpdateResponse;
     if (superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
         await FollowupMessage(interaction.token, {
-            content: undefined,
             embeds: [
                 {
                     title: "Superlative - None",
@@ -79,7 +93,22 @@ export default async function(
         );
     }
 
-    const guild = await getGuildData("Isle of Ducks");  
+    const guildPromise = getGuildData("Isle of Ducks");
+    const guildUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Updating",
+                description: "Fetching Isle of Ducks guild...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    const guild = await guildPromise;
+    await guildUpdateResponse;
     if (!guild.success) {
         let content = undefined;
         if (guild?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
@@ -103,7 +132,7 @@ export default async function(
         );
     }
 
-    let result = await Promise.all(guild.guild.members.map(async (member) => {
+    let resultPromise = Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         // This should never happen, but Typescript/eslint was complaining
@@ -139,6 +168,21 @@ export default async function(
             ping: err.message === "Invalid API key"
         };
     });
+    const resultUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Updating",
+                description: "Fetching player data...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    let result = await resultPromise;
+    await resultUpdateResponse;
     
     if ("success" in result && result.success === false) {
         let content = undefined;
