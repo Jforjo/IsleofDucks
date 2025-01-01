@@ -190,6 +190,7 @@ export default async function(
                 ]
             });
         }
+        console.log("Completed:", completed);
     }).catch((err) => {
         console.log(err.message);
         return {
@@ -198,6 +199,7 @@ export default async function(
             ping: err.message === "Invalid API key"
         };
     });
+    console.log("After progressPromise");
     
     if ("success" in superlativeResult && superlativeResult.success === false) {
         let content = undefined;
