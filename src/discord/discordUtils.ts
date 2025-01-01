@@ -1161,7 +1161,7 @@ export const IsleofDucks = {
         },
         {
             id: "jan25",
-            title: "Bestiary Milestone",
+            title: "Claimed Bestiary Milestone",
             start: new Date("1 January 2025").getTime(),
             callback: async function(
                 uuid: string
