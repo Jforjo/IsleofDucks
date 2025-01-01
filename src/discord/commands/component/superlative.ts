@@ -3,6 +3,7 @@ import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonSty
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { progressPromise } from "@/discord/utils";
 
 export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
@@ -84,7 +85,22 @@ export default async function(
         ]
     })
 
-    const superlative = await getSuperlative();
+    const superlativePromise = getSuperlative();
+    const superlativeUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Updating",
+                description: "Fetching current superlative...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    const superlative = await superlativePromise;
+    await superlativeUpdateResponse;
     if (superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
         await FollowupMessage(interaction.token, {
             content: undefined,
@@ -110,7 +126,22 @@ export default async function(
     const guildName = buttonID === "ducks" ? "Isle of Ducks" :
         buttonID === "ducklings" ? "Isle of Ducklings" :
         "Isle of Ducks";
-    const guild = await getGuildData(guildName);  
+    const guildPromise = getGuildData(guildName);
+    const guildUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Updating",
+                description: `Fetching ${guildName} guild...`,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    const guild = await guildPromise;
+    await guildUpdateResponse; 
     if (!guild.success) {
         let content = undefined;
         if (guild?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
@@ -134,7 +165,7 @@ export default async function(
         );
     }
 
-    let result = await Promise.all(guild.guild.members.map(async (member) => {
+    const superlativeResult = await progressPromise(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         // THis should never happen, but Typescript/eslint was complaining
@@ -164,7 +195,23 @@ export default async function(
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
         };
-    })).catch((err) => {
+    }), async (completed, length) => {
+        if (completed % 10 === 0) {
+            await FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Superlative - Updating",
+                        description: `Fetching player data... (${completed}/${length})`,
+                        color: 0xFB9B00,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            });
+        }
+    }).catch((err) => {
         console.log(err.message);
         return {
             success: false,
@@ -173,15 +220,15 @@ export default async function(
         };
     });
     
-    if ("success" in result && result.success === false) {
+    if ("success" in superlativeResult && superlativeResult.success === false) {
         let content = undefined;
-        if (result.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        if (superlativeResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
             content: content,
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: result.message,
+                    description: superlativeResult.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -191,13 +238,12 @@ export default async function(
             ],
         });
         return NextResponse.json(
-            { success: false, error: result.message },
+            { success: false, error: superlativeResult.message },
             { status: 400 }
         );
     }
     
-    
-    result = result as {
+    let result = superlativeResult as {
         uuid: string;
         name: string;
         value: number;

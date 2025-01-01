@@ -209,7 +209,6 @@ export default async function(
         );
     }
     
-    
     let result = superlativeResult as {
         uuid: string;
         name: string;
