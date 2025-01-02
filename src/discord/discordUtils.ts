@@ -1127,7 +1127,7 @@ export const IsleofDucks = {
             callback: async function(
                 uuid: string
             ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-                return await getSuperlativeValue(uuid, (value) => formatNumber(value, 0));
+                return await getSuperlativeValue(uuid, (value) => value.toString());
             },
             update: async function(uuid: string): Promise<number | {
                 success: false;
