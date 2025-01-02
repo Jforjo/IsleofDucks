@@ -168,7 +168,7 @@ export default async function(
         embeds: [
             {
                 title: "Superlative - Updating",
-                description: `Fetching player data... (0/${guild.guild.members.length})`,
+                description: `Fetching player data...`,
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
