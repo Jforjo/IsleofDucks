@@ -257,38 +257,59 @@ export async function updateGuildSuperlative(
         message: guild.message
     }
 
-    const result = await Promise.all(guild.guild.members.map(async (member, index) => {
+    // const result = await Promise.all(guild.guild.members.map(async (member, index) => {
+    //     if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updating superlative for`, member.uuid);
+    //     // This should never happen, but Typescript/eslint was complaining
+    //     if (!superlative.update) throw new Error("Superlative update function is not defined");
+    //     const updated = await superlative.update(member.uuid);
+    //     if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updated superlative for ${member.uuid} to ${updated}`);
+
+    //     const { rows } = await sql`SELECT * FROM users WHERE uuid = ${member.uuid}`;
+    //     if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) SQL statement returned`, JSON.stringify(rows));
+    //     if (rows.length === 0) {
+    //         await sql`INSERT INTO users(uuid, oldxp, lastupdated) VALUES (${member.uuid}, ${updated}, ${Date.now()})`;
+    //         return;
+    //     }
+    //     if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updated superlative for`, member.uuid);
+
+    //     await sql`UPDATE users SET (cataxp, lastupdated) = (${updated}, ${Date.now()}) WHERE uuid = ${member.uuid}`;
+    // })).catch((error) => {
+    //     return {
+    //         success: false,
+    //         message: error.message,
+    //         error: JSON.stringify(error)
+    //     }
+    // });
+
+    guild.guild.members.forEach(async (member, index) => {
         if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updating superlative for`, member.uuid);
-        // This should never happen, but Typescript/eslint was complaining
-        if (!superlative.update) throw new Error("Superlative update function is not defined");
-        const updated = await superlative.update(member.uuid);
-        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updated superlative for ${member.uuid} to ${updated}`);
 
         const { rows } = await sql`SELECT * FROM users WHERE uuid = ${member.uuid}`;
         if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) SQL statement returned`, JSON.stringify(rows));
+        if (rows.length !== 0 && rows[0].lastUpdated > Date.now() - 1000 * 60 * 60) return;
+
+        // This should never happen, but Typescript/eslint was complaining
+        if (!superlative.update) return;
+        const updated = await superlative.update(member.uuid);
+        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Fetched superlative value for ${member.uuid}: ${updated}`);
+        
         if (rows.length === 0) {
             await sql`INSERT INTO users(uuid, oldxp, lastupdated) VALUES (${member.uuid}, ${updated}, ${Date.now()})`;
             return;
         }
-        if (moreLogs) console.log(`(${index}/${guild.guild.members.length})Updated superlative for`, member.uuid);
+        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updated superlative for`, member.uuid);
 
         await sql`UPDATE users SET (cataxp, lastupdated) = (${updated}, ${Date.now()}) WHERE uuid = ${member.uuid}`;
-    })).catch((error) => {
-        return {
-            success: false,
-            message: error.message,
-            error: JSON.stringify(error)
-        }
     });
 
-    if ("success" in result && !result.success) {
-        console.log(`Superlative update for ${guildName} failed`);
-        console.log(result.error);
-        return {
-            success: false,
-            message: result.message
-        }
-    }
+    // if ("success" in result && !result.success) {
+    //     console.log(`Superlative update for ${guildName} failed`);
+    //     console.log(result.error);
+    //     return {
+    //         success: false,
+    //         message: result.message
+    //     }
+    // }
 
     console.log(`Superlative update for ${guildName} complete`);
     return {

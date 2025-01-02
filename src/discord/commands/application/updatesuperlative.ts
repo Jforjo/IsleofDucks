@@ -23,31 +23,6 @@ export default async function(
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    const { rows } = await sql`SELECT lastUpdated FROM users ORDER BY lastUpdated DESC LIMIT 1`;
-    // Update once per hour
-    if (rows.length > 0 && rows[0].lastUpdated && rows[0].lastUpdated > timestamp.getTime() - 60 * 60 * 1000) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Failed to update superlative data",
-                    description: [
-                        "The last update was too recent.",
-                        `Try again <t:${Math.floor(rows[0].lastUpdated / 1000) + ( 60 * 60 )}:R>`
-                    ].join("\n"),
-                    color: 0xFB9B00,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ]
-        });
-        return NextResponse.json(
-            { success: false, error: "The last update was too recent." },
-            { status: 400 }
-        )
-    }
-
     await FollowupMessage(interaction.token, {
         embeds: [
             {
@@ -57,8 +32,9 @@ export default async function(
                     {
                         name: "Has the data been updated yet?",
                         value: [
-                            "This embed will change once it has.",
-                            `If it's still here <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then try running the command again.`
+                            "This embed will probably not change once it has.",
+                            `If it's still here <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then try running the command again.`,
+                            "It may need to be ran about 4 times."
                         ].join("\n")
                     }
                 ],
@@ -104,8 +80,9 @@ export default async function(
                     {
                         name: "Has the data been updated yet?",
                         value: [
-                            "This embed will change once it has.",
-                            `If it's still here <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then try running the command again.`
+                            "This embed will probably not change once it has.",
+                            `If it's still here <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then try running the command again.`,
+                            "It may need to be ran about 4 times."
                         ].join("\n")
                     }
                 ],
