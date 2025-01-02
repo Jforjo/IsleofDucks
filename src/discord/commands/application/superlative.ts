@@ -61,7 +61,7 @@ export default async function(
     const superlativeUpdateResponse = FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: "Superlative - Updating",
+                title: "Superlative - Fetching",
                 description: "Fetching current superlative...",
                 color: 0xFB9B00,
                 footer: {
@@ -97,7 +97,7 @@ export default async function(
     const guildUpdateResponse = FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: "Superlative - Updating",
+                title: "Superlative - Fetching",
                 description: "Fetching Isle of Ducks guild...",
                 color: 0xFB9B00,
                 footer: {
@@ -138,7 +138,7 @@ export default async function(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: "Superlative - Updating",
+                title: "Superlative - Fetching",
                 description: `Fetching player data...`,
                 color: 0xFB9B00,
                 footer: {
