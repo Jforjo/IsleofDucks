@@ -173,7 +173,10 @@ export default async function(
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: profileAPIResponse.message,
+                    description: profileAPIResponse.message === "Key throttle" && typeof profileAPIResponse.retry === "number" ? [
+                        profileAPIResponse.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + profileAPIResponse.retry ) / 1000)}:R>`
+                    ].join("\n") : profileAPIResponse.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -203,7 +206,10 @@ export default async function(
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: guildResponse.message,
+                    description: guildResponse.message === "Key throttle" && typeof guildResponse.retry === "number" ? [
+                        guildResponse.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + guildResponse.retry ) / 1000)}:R>`
+                    ].join("\n") : guildResponse.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,

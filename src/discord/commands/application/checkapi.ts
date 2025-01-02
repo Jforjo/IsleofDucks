@@ -45,6 +45,7 @@ async function checkAPI(
         status?: number;
         message: string;
         ping?: boolean;
+        retry?: number | null;
     } | {
         success: true;
         status: number;
@@ -70,6 +71,8 @@ async function checkAPI(
             'API-Key': process.env.HYPIXEL_API_KEY
         }
     });
+    const retryAfter = res.headers.get('RateLimit-Reset');
+
     let data;
     try {
         data = await res.json() as SkyblockProfilesResponse;
@@ -88,7 +91,8 @@ async function checkAPI(
                 success: false,
                 status: res.status,
                 message: typeof data.cause === "string" ? data.cause : "Unknown error",
-                ping: data.cause === "Invalid API key"
+                ping: data.cause === "Invalid API key",
+                retry: retryAfter ? parseInt(retryAfter) * 1000 : null
             };
         }
         return {
@@ -224,7 +228,10 @@ export default async function(
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: profileAPIResponse.message,
+                    description: profileAPIResponse.message === "Key throttle" && typeof profileAPIResponse.retry === "number" ? [
+                        profileAPIResponse.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + profileAPIResponse.retry ) / 1000)}:R>`
+                    ].join("\n") : profileAPIResponse.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,

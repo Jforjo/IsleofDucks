@@ -30,7 +30,10 @@ export default async function(
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: guildResponse.message,
+                    description: guildResponse.message === "Key throttle" && typeof guildResponse.retry === "number" ? [
+                        guildResponse.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + guildResponse.retry ) / 1000)}:R>`
+                    ].join("\n") : guildResponse.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
