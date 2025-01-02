@@ -33,7 +33,7 @@ export default async function(
                         value: [
                             "This embed will probably not change once it has.",
                             `If it's still here <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then try running the command again.`,
-                            "It may need to be ran about 4 times."
+                            "It may need to be ran twice."
                         ].join("\n")
                     }
                 ],
@@ -84,7 +84,7 @@ export default async function(
                         value: [
                             "This embed will probably not change once it has.",
                             `If it's still here <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then try running the command again.`,
-                            "It may need to be ran about 4 times."
+                            "It may need to be ran twice."
                         ].join("\n")
                     }
                 ],

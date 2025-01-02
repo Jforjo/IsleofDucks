@@ -280,11 +280,11 @@ export async function updateGuildSuperlative(
     //     }
     // });
 
-    for (const [index, member] of guild.guild.members.entries()) {
+    for (const [_, member] of guild.guild.members.entries()) {
 
-        const { rows } = await sql`SELECT lastUpdated FROM users WHERE uuid = ${member.uuid}`;
-        console.log(`(${index}/${guild.guild.members.length}) SQL statement returned. Hour: ${Date.now() - 1000 * 60 * 60}. Continue?: ${rows.length !== 0 && rows[0].lastUpdated > Date.now() - 1000 * 60 * 60}. Rows: ${JSON.stringify(rows)}`);
-        if (rows.length !== 0 && rows[0].lastUpdated > Date.now() - 1000 * 60 * 60) continue;
+        const { rows } = await sql`SELECT lastupdated FROM users WHERE uuid = ${member.uuid}`;
+        // console.log(`(${index}/${guild.guild.members.length}) SQL statement returned. Hour: ${Date.now() - 1000 * 60 * 60}. Continue?: ${rows.length !== 0 && rows[0].lastUpdated > Date.now() - 1000 * 60 * 60}. Rows: ${JSON.stringify(rows)}`);
+        if (rows.length !== 0 && rows[0].lastupdated > Date.now() - 1000 * 60 * 60) continue;
 
         // This should never happen, but Typescript/eslint was complaining
         if (!superlative.update) return {
