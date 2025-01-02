@@ -236,7 +236,8 @@ export function progressPromise(promises: Promise<unknown>[], tickCallback: (pro
     return Promise.all(promises.map(tick));
 }
 export async function updateGuildSuperlative(
-    guildName: string
+    guildName: string,
+    moreLogs = false
 ): Promise<
     {
         success: false;
@@ -256,16 +257,20 @@ export async function updateGuildSuperlative(
         message: guild.message
     }
 
-    const result = await Promise.all(guild.guild.members.map(async (member) => {
+    const result = await Promise.all(guild.guild.members.map(async (member, index) => {
+        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updating superlative for`, member.uuid);
         // This should never happen, but Typescript/eslint was complaining
         if (!superlative.update) throw new Error("Superlative update function is not defined");
         const updated = await superlative.update(member.uuid);
+        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updated superlative for ${member.uuid} to ${updated}`);
 
         const { rows } = await sql`SELECT * FROM users WHERE uuid = ${member.uuid}`;
+        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) SQL statement returned`, JSON.stringify(rows));
         if (rows.length === 0) {
             await sql`INSERT INTO users(uuid, oldxp, lastupdated) VALUES (${member.uuid}, ${updated}, ${Date.now()})`;
             return;
         }
+        if (moreLogs) console.log(`(${index}/${guild.guild.members.length})Updated superlative for`, member.uuid);
 
         await sql`UPDATE users SET (cataxp, lastupdated) = (${updated}, ${Date.now()}) WHERE uuid = ${member.uuid}`;
     })).catch((error) => {

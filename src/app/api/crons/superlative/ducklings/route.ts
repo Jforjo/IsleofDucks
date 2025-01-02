@@ -9,7 +9,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
     
-    const resultDucks = await updateGuildSuperlative("Isle of Ducklings");
+    const resultDucks = await updateGuildSuperlative("Isle of Ducklings", true);
     if (!resultDucks.success) return new Response(resultDucks.message, { status: 400 });
 
     return Response.json({ success: true });

@@ -9,8 +9,8 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
     
-    const resultDucksPromise = updateGuildSuperlative("Isle of Ducks");
-    const resultDucklingsPromise = updateGuildSuperlative("Isle of Ducklings");
+    const resultDucksPromise = updateGuildSuperlative("Isle of Ducks", true);
+    const resultDucklingsPromise = updateGuildSuperlative("Isle of Ducklings", true);
 
     const resultDucks = await resultDucksPromise;
     const resultDucklings = await resultDucklingsPromise;

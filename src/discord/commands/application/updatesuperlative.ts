@@ -71,7 +71,7 @@ export default async function(
         ]
     });
 
-    const ducks = await updateGuildSuperlative("Isle of Ducks");
+    const ducks = await updateGuildSuperlative("Isle of Ducks", true);
     if (!ducks.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
@@ -118,7 +118,7 @@ export default async function(
         ]
     });
 
-    const ducklings = await updateGuildSuperlative("Isle of Ducklings");
+    const ducklings = await updateGuildSuperlative("Isle of Ducklings", true);
     if (!ducklings.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
