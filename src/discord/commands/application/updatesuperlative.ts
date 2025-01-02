@@ -52,7 +52,10 @@ export default async function(
             embeds: [
                 {
                     title: "Something went wrong",
-                    description: ducks.message,
+                    description: ducks.message === "Key throttle" && typeof ducks.retry === "number" ? [
+                        ducks.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + ducks.retry ) / 1000)}:R>`
+                    ].join("\n") : ducks.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -100,7 +103,10 @@ export default async function(
             embeds: [
                 {
                     title: "Something went wrong",
-                    description: ducklings.message,
+                    description: ducklings.message === "Key throttle" && typeof ducklings.retry === "number" ? [
+                        ducklings.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + ducklings.retry ) / 1000)}:R>`
+                    ].join("\n") : ducklings.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,

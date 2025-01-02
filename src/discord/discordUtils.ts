@@ -953,10 +953,16 @@ async function getSuperlativeValue(
 async function updateSuperlativeValue(
     uuid: string,
     func: (profile: SkyBlockProfileMember) => number | undefined
-): Promise<number | null> {
+): Promise<number | {
+    success: false;
+    status?: number;
+    message: string;
+    ping?: boolean;
+    retry?: number | null;
+}> {
     let value = 0;
     const profiles = await getProfiles(uuid);
-    if (profiles.success === false) return null;
+    if (profiles.success === false) return profiles;
     profiles.profiles.forEach((profile) => {
         const temp = func(profile.members[uuid]);
         if (temp && temp > 0) {
@@ -1043,7 +1049,13 @@ export const IsleofDucks = {
             ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
                 return await getSuperlativeValue(uuid, (value) => formatNumber(value));
             },
-            update: async function(uuid: string): Promise<number | null> {
+            update: async function(uuid: string): Promise<number | {
+                success: false;
+                status?: number;
+                message: string;
+                ping?: boolean;
+                retry?: number | null;
+            }> {
                 return await updateSuperlativeValue(uuid, (profile) => {
                     return profile?.slayer?.slayer_bosses?.enderman?.xp;
                 });
@@ -1058,7 +1070,13 @@ export const IsleofDucks = {
             ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
                 return await getSuperlativeValue(uuid, (value) => formatNumber(value));
             },
-            update: async function(uuid: string): Promise<number | null> {
+            update: async function(uuid: string): Promise<number | {
+                success: false;
+                status?: number;
+                message: string;
+                ping?: boolean;
+                retry?: number | null;
+            }> {
                 return await updateSuperlativeValue(uuid, (profile) => {
                     return profile?.leveling?.experience;
                 });
@@ -1111,7 +1129,13 @@ export const IsleofDucks = {
             ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
                 return await getSuperlativeValue(uuid, (value) => formatNumber(value, 0));
             },
-            update: async function(uuid: string): Promise<number | null> {
+            update: async function(uuid: string): Promise<number | {
+                success: false;
+                status?: number;
+                message: string;
+                ping?: boolean;
+                retry?: number | null;
+            }> {
                 return await updateSuperlativeValue(uuid, (profile) => {
                     return profile?.bestiary?.milestone?.last_claimed_milestone;
                 });
@@ -1181,7 +1205,13 @@ export interface Superlative {
     ) => Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess>;
     update?: (
         uuid: string
-    ) => Promise<number | null>;
+    ) => Promise<number | {
+        success: false;
+        status?: number;
+        message: string;
+        ping?: boolean;
+        retry?: number | null;
+    }>;
     ranks?: {
         ducks: {
             id: string;

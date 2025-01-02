@@ -126,18 +126,6 @@ export function addDashesToUUID(uuid: string): string {
         uuid.slice(20);
 }
 
-/**
- * Fetches SkyBlock profiles from the Hypixel API for a given UUID.
- * 
- * @param uuid - The UUID of the Minecraft player whose profiles are to be retrieved.
- * @returns A promise that resolves to an object:
- *          - If successful, contains a list of SkyBlock profiles.
- *          - If unsuccessful, contains an error message and optional ping flag.
- * 
- * The function requires the HYPIXEL_API_KEY environment variable to be set.
- * It returns an error message if the API key is missing or if the response from
- * Hypixel is not successful.
- */
 export async function getProfiles(
     uuid: string
 ): Promise<
@@ -146,6 +134,7 @@ export async function getProfiles(
         status?: number;
         message: string;
         ping?: boolean;
+        retry?: number | null;
     } | {
         success: true;
         status: number;
@@ -165,6 +154,8 @@ export async function getProfiles(
             'API-Key': process.env.HYPIXEL_API_KEY
         }
     });
+    const retryAfter = res.headers.get('RateLimit-Reset');
+
     let data;
     try {
         data = await res.json() as SkyblockProfilesResponse;
@@ -183,7 +174,8 @@ export async function getProfiles(
                 success: false,
                 status: res.status,
                 message: typeof data.cause === "string" ? data.cause : "Unknown error",
-                ping: data.cause === "Invalid API key"
+                ping: data.cause === "Invalid API key",
+                retry: retryAfter ? parseInt(retryAfter) * 1000 : null
             };
         }
         return {
@@ -246,18 +238,7 @@ export function calcCataLevel(cataxp: number): number {
     }
     return catalvl;
 }
-/**
- * Fetches guild data from the Hypixel API based on the guild name.
- * 
- * @param name - The name of the guild to retrieve data for.
- * @returns A promise that resolves to an object indicating the success status.
- *          - If successful, contains the guild object.
- *          - If unsuccessful, contains an error message and optional ping flag.
- * 
- * The function requires the HYPIXEL_API_KEY environment variable to be set.
- * It returns an error message if the API key is missing or if the response from
- * Hypixel is not successful.
- */
+
 export async function getGuildData(
     name: string
 ): Promise<
@@ -266,6 +247,7 @@ export async function getGuildData(
         status?: number;
         message: string;
         ping?: boolean;
+        retry?: number | null;
     } | {
         success: true;
         status: number;
@@ -285,6 +267,8 @@ export async function getGuildData(
             'API-Key': process.env.HYPIXEL_API_KEY
         }
     });
+    const retryAfter = res.headers.get('RateLimit-Reset');
+
     let data;
     try {
         data = await res.json() as GuildResponse;
@@ -303,7 +287,8 @@ export async function getGuildData(
                 success: false,
                 status: res.status,
                 message: typeof data.cause === "string" ? data.cause : "Unknown error",
-                ping: data.cause === "Invalid API key"
+                ping: data.cause === "Invalid API key",
+                retry: retryAfter ? parseInt(retryAfter) * 1000 : null
             };
         }
         return {
@@ -334,6 +319,7 @@ export async function isPlayerInGuild(
         status?: number;
         message: string;
         ping?: boolean;
+        retry?: number | null;
     } | {
         success: true;
         status: number;
@@ -358,6 +344,8 @@ export async function isPlayerInGuild(
             'API-Key': process.env.HYPIXEL_API_KEY
         }
     });
+    const retryAfter = res.headers.get('RateLimit-Reset');
+    
     let data;
     try {
         data = await res.json() as GuildResponse;
@@ -376,7 +364,8 @@ export async function isPlayerInGuild(
                 success: false,
                 status: res.status,
                 message: typeof data.cause === "string" ? data.cause : "Unknown error",
-                ping: data.cause === "Invalid API key"
+                ping: data.cause === "Invalid API key",
+                retry: retryAfter ? parseInt(retryAfter) * 1000 : null
             };
         }
         return {

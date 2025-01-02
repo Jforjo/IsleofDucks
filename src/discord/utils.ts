@@ -241,7 +241,10 @@ export async function updateGuildSuperlative(
 ): Promise<
     {
         success: false;
+        status?: number;
         message: string;
+        ping?: boolean;
+        retry?: number | null;
     } | {
         success: true;
     }
@@ -252,10 +255,7 @@ export async function updateGuildSuperlative(
     };
 
     const guild = await getGuildData(guildName);
-    if (!guild.success) return {
-        success: false,
-        message: guild.message
-    }
+    if (!guild.success) return guild;
 
     // const result = await Promise.all(guild.guild.members.map(async (member, index) => {
     //     if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updating superlative for`, member.uuid);
@@ -285,7 +285,6 @@ export async function updateGuildSuperlative(
         if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Updating superlative for`, member.uuid);
 
         const { rows } = await sql`SELECT * FROM users WHERE uuid = ${member.uuid}`;
-        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) SQL statement returned`, JSON.stringify(rows));
         if (rows.length !== 0 && rows[0].lastUpdated > Date.now() - 1000 * 60 * 60) continue;
 
         // This should never happen, but Typescript/eslint was complaining
@@ -294,7 +293,9 @@ export async function updateGuildSuperlative(
             message: "Superlative update function is not defined"
         };
         const updated = await superlative.update(member.uuid);
-        if (moreLogs) console.log(`(${index}/${guild.guild.members.length}) Fetched superlative value for ${member.uuid}: ${updated}`);
+        if (typeof updated === "object" && "success" in updated && !updated.success) return updated;
+        // Shouldn't happen
+        if (typeof updated !== "number") continue;
 
         if (rows.length === 0) {
             await sql`INSERT INTO users(uuid, oldxp, lastupdated) VALUES (${member.uuid}, ${updated}, ${Date.now()})`;
