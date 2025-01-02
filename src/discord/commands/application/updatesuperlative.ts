@@ -1,7 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { sql } from "@vercel/postgres";
 import { updateGuildSuperlative } from "@/discord/utils";
 
 
