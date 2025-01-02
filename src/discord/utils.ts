@@ -235,12 +235,26 @@ export function progressPromise(promises: Promise<unknown>[], tickCallback: (pro
 
     return Promise.all(promises.map(tick));
 }
-export async function updateGuildSuperlative(guildName: string): Promise<Response> {
+export async function updateGuildSuperlative(
+    guildName: string
+): Promise<
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+    }
+> {
     const superlative = await getSuperlative();
-    if (superlative == null) return Response.json({ success: true });
+    if (superlative == null) return {
+        success: true
+    };
 
     const guild = await getGuildData(guildName);
-    if (!guild.success) return new Response(guild.message, { status: 400 });
+    if (!guild.success) return {
+        success: false,
+        message: guild.message
+    }
 
     const result = await Promise.all(guild.guild.members.map(async (member) => {
         // This should never happen, but Typescript/eslint was complaining
@@ -262,8 +276,17 @@ export async function updateGuildSuperlative(guildName: string): Promise<Respons
         }
     });
 
-    if ("success" in result && !result.success) return new Response(`Error: ${result.error}`, { status: 400 });
+    if ("success" in result && !result.success) {
+        console.log(`Superlative update for ${guildName} failed`);
+        console.log(result.error);
+        return {
+            success: false,
+            message: result.message
+        }
+    }
 
     console.log(`Superlative update for ${guildName} complete`);
-    return Response.json({ success: true });
+    return {
+        success: true
+    };
 }

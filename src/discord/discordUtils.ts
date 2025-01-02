@@ -931,7 +931,8 @@ export interface SuperlativeCallbackError {
 }
 
 async function getSuperlativeValue(
-    uuid: string
+    uuid: string,
+    formatValue: (value: number) => string
 ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
     let user = null;
     const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
@@ -945,7 +946,7 @@ async function getSuperlativeValue(
     return {
         success: true,
         value: value,
-        formattedValue: formatNumber(value),
+        formattedValue: formatValue(value),
         current: user.cataxp != null ? user.cataxp : user.oldxp
     }
 }
@@ -1040,7 +1041,7 @@ export const IsleofDucks = {
             callback: async function(
                 uuid: string
             ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-                return await getSuperlativeValue(uuid);
+                return await getSuperlativeValue(uuid, (value) => formatNumber(value));
             },
             update: async function(uuid: string): Promise<number | null> {
                 return await updateSuperlativeValue(uuid, (profile) => {
@@ -1055,7 +1056,7 @@ export const IsleofDucks = {
             callback: async function(
                 uuid: string
             ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-                return await getSuperlativeValue(uuid);
+                return await getSuperlativeValue(uuid, (value) => formatNumber(value));
             },
             update: async function(uuid: string): Promise<number | null> {
                 return await updateSuperlativeValue(uuid, (profile) => {
@@ -1108,7 +1109,7 @@ export const IsleofDucks = {
             callback: async function(
                 uuid: string
             ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-                return await getSuperlativeValue(uuid);
+                return await getSuperlativeValue(uuid, (value) => formatNumber(value, 0));
             },
             update: async function(uuid: string): Promise<number | null> {
                 return await updateSuperlativeValue(uuid, (profile) => {

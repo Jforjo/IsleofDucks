@@ -15,8 +15,8 @@ export async function GET(request: NextRequest): Promise<Response> {
     const resultDucks = await resultDucksPromise;
     const resultDucklings = await resultDucklingsPromise;
 
-    if (!resultDucks.ok) return resultDucks;
-    if (!resultDucklings.ok) return resultDucklings;
+    if (!resultDucks.success) return new Response(resultDucks.message, { status: 400 });
+    if (!resultDucklings.success) return new Response(resultDucklings.message, { status: 400 });
 
     return Response.json({ success: true });
 }

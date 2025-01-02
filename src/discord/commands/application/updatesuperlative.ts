@@ -72,12 +72,12 @@ export default async function(
     });
 
     const ducks = await updateGuildSuperlative("Isle of Ducks");
-    if (!ducks.ok) {
+    if (!ducks.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
                     title: "Something went wrong",
-                    description: "Failed to update Isle of Ducks superlative data",
+                    description: ducks.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -87,7 +87,7 @@ export default async function(
             ]
         })
         return NextResponse.json(
-            { success: false, error: "Filed to update Isle of Ducks superlative data" },
+            { success: false, error: ducks.message },
             { status: 400 }
         );
     }
@@ -119,12 +119,12 @@ export default async function(
     });
 
     const ducklings = await updateGuildSuperlative("Isle of Ducklings");
-    if (!ducklings.ok) {
+    if (!ducklings.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
                     title: "Something went wrong",
-                    description: "Failed to update Isle of Ducklings superlative data",
+                    description: ducklings.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -134,7 +134,7 @@ export default async function(
             ]
         })
         return NextResponse.json(
-            { success: false, error: "Filed to update Isle of Ducklings superlative data" },
+            { success: false, error: ducklings.message, },
             { status: 400 }
         );
     }
