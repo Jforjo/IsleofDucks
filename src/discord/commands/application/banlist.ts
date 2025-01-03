@@ -370,6 +370,12 @@ async function checkBanned(
                     `**UUID**: ${uuid.uuid}`,
                     `**Reason**: ${banned.reason}`
                 ].join('\n') : "This player is not on my ban list!",
+                fields: banned && banned.discords ? [
+                    {
+                        name: "Discord IDs",
+                        value: banned.discords.join('\n')
+                    }
+                ] : undefined,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
