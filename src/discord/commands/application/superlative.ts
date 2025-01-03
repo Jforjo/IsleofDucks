@@ -3,6 +3,7 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { updateGuildSuperlative } from "@/discord/utils";
 
 export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
@@ -50,6 +51,8 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
+    const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks");
+
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
@@ -284,6 +287,8 @@ export default async function(
             }
         ]
     });
+
+    await BACKGROUND_SUPERLATIVE_UPDATE;
 
     return NextResponse.json(
         { success: true },

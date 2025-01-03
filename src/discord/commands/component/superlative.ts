@@ -3,6 +3,7 @@ import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonSty
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { updateGuildSuperlative } from "@/discord/utils";
 
 export async function getSuperlative(): Promise<Superlative | null> {
     // Sort array, but the last one is first in the array
@@ -57,6 +58,12 @@ export default async function(
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     const buttonID = interaction.data.custom_id.split("-")[1];
+    // Default to Ducks
+    const guildName = buttonID === "ducks" ? "Isle of Ducks" :
+        buttonID === "ducklings" ? "Isle of Ducklings" :
+        "Isle of Ducks";
+    
+    const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative(guildName);
 
     // Disable all buttons while it loads, since people could spam it
     await FollowupMessage(interaction.token, {
@@ -121,10 +128,6 @@ export default async function(
         );
     }
 
-    // Default to Ducks
-    const guildName = buttonID === "ducks" ? "Isle of Ducks" :
-        buttonID === "ducklings" ? "Isle of Ducklings" :
-        "Isle of Ducks";
     const guildPromise = getGuildData(guildName);
     const guildUpdateResponse = FollowupMessage(interaction.token, {
         embeds: [
@@ -314,6 +317,8 @@ export default async function(
             }
         ]
     });
+
+    await BACKGROUND_SUPERLATIVE_UPDATE;
 
     return NextResponse.json(
         { success: true },
