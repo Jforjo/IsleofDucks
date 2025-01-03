@@ -1,6 +1,6 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
-import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer, getBannedPlayersCount, getBannedPlayer, searchBannedPlayers } from "@/discord/utils";
+import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer, getBannedPlayersCount, getBannedPlayer, searchBannedPlayers, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
@@ -508,6 +508,113 @@ async function searchBanned(
     );
 }
 
+async function addBannedDiscord(
+    interaction: APIChatInputApplicationCommandInteraction,
+    name: string,
+    discordID: Snowflake
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    if (!interaction.member) {
+        await FollowupMessage(interaction.token, {
+            content: "Could not find who ran the command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+    if (!(
+        interaction.member.roles.includes(IsleofDucks.roles.admin) ||
+        interaction.member.roles.includes(IsleofDucks.roles.mod_duck) ||
+        interaction.member.roles.includes(IsleofDucks.roles.mod_duckling)
+    )) {
+        await FollowupMessage(interaction.token, {
+            content: "You don't have permission to use this command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        );
+    }
+
+    const uuidResponse = await getUsernameOrUUID(name);
+    if (!uuidResponse.success) {
+        await FollowupMessage(interaction.token, {
+            content: undefined,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: uuidResponse.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        });
+        return NextResponse.json(
+            { success: false, error: uuidResponse.message },
+            { status: 404 }
+        );
+    }
+    const uuid = uuidResponse.uuid;
+
+    const banned = await isBannedPlayer(uuid);
+    if (!banned) {
+        await FollowupMessage(interaction.token, {
+            content: undefined,
+            embeds: [
+                {
+                    title: `\`${uuidResponse.name}\` is not on my ban list!`,
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        });
+        return NextResponse.json(
+            { success: false, error: "This player is not on my ban list" },
+            { status: 400 }
+        );
+    }
+
+    await updateBannedPlayerDiscord(uuid, discordID);
+
+    await FollowupMessage(interaction.token, {
+        content: null,
+        embeds: [
+            {
+                title: `\`${uuidResponse.name}\` was assigned another Discord ID in my ban list!`,
+                description: [
+                    `User: <@${discordID}>`,
+                    `Discord ID: ${discordID}`
+                ].join('\n'),
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
@@ -597,6 +704,8 @@ export default async function(
         return await checkBanned(interaction, options.check.name);
     } else if (options.search) {
         return await searchBanned(interaction, options.search.query);
+    } else if (options.adddiscord) {
+        return await addBannedDiscord(interaction, options.adddiscord.name, options.adddiscord.discord);
     }
 
     await FollowupMessage(interaction.token, {
@@ -686,6 +795,25 @@ export const CommandData = {
                 {
                     name: "query",
                     description: "The search query.",
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                }
+            ]
+        },
+        {
+            name: "adddiscord",
+            description: "Add a Discord ID to a player.",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "name",
+                    description: "The name of the player.",
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                },
+                {
+                    name: "discord",
+                    description: "The Discord ID of the player.",
                     type: ApplicationCommandOptionType.String,
                     required: true
                 }

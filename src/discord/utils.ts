@@ -1,6 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { getSuperlative } from './commands/application/superlative';
+import { Snowflake } from 'discord-api-types/globals';
 
 export async function getImmunePlayers(): Promise<{
     success: boolean;
@@ -54,7 +55,7 @@ export async function getBannedPlayers(
     players: {
         uuid: string;
         name?: string;
-        discord: string | null;
+        discords: Snowflake[] | null;
         reason: string;
     }[];
 }> {
@@ -67,7 +68,7 @@ export async function getBannedPlayers(
         return {
             uuid: row.uuid,
             name: name,
-            discord: row.discord,
+            discords: row.discord ? JSON.parse(row.discord) : null,
             reason: row.reason
         }
     }));
@@ -81,11 +82,22 @@ export async function getBannedPlayersCount(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM banlist`;
     return rows[0].count;
 }
-export async function addBannedPlayer(uuid: string, discord: string | null, reason: string): Promise<void> {
-    await sql`INSERT INTO banlist (uuid, discord, reason) VALUES (${uuid}, ${discord}, ${reason})`;
+export async function addBannedPlayer(uuid: string, discord: Snowflake | null, reason: string): Promise<void> {
+    const discords = [];
+    let discordsValue: string | null = null;
+    if (discord) {
+        discords.push(discord);
+        discordsValue = JSON.stringify(discords);
+    }
+    await sql`INSERT INTO banlist (uuid, discord, reason) VALUES (${uuid}, ${discordsValue}, ${reason})`;
 }
-export async function updateBannedPlayerDiscord(uuid: string, discord: string | null): Promise<void> {
-    await sql`UPDATE banlist SET discord = ${discord} WHERE uuid = ${uuid}`;
+export async function updateBannedPlayerDiscord(uuid: string, discord: Snowflake): Promise<void> {
+    const user = await getBannedPlayer(uuid);
+    if (!user) return;
+    const discords = [];
+    if (user.discords) discords.push(...user.discords);
+    if (discord) discords.push(discord);
+    await sql`UPDATE banlist SET discord = ${JSON.stringify(discord)} WHERE uuid = ${uuid}`;
 }
 export async function removeBannedPlayer(uuid: string): Promise<void> {
     await sql`DELETE FROM banlist WHERE uuid = ${uuid}`;
@@ -103,7 +115,7 @@ export async function searchBannedPlayers(
     players: {
         uuid: string;
         name?: string;
-        discord: string | null;
+        discords: Snowflake[] | null;
         reason: string;
     }[];
     count: number;
@@ -127,12 +139,17 @@ export async function searchBannedPlayers(
     };
 }
 export async function getBannedPlayer(uuid: string): Promise<
-    { uuid: string; discord: string | null; reason: string } |
+    { uuid: string; discords: Snowflake[] | null; reason: string } |
     null
 > {
     const { rows } = await sql`SELECT * FROM banlist WHERE uuid = ${uuid}`;
     if (rows.length == 0) return null;
-    return rows[0] as { uuid: string; discord: string | null; reason: string };
+    const discords = rows[0].discord ? JSON.parse(rows[0].discord) : null;
+    return {
+        uuid: rows[0].uuid,
+        discords: discords,
+        reason: rows[0].reason
+    }
 }
 // export async function getBannedPlayer(uuid: string): Promise<
 //     { uuid: string; discord: string | null; reason: string }[] |
