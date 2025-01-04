@@ -41,7 +41,7 @@ export async function getSuperlative(): Promise<Superlative | null> {
     return null;
 }
 
-export default async function(
+export default async function Command(
     interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
@@ -210,7 +210,32 @@ export default async function(
                 }
             ],
         });
-        if (superlativeResult.message.includes("User not found")) await BACKGROUND_SUPERLATIVE_UPDATE;
+        if (superlativeResult.message.includes("User not found: ")) {
+            const result = await BACKGROUND_SUPERLATIVE_UPDATE;
+            if (!result.success) {
+                await FollowupMessage(interaction.token, {
+                    embeds: [
+                        {
+                            title: "Something went wrong",
+                            description: result.message === "Key throttle" && typeof result.retry === "number" ? [
+                                result.message,
+                                `Try again <t:${Math.floor(( timestamp.getTime() + result.retry ) / 1000)}:R>`
+                            ].join("\n") : result.message,
+                            color: 0xB00020,
+                            footer: {
+                                text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                            },
+                            timestamp: new Date().toISOString()
+                        }
+                    ]
+                })
+                return NextResponse.json(
+                    { success: false, error: result.message, },
+                    { status: 400 }
+                );
+            }
+            return await Command(interaction);
+        }
         return NextResponse.json(
             { success: false, error: superlativeResult.message },
             { status: 400 }
