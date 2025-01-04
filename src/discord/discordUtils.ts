@@ -941,7 +941,7 @@ async function getSuperlativeValue(
         success: false,
         message: `User not found: ${uuid}`
     };
-    let value = user.oldxp;
+    let value = 0;
     if (user.cataxp != null) value = user.cataxp - user.oldxp;
     return {
         success: true,
