@@ -939,7 +939,7 @@ async function getSuperlativeValue(
     if (rows.length > 0) user = rows[0];
     if (user === null) return {
         success: false,
-        message: "User not found"
+        message: `User not found: ${uuid}`
     };
     let value = user.oldxp;
     if (user.cataxp != null) value = user.cataxp - user.oldxp;

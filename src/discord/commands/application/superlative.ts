@@ -197,7 +197,11 @@ export default async function(
             embeds: [
                 {
                     title: "Something went wrong!",
-                    description: superlativeResult.message,
+                    description: superlativeResult.message.includes("User not found: ") ? [
+                        superlativeResult.message,
+                        `It's likely that the superlative data needs updating, so run the command again in a minute.`,
+                        `(It's currently updating right now)`
+                    ].join("\n") : superlativeResult.message,
                     color: 0xB00020,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -206,6 +210,7 @@ export default async function(
                 }
             ],
         });
+        if (superlativeResult.message.includes("User not found")) await BACKGROUND_SUPERLATIVE_UPDATE;
         return NextResponse.json(
             { success: false, error: superlativeResult.message },
             { status: 400 }
