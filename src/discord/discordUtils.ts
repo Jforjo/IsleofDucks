@@ -878,8 +878,9 @@ export const CheckChannelExists = {
     > {
         const channels = await GetGuildChannels(guildId);
         if (!channels) return { exists: false };
-
+        console.log("Channel Names", channelNames);
         const channelsFound = channels.filter(c => channelNames.includes(c.name ?? ""));
+        console.log("Channels Found", channelsFound);
         if (!channelsFound || channelsFound.length === 0) return { exists: false };
 
         return { exists: true, channelIDs: channelsFound.map(c => c.id) };
