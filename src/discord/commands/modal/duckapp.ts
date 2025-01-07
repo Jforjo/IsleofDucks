@@ -361,7 +361,7 @@ export default async function(
     const yes = Emojis.yes;
     const no = Emojis.no;
     await SendMessage(channel.id, {
-        content: `<@${member.user.id}> is requesting help from ${!member.roles.includes(IsleofDucks.roles.staff) && `<@&${IsleofDucks.roles.mod_duck}>`}`,
+        content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.staff) ? `a Duck Moderator` : `<@&${IsleofDucks.roles.mod_duck}>`}`,
         embeds: [
             {
                 title: `${TICKET.name}`,
