@@ -24,7 +24,16 @@ export default async function(
         }
     });
     
-    const TICKET_TYPE = "Duckling Application";
+    const TICKET = IsleofDucks.ticketTypes.filter((ticket) => ticket.id === interaction.data.custom_id)[0];
+    if (!TICKET) {
+        await FollowupMessage(interaction.token, {
+            content: "Ticket type not found!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Ticket type not found" },
+            { status: 400 }
+        );
+    }
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     const username = interaction.data.components[0].components[0].value;
 
@@ -53,13 +62,13 @@ export default async function(
     if (scammerDiscordResponse.success && scammerDiscordResponse.scammer) {
         if (scammerDiscordResponse.details?.discordIds) {
             for (const discord of scammerDiscordResponse.details.discordIds) {
-                await BanGuildMember(guildID, discord, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`);
+                await BanGuildMember(guildID, discord, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`);
             }
             if (!scammerDiscordResponse.details.discordIds.includes(member.user.id)) {
-                await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`);
+                await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`);
             }
         } else {
-            await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`);
+            await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`);
         }
 
         const mojang = await getUsernameOrUUID(username);
@@ -67,7 +76,7 @@ export default async function(
             embeds: [
                 {
                     title: "Automatic Ban Log",
-                    description: `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`,
+                    description: `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`,
                     fields: [
                         {
                             name: `Discord - <@${member.user.id}>`,
@@ -103,11 +112,11 @@ export default async function(
         );
     }
 
-    const hasTicket = await CheckChannelExists.name(guildID, `duckling-${member.user.username}`);
+    const hasTicket = await CheckChannelExists.names(guildID, TICKET.excludes.map(id => `${id}-${member.user.username}`));
     if (hasTicket.exists) {
         await FollowupMessage(interaction.token, {
             content: [
-                `You already have a ticket open here: <#${hasTicket.channelID}>`,
+                `You already have a ticket open here: <#${hasTicket.channelIDs[0]}>`,
                 `Please close the existing ticket before opening a new one.`
             ].join("\n"),
         });
@@ -142,22 +151,22 @@ export default async function(
     if (bannedResponse) {
         if (bannedResponse.discords) {
             for (const discord of bannedResponse.discords) {
-                await BanGuildMember(guildID, discord, `Automatic ban for being on banlist. Detected through ${TICKET_TYPE}.`);
+                await BanGuildMember(guildID, discord, `Automatic ban for being on banlist. Detected through ${TICKET.name}.`);
             }
             if (!bannedResponse.discords.includes(member.user.id)) {
                 await updateBannedPlayerDiscord(mojang.uuid, member.user.id);
-                await BanGuildMember(guildID, member.user.id, `Automatic ban for being on banlist. Detected through ${TICKET_TYPE}.`);
+                await BanGuildMember(guildID, member.user.id, `Automatic ban for being on banlist. Detected through ${TICKET.name}.`);
             }
         } else {
             await updateBannedPlayerDiscord(mojang.uuid, member.user.id);
-            await BanGuildMember(guildID, member.user.id, `Automatic ban for being on banlist. Detected through ${TICKET_TYPE}.`);
+            await BanGuildMember(guildID, member.user.id, `Automatic ban for being on banlist. Detected through ${TICKET.name}.`);
         }
         
         await SendMessage(IsleofDucks.channels.staffgeneral, {
             embeds: [
                 {
                     title: "Automatic Ban Log",
-                    description: `Automatic ban for being on banlist. Detected through ${TICKET_TYPE}.`,
+                    description: `Automatic ban for being on banlist. Detected through ${TICKET.name}.`,
                     fields: [
                         {
                             name: `Discord - <@${member.user.id}>`,
@@ -197,20 +206,20 @@ export default async function(
     if (scammerResponse.success && scammerResponse.scammer) {
         if (scammerResponse.details?.discordIds) {
             for (const discord of scammerResponse.details.discordIds) {
-                await BanGuildMember(guildID, discord, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`);
+                await BanGuildMember(guildID, discord, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`);
             }
             if (!scammerResponse.details.discordIds.includes(member.user.id)) {
-                await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`);
+                await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`);
             }
         } else {
-            await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`);
+            await BanGuildMember(guildID, member.user.id, `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`);
         }
 
         await SendMessage(IsleofDucks.channels.staffgeneral, {
             embeds: [
                 {
                     title: "Automatic Ban Log",
-                    description: `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET_TYPE}.`,
+                    description: `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`,
                     fields: [
                         {
                             name: `Discord - <@${member.user.id}>`,
@@ -335,7 +344,7 @@ export default async function(
     const channel = await CreateChannel(guildID, {
         type: ChannelType.GuildText,
         name: `duckling-${member.user.username}`,
-        topic: `${TICKET_TYPE} for ${member.nick ?? member.user.username} - ${member.user.id}`,
+        topic: `${TICKET.name} for ${member.nick ?? member.user.username} - ${member.user.id}`,
         parent_id: IsleofDucks.channelGroups.tickets,
         permission_overwrites: channelPermissions
     });
@@ -355,8 +364,8 @@ export default async function(
         content: `<@${member.user.id}> is requesting help from <@&${IsleofDucks.roles.mod_duckling}>`,
         embeds: [
             {
-                title: `${TICKET_TYPE}`,
-                description: `${TICKET_TYPE} for ${member.nick ?? member.user.username} - ${member.user.id}`,
+                title: `${TICKET.name}`,
+                description: `${TICKET.name} for ${member.nick ?? member.user.username} - ${member.user.id}`,
                 color: 0xFB9B00,
             },
             {
@@ -442,7 +451,7 @@ export default async function(
     ]);
 
     await FollowupMessage(interaction.token, {
-        content: `${TICKET_TYPE} ticket created here: <#${channel.id}>`,
+        content: `${TICKET.name} ticket created here: <#${channel.id}>`,
     });
 
     return NextResponse.json(

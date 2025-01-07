@@ -836,6 +836,22 @@ export const CheckChannelExists = {
 
         return { exists: true, channelID: channel.id };
     },
+    ids: async function (guildId: Snowflake, channelIDs: string[]): Promise<
+        {
+            exists: false;
+        } | {
+            exists: true;
+            channelIDs: Snowflake[];
+        }
+    > {
+        const channels = await GetGuildChannels(guildId);
+        if (!channels) return { exists: false };
+
+        const channelsFound = channels.filter(c => channelIDs.includes(c.id));
+        if (!channelsFound) return { exists: false };
+
+        return { exists: true, channelIDs: channelsFound.map(c => c.id) };
+    },
     name: async function (guildId: Snowflake, channelName: string): Promise<
         {
             exists: false;
@@ -851,6 +867,22 @@ export const CheckChannelExists = {
         if (!channel) return { exists: false };
 
         return { exists: true, channelID: channel.id };
+    },
+    names: async function (guildId: Snowflake, channelNames: string[]): Promise<
+        {
+            exists: false;
+        } | {
+            exists: true;
+            channelIDs: Snowflake[];
+        }
+    > {
+        const channels = await GetGuildChannels(guildId);
+        if (!channels) return { exists: false };
+
+        const channelsFound = channels.filter(c => channelNames.includes(c.name ?? ""));
+        if (!channelsFound) return { exists: false };
+
+        return { exists: true, channelIDs: channelsFound.map(c => c.id) };
     }
 }
 
@@ -988,6 +1020,26 @@ export const IsleofDucks = {
         tickets: "988883238292451378",
         carrytickets: "1004180629551845466",
     },
+    ticketTypes: [
+        {
+            id: "duckapp",
+            name: "Duck Application",
+            // Can't open a ticket if one of the following is already open
+            excludes: [
+                "duckapp",
+                "ducklingapp"
+            ]
+        },
+        {
+            id: "ducklingapp",
+            name: "Duckling Application",
+            // Can't open a ticket if one of the following is already open
+            excludes: [
+                "duckapp",
+                "ducklingapp"
+            ]
+        }
+    ],
     transcriptForum: {
         tags: [
             {
