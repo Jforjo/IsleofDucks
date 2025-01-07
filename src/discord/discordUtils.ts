@@ -878,9 +878,8 @@ export const CheckChannelExists = {
     > {
         const channels = await GetGuildChannels(guildId);
         if (!channels) return { exists: false };
-        console.log("Channel Names", channelNames);
+
         const channelsFound = channels.filter(c => channelNames.includes(c.name ?? ""));
-        console.log("Channels Found", channelsFound);
         if (!channelsFound || channelsFound.length === 0) return { exists: false };
 
         return { exists: true, channelIDs: channelsFound.map(c => c.id) };
@@ -1025,19 +1024,21 @@ export const IsleofDucks = {
         {
             id: "duckapp",
             name: "Duck Application",
-            // Can't open a ticket if one of the following is already open
+            ticketName: "duck",
+            // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
             excludes: [
-                "duckapp",
-                "ducklingapp"
+                "duck",
+                "duckling"
             ]
         },
         {
             id: "ducklingapp",
             name: "Duckling Application",
-            // Can't open a ticket if one of the following is already open
+            ticketName: "duckling",
+            // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
             excludes: [
-                "duckapp",
-                "ducklingapp"
+                "duck",
+                "duckling"
             ]
         }
     ],

@@ -343,7 +343,7 @@ export default async function(
 
     const channel = await CreateChannel(guildID, {
         type: ChannelType.GuildText,
-        name: `duckling-${member.user.username}`,
+        name: `${TICKET.ticketName}-${member.user.username}`,
         topic: `${TICKET.name} for ${member.nick ?? member.user.username} - ${member.user.id}`,
         parent_id: IsleofDucks.channelGroups.tickets,
         permission_overwrites: channelPermissions
