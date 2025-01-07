@@ -880,7 +880,7 @@ export const CheckChannelExists = {
         if (!channels) return { exists: false };
 
         const channelsFound = channels.filter(c => channelNames.includes(c.name ?? ""));
-        if (!channelsFound) return { exists: false };
+        if (!channelsFound || channelsFound.length === 0) return { exists: false };
 
         return { exists: true, channelIDs: channelsFound.map(c => c.id) };
     }
