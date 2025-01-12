@@ -5,41 +5,47 @@ import { getBannedPlayer } from "@/discord/utils";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest): Promise<Response> {
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader?.includes('Bearer ')) {
-        return new Response("Unauthorized", {
-            status: 401,
-        });
-    }
-    const APIKey = authHeader.split(' ')[1];
+    // const authHeader = request.headers.get("authorization");
+    // if (!authHeader?.includes('Bearer ')) {
+    //     return Response.json({
+    //         success: false,
+    //         reason: "Missing authorization header"
+    //     });
+    // }
+    // const APIKey = authHeader.split(' ')[1];
+    const APIKey = process.env.HYPIXEL_API_KEY;
 
     const params = request.nextUrl.searchParams;
     const username = params.get("username");
 
     if (!username) {
-        return new Response("Missing username", {
-            status: 400,
+        return Response.json({
+            success: false,
+            reason: "Missing username"
         });
     }
 
     const uuidResponse = await getUsernameOrUUID(username);
     if (!uuidResponse.success) {
-        return new Response(uuidResponse.message, {
-            status: 400,
+        return Response.json({
+            success: false,
+            reason: uuidResponse.message
         });
     }
 
     const guildResponse = await isPlayerInGuild(uuidResponse.uuid, APIKey);
     if (!guildResponse.success) {
-        return new Response(guildResponse.message, {
-            status: guildResponse.status || 400,
+        return Response.json({
+            success: false,
+            reason: guildResponse.message
         });
     }
 
     const profileAPIResponse = await checkPlayer(uuidResponse.uuid, APIKey);
     if (!profileAPIResponse.success) {
-        return new Response(profileAPIResponse.message, {
-            status: profileAPIResponse.status || 400,
+        return Response.json({
+            success: false,
+            reason: profileAPIResponse.message
         });
     }
     
