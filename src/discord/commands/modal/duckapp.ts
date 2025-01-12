@@ -326,7 +326,8 @@ export default async function(
             type: 1,
             allow: ToPermissions({
                 view_channel: true,
-                send_messages: true
+                send_messages: true,
+                use_application_commands: true,
             }),
             deny: null
         },
@@ -335,7 +336,8 @@ export default async function(
             type: 0,
             allow: ToPermissions({
                 view_channel: true,
-                send_messages: true
+                send_messages: true,
+                use_application_commands: true,
             }),
             deny: null
         }
