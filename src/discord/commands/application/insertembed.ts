@@ -155,7 +155,7 @@ const DATA = JSON.stringify({
             fields: [
                 {
                     name: "Isle of Ducks",
-                    value: "▫️ `Skyblock Level 300+`\n▫️ `50k weekly GXP`\n▫️ `All APIs enabled`"
+                    value: "▫️ `Skyblock Level 320+`\n▫️ `50k weekly GXP`\n▫️ `All APIs enabled`"
                 },
                 {
                     name: "Isle of Ducklings",
