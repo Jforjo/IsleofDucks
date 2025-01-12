@@ -312,7 +312,8 @@ export async function getGuildData(
 }
 
 export async function isPlayerInGuild(
-    uuid: string
+    uuid: string,
+    apikey = process.env.HYPIXEL_API_KEY
 ): Promise<
     {
         success: false;
@@ -331,7 +332,7 @@ export async function isPlayerInGuild(
         guild: Guild;
     }
 > {
-    if (!process.env.HYPIXEL_API_KEY) {
+    if (!apikey) {
         return {
             success: false,
             message: 'Missing HYPIXEL_API_KEY',
@@ -341,7 +342,7 @@ export async function isPlayerInGuild(
     const res = await fetch(`https://api.hypixel.net/guild?player=${encodeURIComponent(uuid)}`, {
         method: 'GET',
         headers: {
-            'API-Key': process.env.HYPIXEL_API_KEY
+            'API-Key': apikey
         }
     });
     const retryAfter = res.headers.get('RateLimit-Reset');

@@ -9,7 +9,8 @@ import { getScammerFromUUID } from "@/discord/jerry";
 
 export async function checkPlayer(
     uuid: string,
-    profilename = ""
+    profilename = "",
+    apikey = process.env.HYPIXEL_API_KEY
 ): Promise<
     {
         success: false;
@@ -31,7 +32,7 @@ export async function checkPlayer(
         experience: number;
     }
 > {
-    if (!process.env.HYPIXEL_API_KEY) {
+    if (!apikey) {
         return {
             success: false,
             message: 'Missing HYPIXEL_API_KEY',
@@ -42,7 +43,7 @@ export async function checkPlayer(
     const res = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`, {
         method: 'GET',
         headers: {
-            'API-Key': process.env.HYPIXEL_API_KEY
+            'API-Key': apikey
         }
     });
     const retryAfter = res.headers.get('RateLimit-Reset');
