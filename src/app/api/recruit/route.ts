@@ -47,21 +47,24 @@ export async function GET(request: NextRequest): Promise<Response> {
     const scammerResponse = await getScammerFromUUID(uuidResponse.uuiddashes);
 
     return Response.json({
-        apis: {
-            inventory: profileAPIResponse.inventory,
-            banking: profileAPIResponse.banking,
-            collection: profileAPIResponse.collection,
-            skills: profileAPIResponse.skills,
-            vault: profileAPIResponse.vault,
-        },
-        experience: profileAPIResponse.experience,
-        duckReq: profileAPIResponse.duckReq,
-        ducklingReq: profileAPIResponse.ducklingReq,
-        guild: guildResponse,
-        scammer: scammerResponse,
-        banned: bannedResponse,
-        cute_name: profileAPIResponse.name,
-        username: uuidResponse.name,
-        uuid: uuidResponse.uuid
+        success: true,
+        data: {
+            apis: {
+                inventory: profileAPIResponse.inventory,
+                banking: profileAPIResponse.banking,
+                collection: profileAPIResponse.collection,
+                skills: profileAPIResponse.skills,
+                vault: profileAPIResponse.vault,
+            },
+            experience: profileAPIResponse.experience,
+            duckReq: profileAPIResponse.duckReq,
+            ducklingReq: profileAPIResponse.ducklingReq,
+            guild: guildResponse,
+            scammer: scammerResponse,
+            banned: bannedResponse,
+            cute_name: profileAPIResponse.name,
+            username: uuidResponse.name,
+            uuid: uuidResponse.uuid
+        }
     });
 }
