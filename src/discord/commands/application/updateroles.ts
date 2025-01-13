@@ -105,8 +105,8 @@ export async function UpdateRoles(
     // Should probably change this to use a generator function
     const members = await GetAllGuildMembers(guildID);
     for (const member of members) {
-        let userRoleAdded = false;
-        let userRoleRemoved = false;
+        // let userRoleAdded = false;
+        // let userRoleRemoved = false;
 
         promises.push(UpdateLevelRoles(guildID, member));
 
@@ -124,8 +124,8 @@ export async function UpdateRoles(
         //     }
         // }
 
-        if (userRoleAdded) usersHadRolesAdded++;
-        if (userRoleRemoved) usersHadRolesRemoved++;
+        // if (userRoleAdded) usersHadRolesAdded++;
+        // if (userRoleRemoved) usersHadRolesRemoved++;
     }
 
     const result = await Promise.all(promises);
