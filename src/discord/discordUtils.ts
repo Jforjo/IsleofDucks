@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 
@@ -324,6 +324,62 @@ export async function SendMessage(
             if (retryAfter && !isNaN(Number(retryAfter))) {
                 await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
                 return await SendMessage(channelId, messageData);
+            }
+        }
+        console.error(data);
+        console.error(JSON.stringify(data));
+    }
+
+    return data;
+}
+export async function EditMessage(
+    channelId: Snowflake,
+    messageId: Snowflake,
+    messageData: RESTPatchAPIChannelMessageJSONBody,
+    attachmentURLs?: {
+        id: number,
+        url: string,
+        filename: string
+    }[]
+): Promise<RESTPatchAPIChannelMessageResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.channelMessage(channelId, messageId);
+    const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+    formData.append('payload_json', JSON.stringify(messageData));
+    if (attachmentURLs) {
+        await Promise.all(attachmentURLs.map(async (attachment) => {
+            const blob = await fetch(attachment.url).then(res => res.blob());
+            formData.append(`files[${attachment.id}]`, blob, attachment.filename);
+        }));
+    }
+
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        },
+        method: 'PATCH',
+        body: formData,
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTPatchAPIChannelMessageResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await EditMessage(channelId, messageId, messageData);
             }
         }
         console.error(data);
@@ -1066,6 +1122,36 @@ export const IsleofDucks = {
         duck_guild_member: "933258162931400764",
         duckling_guild_member: "998380474407846000",
         immune: "1276013765405704266",
+        levels: [
+            {
+                id: "1328090605481627698",
+                requirement: 44000
+            },
+            {
+                id: "1328090513793880234",
+                requirement: 40000
+            },
+            {
+                id: "1328090470974230680",
+                requirement: 36000
+            },
+            {
+                id: "1328090385909809173",
+                requirement: 32000
+            },
+            {
+                id: "1328090310470795335",
+                requirement: 28000
+            },
+            {
+                id: "1328090223221149786",
+                requirement: 24000
+            },
+            {
+                id: "1328089436894007506",
+                requirement: 0
+            },
+        ],
         carrier_f1_4: "1004131288023830638",
         carrier_f5_6: "1004131419553005710",
         carrier_f7: "1004131451077406750",
@@ -1233,7 +1319,46 @@ export const IsleofDucks = {
                 ]
             }
         },
-    ]
+    ],
+    // WIP. Currently not used anywhere.
+    help: {
+        pages: [
+            {
+                id: "general",
+                name: "General",
+                description: "General information",
+                data: {
+                    description: [
+                        `Use \`/help [catagory]\` to get more information about a catagory.`,
+                    ].join("\n"),
+                    fields: [
+                        {
+                            name: "Commands",
+                            value: [
+                                `banlist`,
+                                `checkapi`,
+                                `embed`,
+                                `help`,
+                                `immune`,
+                                `ping`,
+                                `recruit`,
+                                `superlative`,
+                                `updatecommands`,
+                                `updateroles`,
+                                `updatesuperlative`,
+                                `weekly`
+                            ].join("\n")
+                        }
+                    ]
+                }
+            },
+            {
+                id: "commands",
+                name: "Commands",
+                description: "List of commands",
+            }
+        ]
+    }
 }
 export const CloseTicketPermissions = {
     duckapp: new Set([
