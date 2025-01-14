@@ -49,7 +49,7 @@ export default async function(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: `Message ID: ${options.messageID}`,
+                title: `Message ID: ${options.id}`,
                 description: `\`\`\`${JSON.stringify(message)}\`\`\``,
                 color: 0xFB9B00,
                 footer: {
