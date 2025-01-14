@@ -224,7 +224,7 @@ export default async function(
         ]
     });
 
-    let updatedCount = await UpdateAllDiscordRolesInDb();
+    await UpdateAllDiscordRolesInDb();
     // while (updatedCount >= 100) updatedCount = await UpdateAllDiscordRolesInDb();
 
     await FollowupMessage(interaction.token, {
