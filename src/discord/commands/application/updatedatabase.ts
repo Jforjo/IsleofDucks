@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export async function UpdateDiscord(uuid: string): Promise<boolean> {
     const discordResult = await getDiscordRole(uuid);
     // Only update Discord if it hasn't been updated in the last 7 days
-    if (discordResult && discordResult.discordupdated > Date.now() - 1000 * 60 * 60 * 24 * 7) return false;
+    if (discordResult && (discordResult.discordid || discordResult.discordname) && discordResult.discordupdated > Date.now() - 1000 * 60 * 60 * 24 * 7) return false;
 
     const playerResult = await getHypixelPlayer(uuid);
     if (!playerResult.success) return false;
