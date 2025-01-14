@@ -52,7 +52,7 @@ export async function UpdateGuildDiscord(guildname: string): Promise<
 }
 
 export async function UpdateAllDiscordRolesInDb(): Promise<number> {
-    const users = await getAllDiscordRolesWhereNameIsNull();
+    const users = await getAllDiscordRolesWhereNameIsNull(10000);
     if (!users) return 0;
     if (users.length === 0) return 0;
     let count = 0;
@@ -225,7 +225,7 @@ export default async function(
     });
 
     let updatedCount = await UpdateAllDiscordRolesInDb();
-    while (updatedCount >= 100) updatedCount = await UpdateAllDiscordRolesInDb();
+    // while (updatedCount >= 100) updatedCount = await UpdateAllDiscordRolesInDb();
 
     await FollowupMessage(interaction.token, {
         embeds: [
