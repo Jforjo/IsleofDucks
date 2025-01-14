@@ -58,10 +58,10 @@ export default async function(
         );
     }
     
-        const options = Object.fromEntries(interaction.data.options.map(option => {
-            option = option as APIApplicationCommandInteractionDataStringOption;
-            return [option.name, option.value];
-        }));
+    const options = Object.fromEntries(interaction.data.options.map(option => {
+        option = option as APIApplicationCommandInteractionDataStringOption;
+        return [option.name, option.value];
+    }));
 
     const embedExists = await CheckEmbedExists(options.name);
     if (!embedExists) {
