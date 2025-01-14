@@ -2,7 +2,7 @@ import { APIChatInputApplicationCommandInteraction, APIGuildMember, APIInteracti
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, ConvertSnowflakeToDate, RemoveGuildMemberRole, AddGuildMemberRole } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { checkPlayer } from "./recruit";
+import { DiscordRole, getDiscordRole, getDiscordRoleFromDiscordID, getDiscordRoleFromDiscordName, updateDiscordRoleName } from "@/discord/utils";
 
 export async function UpdateLevelRoles(
     guildID: Snowflake,
@@ -37,19 +37,43 @@ export async function UpdateLevelRoles(
         }
     }
 
-    if (!member.nick) return false;
-    const uuidResponse = await getUsernameOrUUID(member.nick.replaceAll('✧', '').split(' ')[0]);
-    if (!uuidResponse.success) return false;
+    let player: DiscordRole;
 
-    const playerResponse = await checkPlayer(uuidResponse.uuid);
-    if (!playerResponse.success) return false;
+    // Prioritise Discord ID
+    const playerResponseFromDiscordID = await getDiscordRoleFromDiscordID(member.user.id);
+    if (!playerResponseFromDiscordID) {
+        const playerResponseFromDiscordName = await getDiscordRoleFromDiscordName(member.user.username);
+        if (!playerResponseFromDiscordName) {
+            if (!member.nick) return false;
+            const uuidResponse = await getUsernameOrUUID(member.nick.replaceAll('✧', '').split(' ')[0]);
+            if (!uuidResponse.success) return false;
+
+            const playerResponse = await getDiscordRole(uuidResponse.uuid);
+            if (!playerResponse) {
+                // Someone could nick to someone elses name ig
+                // await addDiscordRole(uuidResponse.uuid, member.user.username, null);
+                return false;
+            }
+
+            player = playerResponse;
+        } else {
+            player = playerResponseFromDiscordName;
+            // Add Discord ID to DB
+            await updateDiscordRoleName(player.uuid, member.user.username, member.user.id);
+        }
+    } else {
+        player = playerResponseFromDiscordID;
+    }
+
+    if (!player) return false;
+    if (!player.exp) return false;
 
     let expectedRole: Snowflake = "";
     let currentRoles: Snowflake[] = [];
 
     for (const role of IsleofDucks.roles.levels.sort((a, b) => a.requirement - b.requirement)) {
         if (member.roles.includes(role.id)) currentRoles.push(role.id);
-        if (playerResponse.experience >= role.requirement) expectedRole = role.id;
+        if (player.exp >= role.requirement) expectedRole = role.id;
     }
 
     // Remove roles they shouldn't have
@@ -93,22 +117,29 @@ export async function UpdateRoles(
     let rolesAdded = 0;
     let rolesRemoved = 0;
 
-    const promises: Promise<
-        false | {
-            rolesAdded: number;
-            rolesRemoved: number;
-            usersHadRolesAdded: number;
-            usersHadRolesRemoved: number;
-        }
-    >[] = [];
+    // const promises: Promise<
+    //     false | {
+    //         rolesAdded: number;
+    //         rolesRemoved: number;
+    //         usersHadRolesAdded: number;
+    //         usersHadRolesRemoved: number;
+    //     }
+    // >[] = [];
 
     // Should probably change this to use a generator function
     const members = await GetAllGuildMembers(guildID);
     for (const member of members) {
         // let userRoleAdded = false;
         // let userRoleRemoved = false;
+        // promises.push(UpdateLevelRoles(guildID, member));
+        const LevelResult = await UpdateLevelRoles(guildID, member);
+        if (LevelResult) {
+            rolesAdded += LevelResult.rolesAdded;
+            rolesRemoved += LevelResult.rolesRemoved;
+            usersHadRolesAdded += LevelResult.usersHadRolesAdded;
+            usersHadRolesRemoved += LevelResult.usersHadRolesRemoved;
+        }
 
-        promises.push(UpdateLevelRoles(guildID, member));
 
         // if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
         //     if (!member.roles.includes(tempRole)) {
@@ -128,15 +159,15 @@ export async function UpdateRoles(
         // if (userRoleRemoved) usersHadRolesRemoved++;
     }
 
-    const result = await Promise.all(promises);
-    for (const res of result) {
-        if (res) {
-            rolesAdded += res.rolesAdded;
-            rolesRemoved += res.rolesRemoved;
-            usersHadRolesAdded += res.usersHadRolesAdded;
-            usersHadRolesRemoved += res.usersHadRolesRemoved;
-        }
-    }
+    // const result = await Promise.all(promises);
+    // for (const res of result) {
+    //     if (res) {
+    //         rolesAdded += res.rolesAdded;
+    //         rolesRemoved += res.rolesRemoved;
+    //         usersHadRolesAdded += res.usersHadRolesAdded;
+    //         usersHadRolesRemoved += res.usersHadRolesRemoved;
+    //     }
+    // }
 
     return {
         rolesAdded: rolesAdded,
@@ -208,7 +239,6 @@ export default async function(
     } = await UpdateRoles(interaction.guild.id);
 
     await FollowupMessage(interaction.token, {
-        content: null,
         embeds: [
             {
                 title: "Done!",

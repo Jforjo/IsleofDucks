@@ -3,6 +3,7 @@ import { Permissions, Snowflake } from "discord-api-types/globals"
 import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
+import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -1048,6 +1049,8 @@ async function updateSuperlativeValue(
     ping?: boolean;
     retry?: number | null;
 }> {
+    let totalExp = 0;
+    
     let value = 0;
     const profiles = await getProfiles(uuid);
     if (profiles.success === false) return profiles;
@@ -1056,7 +1059,23 @@ async function updateSuperlativeValue(
         if (temp && temp > 0) {
             if (value < temp) value = temp;
         }
+        const exp = profile.members[uuid]?.leveling.experience ?? 0;
+        if (exp && exp > 0) {
+            if (totalExp < exp) totalExp = exp;
+        }
     });
+
+    const PlayerInDB = await getDiscordRole(uuid);
+    if (PlayerInDB) {
+        // Superlative already has a limit on updates, so no need to check here
+        // if (PlayerInDB.expupdated <= Date.now() - 1000 * 60 * 60) {
+            // Update if it's been over an hour since last update
+            await updateDiscordRoleExp(uuid, totalExp);
+        // }
+    } else {
+        await addDiscordRole(uuid, null, null, totalExp);
+    }
+    
     return value;
 }
 

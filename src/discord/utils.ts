@@ -335,3 +335,53 @@ export async function updateGuildSuperlative(
         success: true
     };
 }
+
+export interface DiscordRole {
+    uuid: string;
+    discordname: string | null;
+    discordid: Snowflake | null;
+    discordupdated: number;
+    exp: number | null;
+    expupdated: number;
+}
+export async function addDiscordRole(uuid: string, discordname: string | null, discordid: Snowflake | null, experience: number | null): Promise<void> {
+    const timestamp = Date.now();
+    // Only add timestamps if the data isn't null
+    let discordTimestamp = 0;
+    if (discordname || discordid) discordTimestamp = timestamp;
+    let experienceTimestamp = 0;
+    if (experience) experienceTimestamp = timestamp;
+    await sql`INSERT INTO discordroles (uuid, discordname, discordid, discordupdated, exp, expupdated) VALUES (${uuid}, ${discordname}, ${discordid}, ${discordTimestamp}, ${experience}, ${experienceTimestamp})`;
+}
+export async function updateDiscordRoleName(uuid: string, discordname: string, discordid: Snowflake | null): Promise<void> {
+    await sql`UPDATE discordroles SET (discordname, discordid, discordupdated) = (${discordname}, ${discordid}, ${Date.now()}) WHERE uuid = ${uuid}`;
+}
+export async function updateDiscordRoleExp(uuid: string, experience: number): Promise<void> {
+    await sql`UPDATE discordroles SET (exp, expupdated) = (${experience}, ${Date.now()}) WHERE uuid = ${uuid}`;
+}
+export async function deleteDiscordRole(uuid: string): Promise<void> {
+    await sql`DELETE FROM discordroles WHERE uuid = ${uuid}`;
+}
+export async function getDiscordRole(uuid: string): Promise<null | DiscordRole> {
+    const { rows } = await sql`SELECT * FROM discordroles WHERE uuid = ${uuid}`;
+    if (rows.length === 0) return null;
+    return rows[0] as DiscordRole;
+}
+export async function getDiscordRoleFromDiscordName(discordname: string): Promise<null | DiscordRole> {
+    const { rows } = await sql`SELECT * FROM discordroles WHERE discordname = ${discordname}`;
+    if (rows.length === 0) return null;
+    return rows[0] as DiscordRole;
+}
+export async function getDiscordRoleFromDiscordID(discordid: string): Promise<null | DiscordRole> {
+    const { rows } = await sql`SELECT * FROM discordroles WHERE discordid = ${discordid}`;
+    if (rows.length === 0) return null;
+    return rows[0] as DiscordRole;
+}
+export async function getAllDiscordRolesWhereIDIsNull(limit = 100): Promise<DiscordRole[]> {
+    const { rows } = await sql`SELECT * FROM discordroles WHERE discordid IS NULL LIMIT ${limit}`;
+    return rows as DiscordRole[];
+}
+export async function getAllDiscordRolesWhereNameIsNull(limit = 100): Promise<DiscordRole[]> {
+    const { rows } = await sql`SELECT * FROM discordroles WHERE discordname IS NULL LIMIT ${limit}`;
+    return rows as DiscordRole[];
+}

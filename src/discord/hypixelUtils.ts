@@ -1,6 +1,7 @@
 import { Guild } from "@zikeji/hypixel/dist/types/Augmented/Guild";
+import { Player } from "@zikeji/hypixel/dist/types/Augmented/Player";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
-import { GuildResponse, SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
+import { GuildResponse, PlayerResponse, SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
 
 
 export async function getUsernameOrUUID(
@@ -261,7 +262,7 @@ export async function getGuildData(
             ping: true
         };
     }
-    const res = await fetch(`https://api.hypixel.net/guild?name=${encodeURIComponent(name)}`, {
+    const res = await fetch(`https://api.hypixel.net/v2/guild?name=${encodeURIComponent(name)}`, {
         method: 'GET',
         headers: {
             'API-Key': process.env.HYPIXEL_API_KEY
@@ -339,7 +340,7 @@ export async function isPlayerInGuild(
             ping: true
         };
     }
-    const res = await fetch(`https://api.hypixel.net/guild?player=${encodeURIComponent(uuid)}`, {
+    const res = await fetch(`https://api.hypixel.net/v2/guild?player=${encodeURIComponent(uuid)}`, {
         method: 'GET',
         headers: {
             'API-Key': apikey
@@ -387,5 +388,75 @@ export async function isPlayerInGuild(
         status: res.status,
         isInGuild: true,
         guild: data.guild
+    };
+}
+
+export async function getHypixelPlayer(uuid: string): Promise<
+    {
+        success: false;
+        status?: number;
+        message: string;
+        ping?: boolean;
+        retry?: number | null;
+    } | {
+        success: true;
+        status: number;
+        player: Player;
+    }
+> {
+    if (!process.env.HYPIXEL_API_KEY) {
+        return {
+            success: false,
+            message: 'Missing HYPIXEL_API_KEY',
+            ping: true
+        };
+    }
+    const res = await fetch(`https://api.hypixel.net/v2/player?uuid=${encodeURIComponent(uuid)}`, {
+        method: 'GET',
+        headers: {
+            'API-Key': process.env.HYPIXEL_API_KEY
+        }
+    });
+    const retryAfter = res.headers.get('RateLimit-Reset');
+
+    let data;
+    try {
+        data = await res.json() as PlayerResponse;
+    } catch (e) {
+        console.error(e);
+        console.error("res", res);
+        return {
+            success: false,
+            status: res.status,
+            message: 'Bad response from Hypixel'
+        };
+    }
+    if (!res.ok) {
+        if (data && data.cause) {
+            return {
+                success: false,
+                status: res.status,
+                message: typeof data.cause === "string" ? data.cause : "Unknown error",
+                ping: data.cause === "Invalid API key",
+                retry: retryAfter ? parseInt(retryAfter) * 1000 : null
+            };
+        }
+        return {
+            success: false,
+            status: res.status,
+            message: 'Bad response from Hypixel'
+        };
+    }
+    if (data.player === null) {
+        return {
+            success: false,
+            status: res.status,
+            message: 'Player not found'
+        };
+    }
+    return {
+        success: true,
+        status: res.status,
+        player: data.player
     };
 }
