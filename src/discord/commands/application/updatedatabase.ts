@@ -4,25 +4,29 @@ import { addDiscordRole, getAllDiscordRolesWhereNameIsNull, getDiscordRole, upda
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
-export async function UpdateDiscord(uuid: string): Promise<void | true> {
+export async function UpdateDiscord(uuid: string): Promise<boolean> {
     const discordResult = await getDiscordRole(uuid);
     // Only update Discord if it hasn't been updated in the last 7 days
-    if (discordResult && discordResult.discordupdated > Date.now() - 1000 * 60 * 60 * 24 * 7) return;
+    if (discordResult && discordResult.discordupdated > Date.now() - 1000 * 60 * 60 * 24 * 7) return false;
 
     const playerResult = await getHypixelPlayer(uuid);
-    if (!playerResult.success) return;
+    if (!playerResult.success) return false;
     const player = playerResult.player;
-    if (!player) return;
-    if (!player.uuid) return;
-    if (!player.socialMedia) return;
-    if (!player.socialMedia.links) return;
-    if (!player.socialMedia.links.DISCORD) return;
+    if (!player) return false;
+    if (!player.uuid) return false;
+    if (!player.socialMedia) return false;
+    if (!player.socialMedia.links) return false;
+    if (!player.socialMedia.links.DISCORD) return false;
 
-    if (!discordResult) return await addDiscordRole(player.uuid, player.socialMedia.links.DISCORD, null, null);
+    if (!discordResult) {
+        await addDiscordRole(player.uuid, player.socialMedia.links.DISCORD, null, null);
+        return true;
+    }
 
-    if (player.socialMedia.links.DISCORD === discordResult.discordname) return;
+    if (player.socialMedia.links.DISCORD === discordResult.discordname) return false;
     // Resetting Discord ID is intended
     await updateDiscordRoleName(player.uuid, player.socialMedia.links.DISCORD, null);
+    return true;
 }
 
 export async function UpdateGuildDiscord(guildname: string): Promise<
