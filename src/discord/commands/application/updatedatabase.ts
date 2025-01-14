@@ -126,7 +126,7 @@ export default async function(
                     `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
                     `Also, please note that this command is VERY likely to throttle the key if ran multiple times in a row.`
                 ].join("\n"),
-                color: 0xB00020,
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -170,7 +170,7 @@ export default async function(
                     `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
                     `Also, please note that this command is VERY likely to throttle the key if ran multiple times in a row.`
                 ].join("\n"),
-                color: 0xB00020,
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -215,7 +215,7 @@ export default async function(
                     `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
                     `Also, please note that this command is VERY likely to throttle the key if ran multiple times in a row.`
                 ].join("\n"),
-                color: 0xB00020,
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -236,7 +236,7 @@ export default async function(
                     "Updated Discord Data for Isle of Ducklings.",
                     "Updated Discord Data for existing users.",
                 ].join("\n"),
-                color: 0xB00020,
+                color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
