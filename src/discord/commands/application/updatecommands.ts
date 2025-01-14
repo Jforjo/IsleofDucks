@@ -75,7 +75,7 @@ export default async function(
 
     console.log(result);
     if (result && "errors" in result) {
-        console.error("errors:",result.errors);
+        console.error("errors:", result.errors);
         console.log("Stringified errors:", JSON.stringify(result.errors));
     }
 

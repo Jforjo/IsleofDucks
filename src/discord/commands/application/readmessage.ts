@@ -44,7 +44,7 @@ export default async function(
         return [option.name, option.value];
     }));
 
-    const message = await GetChannelMessage(interaction.channel.id, options.messageID);
+    const message = await GetChannelMessage(interaction.channel.id, options.id);
 
     await FollowupMessage(interaction.token, {
         embeds: [
@@ -71,7 +71,7 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
     type: ApplicationCommandType.ChatInput,
     options: [
         {
-            name: "messageID",
+            name: "id",
             description: "ID of the Message",
             type: ApplicationCommandOptionType.String,
             required: true
