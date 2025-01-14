@@ -1059,7 +1059,7 @@ async function updateSuperlativeValue(
         if (temp && temp > 0) {
             if (value < temp) value = temp;
         }
-        const exp = profile.members[uuid]?.leveling.experience ?? 0;
+        const exp = profile.members[uuid]?.leveling?.experience ?? 0;
         if (exp && exp > 0) {
             if (totalExp < exp) totalExp = exp;
         }
