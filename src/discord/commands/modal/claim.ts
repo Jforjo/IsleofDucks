@@ -187,7 +187,7 @@ export default async function(
     // if (autoDetectedWonGiveaways.length === 0) autoDetectedWonGiveaways = false;
 
     await SendMessage(channel.id, {
-        content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.staff) ? `Staff` : `<@&${IsleofDucks.roles.staff}>`}`,
+        content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.staff) ? `Moderators` : `<@&${IsleofDucks.roles.mod_duck}>, <@&${IsleofDucks.roles.mod_duckling}>`}`,
         embeds: [
             {
                 title: `${TICKET.name}`,
