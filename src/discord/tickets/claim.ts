@@ -34,6 +34,7 @@ export async function CheckGiveaways(
                 })
             }
         }
+        if (!('description' in message.embeds[0])) continue;
         if (!message.embeds[0].description) continue;
         const winnerCheck = /<@(.*)> won the giveaway of \[(.*)\]/gm.exec(message.embeds[0].description);
         if (winnerCheck) {

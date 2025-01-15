@@ -1162,7 +1162,7 @@ const TicketTypes = [
         id: "support",
         name: "Support",
         catagory: ChannelGroups.tickets,
-        ticketname: "support",
+        ticketName: "support",
         excludes: [
             "support"
         ]
@@ -1171,7 +1171,7 @@ const TicketTypes = [
         id: "sponsor",
         name: "Sponsor Giveaway",
         catagory: ChannelGroups.tickets,
-        ticketname: "sponsor",
+        ticketName: "sponsor",
         excludes: [
             "sponsor"
         ]
@@ -1180,7 +1180,7 @@ const TicketTypes = [
         id: "claim",
         name: "Claim Giveaway",
         catagory: ChannelGroups.tickets,
-        ticketname: "claim",
+        ticketName: "claim",
         excludes: [
             "claim"
         ]
