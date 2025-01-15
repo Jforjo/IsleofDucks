@@ -106,6 +106,8 @@ export default async function(
     if (messagesToCheck) {
         for (const giveaway of giveawaysWon) {
             for (const message of messagesToCheck) {
+                if (!('content' in message)) continue;
+                if (!message.content) continue;
                 if (message.content.includes(giveaway.messageId)) {
                     giveawaysWon.filter(gw => gw.messageId !== giveaway.messageId);
                     break;
@@ -113,6 +115,8 @@ export default async function(
             }
         }
     }
+
+    console.log("giveawaysWon", JSON.stringify(giveawaysWon));
 
     if (giveawaysWon.length === 0) {
         // Even if the automatic check failed, we should ask them to make sure
