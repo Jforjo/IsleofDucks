@@ -111,25 +111,25 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    // const member = interaction.member;
-    // // If guild exists then so should member, but imma still check it
-    // if (!member) {
-    //     await CreateInteractionResponse(interaction.id, interaction.token, {
-    //         type: InteractionResponseType.ChannelMessageWithSource,
-    //         data: {
-    //             content: "Failed to detect the server member",
-    //             flags: 1 << 6
-    //         }
-    //     });
-    //     return NextResponse.json(
-    //         { success: false, error: "Failed to detect the server member" },
-    //         { status: 400 }
-    //     );
-    // }
+    const member = interaction.member;
+    // If guild exists then so should member, but imma still check it
+    if (!member) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Failed to detect the server member",
+                flags: 1 << 6
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Failed to detect the server member" },
+            { status: 400 }
+        );
+    }
 
-    // const giveawaysWon = await CheckAllGiveaways(member.user.id);
+    const giveawaysWon = await CheckAllGiveaways(member.user.id);
 
-    // if (giveawaysWon.length === 0) {
+    if (giveawaysWon.length === 0) {
         // Even if the automatic check failed, we should ask them to make sure
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.Modal,
@@ -143,7 +143,7 @@ export default async function(
                             {
                                 type: ComponentType.TextInput,
                                 custom_id: "giveaway",
-                                label: "Please paste the message link for the giveaway you won",
+                                label: "The message link for the giveaway you won",
                                 style: TextInputStyle.Short,
                                 required: true,
                             },
@@ -152,16 +152,16 @@ export default async function(
                 ],
             }
         });
-    //     return NextResponse.json(
-    //         { success: true },
-    //         { status: 200 }
-    //     );
-    // }
+        return NextResponse.json(
+            { success: true },
+            { status: 200 }
+        );
+    }
 
-    // const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
-    // if (command) {
-    //     return await command(interaction, giveawaysWon);
-    // }
+    const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
+    if (command) {
+        return await command(interaction, giveawaysWon);
+    }
 
     return NextResponse.json(
         { success: true },
