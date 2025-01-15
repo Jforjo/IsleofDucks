@@ -3,6 +3,7 @@ import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, Isl
 import { NextResponse } from "next/server";
 import { getScammerFromDiscord } from "@/discord/jerry";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { CheckAllGiveaways } from "@/discord/tickets/claim";
 
 export default async function(
     interaction: APIMessageComponentButtonInteraction | APIModalSubmitInteraction,
@@ -181,6 +182,10 @@ export default async function(
             { status: 400 }
         );
     }
+
+    // Temp
+    autoDetectedWonGiveaways = await CheckAllGiveaways(member.user.id);
+    if (autoDetectedWonGiveaways.length === 0) autoDetectedWonGiveaways = false;
 
     await SendMessage(channel.id, {
         content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.staff) ? `Staff` : `<@&${IsleofDucks.roles.staff}>`}`,

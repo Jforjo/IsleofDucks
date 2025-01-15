@@ -57,40 +57,22 @@ export async function CheckGiveaways(
     return won.map(gw => ({channelId: channelId, messageId: gw.messageID}));
 }
 
-export default async function(
-    interaction: APIMessageComponentButtonInteraction
+export async function CheckAllGiveaways(
+    userId: Snowflake
 ): Promise<
-    NextResponse<
-        {
-            success: boolean;
-            error?: string;
-        } | APIInteractionResponse
-    >
+    {
+        channelId: Snowflake;
+        messageId: Snowflake;
+    }[]
 > {
-    const member = interaction.member;
-    // If guild exists then so should member, but imma still check it
-    if (!member) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                content: "Failed to detect the server member",
-                flags: 1 << 6
-            }
-        });
-        return NextResponse.json(
-            { success: false, error: "Failed to detect the server member" },
-            { status: 400 }
-        );
-    }
-
     const giveawaysWon: {
         channelId: Snowflake;
         messageId: Snowflake;
     }[] = [];
 
-    const giveawayMessagesPromise = CheckGiveaways(IsleofDucks.channels.reqgiveaways, member.user.id);
-    const reqgiveawayMessagesPromise = CheckGiveaways(IsleofDucks.channels.flashgiveaways, member.user.id);
-    const flashgiveawayMessagesPromise = CheckGiveaways(IsleofDucks.channels.giveaways, member.user.id);
+    const giveawayMessagesPromise = CheckGiveaways(IsleofDucks.channels.reqgiveaways, userId);
+    const reqgiveawayMessagesPromise = CheckGiveaways(IsleofDucks.channels.flashgiveaways, userId);
+    const flashgiveawayMessagesPromise = CheckGiveaways(IsleofDucks.channels.giveaways, userId);
 
     const giveawayMessages = await giveawayMessagesPromise;
     const reqgiveawayMessages = await reqgiveawayMessagesPromise;
@@ -116,9 +98,38 @@ export default async function(
         }
     }
 
-    console.log("giveawaysWon", JSON.stringify(giveawaysWon));
+    return giveawaysWon;
+}
 
-    if (giveawaysWon.length === 0) {
+export default async function(
+    interaction: APIMessageComponentButtonInteraction
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    // const member = interaction.member;
+    // // If guild exists then so should member, but imma still check it
+    // if (!member) {
+    //     await CreateInteractionResponse(interaction.id, interaction.token, {
+    //         type: InteractionResponseType.ChannelMessageWithSource,
+    //         data: {
+    //             content: "Failed to detect the server member",
+    //             flags: 1 << 6
+    //         }
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Failed to detect the server member" },
+    //         { status: 400 }
+    //     );
+    // }
+
+    // const giveawaysWon = await CheckAllGiveaways(member.user.id);
+
+    // if (giveawaysWon.length === 0) {
         // Even if the automatic check failed, we should ask them to make sure
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.Modal,
@@ -141,16 +152,16 @@ export default async function(
                 ],
             }
         });
-        return NextResponse.json(
-            { success: true },
-            { status: 200 }
-        );
-    }
+    //     return NextResponse.json(
+    //         { success: true },
+    //         { status: 200 }
+    //     );
+    // }
 
-    const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
-    if (command) {
-        return await command(interaction, giveawaysWon);
-    }
+    // const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
+    // if (command) {
+    //     return await command(interaction, giveawaysWon);
+    // }
 
     return NextResponse.json(
         { success: true },
