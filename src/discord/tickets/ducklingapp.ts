@@ -1,4 +1,4 @@
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, TextInputStyle } from "discord-api-types/v10";
 import { CreateInteractionResponse } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
@@ -25,7 +25,7 @@ export default async function(
                             type: ComponentType.TextInput,
                             custom_id: "username",
                             label: "Enter your username",
-                            style: 1,
+                            style: TextInputStyle.Short,
                             min_length: 3,
                             max_length: 16,
                             required: true,

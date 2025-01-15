@@ -347,7 +347,7 @@ export default async function(
         type: ChannelType.GuildText,
         name: `${TICKET.ticketName}-${member.user.username}`,
         topic: `${TICKET.name} for ${member.nick ?? member.user.username} - ${member.user.id}`,
-        parent_id: IsleofDucks.channelGroups.tickets,
+        parent_id: TICKET.catagory,
         permission_overwrites: channelPermissions
     });
     if (!channel) {
@@ -433,7 +433,7 @@ export default async function(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `close-duckapp-${member.user.id}`,
+                        custom_id: `close-${TICKET.id}-${member.user.id}`,
                         type: ComponentType.Button,
                         label: "Close",
                         style: ButtonStyle.Danger,

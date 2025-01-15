@@ -1115,335 +1115,364 @@ async function updateSuperlativeValue(
     return value;
 }
 
-export const IsleofDucks = {
-    serverID: "823061629812867113",
-    staticIDs: {
-        Jforjo: "791380888197660722",
-        Ducksicle: "474770139363934219",
-        GiveawayBoat: "530082442967646230"
-    },
-    channels: {
-        staffgeneral: "823077540654612492",
-        support: "910160132233658408",
-        carrierapps: "1004135601534152755",
-        transcriptForum: "1320673392801878036",
-        giveaways: "882151291340611605",
-        reqgiveaways: "980520250766426142",
-        flashgiveaways: "1066461763266154537",
-        giveawaypayout: "1070783580617314434"
-    },
-    channelGroups: {
-        tickets: "988883238292451378",
-        carrytickets: "1004180629551845466",
-    },
-    ticketTypes: [
-        {
-            id: "duckapp",
-            name: "Duck Application",
-            ticketName: "duck",
-            // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
-            excludes: [
-                "duck",
-                "duckling"
-            ]
-        },
-        {
-            id: "ducklingapp",
-            name: "Duckling Application",
-            ticketName: "duckling",
-            // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
-            excludes: [
-                "duck",
-                "duckling"
-            ]
-        },
-        {
-            id: "support",
-            name: "Support",
-            ticketname: "support",
-            excludes: [
-                "support"
-            ]
-        },
-        {
-            id: "sponsor",
-            name: "Sponsor Giveaway",
-            ticketname: "sponsor",
-            excludes: [
-                "sponsor"
-            ]
-        },
-        {
-            id: "claim",
-            name: "Claim Giveaway",
-            ticketname: "claim",
-            excludes: [
-                "claim"
-            ]
-        }
-    ],
-    transcriptForum: {
-        tags: [
-            {
-                id: "1320673664441782313",
-                name: "duckapp",
-            },
-            {
-                id: "1320673729675788428",
-                name: "ducklingapp",
-            }
+const ServerID = "823061629812867113";
+const StaticIDs = {
+    Jforjo: "791380888197660722",
+    Ducksicle: "474770139363934219",
+    GiveawayBoat: "530082442967646230"
+};
+const Channels = {
+    staffgeneral: "823077540654612492",
+    support: "910160132233658408",
+    carrierapps: "1004135601534152755",
+    transcriptForum: "1320673392801878036",
+    giveaways: "882151291340611605",
+    reqgiveaways: "980520250766426142",
+    flashgiveaways: "1066461763266154537",
+    giveawaypayout: "1070783580617314434"
+};
+const ChannelGroups = {
+    tickets: "988883238292451378",
+    carrytickets: "1004180629551845466",
+};
+const TicketTypes = [
+    {
+        id: "duckapp",
+        name: "Duck Application",
+        catagory: ChannelGroups.tickets,
+        ticketName: "duck",
+        // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
+        excludes: [
+            "duck",
+            "duckling"
         ]
     },
-    roles: {
-        owner: "823071305795633163",
-        admin: "824393734921650247",
-        mod_duck: "886312078611206144",
-        mod_duckling: "997610270262296717",
-        service_management: "1021284854626779136",
-        staff: "1004180925606805614",
-        trainee: "992638050377142392",
-        verified: "1287098228067664004",
-        duck_guild_member: "933258162931400764",
-        duckling_guild_member: "998380474407846000",
-        immune: "1276013765405704266",
-        levels: [
-            {
-                id: "1328090605481627698",
-                requirement: 44000
-            },
-            {
-                id: "1328090513793880234",
-                requirement: 40000
-            },
-            {
-                id: "1328090470974230680",
-                requirement: 36000
-            },
-            {
-                id: "1328090385909809173",
-                requirement: 32000
-            },
-            {
-                id: "1328090310470795335",
-                requirement: 28000
-            },
-            {
-                id: "1328090223221149786",
-                requirement: 24000
-            },
-            {
-                id: "1328089436894007506",
-                requirement: 0
-            },
-        ],
-        carrier_f1_4: "1004131288023830638",
-        carrier_f5_6: "1004131419553005710",
-        carrier_f7: "1004131451077406750",
-        carrier_m1: "1004131476650070036",
-        carrier_m2: "1004131503640420424",
-        carrier_m3: "1004131520656707686",
-        carrier_m4: "1004131539539468369",
-        carrier_m5: "1004131565124730991",
-        carrier_m6: "1004131581696422109",
-        carrier_m7: "1004131601971675246",
-        carrier_rev: "1004131669487403078",
-        carrier_tara: "1004131737795833936",
-        carrier_sven: "1004131758616367225",
-        carrier_eman1_3: "1004131780682596352",
-        carrier_eman4: "1004131845266493500",
-        carrier_inferno1_3: "1004131871774494842",
-        carrier_inferno4: "1004131911263854713",
-        carrier_kuudra1_2: "1119807379903623258",
-        carrier_kuudra3_4: "1119807706841235496",
-        carrier_kuudra5: "1119807771458670654",
+    {
+        id: "ducklingapp",
+        name: "Duckling Application",
+        catagory: ChannelGroups.tickets,
+        ticketName: "duckling",
+        // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
+        excludes: [
+            "duck",
+            "duckling"
+        ]
     },
-    superlatives: [
-        {
-            id: "oct24",
-            title: "",
-            start: new Date("1 October 2024").getTime(),
-            callback: undefined
-        },
-        {
-            id: "nov24",
-            title: "Enderman Slayer Experience",
-            start: new Date("1 November 2024").getTime(),
-            callback: async function(
-                uuid: string
-            ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-                return await getSuperlativeValue(uuid, (value) => formatNumber(value));
-            },
-            update: async function(uuid: string): Promise<number | {
-                success: false;
-                status?: number;
-                message: string;
-                ping?: boolean;
-                retry?: number | null;
-            }> {
-                return await updateSuperlativeValue(uuid, (profile) => {
-                    return profile?.slayer?.slayer_bosses?.enderman?.xp;
-                });
-            }
-        },
-        {
-            id: "dec24",
-            title: "SkyBlock Level",
-            start: new Date("1 December 2024").getTime(),
-            callback: async function(
-                uuid: string
-            ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-                return await getSuperlativeValue(uuid, (value) => formatNumber(value));
-            },
-            update: async function(uuid: string): Promise<number | {
-                success: false;
-                status?: number;
-                message: string;
-                ping?: boolean;
-                retry?: number | null;
-            }> {
-                return await updateSuperlativeValue(uuid, (profile) => {
-                    return profile?.leveling?.experience;
-                });
-            },
-            ranks: {
-                ducks: [
-                    {
-                        id: "GRINCH",
-                        requirement: 0,
-                    },
-                    {
-                        id: "ELF",
-                        requirement: 32000,
-                    },
-                    {
-                        id: "FROSTY",
-                        requirement: 36000,
-                    },
-                    {
-                        id: "SANTA",
-                        requirement: 40000,
-                    },
-                ],
-                ducklings: [
-                    {
-                        id: "GRINCH",
-                        requirement: 0,
-                    },
-                    {
-                        id: "ELF",
-                        requirement: 22000,
-                    },
-                    {
-                        id: "FROSTY",
-                        requirement: 26000,
-                    },
-                    {
-                        id: "SANTA",
-                        requirement: 30000,
-                    },
-                ]
-            }
-        },
-        {
-            id: "jan25",
-            title: "Claimed Bestiary Milestone",
-            start: new Date("1 January 2025").getTime(),
-            callback: async function(
-                uuid: string
-            ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-                return await getSuperlativeValue(uuid, (value) => value.toString());
-            },
-            update: async function(uuid: string): Promise<number | {
-                success: false;
-                status?: number;
-                message: string;
-                ping?: boolean;
-                retry?: number | null;
-            }> {
-                return await updateSuperlativeValue(uuid, (profile) => {
-                    return profile?.bestiary?.milestone?.last_claimed_milestone;
-                });
-            },
-            ranks: {
-                ducks: [
-                    {
-                        id: "PREY",
-                        requirement: 0,
-                    },
-                    {
-                        id: "NOVICE",
-                        requirement: 200,
-                    },
-                    {
-                        id: "HUNTER",
-                        requirement: 250,
-                    },
-                    {
-                        id: "MASTER",
-                        requirement: 300,
-                    },
-                ],
-                ducklings: [
-                    {
-                        id: "PREY",
-                        requirement: 0,
-                    },
-                    {
-                        id: "NOVICE",
-                        requirement: 150,
-                    },
-                    {
-                        id: "HUNTER",
-                        requirement: 200,
-                    },
-                    {
-                        id: "MASTER",
-                        requirement: 250,
-                    },
-                ]
-            }
-        },
-    ],
-    // WIP. Currently not used anywhere.
-    help: {
-        pages: [
-            {
-                id: "general",
-                name: "General",
-                description: "General information",
-                data: {
-                    description: [
-                        `Use \`/help [catagory]\` to get more information about a catagory.`,
-                    ].join("\n"),
-                    fields: [
-                        {
-                            name: "Commands",
-                            value: [
-                                `banlist`,
-                                `checkapi`,
-                                `embed`,
-                                `help`,
-                                `immune`,
-                                `ping`,
-                                `recruit`,
-                                `superlative`,
-                                `updatecommands`,
-                                `updateroles`,
-                                `updatesuperlative`,
-                                `weekly`
-                            ].join("\n")
-                        }
-                    ]
-                }
-            },
-            {
-                id: "commands",
-                name: "Commands",
-                description: "List of commands",
-            }
+    {
+        id: "support",
+        name: "Support",
+        catagory: ChannelGroups.tickets,
+        ticketname: "support",
+        excludes: [
+            "support"
+        ]
+    },
+    {
+        id: "sponsor",
+        name: "Sponsor Giveaway",
+        catagory: ChannelGroups.tickets,
+        ticketname: "sponsor",
+        excludes: [
+            "sponsor"
+        ]
+    },
+    {
+        id: "claim",
+        name: "Claim Giveaway",
+        catagory: ChannelGroups.tickets,
+        ticketname: "claim",
+        excludes: [
+            "claim"
         ]
     }
+];
+const TranscriptForum = {
+    tags: [
+        {
+            id: "1320673664441782313",
+            name: "duckapp",
+        },
+        {
+            id: "1320673729675788428",
+            name: "ducklingapp",
+        },
+        {
+            id: "1320813268230733995",
+            name: "support",
+        },
+        {
+            id: "1329003228020604928",
+            name: "sponsor",
+        },
+        {
+            id: "1320812842685042698",
+            name: "claim",
+        }
+    ]
+};
+const Roles = {
+    owner: "823071305795633163",
+    admin: "824393734921650247",
+    mod_duck: "886312078611206144",
+    mod_duckling: "997610270262296717",
+    service_management: "1021284854626779136",
+    staff: "1004180925606805614",
+    trainee: "992638050377142392",
+    verified: "1287098228067664004",
+    duck_guild_member: "933258162931400764",
+    duckling_guild_member: "998380474407846000",
+    immune: "1276013765405704266",
+    levels: [
+        {
+            id: "1328090605481627698",
+            requirement: 44000
+        },
+        {
+            id: "1328090513793880234",
+            requirement: 40000
+        },
+        {
+            id: "1328090470974230680",
+            requirement: 36000
+        },
+        {
+            id: "1328090385909809173",
+            requirement: 32000
+        },
+        {
+            id: "1328090310470795335",
+            requirement: 28000
+        },
+        {
+            id: "1328090223221149786",
+            requirement: 24000
+        },
+        {
+            id: "1328089436894007506",
+            requirement: 0
+        },
+    ],
+    carrier_f1_4: "1004131288023830638",
+    carrier_f5_6: "1004131419553005710",
+    carrier_f7: "1004131451077406750",
+    carrier_m1: "1004131476650070036",
+    carrier_m2: "1004131503640420424",
+    carrier_m3: "1004131520656707686",
+    carrier_m4: "1004131539539468369",
+    carrier_m5: "1004131565124730991",
+    carrier_m6: "1004131581696422109",
+    carrier_m7: "1004131601971675246",
+    carrier_rev: "1004131669487403078",
+    carrier_tara: "1004131737795833936",
+    carrier_sven: "1004131758616367225",
+    carrier_eman1_3: "1004131780682596352",
+    carrier_eman4: "1004131845266493500",
+    carrier_inferno1_3: "1004131871774494842",
+    carrier_inferno4: "1004131911263854713",
+    carrier_kuudra1_2: "1119807379903623258",
+    carrier_kuudra3_4: "1119807706841235496",
+    carrier_kuudra5: "1119807771458670654",
+};
+const Superlatives = [
+    {
+        id: "oct24",
+        title: "",
+        start: new Date("1 October 2024").getTime(),
+        callback: undefined
+    },
+    {
+        id: "nov24",
+        title: "Enderman Slayer Experience",
+        start: new Date("1 November 2024").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return profile?.slayer?.slayer_bosses?.enderman?.xp;
+            });
+        }
+    },
+    {
+        id: "dec24",
+        title: "SkyBlock Level",
+        start: new Date("1 December 2024").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return profile?.leveling?.experience;
+            });
+        },
+        ranks: {
+            ducks: [
+                {
+                    id: "GRINCH",
+                    requirement: 0,
+                },
+                {
+                    id: "ELF",
+                    requirement: 32000,
+                },
+                {
+                    id: "FROSTY",
+                    requirement: 36000,
+                },
+                {
+                    id: "SANTA",
+                    requirement: 40000,
+                },
+            ],
+            ducklings: [
+                {
+                    id: "GRINCH",
+                    requirement: 0,
+                },
+                {
+                    id: "ELF",
+                    requirement: 22000,
+                },
+                {
+                    id: "FROSTY",
+                    requirement: 26000,
+                },
+                {
+                    id: "SANTA",
+                    requirement: 30000,
+                },
+            ]
+        }
+    },
+    {
+        id: "jan25",
+        title: "Claimed Bestiary Milestone",
+        start: new Date("1 January 2025").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => value.toString());
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return profile?.bestiary?.milestone?.last_claimed_milestone;
+            });
+        },
+        ranks: {
+            ducks: [
+                {
+                    id: "PREY",
+                    requirement: 0,
+                },
+                {
+                    id: "NOVICE",
+                    requirement: 200,
+                },
+                {
+                    id: "HUNTER",
+                    requirement: 250,
+                },
+                {
+                    id: "MASTER",
+                    requirement: 300,
+                },
+            ],
+            ducklings: [
+                {
+                    id: "PREY",
+                    requirement: 0,
+                },
+                {
+                    id: "NOVICE",
+                    requirement: 150,
+                },
+                {
+                    id: "HUNTER",
+                    requirement: 200,
+                },
+                {
+                    id: "MASTER",
+                    requirement: 250,
+                },
+            ]
+        }
+    },
+];
+// WIP. Currently not used anywhere.
+const Help = {
+    pages: [
+        {
+            id: "general",
+            name: "General",
+            description: "General information",
+            data: {
+                description: [
+                    `Use \`/help [catagory]\` to get more information about a catagory.`,
+                ].join("\n"),
+                fields: [
+                    {
+                        name: "Commands",
+                        value: [
+                            `banlist`,
+                            `checkapi`,
+                            `embed`,
+                            `help`,
+                            `immune`,
+                            `ping`,
+                            `recruit`,
+                            `superlative`,
+                            `updatecommands`,
+                            `updateroles`,
+                            `updatesuperlative`,
+                            `weekly`
+                        ].join("\n")
+                    }
+                ]
+            }
+        },
+        {
+            id: "commands",
+            name: "Commands",
+            description: "List of commands",
+        }
+    ]
 }
+
+export const IsleofDucks = {
+    serverID: ServerID,
+    staticIDs: StaticIDs,
+    channels: Channels,
+    channelGroups: ChannelGroups,
+    ticketTypes: TicketTypes,
+    transcriptForum: TranscriptForum,
+    roles: Roles,
+    superlatives: Superlatives,
+    // WIP. Currently not used anywhere.
+    help: Help
+}
+
 export const CloseTicketPermissions = {
     duckapp: new Set([
         IsleofDucks.roles.admin,

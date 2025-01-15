@@ -15,19 +15,17 @@ export default async function(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.Modal,
         data: {
-            custom_id: "duckapp",
-            title: "Duck Application",
+            custom_id: "sponsor",
+            title: "Sponsor Giveaway",
             components: [
                 {
                     type: ComponentType.ActionRow,
                     components: [
                         {
                             type: ComponentType.TextInput,
-                            custom_id: "username",
-                            label: "Enter your username",
+                            custom_id: "item",
+                            label: "What would you like to give away?",
                             style: TextInputStyle.Short,
-                            min_length: 3,
-                            max_length: 16,
                             required: true,
                         },
                     ],

@@ -15,19 +15,17 @@ export default async function(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.Modal,
         data: {
-            custom_id: "duckapp",
-            title: "Duck Application",
+            custom_id: "support",
+            title: "Support",
             components: [
                 {
                     type: ComponentType.ActionRow,
                     components: [
                         {
                             type: ComponentType.TextInput,
-                            custom_id: "username",
-                            label: "Enter your username",
-                            style: TextInputStyle.Short,
-                            min_length: 3,
-                            max_length: 16,
+                            custom_id: "reason",
+                            label: "Please state the purpose of your ticket",
+                            style: TextInputStyle.Paragraph,
                             required: true,
                         },
                     ],
