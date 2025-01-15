@@ -22,8 +22,7 @@ export async function CheckGiveaways(
 
     for (const message of messagesToCheck) {
         // Backslash: .*+?^=!:${}()|[]/\
-        const newWinnerRegEx = new RegExp(`The new winner of the giveaway (.*) is \<\@(.*)\>\. Congrats\!`);
-        const newWinnerCheck = newWinnerRegEx.exec(message.content);
+        const newWinnerCheck = /The new winner of the giveaway (.*) is \<\@(.*)\>\. Congrats\!/gm.exec(message.content);
         if (newWinnerCheck) {
             const title = newWinnerCheck[1];
             const winner = newWinnerCheck[2];
@@ -36,8 +35,7 @@ export async function CheckGiveaways(
             }
         }
         if (!message.embeds[0].description) continue;
-        const winnerRegEx = new RegExp(`\<\@(.*)\> won the giveaway of \[(.*)\]`);
-        const winnerCheck = winnerRegEx.exec(message.embeds[0].description);
+        const winnerCheck = /\<\@(.*)\> won the giveaway of \[(.*)\]/gm.exec(message.embeds[0].description);
         if (winnerCheck) {
             const winner = winnerCheck[1];
             const title = winnerCheck[2];
