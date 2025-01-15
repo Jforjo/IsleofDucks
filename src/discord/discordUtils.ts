@@ -1486,6 +1486,24 @@ export const CloseTicketPermissions = {
         IsleofDucks.roles.mod_duckling,
         IsleofDucks.roles.service_management,
     ]),
+    support: new Set([
+        IsleofDucks.roles.admin,
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.service_management,
+    ]),
+    sponsor: new Set([
+        IsleofDucks.roles.admin,
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.service_management,
+    ]),
+    claim: new Set([
+        IsleofDucks.roles.admin,
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.service_management,
+    ]),
 }
 
 export interface Superlative {
