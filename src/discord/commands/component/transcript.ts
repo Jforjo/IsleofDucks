@@ -75,7 +75,7 @@ export default async function(
     });
 
     const ticketID = interaction.data.custom_id.split('-')[1];
-    const firstMessageID = interaction.data.custom_id.split('-')[2];
+    // const firstMessageID = interaction.data.custom_id.split('-')[2];
     const ticketOwnerID = interaction.data.custom_id.split('-')[3];
 
     const thread = await CreateThread(IsleofDucks.channels.transcriptForum, {
@@ -120,7 +120,7 @@ export default async function(
     //     { status: 200 }
     // )
 
-    for (const message of await GetAllChannelMessages(interaction.channel.id)) {
+    for (const message of (await GetAllChannelMessages(interaction.channel.id)).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())) {
     // for await (const message of GetMessagesAfterGenerator(interaction.channel.id, firstMessageID)) {
         if (!message) continue;
         const avatarURL = message.author.avatar ? RouteBases.cdn + CDNRoutes.userAvatar(message.author.id, message.author.avatar, ImageFormat.PNG ) : undefined;
