@@ -610,6 +610,24 @@ export async function GetAllGuildMembers(
     }
     return members;
 }
+export async function* GetAllGuildMembersGenerator(guildId: Snowflake): AsyncGenerator<APIGuildMember | undefined, undefined, void> {
+    let members = await ListGuildMembers(guildId, {
+        limit: 100,
+    });
+    let count = members ? members.length : 0;
+    
+    while (members) {
+        yield members.pop();
+        if (members.length === 0) {
+            if (count < 100) break;
+            members = await ListGuildMembers(guildId, {
+                limit: 100,
+                after: members[members.length - 1].user.id
+            });
+            count = members ? members.length : 0;
+        }
+    }
+}
 
 export async function GetGuildMember(
     guildId: Snowflake,
