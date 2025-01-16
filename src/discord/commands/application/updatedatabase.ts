@@ -57,7 +57,10 @@ export async function UpdateAllDiscordRolesInDb(): Promise<number> {
     if (users.length === 0) return 0;
     let count = 0;
     for (const user of users) {
-        if (await UpdateDiscord(user.uuid)) count++;
+        if (user.uuid) {
+            const updated = await UpdateDiscord(user.uuid);
+            if (updated) count++;
+        }
     }
     return count;
 }
