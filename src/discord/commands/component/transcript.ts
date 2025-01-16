@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, CreateThread, EditChannel, ExecuteWebhook, FollowupMessage, GetMessagesAfterGenerator, IsleofDucks } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, CreateThread, EditChannel, ExecuteWebhook, FollowupMessage, GetAllChannelMessages, IsleofDucks } from "@/discord/discordUtils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, RouteBases } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -120,7 +120,8 @@ export default async function(
     //     { status: 200 }
     // )
 
-    for await (const message of GetMessagesAfterGenerator(interaction.channel.id, firstMessageID)) {
+    for (const message of await GetAllChannelMessages(interaction.channel.id)) {
+    // for await (const message of GetMessagesAfterGenerator(interaction.channel.id, firstMessageID)) {
         if (!message) continue;
         const avatarURL = message.author.avatar ? RouteBases.cdn + CDNRoutes.userAvatar(message.author.id, message.author.avatar, ImageFormat.PNG ) : undefined;
         const attachments = message.attachments.map((attachment, index) => {
