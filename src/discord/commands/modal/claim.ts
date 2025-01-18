@@ -217,7 +217,7 @@ export default async function(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `close-${TICKET.id}-${member.user.id}`,
+                        custom_id: `close-${TICKET.id}-${member.user.id}-auto`,
                         type: ComponentType.Button,
                         label: "Close",
                         style: ButtonStyle.Danger,

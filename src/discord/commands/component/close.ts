@@ -1,6 +1,7 @@
-import { CloseTicketPermissions, ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, FollowupMessage, SendMessage, ToPermissions } from "@/discord/discordUtils";
+import { CloseTicketPermissions, ConvertSnowflakeToDate, CreateInteractionResponse, DeleteChannel, EditChannel, FollowupMessage, SendMessage, ToPermissions } from "@/discord/discordUtils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
+import { CreateTranscript } from "./transcript";
 
 export default async function(
     interaction: APIMessageComponentButtonInteraction
@@ -52,6 +53,7 @@ export default async function(
     const canClose = CloseTicketPermissions[ticketID as keyof typeof CloseTicketPermissions];
     const userRoles = new Set(interaction.member.roles);
     const ticketOwnerID = interaction.data.custom_id.split('-')[2];
+    const autoCloseTicket = interaction.data.custom_id.split('-')[3] === "auto";
 
     // Typescript complains at the intersection
     // const hasRoles = userRoles.intersection(canClose).size > 0;
@@ -111,6 +113,43 @@ export default async function(
             },
         ]
     });
+
+    if (autoCloseTicket) {
+        await SendMessage(interaction.channel.id, {
+            embeds: [
+                {
+                    title: "Closed Ticket",
+                    fields: [
+                        {
+                            name: "Closed by:",
+                            value: [
+                                `<@${interaction.member.user.id}>`,
+                                `Discord ID: ${interaction.member.user.id}`,
+                                `Username: ${interaction.member.user.username}`,
+                                `Nickname: ${interaction.member.nick ?? ""}`,
+                            ].join("\n"),
+                        }
+                    ],
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        const transcript = await CreateTranscript(interaction.channel.id, interaction.channel.name, interaction.member.user.id, ticketID, ticketOwnerID);
+        if (!transcript.success) {
+            await FollowupMessage(interaction.token, {
+                content: transcript.message
+            });
+            return NextResponse.json(
+                { success: false, error: transcript.message },
+                { status: 400 }
+            );
+        }
+        await DeleteChannel(interaction.channel.id);
+    }
 
     await SendMessage(interaction.channel.id, {
         embeds: [

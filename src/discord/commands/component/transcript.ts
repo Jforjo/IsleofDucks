@@ -1,6 +1,93 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, CreateThread, EditChannel, ExecuteWebhook, FollowupMessage, GetAllChannelMessages, IsleofDucks } from "@/discord/discordUtils";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, RouteBases } from "discord-api-types/v10";
+import { APIChannel, APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, RouteBases, Snowflake } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
+
+export async function CreateTranscript(
+    channelID: Snowflake,
+    channelName: string | null | undefined,
+    memberID: Snowflake,
+    ticketID: string,
+    ticketOwnerID: string
+): Promise<
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+    }
+> {
+    const thread = await CreateThread(IsleofDucks.channels.transcriptForum, {
+        name: channelName ?? "Transcript",
+        auto_archive_duration: 60,
+        applied_tags: IsleofDucks.transcriptForum.tags.filter(tag => tag.name === ticketID).map(tag => tag.id),
+        message: {
+            embeds: [
+                {
+                    title: channelName ?? "Transcript",
+                    fields: [
+                        {
+                            name: "Opened by:",
+                            value: `<@${ticketOwnerID}>`,
+                            inline: true
+                        },
+                        {
+                            name: "Transcript saved by:",
+                            value: `<@${memberID}>`,
+                            inline: true
+                        }
+                    ],
+                    color: 0xFB9B00,
+                }
+            ]
+        }
+    });
+
+    if (!thread) {
+        return {
+            success: false,
+            message: "Failed to create transcript thread"
+        }
+    }
+
+    // console.log(JSON.stringify(thread));
+    // if (!thread.id) return NextResponse.json(
+    //     { success: true },
+    //     { status: 200 }
+    // )
+
+    for (const message of (await GetAllChannelMessages(channelID)).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())) {
+    // for await (const message of GetMessagesAfterGenerator(channelID, firstMessageID)) {
+        if (!message) continue;
+        const avatarURL = message.author.avatar ? RouteBases.cdn + CDNRoutes.userAvatar(message.author.id, message.author.avatar, ImageFormat.PNG ) : undefined;
+        const attachments = message.attachments.map((attachment, index) => {
+            attachment.id = index.toString();
+            return attachment;
+        });
+        await ExecuteWebhook({
+            thread_id: thread.id,
+        }, {
+            username: message.author.username,
+            avatar_url: avatarURL,
+            content: message.content,
+            embeds: message.embeds,
+            attachments: attachments,
+            poll: message.poll,
+        }, attachments.map(attachment => ({
+            id: attachment.id,
+            url: attachment.url,
+            filename: attachment.filename
+        })));
+    }
+    
+    await EditChannel(thread.id, {
+        locked: true,
+        archived: true
+    });
+
+    return {
+        success: true
+    }
+}
 
 export default async function(
     interaction: APIMessageComponentButtonInteraction
@@ -78,77 +165,17 @@ export default async function(
     // const firstMessageID = interaction.data.custom_id.split('-')[2];
     const ticketOwnerID = interaction.data.custom_id.split('-')[3];
 
-    const thread = await CreateThread(IsleofDucks.channels.transcriptForum, {
-        name: interaction.channel.name ?? "Transcript",
-        auto_archive_duration: 60,
-        applied_tags: IsleofDucks.transcriptForum.tags.filter(tag => tag.name === ticketID).map(tag => tag.id),
-        message: {
-            embeds: [
-                {
-                    title: interaction.channel.name ?? "Transcript",
-                    fields: [
-                        {
-                            name: "Opened by:",
-                            value: `<@${ticketOwnerID}>`,
-                            inline: true
-                        },
-                        {
-                            name: "Transcript saved by:",
-                            value: `<@${interaction.member.user.id}>`,
-                            inline: true
-                        }
-                    ],
-                    color: 0xFB9B00,
-                }
-            ]
-        }
-    });
-
-    if (!thread) {
+    const result = await CreateTranscript(interaction.channel.id, interaction.channel.name, interaction.member.user.id, ticketID, ticketOwnerID);
+    if (!result.success) {
         await FollowupMessage(interaction.token, {
-            content: "Failed to create transcript thread!"
+            content: result.message
         });
         return NextResponse.json(
-            { success: false, error: "Failed to create transcript thread" },
+            { success: false, error: result.message },
             { status: 400 }
-        )
+        );
     }
 
-    // console.log(JSON.stringify(thread));
-    // if (!thread.id) return NextResponse.json(
-    //     { success: true },
-    //     { status: 200 }
-    // )
-
-    for (const message of (await GetAllChannelMessages(interaction.channel.id)).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())) {
-    // for await (const message of GetMessagesAfterGenerator(interaction.channel.id, firstMessageID)) {
-        if (!message) continue;
-        const avatarURL = message.author.avatar ? RouteBases.cdn + CDNRoutes.userAvatar(message.author.id, message.author.avatar, ImageFormat.PNG ) : undefined;
-        const attachments = message.attachments.map((attachment, index) => {
-            attachment.id = index.toString();
-            return attachment;
-        });
-        await ExecuteWebhook({
-            thread_id: thread.id,
-        }, {
-            username: message.author.username,
-            avatar_url: avatarURL,
-            content: message.content,
-            embeds: message.embeds,
-            attachments: attachments,
-            poll: message.poll,
-        }, attachments.map(attachment => ({
-            id: attachment.id,
-            url: attachment.url,
-            filename: attachment.filename
-        })));
-    }
-    
-    await EditChannel(thread.id, {
-        locked: true,
-        archived: true
-    });
-    
     components.forEach(row => {
         if (row.type !== ComponentType.ActionRow) return;
         row.components.forEach(button => {
