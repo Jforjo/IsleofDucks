@@ -1,5 +1,5 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, CreateThread, EditChannel, ExecuteWebhook, FollowupMessage, GetAllChannelMessages, IsleofDucks } from "@/discord/discordUtils";
-import { APIChannel, APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, RouteBases, Snowflake } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, RouteBases, Snowflake } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export async function CreateTranscript(
