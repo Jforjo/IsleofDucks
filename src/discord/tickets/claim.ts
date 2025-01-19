@@ -130,7 +130,6 @@ export default async function(
     const giveawaysWon = await CheckAllGiveaways(member.user.id);
 
     if (giveawaysWon.length === 0) {
-        // Even if the automatic check failed, we should ask them to make sure
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.Modal,
             data: {

@@ -25,7 +25,8 @@ export default async function(
             flags: 1 << 6
         }
     });
-    const ticketID = interaction.data.custom_id.includes('ticket-') ? interaction.data.custom_id.split('-')[1] : interaction.data.custom_id;
+    const tickerButton = interaction.data.custom_id.includes('ticket-');
+    const ticketID = tickerButton ? interaction.data.custom_id.split('-')[1] : interaction.data.custom_id;
     const TICKET = IsleofDucks.ticketTypes.filter((ticket) => ticket.id === ticketID)[0];
     if (!TICKET) {
         await FollowupMessage(interaction.token, {
@@ -38,8 +39,11 @@ export default async function(
     }
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     let userinput = "";
-    if ('data' in interaction && 'components' in interaction.data)
-        userinput = interaction.data.components[0].components[0].value;
+    if (!tickerButton) {
+        // If statement needed because TS complains
+        if ('data' in interaction && 'components' in interaction.data)
+            userinput = interaction.data.components[0].components[0].value;
+    }
 
     const guildID = interaction.guild_id;
     if (!guildID) {
@@ -182,10 +186,15 @@ export default async function(
         );
     }
 
-    // Temp
-    // autoDetectedWonGiveaways = await CheckAllGiveaways(member.user.id);
-    // if (autoDetectedWonGiveaways.length === 0) autoDetectedWonGiveaways = false;
-    console.log("gws", autoDetectedWonGiveaways);
+    const field = tickerButton ? {
+        name: "Auto detected giveaways won",
+        value: autoDetectedWonGiveaways ?
+            autoDetectedWonGiveaways.map(gw => `https://discord.com/channels/${IsleofDucks.serverID}/${gw.channelId}/${gw.messageId}`).join('\n') :
+            "None"
+    } : {
+        name: "Giveaway they won",
+        value: userinput
+    };
 
     await SendMessage(channel.id, {
         content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.staff) ? `Moderators` : `<@&${IsleofDucks.roles.mod_duck}>, <@&${IsleofDucks.roles.mod_duckling}>`}`,
@@ -193,18 +202,7 @@ export default async function(
             {
                 title: `${TICKET.name}`,
                 description: `${TICKET.name} for ${member.nick ?? member.user.username} - ${member.user.id}`,
-                fields: [
-                    {
-                        name: "Auto detected giveaways won",
-                        value: autoDetectedWonGiveaways ?
-                            autoDetectedWonGiveaways.map(gw => `https://discord.com/channels/${IsleofDucks.serverID}/${gw.channelId}/${gw.messageId}`).join('\n') :
-                            "None"
-                    },
-                    {
-                        name: "Giveaway they won",
-                        value: userinput
-                    }
-                ],
+                fields: [ field ],
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
