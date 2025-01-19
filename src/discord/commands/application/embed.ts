@@ -1,5 +1,5 @@
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, CheckEmbedExists, GetEmbedData, SendMessage } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, CheckEmbedExists, GetEmbedData, SendMessage, EditMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -85,10 +85,17 @@ export default async function(
         );
     }
 
-    await SendMessage(interaction.channel.id, Object.assign({
-        content: embedData.content,
-        components: embedData.components ? JSON.parse(embedData.components) : undefined,
-    }, JSON.parse(embedData.embeds)), embedData.attachments ? JSON.parse(embedData.attachments) : undefined);
+    if (options.message) {
+        await EditMessage(interaction.channel.id, options.message, Object.assign({
+            content: embedData.content,
+            components: embedData.components ? JSON.parse(embedData.components) : undefined,
+        }, JSON.parse(embedData.embeds)), embedData.attachments ? JSON.parse(embedData.attachments) : undefined);
+    } else {
+        await SendMessage(interaction.channel.id, Object.assign({
+            content: embedData.content,
+            components: embedData.components ? JSON.parse(embedData.components) : undefined,
+        }, JSON.parse(embedData.embeds)), embedData.attachments ? JSON.parse(embedData.attachments) : undefined);
+    }
 
     await FollowupMessage(interaction.token, {
         content: "Done!",
@@ -108,6 +115,12 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
             description: "Name of the embed",
             type: ApplicationCommandOptionType.String,
             required: true
+        },
+        {
+            name: "message",
+            description: "ID of the message to edit in the same channel",
+            type: ApplicationCommandOptionType.String,
+            required: false
         }
     ],
 }
