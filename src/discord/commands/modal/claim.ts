@@ -25,8 +25,8 @@ export default async function(
             flags: 1 << 6
         }
     });
-    
-    const TICKET = IsleofDucks.ticketTypes.filter((ticket) => ticket.id === interaction.data.custom_id)[0];
+    const ticketID = interaction.data.custom_id.includes('ticket-') ? interaction.data.custom_id.split('-')[1] : interaction.data.custom_id;
+    const TICKET = IsleofDucks.ticketTypes.filter((ticket) => ticket.id === ticketID)[0];
     if (!TICKET) {
         await FollowupMessage(interaction.token, {
             content: "Ticket type not found!",
