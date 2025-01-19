@@ -158,7 +158,7 @@ export default async function(
         );
     }
 
-    const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
+    const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[1].toLowerCase()}.ts`);
     if (command) {
         return await command(interaction, giveawaysWon);
     }
