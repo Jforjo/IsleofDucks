@@ -185,7 +185,7 @@ export default async function(
     // Temp
     // autoDetectedWonGiveaways = await CheckAllGiveaways(member.user.id);
     // if (autoDetectedWonGiveaways.length === 0) autoDetectedWonGiveaways = false;
-    // console.log("gws", autoDetectedWonGiveaways);
+    console.log("gws", autoDetectedWonGiveaways);
 
     await SendMessage(channel.id, {
         content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.staff) ? `Moderators` : `<@&${IsleofDucks.roles.mod_duck}>, <@&${IsleofDucks.roles.mod_duckling}>`}`,
