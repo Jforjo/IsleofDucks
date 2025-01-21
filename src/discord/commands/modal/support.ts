@@ -181,7 +181,7 @@ export default async function(
         embeds: [
             {
                 title: `${TICKET.name}`,
-                description: `${TICKET.name} for ${member.nick ?? member.user.username} - ${member.user.id}`,
+                description: `${TICKET.name} for ${member.nick?.replaceAll('_', '\\_') ?? member.user.username.replaceAll('_', '\\_')} - ${member.user.id}`,
                 fields: [
                     {
                         name: "Reason",
