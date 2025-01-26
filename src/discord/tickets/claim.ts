@@ -38,16 +38,18 @@ export async function CheckGiveaways(
         if (message.embeds.length === 0) continue;
         if (!('description' in message.embeds[0])) continue;
         if (!message.embeds[0].description) continue;
-        const winnerCheck = /<@(.*)> won the giveaway of \[(.*)\]/gm.exec(message.embeds[0].description);
+        const winnerCheck = /(.*) won the giveaway of \[(.*)\]/gm.exec(message.embeds[0].description);
         if (winnerCheck) {
-            const winner = winnerCheck[1];
+            const winners = winnerCheck[1].split(', ');
             const title = winnerCheck[2];
             if (giveaways.filter(gw => gw.title === title).length === 0) {
-                giveaways.push({
-                    title: title,
-                    winner: winner,
-                    messageID: message.id
-                })
+                winners.forEach(winner => {
+                    giveaways.push({
+                        title: title,
+                        winner: winner.replace('<@', '').replace('>', ''),
+                        messageID: message.id
+                    });
+                });
             }
         }
     }
