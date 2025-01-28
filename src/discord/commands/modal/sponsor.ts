@@ -33,7 +33,9 @@ export default async function(
         );
     }
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    const giveawayItem = interaction.data.components[0].components[0].value;
+    const inputs = Object.fromEntries(interaction.data.components[0].components.map(input => {
+        return [input.custom_id, input.value];
+    }));
 
     const guildID = interaction.guild_id;
     if (!guildID) {
@@ -184,9 +186,17 @@ export default async function(
                 description: `${TICKET.name} for ${member.nick?.replaceAll('_', '\\_') ?? member.user.username.replaceAll('_', '\\_')} - ${member.user.id}`,
                 fields: [
                     {
-                        name: "What they want to give away",
-                        value: `\`\`\`${giveawayItem.replaceAll('`', '\'')}\`\`\``
-                    }
+                        name: "What they want to give away:",
+                        value: `\`\`\`${inputs.item.replaceAll('`', '\'')}\`\`\``
+                    },
+                    {
+                        name: "Type of giveaway:",
+                        value: `\`\`\`${inputs.type.replaceAll('`', '\'')}\`\`\``
+                    },
+                    {
+                        name: "Length of giveaway:",
+                        value: `\`\`\`${inputs.time.replaceAll('`', '\'')}\`\`\``
+                    },
                 ],
                 color: 0xFB9B00,
                 footer: {
