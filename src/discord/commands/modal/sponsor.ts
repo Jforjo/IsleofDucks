@@ -33,7 +33,8 @@ export default async function(
         );
     }
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    const inputs = Object.fromEntries(interaction.data.components[0].components.map(input => {
+    const inputs = Object.fromEntries(interaction.data.components.map(component => {
+        const input = component.components[0];
         return [input.custom_id, input.value];
     }));
 

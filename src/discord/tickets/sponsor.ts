@@ -28,6 +28,11 @@ export default async function(
                             style: TextInputStyle.Short,
                             required: true,
                         },
+                    ],
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
                         {
                             type: ComponentType.TextInput,
                             custom_id: "type",
@@ -35,6 +40,11 @@ export default async function(
                             style: TextInputStyle.Short,
                             required: true,
                         },
+                    ],
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
                         {
                             type: ComponentType.TextInput,
                             custom_id: "time",
