@@ -65,6 +65,7 @@ export async function CreateTranscript(
         });
         await ExecuteWebhook({
             thread_id: thread.id,
+            wait: true
         }, {
             username: message.author.username,
             avatar_url: avatarURL,
@@ -72,6 +73,10 @@ export async function CreateTranscript(
             embeds: message.embeds,
             attachments: attachments,
             poll: message.poll,
+            flags: 1 << 12,
+            allowed_mentions: {
+                parse: []
+            }
         }, attachments.map(attachment => ({
             id: attachment.id,
             url: attachment.url,
