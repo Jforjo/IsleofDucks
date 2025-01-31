@@ -1481,6 +1481,65 @@ const Superlatives = [
             ]
         }
     },
+    {
+        id: "feb25",
+        title: "Gifts Received",
+        start: new Date("1 February 2025").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return profile?.player_stats?.gifts?.total_received ?? 0;
+            });
+        },
+        ranks: {
+            ducks: [
+                {
+                    id: "RATTLE",
+                    requirement: 0,
+                },
+                {
+                    id: "PYTHON",
+                    requirement: 2500,
+                },
+                {
+                    id: "COBRA",
+                    requirement: 5000,
+                },
+                {
+                    id: "VIPER",
+                    requirement: 10000,
+                },
+            ],
+            ducklings: [
+                {
+                    id: "RATTLE",
+                    requirement: 0,
+                },
+                {
+                    id: "PYTHON",
+                    requirement: 2500,
+                },
+                {
+                    id: "COBRA",
+                    requirement: 5000,
+                },
+                {
+                    id: "VIPER",
+                    requirement: 10000,
+                },
+            ]
+        }
+    },
 ];
 // WIP. Currently not used anywhere.
 const Help = {
