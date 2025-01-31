@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, RESTPostAPIChannelMessageResult } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
@@ -180,6 +180,9 @@ export default async function Command(
             }
         ]
     });
+
+    const setranks: Promise<RESTPostAPIChannelMessageResult | undefined>[] = [];
+
     const superlativeResult = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
@@ -205,21 +208,21 @@ export default async function Command(
             // Otherwise, GM and staff will always have a green/red arrow
             if (bracketShould > bracketCurrent) {
                 rankUp = Emojis.up;
-                if (buttonID === "ducks") await SendMessage(IsleofDucks.channels.duckoc, {
+                if (buttonID === "ducks") setranks.push(SendMessage(IsleofDucks.channels.duckoc, {
                     content: `setrank ${mojang.name} ${rankShould}`
-                });
-                else if (buttonID === "ducklings") await SendMessage(IsleofDucks.channels.ducklingoc, {
+                }));
+                else if (buttonID === "ducklings") setranks.push(SendMessage(IsleofDucks.channels.ducklingoc, {
                     content: `setrank ${mojang.name} ${rankShould}`
-                });
+                }));
             }
             if (bracketShould < bracketCurrent) {
                 rankUp = Emojis.down;
-                if (buttonID === "ducks") await SendMessage(IsleofDucks.channels.duckoc, {
+                if (buttonID === "ducks") setranks.push(SendMessage(IsleofDucks.channels.duckoc, {
                     content: `setrank ${mojang.name} ${rankShould}`
-                });
-                else if (buttonID === "ducklings") await SendMessage(IsleofDucks.channels.ducklingoc, {
+                }));
+                else if (buttonID === "ducklings") setranks.push(SendMessage(IsleofDucks.channels.ducklingoc, {
                     content: `setrank ${mojang.name} ${rankShould}`
-                });
+                }));
             }
         }
 
@@ -368,6 +371,7 @@ export default async function Command(
         ]
     });
 
+    await Promise.all(setranks);
     await BACKGROUND_SUPERLATIVE_UPDATE;
 
     return NextResponse.json(
