@@ -1488,7 +1488,7 @@ const Superlatives = [
         callback: async function(
             uuid: string
         ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
+            return await getSuperlativeValue(uuid, (value) => value.toString());
         },
         update: async function(uuid: string): Promise<number | {
             success: false;
