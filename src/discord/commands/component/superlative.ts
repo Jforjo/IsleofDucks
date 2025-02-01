@@ -371,8 +371,8 @@ export default async function Command(
         ]
     });
 
-    await Promise.all(setranks);
     await BACKGROUND_SUPERLATIVE_UPDATE;
+    await Promise.all(setranks);
 
     return NextResponse.json(
         { success: true },
