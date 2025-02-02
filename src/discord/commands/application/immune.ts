@@ -1,7 +1,7 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer } from "@/discord/utils";
-import { getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
 async function addImmune(
@@ -84,7 +84,6 @@ async function addImmune(
     await addImmunePlayer(uuid, null, reason);
 
     await FollowupMessage(interaction.token, {
-        content: null,
         embeds: [
             {
                 title: `\`${uuidResponse.name}\` was added to the immune list!`,
@@ -163,7 +162,6 @@ async function removeImmune(
     const immune = await isImmunePlayer(uuid, reason);
     if (!immune) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: `\`${uuidResponse.name}\` is not immune!`,
@@ -184,7 +182,6 @@ async function removeImmune(
     await removeImmunePlayer(uuid, reason);
 
     await FollowupMessage(interaction.token, {
-        content: null,
         embeds: [
             {
                 title: `\`${uuidResponse.name}\` was removed from the ${reason} immune list!`,
@@ -218,7 +215,6 @@ async function viewImmune(
     const immunePlayers = await getImmunePlayers();
     if (!immunePlayers.success) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -239,7 +235,6 @@ async function viewImmune(
 
     if (immunePlayers.players.length === 0) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "There are no immune players!",
@@ -290,6 +285,92 @@ async function viewImmune(
     );
 }
 
+async function checkImmune(
+    interaction: APIChatInputApplicationCommandInteraction,
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    const immunePlayers = await getImmunePlayers();
+    if (!immunePlayers.success) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Could not get immune players",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not get immune players" },
+            { status: 400 }
+        )
+    }
+
+    if (immunePlayers.players.length === 0) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "There are no immune players!",
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "There are no immune players" },
+            { status: 400 }
+        )
+    }
+
+    let removedCount = {
+        notInGuild: 0
+    };
+    for (const player of immunePlayers.players) {
+        const guildRes = await isPlayerInGuild(player.uuid);
+        if (!guildRes.success) continue;
+        if (!guildRes.isInGuild) {
+            await removeImmunePlayer(player.uuid);
+            removedCount.notInGuild++;
+        }
+    }
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Removed immune players",
+                description: [
+                    `Removed ${removedCount.notInGuild} immune players that are not in the guild.`,
+                ].join('\n'),
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
@@ -309,7 +390,6 @@ export default async function(
 
     if (!interaction.data) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -330,7 +410,6 @@ export default async function(
     const interactionData = interaction.data as APIChatInputApplicationCommandInteractionData;
     if (!interactionData.options) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -375,6 +454,8 @@ export default async function(
         return await removeImmune(interaction, options.remove.name, options.remove.reason);
     } else if (options.view) {
         return await viewImmune(interaction);
+    } else if (options.check) {
+        return await checkImmune(interaction);
     }
 
     await FollowupMessage(interaction.token, {
@@ -461,6 +542,11 @@ export const CommandData = {
         {
             name: "view",
             description: "View the immune list.",
+            type: ApplicationCommandOptionType.Subcommand
+        },
+        {
+            name: "check",
+            description: "Auto remove users who no longer meet the requirements.",
             type: ApplicationCommandOptionType.Subcommand
         }
     ]
