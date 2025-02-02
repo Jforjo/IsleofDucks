@@ -26,9 +26,9 @@ export async function getUsernameOrUUID(
         uuiddashes: string;
         name: string;
     } | false = false;
-    if (query.length > 25) res = await getUsernameFromMojang(query);
-    else res = await getUUIDFromMojang(query);
-    if (res !== false) return res;
+    // if (query.length > 25) res = await getUsernameFromMojang(query);
+    // else res = await getUUIDFromMojang(query);
+    // if (res !== false) return res;
     res = await getUsernameOrUUIDFromPlayerDB(query);
     if (res !== false) return res;
     res = await getUsernameOrUUIDFromMinetools(query);
