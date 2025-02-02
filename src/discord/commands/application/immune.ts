@@ -346,6 +346,9 @@ async function checkImmune(
         if (!guildRes.isInGuild) {
             await removeImmunePlayer(player.uuid);
             removedCount.notInGuild++;
+        } else if (guildRes.guild.name !== "Isle of Ducks" && guildRes.guild.name !== "Isle of Ducklings") {
+            await removeImmunePlayer(player.uuid);
+            removedCount.notInGuild++;
         }
     }
 
