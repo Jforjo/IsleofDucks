@@ -53,7 +53,7 @@ export interface MojangResponseError {
     error: string;
     errorMessage: string;
 }
-async function getUsernameFromMojang(uuid: string): Promise<
+export async function getUsernameFromMojang(uuid: string): Promise<
     {
         success: false;
         message: string;
@@ -83,7 +83,7 @@ async function getUsernameFromMojang(uuid: string): Promise<
         name: data.name
     }
 }
-async function getUUIDFromMojang(username: string): Promise<
+export async function getUUIDFromMojang(username: string): Promise<
     {
         success: false;
         message: string;
@@ -113,7 +113,7 @@ async function getUUIDFromMojang(username: string): Promise<
         name: data.name
     }
 }
-async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
+export async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
     {
         success: false;
         message: string;
@@ -155,7 +155,7 @@ async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
         name: data.data.player.username
     }
 }
-async function getUsernameOrUUIDFromMinetools(query: string): Promise<
+export async function getUsernameOrUUIDFromMinetools(query: string): Promise<
     {
         success: false;
         message: string;
