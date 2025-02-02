@@ -337,7 +337,7 @@ async function checkImmune(
         )
     }
 
-    let removedCount = {
+    const removedCount = {
         notInGuild: 0
     };
     for (const player of immunePlayers.players) {
