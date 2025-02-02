@@ -17,7 +17,19 @@ export async function getUsernameOrUUID(
         name: string;
     }
 > {
-    let res = await getUsernameOrUUIDFromPlayerDB(query);
+    let res: {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+        uuid: string;
+        uuiddashes: string;
+        name: string;
+    } | false = false;
+    if (query.length > 25) res = await getUsernameFromMojang(query);
+    else res = await getUUIDFromMojang(query);
+    if (res !== false) return res;
+    res = await getUsernameOrUUIDFromPlayerDB(query);
     if (res !== false) return res;
     res = await getUsernameOrUUIDFromMinetools(query);
     if (res !== false) return res;
@@ -27,8 +39,80 @@ export async function getUsernameOrUUID(
         message: "Could not find player"
     };
 }
-
-
+export interface MojangResponseSuccess {
+    id: string;
+    name: string;
+    path: never;
+    error: never;
+    errorMessage: never;
+}
+export interface MojangResponseError {
+    id: never;
+    name: never;
+    path: string;
+    error: string;
+    errorMessage: string;
+}
+async function getUsernameFromMojang(uuid: string): Promise<
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+        uuid: string;
+        uuiddashes: string;
+        name: string;
+    } | false
+> {
+    const res = await fetch(`https://api.minecraftservices.com/minecraft/profile/lookup/${encodeURIComponent(uuid)}`);
+    if (!res.ok) {
+        console.log("Mojang response", res);
+        console.log("Mojang body", await res.text());
+        return false;
+    }
+    // It returns other stuff, but I don't care
+    const data = await res.json() as MojangResponseSuccess | MojangResponseError
+    if (data.error) return {
+        success: false,
+        message: data.errorMessage
+    }
+    return {
+        success: true,
+        uuid: data.id,
+        uuiddashes: addDashesToUUID(data.id),
+        name: data.name
+    }
+}
+async function getUUIDFromMojang(username: string): Promise<
+    {
+        success: false;
+        message: string;
+    } | {
+        success: true;
+        uuid: string;
+        uuiddashes: string;
+        name: string;
+    } | false
+> {
+    const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${encodeURIComponent(username)}`);
+    if (!res.ok) {
+        console.log("Mojang response", res);
+        console.log("Mojang body", await res.text());
+        return false;
+    }
+    // It returns other stuff, but I don't care
+    const data = await res.json() as MojangResponseSuccess | MojangResponseError
+    if (data.error) return {
+        success: false,
+        message: data.errorMessage
+    }
+    return {
+        success: true,
+        uuid: data.id,
+        uuiddashes: addDashesToUUID(data.id),
+        name: data.name
+    }
+}
 async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
     {
         success: false;
