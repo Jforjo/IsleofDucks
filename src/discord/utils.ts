@@ -31,15 +31,20 @@ export async function getImmunePlayers(): Promise<{
         players: players
     };
 }
-export async function isImmunePlayer(uuid: string): Promise<boolean> {
+export async function isImmunePlayer(uuid: string, reason?: string): Promise<boolean> {
+    if (reason) {
+        const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid} AND reason = ${reason}`;
+        return rows.length > 0;
+    }
     const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid}`;
     return rows.length > 0;
 }
 export async function addImmunePlayer(uuid: string, discord: string | null, reason: string): Promise<void> {
     await sql`INSERT INTO immune (uuid, discord, reason) VALUES (${uuid}, ${discord}, ${reason})`;
 }
-export async function removeImmunePlayer(uuid: string): Promise<void> {
-    await sql`DELETE FROM immune WHERE uuid = ${uuid}`;
+export async function removeImmunePlayer(uuid: string, reason?: string): Promise<void> {
+    if (reason) await sql`DELETE FROM immune WHERE uuid = ${uuid} AND reason = ${reason}`;
+    else await sql`DELETE FROM immune WHERE uuid = ${uuid}`;
 }
 export async function getImmunePlayer(uuid: string): Promise<{ uuid: string; discord: string | null; reason: string } | null> {
     const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid}`;
@@ -384,4 +389,22 @@ export async function getAllDiscordRolesWhereIDIsNull(limit = 100): Promise<Disc
 export async function getAllDiscordRolesWhereNameIsNull(limit = 100): Promise<DiscordRole[]> {
     const { rows } = await sql`SELECT * FROM discordroles WHERE discordname IS NULL LIMIT ${limit}`;
     return rows as DiscordRole[];
+}
+
+export interface HyGuessrData {
+    answer: {
+        x: number;
+        y: number;
+        z: number;
+    };
+    image: string;
+}
+export async function getHyGuessrData(id: string): Promise<HyGuessrData[] | null> {
+    const { rows } = await sql`SELECT data FROM hyguessr WHERE id = ${id}`;
+    if (rows.length === 0) return null;
+    return JSON.parse(rows[0].data);
+}
+export async function createHyGuessr(data: HyGuessrData[]): Promise<string> {
+    const { rows } = await sql`INSERT INTO hyguessr (data) VALUES (${JSON.stringify(data)}) RETURNING id`;
+    return rows[0].id;
 }

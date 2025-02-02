@@ -60,13 +60,13 @@ async function addImmune(
     }
     const uuid = uuidResponse.uuid;
 
-    const immune = await isImmunePlayer(uuid);
+    const immune = await isImmunePlayer(uuid, reason);
     if (immune) {
         await FollowupMessage(interaction.token, {
             content: undefined,
             embeds: [
                 {
-                    title: `\`${uuidResponse.name}\` is already immune!`,
+                    title: `\`${uuidResponse.name}\` already has that immunity type!`,
                     color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -76,7 +76,7 @@ async function addImmune(
             ]
         });
         return NextResponse.json(
-            { success: false, error: "This player is already immune" },
+            { success: false, error: "This player already has that immunity type" },
             { status: 400 }
         );
     }
@@ -106,7 +106,8 @@ async function addImmune(
 
 async function removeImmune(
     interaction: APIChatInputApplicationCommandInteraction,
-    name: string
+    name: string,
+    reason: string
 ): Promise<
     NextResponse<
         {
@@ -159,7 +160,7 @@ async function removeImmune(
     }
     const uuid = uuidResponse.uuid;
 
-    const immune = await isImmunePlayer(uuid);
+    const immune = await isImmunePlayer(uuid, reason);
     if (!immune) {
         await FollowupMessage(interaction.token, {
             content: null,
@@ -180,13 +181,13 @@ async function removeImmune(
         );
     }
 
-    await removeImmunePlayer(uuid);
+    await removeImmunePlayer(uuid, reason);
 
     await FollowupMessage(interaction.token, {
         content: null,
         embeds: [
             {
-                title: `\`${uuidResponse.name}\` was removed from the immune list!`,
+                title: `\`${uuidResponse.name}\` was removed from the ${reason} immune list!`,
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -371,7 +372,7 @@ export default async function(
     if (options.add) {
         return await addImmune(interaction, options.add.name, options.add.reason);
     } else if (options.remove) {
-        return await removeImmune(interaction, options.remove.name);
+        return await removeImmune(interaction, options.remove.name, options.remove.reason);
     } else if (options.view) {
         return await viewImmune(interaction);
     }
@@ -438,6 +439,22 @@ export const CommandData = {
                     description: "The name of the player.",
                     type: ApplicationCommandOptionType.String,
                     required: true
+                },
+                {
+                    name: "reason",
+                    description: "The type of immune list.",
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                    choices: [
+                        {
+                            name: "Level",
+                            value: "Level"
+                        },
+                        {
+                            name: "Loyalty",
+                            value: "Loyalty"
+                        }
+                    ]
                 }
             ]
         },
