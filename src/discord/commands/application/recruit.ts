@@ -1,7 +1,7 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
 import { getBannedPlayer, getSettingValue } from "@/discord/utils";
@@ -137,9 +137,27 @@ export default async function(
 
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
+    if (!interaction.member) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Could not find who ran the command",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
     if (!interaction.data) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -159,7 +177,6 @@ export default async function(
     }
     if (!interaction.data.options) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -190,7 +207,6 @@ export default async function(
 
     if (!mojang.success) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -333,6 +349,44 @@ export default async function(
                 timestamp: new Date().toISOString()
             }
         ],
+        components: !interaction.member.roles.includes(IsleofDucks.roles.staff) ? undefined : [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-log-duck-${mojang.name}`,
+                        label: "Duck Log",
+                        style: ButtonStyle.Primary
+                    },
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-invite-duck-${mojang.name}`,
+                        label: "Duck Invite",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    }
+                ]
+            },
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-log-duckling-${mojang.name}`,
+                        label: "Duckling Log",
+                        style: ButtonStyle.Primary
+                    },
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-invite-duckling-${mojang.name}`,
+                        label: "Duckling Invite",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    }
+                ]
+            }
+        ]
     }, [
         {
             id: 0,
