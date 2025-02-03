@@ -81,9 +81,9 @@ export default async function(
                     description: `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`,
                     fields: [
                         {
-                            name: `Discord - <@${member.user.id}>`,
+                            name: `Discord - ${member.user.id}`,
                             value: [
-                                `ID: ${member.user.id}`,
+                                `User: <@${member.user.id}>`,
                                 `Username: ${member.user.username.replaceAll('_', '\\_')}`,
                                 `Nickname: ${member.nick?.replaceAll('_', '\\_') ?? ""}`
                             ].join('\n')
