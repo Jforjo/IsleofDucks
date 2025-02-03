@@ -122,9 +122,14 @@ export default async function Command(
             if (!message.embeds.length) return;
             if (!message.embeds[0].description) return;
             const description = message.embeds[0].description;
+            if (description === "There are no logs to display.") {
+                logMessage = message;
+                return;
+            }
             if (!description.split("\n")[1].includes('Guild Log')) return;
             if (!description.includes(username)) return;
             logMessage = message;
+            return;
         });
         if (!logMessage) {
             await FollowupMessage(interaction.token, {
