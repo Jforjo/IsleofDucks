@@ -96,7 +96,6 @@ export default async function Command(
             });
             count++;
         }
-        console.log(JSON.stringify(messages));
         if (!messages) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
@@ -123,7 +122,7 @@ export default async function Command(
             if (!message.embeds.length) return;
             if (!message.embeds[0].description) return;
             const description = message.embeds[0].description;
-            if (!description.split("\n").includes('Guild Log')) return;
+            if (!description.split("\n")[1].includes('Guild Log')) return;
             if (!description.includes(username)) return;
             logMessage = message;
         });
