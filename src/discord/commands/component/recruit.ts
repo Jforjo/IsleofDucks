@@ -96,6 +96,7 @@ export default async function Command(
             });
             count++;
         }
+        console.log(JSON.stringify(messages));
         if (!messages) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
