@@ -87,7 +87,7 @@ export default async function Command(
             after: message.id
         });
         let count = 0;
-        while (!messages) {
+        while (!messages || messages.length === 0) {
             if (count > 30) break;
             await new Promise(resolve => setTimeout(resolve, 1000));
             messages = await GetChannelMessages(message.channel_id, {
