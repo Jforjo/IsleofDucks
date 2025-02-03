@@ -26,7 +26,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds, {
-                title: "Guild Log",
+                title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
                 description: "Sending log command...",
                 color: 0xFB9B00,
                 footer: {
@@ -52,7 +52,7 @@ export default async function Command(
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
                 embeds: [...interaction.message.embeds, {
-                    title: "Guild Log",
+                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
                     description: "Failed to send the log command.",
                     color: 0xB00020,
                     footer: {
@@ -71,7 +71,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds, {
-                title: "Guild Log",
+                title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
                 description: "Fetching logs...",
                 color: 0xFB9B00,
                 footer: {
@@ -82,15 +82,25 @@ export default async function Command(
             components: interaction.message.components
         });
 
-        const messages = await GetChannelMessages(message.channel_id, {
+        let messages = await GetChannelMessages(message.channel_id, {
             limit: 5,
             after: message.id
         });
+        let count = 0;
+        while (!messages) {
+            if (count > 30) break;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            messages = await GetChannelMessages(message.channel_id, {
+                limit: 5,
+                after: message.id
+            });
+            count++;
+        }
         if (!messages) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
                 embeds: [...interaction.message.embeds, {
-                    title: "Guild Log",
+                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
                     description: "Failed to fetch logs.",
                     color: 0xB00020,
                     footer: {
@@ -120,7 +130,7 @@ export default async function Command(
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
                 embeds: [...interaction.message.embeds, {
-                    title: "Guild Log",
+                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
                     description: "Failed to fetch log message.",
                     color: 0xB00020,
                     footer: {
@@ -139,7 +149,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds, {
-                title: "Guild Log",
+                title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
                 description: logMessage.embeds[0].description,
                 color: 0xFB9B00,
                 footer: {
