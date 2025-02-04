@@ -374,6 +374,7 @@ export default async function Command(
     await BACKGROUND_SUPERLATIVE_UPDATE;
     for (const setrank of setranks) {
         await setrank;
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     return NextResponse.json(
