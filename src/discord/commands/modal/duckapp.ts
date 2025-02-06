@@ -438,6 +438,19 @@ export default async function(
                 type: ComponentType.ActionRow,
                 components: [
                     {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-log-duck-${mojang.name}`,
+                        label: "Duck Log",
+                        style: ButtonStyle.Primary
+                    },
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-invite-duck-${mojang.name}`,
+                        label: "Duck Invite",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    },
+                    {
                         custom_id: `close-${TICKET.id}-${member.user.id}-auto`,
                         type: ComponentType.Button,
                         label: "Close",
@@ -446,6 +459,24 @@ export default async function(
                             name: "🔒"
                         }
                     },
+                ]
+            },
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-log-duckling-${mojang.name}`,
+                        label: "Duckling Log",
+                        style: ButtonStyle.Primary
+                    },
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-invite-duckling-${mojang.name}`,
+                        label: "Duckling Invite",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    }
                 ]
             }
         ],

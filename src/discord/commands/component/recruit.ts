@@ -1,4 +1,4 @@
-import { APIButtonComponentWithCustomId, APIInteractionResponse, APIMessage, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIButtonComponentWithCustomId, APIInteractionResponse, APIMessage, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
@@ -12,6 +12,25 @@ export default async function Command(
         } | APIInteractionResponse
     >
 > {
+    if (!interaction.member) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Failed to detect the server member",
+                flags: MessageFlags.Ephemeral
+            }
+        });
+    }
+    if (!interaction.member?.roles.includes(IsleofDucks.roles.staff)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "You don't have permission to use this command",
+                flags: MessageFlags.Ephemeral
+            }
+        });
+    }
+
     // ACK response and update the original message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredMessageUpdate,
