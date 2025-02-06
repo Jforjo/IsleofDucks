@@ -59,11 +59,11 @@ export default async function Command(
         let message: APIMessage | undefined;
         if (type === "duck") {
             message = await SendMessage(IsleofDucks.channels.duckoc, {
-                content: `log ${username.replaceAll('_', '\\_')}`
+                content: `log ${username}`
             });
         } else if (type === "duckling") {
             message = await SendMessage(IsleofDucks.channels.ducklingoc, {
-                content: `log ${username.replaceAll('_', '\\_')}`
+                content: `log ${username}`
             });
         }
         if (!message) await new Promise(resolve => setTimeout(resolve, 1000));
@@ -206,11 +206,11 @@ export default async function Command(
     } else if (buttonID === "invite") {
         if (type === "duck") {
             await SendMessage(IsleofDucks.channels.duckoc, {
-                content: `invite ${username.replaceAll('_', '\\_')}`
+                content: `invite ${username}`
             });
         } else if (type === "duckling") {
             await SendMessage(IsleofDucks.channels.ducklingoc, {
-                content: `invite ${username.replaceAll('_', '\\_')}`
+                content: `invite ${username}`
             });
         }
         
