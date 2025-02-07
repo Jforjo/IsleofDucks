@@ -17,6 +17,7 @@ import { CommandData as InsertEmbed } from "./insertembed";
 import { CommandData as UpdateSuperlative } from "./updatesuperlative";
 import { CommandData as UpdateDatabase } from "./updatedatabase";
 import { CommandData as ReadMessage } from "./readmessage";
+import { CommandData as Test } from "./test";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -70,7 +71,8 @@ export default async function(
         InsertEmbed,
         UpdateSuperlative,
         UpdateDatabase,
-        ReadMessage
+        ReadMessage,
+        Test
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
