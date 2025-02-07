@@ -1,5 +1,5 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, BanGuildMember, SendMessage, RemoveBanGuildMember } from "@/discord/discordUtils";
 import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer, getBannedPlayersCount, getBannedPlayer, searchBannedPlayers, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
@@ -88,6 +88,15 @@ async function addBanned(
 
     await addBannedPlayer(uuid, discord ?? null, reason);
 
+    if (discord) await BanGuildMember(IsleofDucks.serverID, discord, reason);
+
+    await SendMessage(IsleofDucks.channels.duckoc, {
+        content: `kick ${uuidResponse.name} ${reason}`
+    });
+    await SendMessage(IsleofDucks.channels.ducklingoc, {
+        content: `kick ${uuidResponse.name} ${reason}`
+    });
+
     await FollowupMessage(interaction.token, {
         content: null,
         embeds: [
@@ -164,7 +173,7 @@ async function removeBanned(
     }
     const uuid = uuidResponse.uuid;
 
-    const banned = await isBannedPlayer(uuid);
+    const banned = await getBannedPlayer(uuid);
     if (!banned) {
         await FollowupMessage(interaction.token, {
             content: null,
@@ -186,6 +195,12 @@ async function removeBanned(
     }
 
     await removeBannedPlayer(uuid);
+
+    if (banned.discords) {
+        for (const discord of banned.discords) {
+            await RemoveBanGuildMember(IsleofDucks.serverID, discord, `Removed from banlist by ${interaction.member.user.username}`);
+        }
+    }
 
     await FollowupMessage(interaction.token, {
         content: null,
@@ -574,7 +589,7 @@ async function addBannedDiscord(
     }
     const uuid = uuidResponse.uuid;
 
-    const banned = await isBannedPlayer(uuid);
+    const banned = await getBannedPlayer(uuid);
     if (!banned) {
         await FollowupMessage(interaction.token, {
             content: undefined,
@@ -596,6 +611,8 @@ async function addBannedDiscord(
     }
 
     await updateBannedPlayerDiscord(uuid, discordID);
+
+    await BanGuildMember(IsleofDucks.serverID, discordID, banned.reason);
 
     await FollowupMessage(interaction.token, {
         content: null,

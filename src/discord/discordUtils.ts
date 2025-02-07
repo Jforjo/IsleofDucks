@@ -727,6 +727,22 @@ export async function BanGuildMember(guildId: Snowflake, userId: Snowflake, reas
 
     return res.status === 204;
 }
+export async function RemoveBanGuildMember(guildId: Snowflake, userId: Snowflake, reason: string): Promise<boolean> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.guildBan(guildId, userId);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'X-Audit-Log-Reason': reason
+        },
+        method: 'DELETE',
+    });
+
+    return res.status === 204;
+}
 
 export async function GetChannelMessage(channelId: Snowflake, messageId: Snowflake): Promise<RESTGetAPIChannelMessageResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
@@ -1186,6 +1202,7 @@ const Channels = {
     support: "910160132233658408",
     carrierapps: "1004135601534152755",
     transcriptForum: "1320673392801878036",
+    surveyResponses: "1337447048672448576",
     giveaways: "882151291340611605",
     reqgiveaways: "980520250766426142",
     flashgiveaways: "1066461763266154537",
@@ -1335,6 +1352,40 @@ const Roles = {
     carrier_kuudra3_4: "1119807706841235496",
     carrier_kuudra5: "1119807771458670654",
 };
+const Surveys = [
+    {
+        id: "guildapp",
+        name: "Guild App",
+        description: "Please take a moment to complete this brief survey while you wait for assistance from a staff member.",
+        questions: [
+            {
+                question: "Where did you find our guild?",
+                options: [
+                    {
+                        id: "discord",
+                        name: "Hypixel/SBS Discord"
+                    },
+                    {
+                        id: "forum",
+                        name: "Forums"
+                    },
+                    {
+                        id: "hypixel",
+                        name: "On Hypixel"
+                    },
+                    {
+                        id: "friend",
+                        name: "A Friend"
+                    },
+                    {
+                        id: "returning",
+                        name: "I'm a Returning Member"
+                    }
+                ]
+            }
+        ]
+    }
+]
 const Superlatives = [
     {
         id: "oct24",
@@ -1590,6 +1641,7 @@ export const IsleofDucks = {
     transcriptForum: TranscriptForum,
     roles: Roles,
     superlatives: Superlatives,
+    surveys: Surveys,
     // WIP. Currently not used anywhere.
     help: Help
 }
