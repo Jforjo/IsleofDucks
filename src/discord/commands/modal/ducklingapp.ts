@@ -503,17 +503,15 @@ export default async function(
                     timestamp: new Date().toISOString()
                 }
             ],
-            components: [
-                {
-                    type: ComponentType.ActionRow,
-                    components: survey.questions[0].options.map(option => ({
-                        type: ComponentType.Button,
-                        custom_id: `survey-${survey.id}-1-${option.id}-${member.user.id}`,
-                        label: option.name,
-                        style: ButtonStyle.Secondary
-                    }))
-                }
-            ]
+            components: survey.questions[0].options.map(row => ({
+                type: ComponentType.ActionRow,
+                components: row.map(option => ({
+                    type: ComponentType.Button,
+                    custom_id: `survey-${survey.id}-1-${option.id}-${member.user.id}`,
+                    label: option.name,
+                    style: ButtonStyle.Secondary
+                }))
+            }))
         })
     }
 

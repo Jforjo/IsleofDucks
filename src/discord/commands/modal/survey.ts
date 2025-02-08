@@ -1,9 +1,9 @@
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
+import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessage, EditMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function Command(
-    interaction: APIMessageComponentButtonInteraction
+    interaction: APIModalSubmitInteraction
 ): Promise<
     NextResponse<
         {
@@ -95,33 +95,7 @@ export default async function Command(
         );
     }
 
-    if (selectedOption.type) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.Modal,
-            data: {
-                custom_id: "survey-modal",
-                title: selectedOption.name,
-                components: [
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                type: ComponentType.TextInput,
-                                custom_id: `survey-${survey.id}-${questionNumber}-${selectedOption.id}-${owner}`,
-                                label: "Other",
-                                style: selectedOption.type === "shorttext" ? TextInputStyle.Short : TextInputStyle.Paragraph,
-                                required: true
-                            }
-                        ]
-                    }
-                ]
-            }
-        });
-        return NextResponse.json(
-            { success: true },
-            { status: 200 }
-        );
-    }
+    const input = interaction.data.components[0].components[0].value;
 
     // ACK response and update the original message
     await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -180,7 +154,10 @@ export default async function Command(
                 fields: [
                     {
                         name: survey.questions[questionNumber - 1].question,
-                        value: selectedOption.name
+                        value: [
+                            `${selectedOption.name}:`,
+                            input
+                        ].join('\n')
                     }
                 ],
                 footer: {

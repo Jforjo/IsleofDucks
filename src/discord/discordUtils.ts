@@ -1361,26 +1361,40 @@ const Surveys = [
             {
                 question: "Where did you find our guild?",
                 options: [
-                    {
-                        id: "discord",
-                        name: "Hypixel/SBS Discord"
-                    },
-                    {
-                        id: "forum",
-                        name: "Forums"
-                    },
-                    {
-                        id: "hypixel",
-                        name: "On Hypixel"
-                    },
-                    {
-                        id: "friend",
-                        name: "A Friend"
-                    },
-                    {
-                        id: "returning",
-                        name: "I'm a Returning Member"
-                    }
+                    [
+                        {
+                            id: "discord",
+                            name: "Hypixel/SBS Discord",
+                            type: "button"
+                        },
+                        {
+                            id: "forum",
+                            name: "Forums",
+                            type: "button"
+                        },
+                        {
+                            id: "hypixel",
+                            name: "On Hypixel",
+                            type: "button"
+                        },
+                        {
+                            id: "friend",
+                            name: "A Friend",
+                            type: "button"
+                        },
+                        {
+                            id: "returning",
+                            name: "I'm a Returning Member",
+                            type: "button"
+                        }
+                    ],
+                    [
+                        {
+                            id: "other",
+                            name: "Other",
+                            type: "shorttext"
+                        }
+                    ]
                 ]
             }
         ]
