@@ -488,6 +488,34 @@ export default async function(
         }
     ]);
 
+    const survey = IsleofDucks.surveys.find(survey => survey.id === "guildapp");
+    if (survey) {
+        await SendMessage(channel.id, {
+            embeds: [
+                {
+                    title: `Survey (1/${survey.questions.length})`,
+                    description: survey.description,
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: survey.questions[0].options.map(option => ({
+                        type: ComponentType.Button,
+                        custom_id: `survey-${survey.id}-1-${option.id}-${member.user.id}`,
+                        label: option.name,
+                        style: ButtonStyle.Secondary
+                    }))
+                }
+            ]
+        })
+    }
+
     await FollowupMessage(interaction.token, {
         content: `${TICKET.name} ticket created here: <#${channel.id}>`,
     });
