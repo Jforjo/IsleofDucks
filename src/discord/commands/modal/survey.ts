@@ -114,7 +114,7 @@ export default async function Command(
                 if (surveyType !== survey.name) return line;
                 const num = parseInt(line.split(' ')[0]);
                 return `${num + 1} ${surveyType}`;
-            }), ...missing.map(option => `0 ${option.name}`)].join('\n'),
+            }), ...missing.map(option => `${option.id === selectedOption.id ? '1' : '0'} ${option.name}`)].join('\n'),
             embeds: totalMessage.embeds.map(embed => {
                 if (embed.title !== survey.name) return embed;
                 if (!embed.fields || embed.fields.length === 0) return embed;
