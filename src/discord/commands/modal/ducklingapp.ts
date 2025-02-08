@@ -491,10 +491,11 @@ export default async function(
     const survey = IsleofDucks.surveys.find(survey => survey.id === "guildapp");
     if (survey) {
         await SendMessage(channel.id, {
+            content: survey.description,
             embeds: [
                 {
-                    title: `Survey (1/${survey.questions.length})`,
-                    description: survey.description,
+                    title: `Question 1/${survey.questions.length}`,
+                    description: survey.questions[0].question,
                     color: 0xFB9B00,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,

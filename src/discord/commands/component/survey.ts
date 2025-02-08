@@ -176,14 +176,15 @@ export default async function Command(
                     },
                     timestamp: new Date().toISOString()
                 }
-            ]
+            ],
+            components: []
         });
     } else {
         await FollowupMessage(interaction.token, {
-            content: null,
+            content: survey.description,
             embeds: [
                 {
-                    title: `Survey (${questionNumber + 1}/${survey.questions.length})`,
+                    title: `Question ${questionNumber + 1}/${survey.questions.length}`,
                     description: survey.questions[questionNumber].question,
                     color: 0xFB9B00,
                     footer: {
