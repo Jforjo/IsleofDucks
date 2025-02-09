@@ -95,11 +95,11 @@ export default async function Command(
         );
     }
 
-    if (selectedOption.type) {
+    if (selectedOption.type === "shorttext" || selectedOption.type === "longtext") {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.Modal,
             data: {
-                custom_id: "survey-modal",
+                custom_id: `survey-${survey.id}-${questionNumber}-${selectedOption.id}-${owner}`,
                 title: selectedOption.name,
                 components: [
                     {
@@ -107,7 +107,7 @@ export default async function Command(
                         components: [
                             {
                                 type: ComponentType.TextInput,
-                                custom_id: `survey-${survey.id}-${questionNumber}-${selectedOption.id}-${owner}`,
+                                custom_id: `survey-${selectedOption.id}`,
                                 label: "Other",
                                 style: selectedOption.type === "shorttext" ? TextInputStyle.Short : TextInputStyle.Paragraph,
                                 required: true
