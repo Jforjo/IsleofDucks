@@ -134,13 +134,16 @@ export default async function Command(
     
     if (!interaction.member.roles.includes(IsleofDucks.roles.staff)) {
         await EditMessage(IsleofDucks.channels.surveyResponses, "1337447048672448576", {
-            content: [...totalMessage.content.split('\n').map(line => {
+            content: totalMessage.content.split('\n').filter(line => {
                 const surveyType = line.split(' ').slice(1).join(' ');
-                missing = missing.filter(option => option.name !== surveyType);
+                const temp = survey.questions[questionNumber - 1].options.flatMap(row => row);
+                return !temp.some(option => option.name === surveyType);
+            }).map(line => {
+                const surveyType = line.split(' ').slice(1).join(' ');
                 if (surveyType !== survey.name) return line;
                 const num = parseInt(line.split(' ')[0]);
                 return `${num + 1} ${surveyType}`;
-            }), ...missing.map(option => `0 ${option.name}`)].join('\n'),
+            }).join('\n'),
             embeds: totalMessage.embeds.map(embed => {
                 if (embed.title !== survey.name) return embed;
                 if (!embed.fields || embed.fields.length === 0) return embed;
@@ -151,12 +154,13 @@ export default async function Command(
                         if (field.name !== survey.questions[questionNumber - 1].question) return field;
                         return {
                             name: field.name,
-                            value: field.value.split('\n').map(line => {
+                            value: [...field.value.split('\n').map(line => {
                                 const answer = line.split(' ').slice(1).join(' ');
+                                missing = missing.filter(option => option.name !== answer);
                                 if (answer !== selectedOption.name) return line;
                                 const num = parseInt(line.split(' ')[0]);
                                 return `${num + 1} ${answer}`;
-                            }).join('\n'),
+                            }), ...missing.map(option => `0 ${option.name}`)].join('\n'),
                         }
                     }),
                     color: embed.color
