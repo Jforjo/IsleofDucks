@@ -280,7 +280,7 @@ export default async function(
     }
     if (profileAPIResponse.experience < profileAPIResponse.ducklingReq) {
         await FollowupMessage(interaction.token, {
-            content: `You do not meet the level requirements to join either guild (${profileAPIResponse.experience / 100}/${profileAPIResponse.ducklingReq / 100})!`,
+            content: `You do not meet the level requirements to join Isle of Ducklings (${profileAPIResponse.experience / 100}/${profileAPIResponse.ducklingReq / 100})!`,
         });
         return NextResponse.json(
             { success: true },
