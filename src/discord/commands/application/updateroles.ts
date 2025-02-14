@@ -150,16 +150,19 @@ export async function UpdateRoles(
                 await AddGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesAdded++;
                 if (LevelResult && LevelResult.usersHadRolesAdded === 0) usersHadRolesAdded++;
+                else usersHadRolesAdded++;
             } else if (boosts.length < 4 && member.roles.includes(IsleofDucks.roles.booster2x)) {
                 await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesRemoved++;
                 if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
+                else usersHadRolesRemoved++;
             }
         } else {
             if (member.roles.includes(IsleofDucks.roles.booster2x)) {
                 await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesRemoved++;
                 if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
+                else usersHadRolesRemoved++;
             }
         }
 
