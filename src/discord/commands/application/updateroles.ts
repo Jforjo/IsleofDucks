@@ -153,6 +153,12 @@ export async function UpdateRoles(
                 rolesRemoved++;
                 if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
             }
+        } else {
+            if (member.roles.includes(IsleofDucks.roles.booster2x)) {
+                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
+                rolesRemoved++;
+                if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
+            }
         }
 
         // if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
