@@ -1,5 +1,5 @@
-import { APIChatInputApplicationCommandInteraction, APIGuildMember, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, ConvertSnowflakeToDate, RemoveGuildMemberRole, AddGuildMemberRole } from "@/discord/discordUtils";
+import { APIChatInputApplicationCommandInteraction, APIGuildMember, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageType, Snowflake } from "discord-api-types/v10";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, ConvertSnowflakeToDate, RemoveGuildMemberRole, AddGuildMemberRole, GetAllChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { DiscordRole, getDiscordRole, getDiscordRoleFromDiscordID, getDiscordRoleFromDiscordName, updateDiscordRoleName } from "@/discord/utils";
@@ -125,7 +125,7 @@ export async function UpdateRoles(
     //         usersHadRolesRemoved: number;
     //     }
     // >[] = [];
-
+    const boosterMessages = (await GetAllChannelMessages(IsleofDucks.channels.nitroboosts)).filter(msg => msg.type === MessageType.GuildBoost);
     // Should probably change this to use a generator function
     const members = await GetAllGuildMembers(guildID);
     for (const member of members) {
@@ -140,6 +140,20 @@ export async function UpdateRoles(
             usersHadRolesRemoved += LevelResult.usersHadRolesRemoved;
         }
 
+        if (member.premium_since) {
+            // Offset by 1 minute just in case
+            const messagesToCheck = boosterMessages.filter(msg => new Date(msg.timestamp).getTime() > new Date(member.premium_since ?? '0').getTime() - 1000 * 60);
+            const boosts = messagesToCheck.filter(msg => msg.author.id === member.user.id);
+            if (boosts.length > 1) {
+                await AddGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
+                rolesAdded++;
+                if (LevelResult && LevelResult.usersHadRolesAdded === 0) usersHadRolesAdded++;
+            } else {
+                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
+                rolesRemoved++;
+                if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
+            }
+        }
 
         // if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
         //     if (!member.roles.includes(tempRole)) {

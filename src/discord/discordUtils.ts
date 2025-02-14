@@ -1209,6 +1209,7 @@ const Channels = {
     giveawaypayout: "1070783580617314434",
     duckoc: "1166902454496006196",
     ducklingoc: "1166900860224294932",
+    nitroboosts: "982019701918035978",
 };
 const ChannelGroups = {
     tickets: "988883238292451378",
@@ -1301,6 +1302,8 @@ const Roles = {
     duck_guild_member: "933258162931400764",
     duckling_guild_member: "998380474407846000",
     immune: "1276013765405704266",
+    booster: "881421446017056799",
+    booster2x: "993257342848213126",
     levels: [
         {
             id: "1328090605481627698",
