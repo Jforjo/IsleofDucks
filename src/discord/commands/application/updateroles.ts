@@ -144,12 +144,13 @@ export async function UpdateRoles(
             // Offset by 1 minute just in case
             const messagesToCheck = boosterMessages.filter(msg => new Date(msg.timestamp).getTime() > new Date(member.premium_since ?? '0').getTime() - 1000 * 60);
             const boosts = messagesToCheck.filter(msg => msg.author.id === member.user.id);
-            if (boosts.length > 1) {
-                console.log(JSON.stringify(boosts));
+            // 2 = 1 and 4 = 2
+            // It's counting them twice for some reason
+            if (boosts.length >= 4 && !member.roles.includes(IsleofDucks.roles.booster2x)) {
                 await AddGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesAdded++;
                 if (LevelResult && LevelResult.usersHadRolesAdded === 0) usersHadRolesAdded++;
-            } else {
+            } else if (boosts.length < 4 && member.roles.includes(IsleofDucks.roles.booster2x)) {
                 await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesRemoved++;
                 if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
