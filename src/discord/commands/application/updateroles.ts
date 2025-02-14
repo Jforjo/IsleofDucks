@@ -145,6 +145,7 @@ export async function UpdateRoles(
             const messagesToCheck = boosterMessages.filter(msg => new Date(msg.timestamp).getTime() > new Date(member.premium_since ?? '0').getTime() - 1000 * 60);
             const boosts = messagesToCheck.filter(msg => msg.author.id === member.user.id);
             if (boosts.length > 1) {
+                console.log(JSON.stringify(boosts));
                 await AddGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesAdded++;
                 if (LevelResult && LevelResult.usersHadRolesAdded === 0) usersHadRolesAdded++;
