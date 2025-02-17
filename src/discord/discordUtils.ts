@@ -1367,7 +1367,7 @@ const Surveys = [
                     [
                         {
                             id: "discord",
-                            name: "Hypixel/SBS Discord",
+                            name: "SBZ/SBS Discord",
                             type: "button"
                         },
                         {
