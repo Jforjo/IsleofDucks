@@ -1299,6 +1299,7 @@ const Roles = {
     service_management: "1021284854626779136",
     staff: "1004180925606805614",
     trainee: "992638050377142392",
+    helper: "1281079969258147870",
     verified: "1287098228067664004",
     duck_guild_member: "933258162931400764",
     duckling_guild_member: "998380474407846000",

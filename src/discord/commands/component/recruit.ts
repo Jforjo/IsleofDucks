@@ -20,8 +20,12 @@ export default async function Command(
                 flags: MessageFlags.Ephemeral
             }
         });
+        return NextResponse.json(
+            { success: false, error: "Failed to detect the server member" },
+            { status: 400 }
+        );
     }
-    if (!interaction.member?.roles.includes(IsleofDucks.roles.staff)) {
+    if (!( interaction.member.roles.includes(IsleofDucks.roles.staff) || interaction.member.roles.includes(IsleofDucks.roles.helper) )) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
@@ -29,6 +33,10 @@ export default async function Command(
                 flags: MessageFlags.Ephemeral
             }
         });
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        )
     }
 
     // ACK response and update the original message

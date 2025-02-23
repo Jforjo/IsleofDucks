@@ -356,7 +356,7 @@ export default async function(
                 timestamp: new Date().toISOString()
             }
         ],
-        components: !interaction.member.roles.includes(IsleofDucks.roles.staff) ? undefined : [
+        components: !( interaction.member.roles.includes(IsleofDucks.roles.staff) || interaction.member.roles.includes(IsleofDucks.roles.helper) ) ? undefined : [
             {
                 type: ComponentType.ActionRow,
                 components: [
