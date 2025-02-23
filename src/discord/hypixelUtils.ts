@@ -70,17 +70,21 @@ export async function getUsernameFromMojang(uuid: string): Promise<
         console.log("Mojang body", await res.text());
         return false;
     }
-    // It returns other stuff, but I don't care
-    const data = await res.json() as MojangResponseSuccess | MojangResponseError
-    if (data.error) return {
-        success: false,
-        message: data.errorMessage
-    }
-    return {
-        success: true,
-        uuid: data.id,
-        uuiddashes: addDashesToUUID(data.id),
-        name: data.name
+    try {
+        // It returns other stuff, but I don't care
+        const data = await res.json() as MojangResponseSuccess | MojangResponseError
+        if (data.error) return {
+            success: false,
+            message: data.errorMessage
+        }
+        return {
+            success: true,
+            uuid: data.id,
+            uuiddashes: addDashesToUUID(data.id),
+            name: data.name
+        }
+    } catch {
+        return false;
     }
 }
 export async function getUUIDFromMojang(username: string): Promise<
@@ -100,17 +104,21 @@ export async function getUUIDFromMojang(username: string): Promise<
         console.log("Mojang body", await res.text());
         return false;
     }
-    // It returns other stuff, but I don't care
-    const data = await res.json() as MojangResponseSuccess | MojangResponseError
-    if (data.error) return {
-        success: false,
-        message: data.errorMessage
-    }
-    return {
-        success: true,
-        uuid: data.id,
-        uuiddashes: addDashesToUUID(data.id),
-        name: data.name
+    try {
+        // It returns other stuff, but I don't care
+        const data = await res.json() as MojangResponseSuccess | MojangResponseError
+        if (data.error) return {
+            success: false,
+            message: data.errorMessage
+        }
+        return {
+            success: true,
+            uuid: data.id,
+            uuiddashes: addDashesToUUID(data.id),
+            name: data.name
+        }
+    } catch {
+        return false;
     }
 }
 export async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
@@ -130,29 +138,33 @@ export async function getUsernameOrUUIDFromPlayerDB(query: string): Promise<
         console.log("PlayerDB body", await res.text());
         return false;
     }
-    // It returns other stuff, but I don't care
-    const data = await res.json() as {
-        code: string;
-        message: string;
-        data: {
-            player?: {
-                username: string;
-                id: string;
-                raw_id: string;
-            }
-        };
-        success: boolean;
-    }
-    if (!data.success) return {
-        success: false,
-        message: data.message
-    }
-    if (!data.data.player) return false;
-    return {
-        success: true,
-        uuid: data.data.player.raw_id,
-        uuiddashes: data.data.player.id,
-        name: data.data.player.username
+    try {
+        // It returns other stuff, but I don't care
+        const data = await res.json() as {
+            code: string;
+            message: string;
+            data: {
+                player?: {
+                    username: string;
+                    id: string;
+                    raw_id: string;
+                }
+            };
+            success: boolean;
+        }
+        if (!data.success) return {
+            success: false,
+            message: data.message
+        }
+        if (!data.data.player) return false;
+        return {
+            success: true,
+            uuid: data.data.player.raw_id,
+            uuiddashes: data.data.player.id,
+            name: data.data.player.username
+        }
+    } catch {
+        return false;
     }
 }
 export async function getUsernameOrUUIDFromMinetools(query: string): Promise<
@@ -175,32 +187,36 @@ export async function getUsernameOrUUIDFromMinetools(query: string): Promise<
         console.log("Minetools body", await res.text());
         return false;
     }
-    const data = await res.json() as {
-        id: string | null;
-        name: string | null;
-        status: string;
-        error?: string;
-        errorMessage?: string;
-    };
-    if (data.error || data.errorMessage) {
-        console.log("Minetools data", data);
-        console.log("Minetools data", JSON.stringify(data));
+    try {
+        const data = await res.json() as {
+            id: string | null;
+            name: string | null;
+            status: string;
+            error?: string;
+            errorMessage?: string;
+        };
+        if (data.error || data.errorMessage) {
+            console.log("Minetools data", data);
+            console.log("Minetools data", JSON.stringify(data));
+            return false;
+        }
+        if (data.name === null) return {
+            success: false,
+            message: "Invalid UUID"
+        }
+        if (data.id === null) return {
+            success: false,
+            message: "Invalid Username"
+        }
+        return {
+            success: true,
+            uuid: data.id,
+            uuiddashes: addDashesToUUID(data.id),
+            name: data.name
+        };
+    } catch {
         return false;
     }
-    if (data.name === null) return {
-        success: false,
-        message: "Invalid UUID"
-    }
-    if (data.id === null) return {
-        success: false,
-        message: "Invalid Username"
-    }
-    return {
-        success: true,
-        uuid: data.id,
-        uuiddashes: addDashesToUUID(data.id),
-        name: data.name
-    };
 }
 
 export function addDashesToUUID(uuid: string): string {

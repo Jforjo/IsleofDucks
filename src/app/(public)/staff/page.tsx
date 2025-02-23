@@ -5,24 +5,25 @@ import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 
 export default async function Staff() {
     const members = await GetAllGuildMembers(IsleofDucks.serverID);
-    const staffMembers = members.filter(member => {
+    const staffMembers: { name: string | undefined; uuid: string; role: string; order: number; }[] = [];
+    for (const member of members.filter(member => {
         return member.roles.includes(IsleofDucks.roles.staff);
-    }).map(async member => {
+    })) {
         let stats = { role: "", order: 0 };
         if (member.roles.includes(IsleofDucks.roles.owner)) stats = { role: 'Owner', order: 0 };
         else if (member.roles.includes(IsleofDucks.roles.admin)) stats = { role: 'Admin', order: 1 };
         else if (member.roles.includes(IsleofDucks.roles.mod_duck)) stats = { role: 'Moderator', order: 2 };
         else if (member.roles.includes(IsleofDucks.roles.mod_duckling)) stats = { role: 'Moderator', order: 2 };
         else if (member.roles.includes(IsleofDucks.roles.trainee)) stats = { role: 'Trainee', order: 3 };
-        else return null;
+        else continue;
         
         const username = member.nick?.replace('✧', '').split(' ')[0];
         const uuid = await getUsernameOrUUID(username ?? "");
-        if (uuid.success === false) return null;
+        if (uuid.success === false) continue;
 
-        return { name: username, uuid: uuid.uuid, role: stats.role, order: stats.order };
-    })
-    const staff = (await Promise.all(staffMembers))
+        staffMembers.push({ name: username, uuid: uuid.uuid, role: stats.role, order: stats.order });
+    }
+    const staff = staffMembers
         .sort((a, b) => (a?.order || 0) - (b?.order || 0))
         .reduce<Record<string, { name: string; uuid: string; }[]>>((accumlator: Record<string, { name: string; uuid: string; }[]>, current) => {
             if (!current || !current.name) return accumlator;
