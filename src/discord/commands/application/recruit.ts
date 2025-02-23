@@ -343,10 +343,7 @@ export default async function(
                             scammerResponse.scammer ? (
                                 scammerResponse.details === null ?
                                     `${no} They are a scammer!` :
-                                    [
-                                        `${no} ${scammerResponse.details.reason}`,
-                                        `Added: <t:${scammerResponse.details.creationTime}:F>`,
-                                    ].join('\n')
+                                    `${no} ${scammerResponse.details.reason}`
                             ) : `${yes} They are not in the Jerry scammer list`,
                         ].join('\n'),
                         inline: false
