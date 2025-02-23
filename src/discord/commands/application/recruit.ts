@@ -345,7 +345,7 @@ export default async function(
                                     `${no} They are a scammer!` :
                                     [
                                         `${no} ${scammerResponse.details.reason}`,
-                                        `Added: <t:${Math.floor(scammerResponse.details.creationTime / 1000)}:F>`,
+                                        `Added: <t:${scammerResponse.details.creationTime}:F>`,
                                     ].join('\n')
                             ) : `${yes} They are not in the Jerry scammer list`,
                         ].join('\n'),
