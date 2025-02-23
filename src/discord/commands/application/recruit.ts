@@ -338,10 +338,15 @@ export default async function(
                     {
                         name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
                         value: [
-                            scammerResponse.success && scammerResponse.scammer ? (
+                            !scammerResponse.success ?
+                                `⚠️ Failed to check scammer status` :
+                            scammerResponse.scammer ? (
                                 scammerResponse.details === null ?
                                     `${no} They are a scammer!` :
-                                    `${no} ${scammerResponse.details.reason}`
+                                    [
+                                        `${no} ${scammerResponse.details.reason}`,
+                                        `Added: <t:${Math.floor(scammerResponse.details.creationTime / 1000)}:F>`,
+                                    ].join('\n')
                             ) : `${yes} They are not in the Jerry scammer list`,
                         ].join('\n'),
                         inline: false
