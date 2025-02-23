@@ -112,6 +112,16 @@ export default async function(
         );
     }
 
+    if (!member.roles.includes(IsleofDucks.roles.verified)) {
+        await FollowupMessage(interaction.token, {
+            content: `You must verify first! <#${IsleofDucks.channels.verification}>`,
+        });
+        return NextResponse.json(
+            { success: false, error: "You are not verified" },
+            { status: 400 }
+        );
+    }
+
     const hasTicket = await CheckChannelExists.names(guildID, TICKET.excludes.map(id => `${id}-${member.user.username}`));
     if (hasTicket.exists) {
         await FollowupMessage(interaction.token, {
@@ -309,6 +319,18 @@ export default async function(
         return NextResponse.json(
             { success: false, error: guildResponse.message },
             { status: guildResponse.status }
+        );
+    }
+    if (guildResponse.isInGuild && guildResponse.guild.name_lower === "isle of ducks" && !member.roles.includes(IsleofDucks.roles.staff)) {
+        await FollowupMessage(interaction.token, {
+            content: [
+                `You are already in the guild!`,
+                `If you have any queries then please open a support ticket instead: <#${IsleofDucks.channels.support}>`
+            ].join('\n')
+        });
+        return NextResponse.json(
+            { success: false, error: "You are already in the guild" },
+            { status: 400 }
         );
     }
 

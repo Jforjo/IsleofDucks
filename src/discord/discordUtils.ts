@@ -1210,6 +1210,7 @@ const Channels = {
     duckoc: "1166902454496006196",
     ducklingoc: "1166900860224294932",
     nitroboosts: "982019701918035978",
+    verification: "1287099048796356608",
 };
 const ChannelGroups = {
     tickets: "988883238292451378",
