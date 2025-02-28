@@ -1610,6 +1610,65 @@ const Superlatives = [
             ]
         }
     },
+    {
+        id: "mar25",
+        title: "Blaze Slayer Experience",
+        start: new Date("1 March 2025").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return profile?.slayer?.slayer_bosses?.blaze?.xp;
+            });
+        },
+        ranks: {
+            ducks: [
+                {
+                    id: "BEZAL",
+                    requirement: 0,
+                },
+                {
+                    id: "BLAZE",
+                    requirement: 500000,
+                },
+                {
+                    id: "DEMON",
+                    requirement: 1000000,
+                },
+                {
+                    id: "KING",
+                    requirement: 1500000,
+                },
+            ],
+            ducklings: [
+                {
+                    id: "BEZAL",
+                    requirement: 0,
+                },
+                {
+                    id: "BLAZE",
+                    requirement: 1500,
+                },
+                {
+                    id: "DEMON",
+                    requirement: 50000,
+                },
+                {
+                    id: "KING",
+                    requirement: 250000,
+                },
+            ]
+        }
+    }
 ];
 // WIP. Currently not used anywhere.
 const Help = {
