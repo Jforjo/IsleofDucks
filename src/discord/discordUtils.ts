@@ -1459,36 +1459,44 @@ const Superlatives = [
             ducks: [
                 {
                     id: "GRINCH",
+                    name: "grinch",
                     requirement: 0,
                 },
                 {
                     id: "ELF",
+                    name: "elf",
                     requirement: 32000,
                 },
                 {
                     id: "FROSTY",
+                    name: "frosty",
                     requirement: 36000,
                 },
                 {
                     id: "SANTA",
+                    name: "santa",
                     requirement: 40000,
                 },
             ],
             ducklings: [
                 {
                     id: "GRINCH",
+                    name: "grinch",
                     requirement: 0,
                 },
                 {
                     id: "ELF",
+                    name: "elf",
                     requirement: 22000,
                 },
                 {
                     id: "FROSTY",
+                    name: "frosty",
                     requirement: 26000,
                 },
                 {
                     id: "SANTA",
+                    name: "santa",
                     requirement: 30000,
                 },
             ]
@@ -1518,36 +1526,44 @@ const Superlatives = [
             ducks: [
                 {
                     id: "PREY",
+                    name: "prey",
                     requirement: 0,
                 },
                 {
                     id: "NOVICE",
+                    name: "novice",
                     requirement: 200,
                 },
                 {
                     id: "HUNTER",
+                    name: "hunter",
                     requirement: 250,
                 },
                 {
                     id: "MASTER",
+                    name: "master",
                     requirement: 300,
                 },
             ],
             ducklings: [
                 {
                     id: "PREY",
+                    name: "prey",
                     requirement: 0,
                 },
                 {
                     id: "NOVICE",
+                    name: "novice",
                     requirement: 150,
                 },
                 {
                     id: "HUNTER",
+                    name: "hunter",
                     requirement: 200,
                 },
                 {
                     id: "MASTER",
+                    name: "master",
                     requirement: 250,
                 },
             ]
@@ -1577,36 +1593,44 @@ const Superlatives = [
             ducks: [
                 {
                     id: "RATTLE",
+                    name: "rattle",
                     requirement: 0,
                 },
                 {
                     id: "PYTHON",
+                    name: "python",
                     requirement: 2500,
                 },
                 {
                     id: "COBRA",
+                    name: "cobra",
                     requirement: 5000,
                 },
                 {
                     id: "VIPER",
+                    name: "viper",
                     requirement: 10000,
                 },
             ],
             ducklings: [
                 {
                     id: "RATTLE",
+                    name: "rattle",
                     requirement: 0,
                 },
                 {
                     id: "PYTHON",
+                    name: "python",
                     requirement: 2500,
                 },
                 {
                     id: "COBRA",
+                    name: "cobra",
                     requirement: 5000,
                 },
                 {
                     id: "VIPER",
+                    name: "viper",
                     requirement: 10000,
                 },
             ]
@@ -1636,36 +1660,44 @@ const Superlatives = [
             ducks: [
                 {
                     id: "BEZAL",
+                    name: "bezal",
                     requirement: 0,
                 },
                 {
                     id: "BLAZE",
+                    name: "blaze",
                     requirement: 500000,
                 },
                 {
                     id: "LORD",
+                    name: "demon lord",
                     requirement: 1000000,
                 },
                 {
                     id: "KING",
+                    name: "gabagool king",
                     requirement: 1500000,
                 },
             ],
             ducklings: [
                 {
                     id: "BEZAL",
+                    name: "bezal",
                     requirement: 0,
                 },
                 {
                     id: "BLAZE",
+                    name: "blaze",
                     requirement: 1500,
                 },
                 {
                     id: "LORD",
+                    name: "demon lord",
                     requirement: 50000,
                 },
                 {
                     id: "KING",
+                    name: "gabagool king",
                     requirement: 250000,
                 },
             ]
@@ -1778,10 +1810,12 @@ export interface Superlative {
     ranks?: {
         ducks: {
             id: string;
+            name: string;
             requirement: number;
         }[],
         ducklings: {
             id: string;
+            name: string;
             requirement: number;
         }[],
     };

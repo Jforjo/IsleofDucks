@@ -169,7 +169,7 @@ export default async function Command(
         superlative.ranks?.ducks.forEach((rank, index) => {
             if (rank.requirement <= superlativeData.current) {
                 bracketShould = index;
-                rankShould = rank.id.toLowerCase();
+                rankShould = rank.name.toLowerCase();
             }
             if (rank.id.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
         });
