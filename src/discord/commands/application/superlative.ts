@@ -152,7 +152,7 @@ export default async function Command(
         ]
     });
 
-    const setranks: Promise<RESTPostAPIChannelMessageResult | undefined>[] = [];
+    const setranks: string[] = [];
 
     const superlativeResult = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
@@ -177,15 +177,11 @@ export default async function Command(
             // Otherwise, GM and staff will always have a green/red arrow
             if (bracketShould > bracketCurrent) {
                 rankUp = Emojis.up;
-                setranks.push(SendMessage(IsleofDucks.channels.duckoc, {
-                    content: `setrank ${mojang.name} ${rankShould}`
-                }));
+                setranks.push(`setrank ${mojang.name} ${rankShould}`);
             }
             if (bracketShould < bracketCurrent) {
                 rankUp = Emojis.down;
-                setranks.push(SendMessage(IsleofDucks.channels.duckoc, {
-                    content: `setrank ${mojang.name} ${rankShould}`
-                }));
+                setranks.push(`setrank ${mojang.name} ${rankShould}`);
             }
         }
 
@@ -336,8 +332,10 @@ export default async function Command(
 
     await BACKGROUND_SUPERLATIVE_UPDATE;
     for (const setrank of setranks) {
-        await setrank;
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await SendMessage(IsleofDucks.channels.duckoc, {
+            content: setrank
+        });
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     return NextResponse.json(
