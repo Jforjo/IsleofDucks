@@ -1115,6 +1115,8 @@ export function formatNumber(num: number, decimals = 2): string {
     if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(decimals) + 'B';
     if (num >= 1_000_000) return (num / 1_000_000).toFixed(decimals) + 'M';
     if (num >= 1_000) return (num / 1_000).toFixed(decimals) + 'K';
+    // if whole number then return as is
+    if (num % 1 === 0) return num.toString();
     return num.toFixed(decimals);
 }
 
