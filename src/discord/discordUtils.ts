@@ -1643,7 +1643,7 @@ const Superlatives = [
                     requirement: 500000,
                 },
                 {
-                    id: "DEMON",
+                    id: "LORD",
                     requirement: 1000000,
                 },
                 {
@@ -1661,7 +1661,7 @@ const Superlatives = [
                     requirement: 1500,
                 },
                 {
-                    id: "DEMON",
+                    id: "LORD",
                     requirement: 50000,
                 },
                 {
