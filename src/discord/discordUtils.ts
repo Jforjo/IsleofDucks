@@ -1411,13 +1411,13 @@ const Superlatives = [
     {
         id: "oct24",
         title: "",
-        start: new Date("1 October 2024").getTime(),
+        start: new Date("1 October 2024 UTC").getTime(),
         callback: undefined
     },
     {
         id: "nov24",
         title: "Enderman Slayer Experience",
-        start: new Date("1 November 2024").getTime(),
+        start: new Date("1 November 2024 UTC").getTime(),
         callback: async function(
             uuid: string
         ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
@@ -1438,7 +1438,7 @@ const Superlatives = [
     {
         id: "dec24",
         title: "SkyBlock Level",
-        start: new Date("1 December 2024").getTime(),
+        start: new Date("1 December 2024 UTC").getTime(),
         callback: async function(
             uuid: string
         ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
@@ -1497,7 +1497,7 @@ const Superlatives = [
     {
         id: "jan25",
         title: "Claimed Bestiary Milestone",
-        start: new Date("1 January 2025").getTime(),
+        start: new Date("1 January 2025 UTC").getTime(),
         callback: async function(
             uuid: string
         ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
@@ -1556,7 +1556,7 @@ const Superlatives = [
     {
         id: "feb25",
         title: "Gifts Received",
-        start: new Date("1 February 2025").getTime(),
+        start: new Date("1 February 2025 UTC").getTime(),
         callback: async function(
             uuid: string
         ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
@@ -1615,7 +1615,7 @@ const Superlatives = [
     {
         id: "mar25",
         title: "Blaze Slayer Experience",
-        start: new Date("1 March 2025").getTime(),
+        start: new Date("1 March 2025 UTC").getTime(),
         callback: async function(
             uuid: string
         ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
