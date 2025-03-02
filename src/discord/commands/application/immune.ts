@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
-import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer } from "@/discord/utils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
+import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getDiscordRole } from "@/discord/utils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
@@ -337,8 +337,9 @@ async function checkImmune(
         )
     }
 
-    const removedCount = {
-        notInGuild: 0
+    const removedCount: { notInGuild: number, names: string[] } = {
+        notInGuild: 0,
+        names: []
     };
     for (const player of immunePlayers.players) {
         const guildRes = await isPlayerInGuild(player.uuid);
@@ -346,9 +347,23 @@ async function checkImmune(
         if (!guildRes.isInGuild) {
             await removeImmunePlayer(player.uuid);
             removedCount.notInGuild++;
+            const discordRes = await getDiscordRole(player.uuid);
+            if (discordRes && discordRes.discordid) {
+                await RemoveGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+                removedCount.names.push(`<@${discordRes.discordid}> - ${player.name ?? player.uuid}`);
+            } else {
+                removedCount.names.push(player.name ?? player.uuid);
+            }
         } else if (guildRes.guild.name !== "Isle of Ducks" && guildRes.guild.name !== "Isle of Ducklings") {
             await removeImmunePlayer(player.uuid);
             removedCount.notInGuild++;
+            const discordRes = await getDiscordRole(player.uuid);
+            if (discordRes && discordRes.discordid) {
+                await RemoveGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+                removedCount.names.push(`<@${discordRes.discordid}> - ${player.name ?? player.uuid}`);
+            } else {
+                removedCount.names.push(player.name ?? player.uuid);
+            }
         }
     }
 
@@ -358,6 +373,8 @@ async function checkImmune(
                 title: "Removed immune players",
                 description: [
                     `Removed ${removedCount.notInGuild} immune players that are not in the guild.`,
+                    '',
+                    ...removedCount.names
                 ].join('\n'),
                 color: 0xFB9B00,
                 footer: {

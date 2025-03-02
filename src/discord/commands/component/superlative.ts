@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, RESTPostAPIChannelMessageResult } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
