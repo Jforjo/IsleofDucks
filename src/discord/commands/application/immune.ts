@@ -1,5 +1,5 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole } from "@/discord/discordUtils";
 import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getDiscordRole } from "@/discord/utils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
@@ -82,6 +82,10 @@ async function addImmune(
     }
 
     await addImmunePlayer(uuid, null, reason);
+    const discordRes = await getDiscordRole(uuid);
+    if (discordRes && discordRes.discordid) {
+        await AddGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+    }
 
     await FollowupMessage(interaction.token, {
         embeds: [
@@ -180,6 +184,10 @@ async function removeImmune(
     }
 
     await removeImmunePlayer(uuid, reason);
+    const discordRes = await getDiscordRole(uuid);
+    if (discordRes && discordRes.discordid) {
+        await RemoveGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+    }
 
     await FollowupMessage(interaction.token, {
         embeds: [
