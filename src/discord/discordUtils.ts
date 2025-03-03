@@ -562,7 +562,7 @@ export async function AddGuildMemberRole(
         }
     }
 
-    return res.ok;
+    return res.status === 204;
 }
 export async function RemoveGuildMemberRole(
     guildId: Snowflake,
@@ -591,7 +591,7 @@ export async function RemoveGuildMemberRole(
         }
     }
 
-    return res.ok;
+    return res.status === 204;
 }
 
 export async function ListGuildMembers(

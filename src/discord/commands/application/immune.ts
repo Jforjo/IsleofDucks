@@ -83,15 +83,20 @@ async function addImmune(
 
     await addImmunePlayer(uuid, null, reason);
     const discordRes = await getDiscordRole(uuid);
+    let roleAdded = false;
     if (discordRes && discordRes.discordid) {
-        await AddGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+        const res = await AddGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+        if (res) roleAdded = true;
     }
 
     await FollowupMessage(interaction.token, {
         embeds: [
             {
                 title: `\`${uuidResponse.name}\` was added to the immune list!`,
-                description: `Reason: ${reason}`,
+                description: [
+                    `Reason: ${reason}`,
+                    `${roleAdded ? "Immunity role added" : `Failed to add immunity role to <@${discordRes?.discordid}>`}`,
+                ].join('\n'),
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -185,14 +190,19 @@ async function removeImmune(
 
     await removeImmunePlayer(uuid, reason);
     const discordRes = await getDiscordRole(uuid);
+    let roleRemoved = false;
     if (discordRes && discordRes.discordid) {
-        await RemoveGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+        const res = await RemoveGuildMemberRole(IsleofDucks.serverID, discordRes.discordid, IsleofDucks.roles.immune);
+        if (res) roleRemoved = true;
     }
 
     await FollowupMessage(interaction.token, {
         embeds: [
             {
                 title: `\`${uuidResponse.name}\` was removed from the ${reason} immune list!`,
+                description: [
+                    `${roleRemoved ? "Immunity role removed" : `Failed to remove immunity role from <@${discordRes?.discordid}>`}`,
+                ].join('\n'),
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
