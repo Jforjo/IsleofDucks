@@ -465,13 +465,13 @@ export default async function(
                         label: "Duck Log",
                         style: ButtonStyle.Primary
                     },
-                    {
-                        type: ComponentType.Button,
-                        custom_id: `recruit-invite-duck-${mojang.name}`,
-                        label: "Duck Invite",
-                        style: ButtonStyle.Primary,
-                        disabled: true
-                    },
+                    // {
+                    //     type: ComponentType.Button,
+                    //     custom_id: `recruit-invite-duck-${mojang.name}`,
+                    //     label: "Duck Invite",
+                    //     style: ButtonStyle.Primary,
+                    //     disabled: true
+                    // },
                     {
                         custom_id: `close-${TICKET.id}-${member.user.id}-auto`,
                         type: ComponentType.Button,

@@ -492,13 +492,13 @@ export default async function(
                         label: "Duckling Log",
                         style: ButtonStyle.Primary
                     },
-                    {
-                        type: ComponentType.Button,
-                        custom_id: `recruit-invite-duckling-${mojang.name}`,
-                        label: "Duckling Invite",
-                        style: ButtonStyle.Primary,
-                        disabled: true
-                    }
+                    // {
+                    //     type: ComponentType.Button,
+                    //     custom_id: `recruit-invite-duckling-${mojang.name}`,
+                    //     label: "Duckling Invite",
+                    //     style: ButtonStyle.Primary,
+                    //     disabled: true
+                    // }
                 ]
             }
         ],
