@@ -1,7 +1,7 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIActionRowComponent, APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, APIMessageActionRowComponent, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
 import { getBannedPlayer, getSettingValue } from "@/discord/utils";
@@ -283,6 +283,48 @@ export default async function(
     // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
     const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
 
+    const buttons: APIActionRowComponent<APIMessageActionRowComponent>[] | undefined = !(
+        interaction.member.roles.includes(IsleofDucks.roles.staff) || interaction.member.roles.includes(IsleofDucks.roles.helper)
+    ) ? undefined : [];
+    if (buttons) {
+        if (profileAPIResponse.experience >= profileAPIResponse.duckReq) buttons.push({
+            type: ComponentType.ActionRow,
+            components: [
+                {
+                    type: ComponentType.Button,
+                    custom_id: `recruit-log-duck-${mojang.name}`,
+                    label: "Duck Log",
+                    style: ButtonStyle.Primary
+                },
+                {
+                    type: ComponentType.Button,
+                    custom_id: `recruit-invite-duck-${mojang.name}`,
+                    label: "Duck Invite",
+                    style: ButtonStyle.Primary,
+                    disabled: true
+                }
+            ]
+        });
+        if (profileAPIResponse.experience >= profileAPIResponse.ducklingReq) buttons.push({
+            type: ComponentType.ActionRow,
+            components: [
+                {
+                    type: ComponentType.Button,
+                    custom_id: `recruit-log-duckling-${mojang.name}`,
+                    label: "Duckling Log",
+                    style: ButtonStyle.Primary
+                },
+                {
+                    type: ComponentType.Button,
+                    custom_id: `recruit-invite-duckling-${mojang.name}`,
+                    label: "Duckling Invite",
+                    style: ButtonStyle.Primary,
+                    disabled: true
+                }
+            ]
+        })
+    }
+
     await FollowupMessage(interaction.token, {
         embeds: [
             {
@@ -356,44 +398,7 @@ export default async function(
                 timestamp: new Date().toISOString()
             }
         ],
-        components: !( interaction.member.roles.includes(IsleofDucks.roles.staff) || interaction.member.roles.includes(IsleofDucks.roles.helper) ) ? undefined : [
-            {
-                type: ComponentType.ActionRow,
-                components: [
-                    {
-                        type: ComponentType.Button,
-                        custom_id: `recruit-log-duck-${mojang.name}`,
-                        label: "Duck Log",
-                        style: ButtonStyle.Primary
-                    },
-                    {
-                        type: ComponentType.Button,
-                        custom_id: `recruit-invite-duck-${mojang.name}`,
-                        label: "Duck Invite",
-                        style: ButtonStyle.Primary,
-                        disabled: true
-                    }
-                ]
-            },
-            {
-                type: ComponentType.ActionRow,
-                components: [
-                    {
-                        type: ComponentType.Button,
-                        custom_id: `recruit-log-duckling-${mojang.name}`,
-                        label: "Duckling Log",
-                        style: ButtonStyle.Primary
-                    },
-                    {
-                        type: ComponentType.Button,
-                        custom_id: `recruit-invite-duckling-${mojang.name}`,
-                        label: "Duckling Invite",
-                        style: ButtonStyle.Primary,
-                        disabled: true
-                    }
-                ]
-            }
-        ]
+        components: buttons
     }, [
         {
             id: 0,
