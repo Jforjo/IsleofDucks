@@ -1666,17 +1666,17 @@ const Superlatives = [
                 {
                     id: "BLAZE",
                     name: "blaze",
-                    requirement: 500000,
+                    requirement: 100000,
                 },
                 {
                     id: "LORD",
                     name: "demon lord",
-                    requirement: 1000000,
+                    requirement: 400000,
                 },
                 {
                     id: "KING",
                     name: "gabagool king",
-                    requirement: 1500000,
+                    requirement: 1000000,
                 },
             ],
             ducklings: [
