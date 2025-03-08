@@ -302,11 +302,13 @@ export default async function Command(
                 value: finalResult.slice(i, i + chunkSize).map((field) => {
                     const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
                     if (!detailed) return main;
-                    return [
+                    const result = [
                         main,
                         `Total: ${field.current}`,
-                        `Value: ${field.value}`
-                    ].join('\n');
+                        // `Value: ${field.value}`
+                    ];
+                    if (field.untilNextRank > 0) result.push(`Until: ${field.untilNextRank}`);
+                    return result.join('\n');
                 }).join('\n'),
                 inline: true
             }
