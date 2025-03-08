@@ -175,7 +175,7 @@ export default async function Command(
             } else {
                 untilNextRank = rank.requirement - superlativeData.current;
             }
-            if (rank.id.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
+            if (rank.name.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
         });
         if (bracketCurrent !== -1) {
             // Otherwise, GM and staff will always have a green/red arrow

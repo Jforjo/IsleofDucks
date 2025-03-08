@@ -201,7 +201,7 @@ export default async function Command(
                     bracketShould = index;
                     rankShould = rank.name.toLowerCase();
                 }
-                if (rank.id.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
+                if (rank.name.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
             });
         }
         if (bracketCurrent !== -1) {
