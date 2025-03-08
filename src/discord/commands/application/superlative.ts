@@ -172,7 +172,7 @@ export default async function Command(
             if (rank.requirement <= superlativeData.current) {
                 bracketShould = index;
                 rankShould = rank.name.toLowerCase();
-            } else {
+            } else if (untilNextRank === 0) {
                 untilNextRank = rank.requirement - superlativeData.current;
             }
             if (rank.name.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
