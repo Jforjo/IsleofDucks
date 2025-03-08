@@ -166,11 +166,14 @@ export default async function Command(
         let rankUp = null;
         let bracketCurrent = -1;
         let bracketShould = 0;
+        let untilNextRank = 0;
         let rankShould = "";
         superlative.ranks?.ducks.forEach((rank, index) => {
             if (rank.requirement <= superlativeData.current) {
                 bracketShould = index;
                 rankShould = rank.name.toLowerCase();
+            } else {
+                untilNextRank = rank.requirement - superlativeData.current;
             }
             if (rank.id.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
         });
@@ -191,6 +194,7 @@ export default async function Command(
             name: mojang.name,
             value: superlativeData.value,
             current: superlativeData.current,
+            untilNextRank: untilNextRank,
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
         };
@@ -261,6 +265,7 @@ export default async function Command(
         name: string;
         value: number;
         current: number;
+        untilNextRank: number;
         formattedValue: string;
         rankUp: string | null;
     }[];
@@ -273,6 +278,7 @@ export default async function Command(
             name: member.name,
             value: member.value,
             current: member.current,
+            untilNextRank: member.untilNextRank,
             formattedValue: member.formattedValue,
             rankUp: member.rankUp
         };
@@ -283,6 +289,7 @@ export default async function Command(
         name: string;
         value: number;
         current: number;
+        untilNextRank: number;
         formattedValue: string;
         rankUp: string | null;
     }[];
@@ -295,11 +302,13 @@ export default async function Command(
                 value: finalResult.slice(i, i + chunkSize).map((field) => {
                     const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
                     if (!detailed) return main;
-                    return [
+                    const result = [
                         main,
                         `Total: ${field.current}`,
                         `Value: ${field.value}`
-                    ].join('\n');
+                    ];
+                    if (field.untilNextRank > 0) result.push(`Until: ${field.untilNextRank}`);
+                    return result.join('\n');
                 }).join('\n'),
                 inline: true
             }
