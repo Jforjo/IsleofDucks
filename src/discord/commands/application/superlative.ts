@@ -42,7 +42,8 @@ export async function getSuperlative(): Promise<Superlative | null> {
 }
 
 export default async function Command(
-    interaction: APIChatInputApplicationCommandInteraction
+    interaction: APIChatInputApplicationCommandInteraction,
+    detailed = false
 ): Promise<
     NextResponse<
         {
@@ -189,6 +190,7 @@ export default async function Command(
             uuid: member.uuid,
             name: mojang.name,
             value: superlativeData.value,
+            current: superlativeData.current,
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
         };
@@ -258,6 +260,7 @@ export default async function Command(
         uuid: string;
         name: string;
         value: number;
+        current: number;
         formattedValue: string;
         rankUp: string | null;
     }[];
@@ -269,6 +272,7 @@ export default async function Command(
             uuid: member.uuid,
             name: member.name,
             value: member.value,
+            current: member.current,
             formattedValue: member.formattedValue,
             rankUp: member.rankUp
         };
@@ -278,6 +282,7 @@ export default async function Command(
         uuid: string;
         name: string;
         value: number;
+        current: number;
         formattedValue: string;
         rankUp: string | null;
     }[];
@@ -287,7 +292,15 @@ export default async function Command(
         fieldArray.push(
             {
                 name: '\u200b',
-                value: finalResult.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`).join('\n'),
+                value: finalResult.slice(i, i + chunkSize).map((field) => {
+                    const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
+                    if (!detailed) return main;
+                    return [
+                        main,
+                        `Total: ${field.current}`,
+                        `Value: ${field.value}`
+                    ].join('\n');
+                }).join('\n'),
                 inline: true
             }
         );
