@@ -102,8 +102,7 @@ export async function updateBannedPlayerDiscord(uuid: string, discord: Snowflake
     const discords = [];
     if (user.discords) discords.push(...user.discords);
     if (discord) discords.push(discord);
-    console.log("addbanneddisc", discords);
-    await sql`UPDATE banlist SET discord = ${JSON.stringify(discord)} WHERE uuid = ${uuid}`;
+    await sql`UPDATE banlist SET discord = ${JSON.stringify(discords)} WHERE uuid = ${uuid}`;
 }
 export async function removeBannedPlayer(uuid: string): Promise<void> {
     await sql`DELETE FROM banlist WHERE uuid = ${uuid}`;
@@ -151,7 +150,6 @@ export async function getBannedPlayer(uuid: string): Promise<
     const { rows } = await sql`SELECT * FROM banlist WHERE uuid = ${uuid}`;
     if (rows.length == 0) return null;
     const discords = rows[0].discord ? JSON.parse(rows[0].discord) : null;
-    console.log('getbanner', rows[0].discord);
     return {
         uuid: rows[0].uuid,
         // is 'discords' is a string then return that in an array, otherwise return it as normal
