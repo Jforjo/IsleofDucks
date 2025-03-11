@@ -388,7 +388,7 @@ async function checkBanned(
                 fields: banned && banned.discords ? [
                     {
                         name: "Discord IDs",
-                        value: banned.discords.join('\n')
+                        value: typeof banned.discords === 'string' ? banned.discords[0] : banned.discords.join('\n')
                     }
                 ] : undefined,
                 footer: {

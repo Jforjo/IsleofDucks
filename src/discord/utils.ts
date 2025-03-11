@@ -144,7 +144,7 @@ export async function searchBannedPlayers(
     };
 }
 export async function getBannedPlayer(uuid: string): Promise<
-    { uuid: string; discords: Snowflake[] | null; reason: string } |
+    { uuid: string; discords: Snowflake[] | Snowflake | null; reason: string } |
     null
 > {
     const { rows } = await sql`SELECT * FROM banlist WHERE uuid = ${uuid}`;
@@ -152,7 +152,8 @@ export async function getBannedPlayer(uuid: string): Promise<
     const discords = rows[0].discord ? JSON.parse(rows[0].discord) : null;
     return {
         uuid: rows[0].uuid,
-        discords: discords,
+        // is 'discords' is a string then return that in an array, otherwise return it as normal
+        discords: typeof discords === 'string' ? [discords] : discords,
         reason: rows[0].reason
     }
 }
@@ -393,11 +394,12 @@ export async function getAllDiscordRolesWhereNameIsNull(limit = 100): Promise<Di
 
 export interface HyGuessrData {
     answer: {
-        x: number;
-        y: number;
-        z: number;
+        x: string;
+        y: string;
+        z: string;
     };
     image: string;
+    island: string;
 }
 export async function getHyGuessrData(id: string): Promise<HyGuessrData[] | null> {
     const { rows } = await sql`SELECT data FROM hyguessr WHERE id = ${id}`;
