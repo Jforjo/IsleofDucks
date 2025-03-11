@@ -252,7 +252,7 @@ export default async function Command(
                     { status: 400 }
                 );
             }
-            return await Command(interaction);
+            return await Command(interaction, detailed);
         }
         return NextResponse.json(
             { success: false, error: superlativeResult.message },
