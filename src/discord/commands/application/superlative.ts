@@ -316,7 +316,6 @@ export default async function Command(
     }
 
     await FollowupMessage(interaction.token, {
-        content: undefined,
         embeds: [
             {
                 title: `Superlative - ${superlative.title}`,
@@ -334,14 +333,14 @@ export default async function Command(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: "superlative-ducks",
+                        custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducks",
                         style: ButtonStyle.Success,
                         disabled: true
                     },
                     {
-                        custom_id: "superlative-ducklings",
+                        custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducklings",
                         style: ButtonStyle.Primary,

@@ -62,6 +62,7 @@ export default async function Command(
     const guildName = buttonID === "ducks" ? "Isle of Ducks" :
         buttonID === "ducklings" ? "Isle of Ducklings" :
         "Isle of Ducks";
+    const detailed = interaction.data.custom_id.split("-")[2] === "detailed";
     
     const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative(guildName);
 
@@ -73,14 +74,14 @@ export default async function Command(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: "superlative-ducks",
+                        custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducks",
                         style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
                         disabled: true
                     },
                     {
-                        custom_id: "superlative-ducklings",
+                        custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducklings",
                         style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
@@ -194,12 +195,15 @@ export default async function Command(
         let rankUp = null;
         let bracketCurrent = -1;
         let bracketShould = 0;
+        let untilNextRank = 0;
         let rankShould = "";
         if (buttonID === "ducks" || buttonID === "ducklings") {
             superlative.ranks?.[buttonID].forEach((rank, index) => {
                 if (rank.requirement <= superlativeData.current) {
                     bracketShould = index;
                     rankShould = rank.name.toLowerCase();
+                } else if (untilNextRank === 0) {
+                    untilNextRank = rank.requirement - superlativeData.current;
                 }
                 if (rank.name.toLowerCase() === member.rank.toLowerCase()) bracketCurrent = index;
             });
@@ -220,6 +224,8 @@ export default async function Command(
             uuid: member.uuid,
             name: mojang.name,
             value: superlativeData.value,
+            current: superlativeData.current,
+            untilNextRank: untilNextRank,
             formattedValue: superlativeData.formattedValue,
             rankUp: rankUp
         };
@@ -289,6 +295,8 @@ export default async function Command(
         uuid: string;
         name: string;
         value: number;
+        current: number;
+        untilNextRank: number;
         formattedValue: string;
         rankUp: string | null;
     }[];
@@ -300,6 +308,8 @@ export default async function Command(
             uuid: member.uuid,
             name: member.name,
             value: member.value,
+            current: member.current,
+            untilNextRank: member.untilNextRank,
             formattedValue: member.formattedValue,
             rankUp: member.rankUp
         };
@@ -309,16 +319,28 @@ export default async function Command(
         uuid: string;
         name: string;
         value: number;
+        current: number;
+        untilNextRank: number;
         formattedValue: string;
         rankUp: string | null;
     }[];
     const fieldArray = [];
-    const chunkSize = 21;
+    const chunkSize = detailed ? 14 : 21;
     for (let i = 0; i < finalResult.length; i += chunkSize) {
         fieldArray.push(
             {
                 name: '\u200b',
-                value: finalResult.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`).join('\n'),
+                value: finalResult.slice(i, i + chunkSize).map((field) => {
+                    const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
+                    if (!detailed) return main;
+                    const result = [
+                        main,
+                        `Total: ${field.current}`,
+                        // `Value: ${field.value}`
+                    ];
+                    if (field.untilNextRank > 0) result.push(`Until: ${field.untilNextRank}`);
+                    return result.join('\n');
+                }).join('\n'),
                 inline: true
             }
         );
@@ -343,14 +365,14 @@ export default async function Command(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: "superlative-ducks",
+                        custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducks",
                         style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
                         disabled: buttonID === "ducks"
                     },
                     {
-                        custom_id: "superlative-ducklings",
+                        custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducklings",
                         style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
