@@ -184,10 +184,10 @@ export default async function Command(
                 return {
                     ...embed,
                     thumbnaill: embed.thumbnail && {
-                        url: `attachment://${embed.thumbnail.url.split('/').pop()}`
+                        url: `attachment://${embed.thumbnail.url.split('/').pop()?.split('?')[0]}`
                     },
                     image: embed.image && {
-                        url: `attachment://${embed.image.url.split('/').pop()}`
+                        url: `attachment://${embed.image.url.split('/').pop()?.split('?')[0]}`
                     }
                 }
             }), {
