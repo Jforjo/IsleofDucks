@@ -61,7 +61,10 @@ export default async function Command(
                 },
                 timestamp: new Date().toISOString()
             }],
-            components: interaction.message.components
+            components: interaction.message.components,
+            attachments: interaction.message.attachments.map(attachment => ({
+                id: attachment.id,
+            }))
         });
 
         let message: APIMessage | undefined;
@@ -87,7 +90,10 @@ export default async function Command(
                     },
                     timestamp: new Date().toISOString()
                 }],
-                components: interaction.message.components
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
             });
             return NextResponse.json(
                 { success: false, error: "Failed to send the log command." },
@@ -106,7 +112,10 @@ export default async function Command(
                 },
                 timestamp: new Date().toISOString()
             }],
-            components: interaction.message.components
+            components: interaction.message.components,
+            attachments: interaction.message.attachments.map(attachment => ({
+                id: attachment.id,
+            }))
         });
 
         let messages = await GetChannelMessages(message.channel_id, {
@@ -135,7 +144,10 @@ export default async function Command(
                     },
                     timestamp: new Date().toISOString()
                 }],
-                components: interaction.message.components
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
             });
             return NextResponse.json(
                 { success: false, error: "Failed to fetch logs." },
@@ -170,30 +182,20 @@ export default async function Command(
                     },
                     timestamp: new Date().toISOString()
                 }],
-                components: interaction.message.components
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
             });
             return NextResponse.json(
                 { success: false, error: "Failed to fetch logs." },
                 { status: 400 }
             );
         }
-        
-        // const attachments = interaction.message.attachments.length > 0 ? interaction.message.attachments.map(attachment => ({
-        //     filename: attachment.filename,
-        //     url: attachment.url.split('/').pop()?.split('?')[0] ?? ""
-        // })) : [];
 
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds.map(embed => {
-                // if (embed.thumbnail) attachments.push({
-                //     filename: embed.thumbnail.url.split('/').pop()?.split('?')[0] ?? "",
-                //     url: embed.thumbnail.url
-                // });
-                // if (embed.image) attachments.push({
-                //     filename: embed.image.url.split('/').pop()?.split('?')[0] ?? "",
-                //     url: embed.image.url
-                // });
                 return {
                     ...embed,
                     thumbnaill: embed.thumbnail && {
@@ -237,11 +239,6 @@ export default async function Command(
                 id: attachment.id,
             }))
         });
-        // }, attachments.map((attachment, index) => ({
-        //     id: index,
-        //     ...attachment
-        // })));
-        // console.log('attachments', attachments);
     } else if (buttonID === "invite") {
         if (type === "duck") {
             await SendMessage(IsleofDucks.channels.duckoc, {
@@ -271,7 +268,10 @@ export default async function Command(
                         return component;
                     })
                 };
-            })
+            }),
+            attachments: interaction.message.attachments.map(attachment => ({
+                id: attachment.id,
+            }))
         });
     }
 
