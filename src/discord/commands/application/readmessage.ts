@@ -48,19 +48,25 @@ export default async function(
     console.log(message);
     console.log(JSON.stringify(message));
 
-    await FollowupMessage(interaction.token, {
-        embeds: [
-            {
-                title: `Message ID: ${options.id}`,
-                description: `\`\`\`${JSON.stringify(message)}\`\`\``,
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ],
-    });
+    try {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: `Message ID: ${options.id}`,
+                    description: `\`\`\`${JSON.stringify(message)}\`\`\``,
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+    } catch (error) {
+        await FollowupMessage(interaction.token, {
+            content: "Content probs too big, check logs!",
+        });
+    }
 
     return NextResponse.json(
         { success: true },
