@@ -178,9 +178,25 @@ export default async function Command(
             );
         }
         
+        const attachments = interaction.message.attachments.map(attachment => ({
+            id: parseInt(attachment.id),
+            filename: attachment.filename,
+            url: attachment.url
+        })).sort((a, b) => a.id - b.id);
+
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds.map(embed => {
+                if (embed.thumbnail) attachments.push({
+                    id: attachments[attachments.length - 1].id + 1,
+                    filename: embed.thumbnail.url.split('/').pop()?.split('?')[0] ?? "",
+                    url: embed.thumbnail.url
+                });
+                if (embed.image) attachments.push({
+                    id: attachments[attachments.length - 1].id + 1,
+                    filename: embed.image.url.split('/').pop()?.split('?')[0] ?? "",
+                    url: embed.image.url
+                });
                 return {
                     ...embed,
                     thumbnaill: embed.thumbnail && {
@@ -220,13 +236,7 @@ export default async function Command(
                     })
                 };
             })
-        }, interaction.message.attachments.map(attachment => {
-            return {
-                id: parseInt(attachment.id),
-                filename: attachment.filename,
-                url: attachment.url
-            }
-        }));
+        }, attachments);
     } else if (buttonID === "invite") {
         if (type === "duck") {
             await SendMessage(IsleofDucks.channels.duckoc, {
