@@ -180,7 +180,7 @@ export default async function Command(
         
         const attachments = interaction.message.attachments.length > 0 ? interaction.message.attachments.map(attachment => ({
             filename: attachment.filename,
-            url: attachment.url
+            url: attachment.url.split('/').pop()?.split('?')[0] ?? ""
         })) : [];
 
         await FollowupMessage(interaction.token, {
@@ -232,7 +232,8 @@ export default async function Command(
                         return component;
                     })
                 };
-            })
+            }),
+            attachments: []
         }, attachments.map((attachment, index) => ({
             id: index,
             ...attachment
