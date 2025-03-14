@@ -45,6 +45,7 @@ export default async function(
     }));
 
     const message = await GetChannelMessage(interaction.channel.id, options.id);
+    console.log(message);
 
     await FollowupMessage(interaction.token, {
         embeds: [
