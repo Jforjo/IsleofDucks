@@ -220,7 +220,13 @@ export default async function Command(
                     })
                 };
             })
-        });
+        }, interaction.message.attachments.map(attachment => {
+            return {
+                id: parseInt(attachment.id),
+                filename: attachment.filename,
+                url: attachment.url
+            }
+        }));
     } else if (buttonID === "invite") {
         if (type === "duck") {
             await SendMessage(IsleofDucks.channels.duckoc, {
