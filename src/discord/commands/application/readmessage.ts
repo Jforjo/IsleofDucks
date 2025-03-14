@@ -64,7 +64,11 @@ export default async function(
         });
     } catch (error) {
         await FollowupMessage(interaction.token, {
-            content: "Content probs too big, check logs!",
+            content: [
+                `Content probs too big, check logs!`,
+                `Error:`,
+                `${error}`,
+            ].join("\n"),
         });
     }
 
