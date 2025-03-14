@@ -178,22 +178,22 @@ export default async function Command(
             );
         }
         
-        const attachments = interaction.message.attachments.map(attachment => ({
+        const attachments = interaction.message.attachments.length > 0 ? interaction.message.attachments.map(attachment => ({
             id: parseInt(attachment.id),
             filename: attachment.filename,
             url: attachment.url
-        })).sort((a, b) => a.id - b.id);
+        })).sort((a, b) => a.id - b.id) : [];
 
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds.map(embed => {
                 if (embed.thumbnail) attachments.push({
-                    id: attachments[attachments.length - 1].id + 1,
+                    id: attachments.length > 0 ? attachments[attachments.length - 1].id + 1 : 0,
                     filename: embed.thumbnail.url.split('/').pop()?.split('?')[0] ?? "",
                     url: embed.thumbnail.url
                 });
                 if (embed.image) attachments.push({
-                    id: attachments[attachments.length - 1].id + 1,
+                    id: attachments.length > 0 ? attachments[attachments.length - 1].id + 1 : 0,
                     filename: embed.image.url.split('/').pop()?.split('?')[0] ?? "",
                     url: embed.image.url
                 });
@@ -237,6 +237,7 @@ export default async function Command(
                 };
             })
         }, attachments);
+        console.log('attachments', attachments);
     } else if (buttonID === "invite") {
         if (type === "duck") {
             await SendMessage(IsleofDucks.channels.duckoc, {
