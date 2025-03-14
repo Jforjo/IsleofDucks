@@ -1,6 +1,7 @@
 import { APIButtonComponentWithCustomId, APIInteractionResponse, APIMessage, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 
 export default async function Command(
     interaction: APIMessageComponentButtonInteraction
@@ -67,14 +68,18 @@ export default async function Command(
             }))
         });
 
+        let logquery = username;
+        const mojang = await getUsernameOrUUID(username);
+        if (mojang.success) logquery = mojang.uuid;
+
         let message: APIMessage | undefined;
         if (type === "duck") {
             message = await SendMessage(IsleofDucks.channels.duckoc, {
-                content: `log ${username}`
+                content: `log ${logquery}`
             });
         } else if (type === "duckling") {
             message = await SendMessage(IsleofDucks.channels.ducklingoc, {
-                content: `log ${username}`
+                content: `log ${logquery}`
             });
         }
         if (!message) await new Promise(resolve => setTimeout(resolve, 1000));
