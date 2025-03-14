@@ -180,7 +180,17 @@ export default async function Command(
         
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: [...interaction.message.embeds, {
+            embeds: [...interaction.message.embeds.map(embed => {
+                return {
+                    ...embed,
+                    thumbnaill: embed.thumbnail && {
+                        url: `attachment://${embed.thumbnail.url.split('/').pop()}`
+                    },
+                    image: embed.image && {
+                        url: `attachment://${embed.image.url.split('/').pop()}`
+                    }
+                }
+            }), {
                 title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
                 description: logMessage.embeds[0].description,
                 color: 0xFB9B00,
