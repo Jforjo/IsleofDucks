@@ -1,7 +1,6 @@
 import { APIButtonComponentWithCustomId, APIInteractionResponse, APIMessage, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 
 export default async function Command(
     interaction: APIMessageComponentButtonInteraction
