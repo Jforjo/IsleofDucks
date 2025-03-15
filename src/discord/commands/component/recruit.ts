@@ -68,18 +68,14 @@ export default async function Command(
             }))
         });
 
-        let logquery = username;
-        const mojang = await getUsernameOrUUID(username);
-        if (mojang.success) logquery = mojang.uuid;
-
         let message: APIMessage | undefined;
         if (type === "duck") {
             message = await SendMessage(IsleofDucks.channels.duckoc, {
-                content: `log ${logquery}`
+                content: `log ${username} 1`
             });
         } else if (type === "duckling") {
             message = await SendMessage(IsleofDucks.channels.ducklingoc, {
-                content: `log ${logquery}`
+                content: `log ${username} 1`
             });
         }
         if (!message) await new Promise(resolve => setTimeout(resolve, 1000));
