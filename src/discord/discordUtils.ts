@@ -399,8 +399,6 @@ export async function DeleteMessage(
     const endpoint = Routes.channelMessage(channelId, messageId);
     const url = RouteBases.api + endpoint;
 
-    const formData = new FormData();
-
     const res = await fetch(url, {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
