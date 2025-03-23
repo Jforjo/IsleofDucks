@@ -26,7 +26,10 @@ export default async function(
             { status: 400 }
         );
     }
-    if (member.user.id !== IsleofDucks.staticIDs.Jforjo) {
+    if (!(
+        member.user.id === IsleofDucks.staticIDs.Jforjo ||
+        member.roles.includes(IsleofDucks.roles.admin)
+    )) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
