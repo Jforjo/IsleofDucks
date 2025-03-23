@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, EditMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, DeleteMessage, FollowupMessage, GetAllChannelMessages, IsleofDucks } from "@/discord/discordUtils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -39,41 +39,30 @@ export default async function(
             { status: 400 }
         );
     }
-    await EditMessage("1337447048672448576", "1337447048672448576", {
-        content: [
-            "**Total Survey Responses**",
-            `21 Guild App`
-        ].join('\n'),
-        embeds: [
-            {
-                title: "Guild App",
-                description: [
-                    `Survey presented after players open a guild application ticket`
-                ].join('\n'),
-                fields: [
-                    {
-                        name: "Where did you find our guild?",
-                        value: [
-                            `3 SBZ/SBS Discord`,
-                            `6 Forums`,
-                            `1 On Hypixel`,
-                            `6 A Friend`,
-                            `5 I'm a Returning Member`,
-                            `0 Other`
-                        ].join('\n'),
-                    },
-                ],
-                color: 0xFB9B00,
-            }
-        ]
-    });
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-            content: `Done!`,
+            content: `Timer: <t:${Math.floor(Date.now() / 1000) + 60}:R>`,
             flags: MessageFlags.Ephemeral
         }
+    });
+    
+    const messages = await GetAllChannelMessages(interaction.channel.id);
+    for (const message of messages) {
+        await DeleteMessage(interaction.channel.id, message.id);
+    }
+
+    // await CreateInteractionResponse(interaction.id, interaction.token, {
+    //     type: InteractionResponseType.ChannelMessageWithSource,
+    //     data: {
+    //         content: `Done!`,
+    //         flags: MessageFlags.Ephemeral
+    //     }
+    // });
+
+    await FollowupMessage(interaction.token, {
+        content: `Done!`,
     });
 
     return NextResponse.json(

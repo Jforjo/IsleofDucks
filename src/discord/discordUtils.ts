@@ -389,6 +389,48 @@ export async function EditMessage(
 
     return data;
 }
+export async function DeleteMessage(
+    channelId: Snowflake,
+    messageId: Snowflake,
+): Promise<RESTPatchAPIChannelMessageResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.channelMessage(channelId, messageId);
+    const url = RouteBases.api + endpoint;
+
+    const formData = new FormData();
+
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+        },
+        method: 'DELETE',
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTPatchAPIChannelMessageResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await DeleteMessage(channelId, messageId);
+            }
+        }
+        console.error(data);
+        console.error(JSON.stringify(data));
+    }
+
+    return data;
+}
 export async function CreateInteractionResponse(
     id: Snowflake,
     token: Snowflake,
@@ -1714,26 +1756,8 @@ const Help = {
             data: {
                 description: [
                     `Use \`/help [catagory]\` to get more information about a catagory.`,
+                    `You can select the command using the box between the arrows below.`
                 ].join("\n"),
-                fields: [
-                    {
-                        name: "Commands",
-                        value: [
-                            `banlist`,
-                            `checkapi`,
-                            `embed`,
-                            `help`,
-                            `immune`,
-                            `ping`,
-                            `recruit`,
-                            `superlative`,
-                            `updatecommands`,
-                            `updateroles`,
-                            `updatesuperlative`,
-                            `weekly`
-                        ].join("\n")
-                    }
-                ]
             }
         },
         {
