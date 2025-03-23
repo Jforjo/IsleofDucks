@@ -54,6 +54,7 @@ export default async function(
     const messages = await GetAllChannelMessages(interaction.channel.id);
     for (const message of messages) {
         await DeleteMessage(interaction.channel.id, message.id);
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     // await CreateInteractionResponse(interaction.id, interaction.token, {

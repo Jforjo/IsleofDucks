@@ -406,6 +406,8 @@ export async function DeleteMessage(
         method: 'DELETE',
     });
 
+    if (res.status === 204) return;
+
     let data;
     try {
         data = await res.json() as RESTPatchAPIChannelMessageResult;
