@@ -22,6 +22,12 @@ const nextConfig = {
                 hostname: 'crafatar.com',
                 port: '',
                 pathname: '/avatars/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.imgur.com',
+                port: '',
+                pathname: '/**',
             }
         ],
     },
