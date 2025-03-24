@@ -78,7 +78,14 @@ async function convertTimestamp(
 > {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    const date = new Date(year, month - 1, day, hour, minute, second);
+    const date = new Date(
+        year ? year : timestamp.getUTCFullYear(),
+        month ? month - 1 : timestamp.getUTCMonth(),
+        day ? day : timestamp.getUTCDate(),
+        hour ? hour : timestamp.getUTCHours(),
+        minute ? minute : timestamp.getUTCMinutes(),
+        second ? second : timestamp.getUTCSeconds()
+    );
 
     await FollowupMessage(interaction.token, {
         embeds: [
