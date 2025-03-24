@@ -78,13 +78,16 @@ export async function UpdateLevelRoles(
 
     // Remove roles they shouldn't have
     if (currentRoles.length > 1) {
+        const newRoles: Snowflake[] = []
         for (const role of currentRoles) {
             if (role !== expectedRole) {
                 await RemoveGuildMemberRole(guildID, member.user.id, role);
                 rolesRemoved++;
-                currentRoles = currentRoles.filter(r => r !== role);
+            } else {
+                newRoles.push(role);
             }
         }
+        currentRoles = newRoles;
     }
 
     // Add the role that they should have
