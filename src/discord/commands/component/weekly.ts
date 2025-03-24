@@ -1,11 +1,11 @@
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { getImmunePlayers } from "@/discord/utils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
-    interaction: APIChatInputApplicationCommandInteraction
+    interaction: APIMessageComponentButtonInteraction
 ): Promise<
     NextResponse<
         {
@@ -20,8 +20,38 @@ export default async function(
     });
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
+    const buttonID = interaction.data.custom_id.split("-")[1];
+    // Default to Ducks
+    const guildName = buttonID === "ducks" ? "Isle of Ducks" :
+        buttonID === "ducklings" ? "Isle of Ducklings" :
+        "Isle of Ducks";
 
-    const guildResponse = await getGuildData("Isle of Ducks");
+    // Disable all buttons while it loads, since people could spam it
+    await FollowupMessage(interaction.token, {
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: `superlative-ducks`,
+                        type: ComponentType.Button,
+                        label: "Ducks",
+                        style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: true
+                    },
+                    {
+                        custom_id: `superlative-ducklings`,
+                        type: ComponentType.Button,
+                        label: "Ducklings",
+                        style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: true
+                    }
+                ]
+            }
+        ]
+    });
+
+    const guildResponse = await getGuildData(guildName);
     if (!guildResponse.success) {
         let content = undefined;
         if (guildResponse.ping) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
@@ -53,7 +83,6 @@ export default async function(
     
     if (immunePlayers?.success === false) {
         await FollowupMessage(interaction.token, {
-            content: undefined,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -175,15 +204,15 @@ export default async function(
                         custom_id: `weekly-ducks`,
                         type: ComponentType.Button,
                         label: "Ducks",
-                        style: ButtonStyle.Success,
-                        disabled: true
+                        style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: buttonID === "ducks"
                     },
                     {
                         custom_id: `weekly-ducklings`,
                         type: ComponentType.Button,
                         label: "Ducklings",
-                        style: ButtonStyle.Primary,
-                        disabled: false
+                        style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: buttonID === "ducklings"
                     }
                 ]
             }
@@ -193,9 +222,4 @@ export default async function(
         { success: true },
         { status: 200 }
     );
-}
-export const CommandData = {
-    name: "weekly",
-    description: "Displays the weekly GEXP for Isle of Ducks",
-    type: ApplicationCommandType.ChatInput,
 }
