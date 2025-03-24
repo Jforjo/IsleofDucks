@@ -76,6 +76,17 @@ export async function UpdateLevelRoles(
         if (player.exp >= role.requirement) expectedRole = role.id;
     }
 
+    console.log(member.nick, JSON.stringify({
+        currentRoles: currentRoles.map(role => ({
+            id: role,
+            req: IsleofDucks.roles.levels.find(level => level.id === role)?.requirement
+        })),
+        expectedRole: {
+            id: expectedRole,
+            req: IsleofDucks.roles.levels.find(level => level.id === expectedRole)?.requirement
+        }
+    }));
+
     // Remove roles they shouldn't have
     if (currentRoles.length > 1) {
         const newRoles: Snowflake[] = []
