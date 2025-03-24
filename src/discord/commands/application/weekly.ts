@@ -157,7 +157,7 @@ export default async function(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: 'Weekly Guild Experience',
+                title: 'Weekly Guild Experience - Isle of Ducks',
                 // description: ``,
                 color: 0xFB9B00,
                 fields: fieldArray,
