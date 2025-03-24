@@ -191,6 +191,10 @@ export default async function(
                         value: `\`\`\`${inputs.item.replaceAll('`', '\'')}\`\`\``
                     },
                     {
+                        name: "Number of winners:",
+                        value: `\`\`\`${inputs.winners.replaceAll('`', '\'')}\`\`\``
+                    },
+                    {
                         name: "Type of giveaway:",
                         value: `\`\`\`${inputs.type.replaceAll('`', '\'')}\`\`\``
                     },

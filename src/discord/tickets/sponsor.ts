@@ -35,6 +35,18 @@ export default async function(
                     components: [
                         {
                             type: ComponentType.TextInput,
+                            custom_id: "winners",
+                            label: "How many winners are there?",
+                            style: TextInputStyle.Short,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.TextInput,
                             custom_id: "type",
                             label: "What type of giveaway? (everyone/guild-only)",
                             style: TextInputStyle.Short,
