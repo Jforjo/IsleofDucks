@@ -28,6 +28,17 @@ export default async function(
 
     // Disable all buttons while it loads, since people could spam it
     await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: `Weekly Guild Experience - ${guildName}`,
+                description: `Fetching current weekly guild experience data...`,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
         components: [
             {
                 type: ComponentType.ActionRow,
