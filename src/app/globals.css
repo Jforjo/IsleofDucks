@@ -1,7 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+@import "tailwindcss";
+/* https://github.com/imohitarora/tailwind4-next15-shadcn/blob/main/app/globals.css */
 :root {
     /* interpolate-size: 'allow-keywords'; */
 	--background: #ffffff;
