@@ -76,25 +76,8 @@ export async function UpdateLevelRoles(
         if (player.exp >= role.requirement) expectedRole = role.id;
     }
 
-    if ([
-        '734173726068965447',
-        '987205176140116000',
-        '627018533523554305'
-    ].includes(member.user.id)) {
-        console.log(member.nick, JSON.stringify({
-            currentRoles: currentRoles.map(role => ({
-                id: role,
-                req: IsleofDucks.roles.levels.find(level => level.id === role)?.requirement
-            })),
-            expectedRole: {
-                id: expectedRole,
-                req: IsleofDucks.roles.levels.find(level => level.id === expectedRole)?.requirement
-            }
-        }));
-    }
-
     // Remove roles they shouldn't have
-    if (currentRoles.length > 1) {
+    if (currentRoles.length >= 1) {
         const newRoles: Snowflake[] = []
         for (const role of currentRoles) {
             if (role !== expectedRole) {
