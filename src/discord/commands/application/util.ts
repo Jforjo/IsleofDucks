@@ -180,9 +180,9 @@ export default async function(
         }
     }));
 
-    if (options.add) {
+    if (options.convert?.uuid) {
         return await convertUUID(interaction, options.convert.uuid.query);
-    } else if (options.remove) {
+    } else if (options.convert?.timestamp) {
         return await convertTimestamp(interaction,
             options.convert.timestamp.year,
             options.convert.timestamp.month,
