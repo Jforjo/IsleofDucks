@@ -1752,19 +1752,54 @@ const Help = {
         {
             id: "general",
             name: "General",
-            description: "General information",
+            description: "General information about the bot.",
             data: {
                 description: [
-                    `Use \`/help [catagory]\` to get more information about a catagory.`,
-                    `You can select the command using the box between the arrows below.`
+                    `Use \`/help [command]\` to get more information about a command.`,
+                    `You can also select the command using the box between the arrows below.`
                 ].join("\n"),
             }
         },
         {
-            id: "commands",
-            name: "Commands",
-            description: "List of commands",
+            id: "away",
+            name: "Away",
+            description: "Information about the away command.",
+            data: {
+                description: [
+                    `This command is used to let admins know that you will be taking a leave of absence.`,
+                ].join("\n"),
+                fields: [
+                    {
+                        name: "`/away apply [reason] [leave] [return]`",
+                        value: [
+                            `Reason: The reason why you will be away.`,
+                            `Leave: The time you will leave as a timestamp taken from [here](<https://r.3v.fi/discord-timestamps/>).`,
+                            `Return: The time you will return as a timestamp taken from [here](<https://r.3v.fi/discord-timestamps/>).`,
+                            `(When getting the timestamp, use '123456' instead of '<t:123456:r>')`
+                        ].join("\n"),
+                    }
+                ]
+            }
         }
+    ],
+    commands: [
+        'away',
+        'banlist',
+        'checkapi',
+        'embed',
+        'help',
+        // 'hyguessr',
+        'immune',
+        'ping',
+        'readmessage',
+        'recruit',
+        'superlatives',
+        'superlativedetailed',
+        'updatecommands',
+        'updatedatabase',
+        'updateroles',
+        'updatesuperlative',
+        'weekly'
     ]
 }
 
@@ -1788,12 +1823,14 @@ export const CloseTicketPermissions = {
         IsleofDucks.roles.mod_duck,
         IsleofDucks.roles.mod_duckling,
         IsleofDucks.roles.service_management,
+        IsleofDucks.roles.trainee,
     ]),
     ducklingapp: new Set([
         IsleofDucks.roles.admin,
         IsleofDucks.roles.mod_duck,
         IsleofDucks.roles.mod_duckling,
         IsleofDucks.roles.service_management,
+        IsleofDucks.roles.trainee,
     ]),
     support: new Set([
         IsleofDucks.roles.admin,
