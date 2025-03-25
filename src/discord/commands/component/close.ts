@@ -1,5 +1,5 @@
 import { CloseTicketPermissions, ConvertSnowflakeToDate, CreateInteractionResponse, DeleteChannel, EditChannel, FollowupMessage, SendMessage, ToPermissions } from "@/discord/discordUtils";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { CreateTranscript } from "./transcript";
 
@@ -12,17 +12,16 @@ export default async function(
             error?: string;
         } | APIInteractionResponse
     >
-> {
-    // ACK response and update the original message
-    await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredMessageUpdate,
-    });
-    
+> {    
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     if (!interaction.guild) {
-        await FollowupMessage(interaction.token, {
-            content: "This command can only be used in a server!"
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "This command can only be used in a server!",
+                flags: MessageFlags.Ephemeral
+            }
         });
         return NextResponse.json(
             { success: false, error: "This command can only be used in a server" },
@@ -31,8 +30,12 @@ export default async function(
     }
     // If guild exists then so should member, but imma still check it
     if (!interaction.member) {
-        await FollowupMessage(interaction.token, {
-            content: "Could not find who ran the command!"
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Could not find who ran the command!",
+                flags: MessageFlags.Ephemeral
+            }
         });
         return NextResponse.json(
             { success: false, error: "Could not find who ran the command" },
@@ -42,8 +45,12 @@ export default async function(
 
     const ticketID = interaction.data.custom_id.split('-')[1];
     if (!Object.keys(CloseTicketPermissions).includes(ticketID)) {
-        await FollowupMessage(interaction.token, {
-            content: "Invalid ticket type!"
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Invalid ticket type!",
+                flags: MessageFlags.Ephemeral
+            }
         });
         return NextResponse.json(
             { success: false, error: "Invalid ticket type" },
@@ -66,8 +73,12 @@ export default async function(
     })
 
     if (!hasRoles && interaction.member.user.id !== ticketOwnerID) {
-        await FollowupMessage(interaction.token, {
-            content: "You do not have permission to close this ticket!"
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "You do not have permission to close this ticket!",
+                flags: MessageFlags.Ephemeral
+            }
         });
         return NextResponse.json(
             { success: false, error: "You do not have permission to close this ticket" },
@@ -77,14 +88,24 @@ export default async function(
     
     const components = interaction.message.components;
     if (!components) {
-        await FollowupMessage(interaction.token, {
-            content: "Could not find the original message!",
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Could not find the original message!",
+                flags: MessageFlags.Ephemeral
+            }
         });
         return NextResponse.json(
             { success: false, error: "Could not find the original message" },
             { status: 400 }
         );
     }
+    
+    // ACK response and update the original message
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DeferredMessageUpdate,
+    });
+    
     // Disable all buttons while it loads, since people could spam it
     components.forEach(row => {
         if (row.type !== ComponentType.ActionRow) return;
