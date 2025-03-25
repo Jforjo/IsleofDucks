@@ -282,6 +282,7 @@ export default async function(
     const bannedResponse = await getBannedPlayer(mojang.uuid);
     // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
     const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
+    if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
 
     const buttons: {
         duck: APIMessageActionRowComponent[],
