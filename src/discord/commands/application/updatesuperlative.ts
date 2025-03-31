@@ -2,6 +2,7 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { updateGuildSuperlative } from "@/discord/utils";
+import { getSuperlative } from "./superlative";
 
 
 
@@ -45,8 +46,29 @@ export default async function(
             }
         ]
     });
+    
+    const superlativeData = await getSuperlative();
+    if (superlativeData == null) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Superlative - None",
+                    description: "There is no superlative right now!",
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: true },
+            { status: 200 }
+        );
+    }
 
-    const ducks = await updateGuildSuperlative("Isle of Ducks");
+    const ducks = await updateGuildSuperlative("Isle of Ducks", superlativeData.superlative);
     if (!ducks.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
@@ -97,7 +119,7 @@ export default async function(
         ]
     });
 
-    const ducklings = await updateGuildSuperlative("Isle of Ducklings");
+    const ducklings = await updateGuildSuperlative("Isle of Ducklings", superlativeData.superlative);
     if (!ducklings.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
