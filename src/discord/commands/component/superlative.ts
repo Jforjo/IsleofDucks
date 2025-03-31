@@ -1,45 +1,9 @@
-import { sql } from "@vercel/postgres";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { updateGuildSuperlative } from "@/discord/utils";
-
-export async function getSuperlative(): Promise<Superlative | null> {
-    // Sort array, but the last one is first in the array
-    const superlativeList = IsleofDucks.superlatives.sort((a, b) => b.start - a.start);
-    let currentSuperlative;
-
-    const { rows } = await sql`SELECT value FROM settings WHERE key = 'superlative' LIMIT 1`;
-    if (rows.length > 0) {
-        currentSuperlative = rows[0].value as string;
-    }
-
-    const { rows: reset } = await sql`SELECT value FROM settings WHERE key = 'superlativeReset' LIMIT 1`;
-    if (reset.length > 0) {
-        if (reset[0].value === "true") {
-            await sql`TRUNCATE TABLE users`;
-            await sql`UPDATE settings SET value = ${"false"} WHERE key = 'superlativeReset'`;
-        }
-    }
-
-    for (let i = 0; i < superlativeList.length; i++) {
-        const superlative = superlativeList[i];
-        if (Date.now() >= superlative.start) {
-            if (superlative.id !== currentSuperlative) {
-                await sql`UPDATE settings SET value = ${superlative.id} WHERE key = 'superlative'`;
-                await sql`UPDATE settings SET value = ${"true"} WHERE key = 'superlativeReset'`;
-                // Return the previous superlative to get the final results
-                if (superlativeList[i + 1] != null) {
-                    return superlativeList[i + 1];
-                }
-            }
-            return superlative;
-        }
-    }
-
-    return null;
-}
+import { getSuperlative } from "../application/superlative";
 
 export default async function Command(
     interaction: APIMessageComponentButtonInteraction
@@ -63,12 +27,9 @@ export default async function Command(
         buttonID === "ducklings" ? "Isle of Ducklings" :
         "Isle of Ducks";
     const detailed = interaction.data.custom_id.split("-")[2] === "detailed";
-    
-    const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative(guildName);
 
     // Disable all buttons while it loads, since people could spam it
     await FollowupMessage(interaction.token, {
-        content: undefined,
         components: [
             {
                 type: ComponentType.ActionRow,
@@ -90,7 +51,7 @@ export default async function Command(
                 ]
             }
         ]
-    })
+    });
 
     const superlativePromise = getSuperlative();
     const superlativeUpdateResponse = FollowupMessage(interaction.token, {
@@ -106,9 +67,10 @@ export default async function Command(
             }
         ]
     });
-    const superlative = await superlativePromise;
+    const superlativeData = await superlativePromise;
+    const superlative = superlativeData?.superlative;
     await superlativeUpdateResponse;
-    if (superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
+    if (superlativeData == null || superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
         await FollowupMessage(interaction.token, {
             content: undefined,
             embeds: [
@@ -128,6 +90,8 @@ export default async function Command(
             { status: 200 }
         );
     }
+    
+    const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative(guildName, superlative);
 
     const guildPromise = getGuildData(guildName);
     const guildUpdateResponse = FollowupMessage(interaction.token, {

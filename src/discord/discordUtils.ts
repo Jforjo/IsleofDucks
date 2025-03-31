@@ -1744,6 +1744,73 @@ const Superlatives = [
                 },
             ]
         }
+    },
+    {
+        id: "apr25",
+        title: "Fishing Experience",
+        start: new Date("1 April 2025 UTC").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return profile?.player_data?.experience?.SKILL_FISHING;
+            });
+        },
+        ranks: {
+            ducks: [
+                {
+                    id: "BASS",
+                    name: "bass",
+                    requirement: 0,
+                },
+                {
+                    id: "TUNA",
+                    name: "tuna",
+                    requirement: 38_072_425,
+                },
+                {
+                    id: "SHARK",
+                    name: "shark",
+                    requirement: 55_172_425,
+                },
+                {
+                    id: "KRAKEN",
+                    name: "kraken",
+                    requirement: 55_172_425 + 40_000_000,
+                },
+            ],
+            ducklings: [
+                {
+                    id: "BASS",
+                    name: "bass",
+                    requirement: 0,
+                },
+                {
+                    id: "TUNA",
+                    name: "tuna",
+                    requirement: 8_022_425,
+                },
+                {
+                    id: "SHARK",
+                    name: "shark",
+                    requirement: 15_522_425,
+                },
+                {
+                    id: "KRAKEN",
+                    name: "kraken",
+                    requirement: 55_172_425,
+                },
+            ]
+        }
     }
 ];
 // WIP. Currently not used anywhere.

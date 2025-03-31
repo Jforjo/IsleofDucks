@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
-import { getSuperlative } from './commands/application/superlative';
 import { Snowflake } from 'discord-api-types/globals';
+import { Superlative } from './discordUtils';
 
 export async function getImmunePlayers(): Promise<{
     success: boolean;
@@ -259,7 +259,8 @@ export function progressPromise(promises: Promise<unknown>[], tickCallback: (pro
     return Promise.all(promises.map(tick));
 }
 export async function updateGuildSuperlative(
-    guildName: string
+    guildName: string,
+    superlative: Superlative
 ): Promise<
     {
         success: false;
@@ -271,7 +272,6 @@ export async function updateGuildSuperlative(
         success: true;
     }
 > {
-    const superlative = await getSuperlative();
     if (superlative == null) return {
         success: true
     };

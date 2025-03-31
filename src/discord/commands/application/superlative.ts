@@ -5,7 +5,10 @@ import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, Isl
 import { NextResponse } from "next/server";
 import { updateGuildSuperlative } from "@/discord/utils";
 
-export async function getSuperlative(): Promise<Superlative | null> {
+export async function getSuperlative(): Promise<{
+    superlative: Superlative;
+    new: boolean;
+} | null> {
     // Sort array, but the last one is first in the array
     const superlativeList = IsleofDucks.superlatives.sort((a, b) => b.start - a.start);
     let currentSuperlative;
@@ -31,14 +34,322 @@ export async function getSuperlative(): Promise<Superlative | null> {
                 await sql`UPDATE settings SET value = ${"true"} WHERE key = 'superlativeReset'`;
                 // Return the previous superlative to get the final results
                 if (superlativeList[i + 1] != null) {
-                    return superlativeList[i + 1];
+                    return {
+                        superlative: superlativeList[i + 1],
+                        new: true
+                    };
                 }
             }
-            return superlative;
+            return {
+                superlative: superlative,
+                new: false
+            }
         }
     }
 
     return null;
+}
+
+async function superlativeNew(
+    interaction: APIChatInputApplicationCommandInteraction,
+    superlative: Superlative
+): Promise<
+NextResponse<
+    {
+        success: boolean;
+        error?: string;
+    } | APIInteractionResponse
+>
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    const guildDuckPromise = getGuildData("Isle of Ducks");
+    const guildDuckUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Fetching",
+                description: "Fetching Isle of Ducks guild...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    const guildDuck = await guildDuckPromise;
+    await guildDuckUpdateResponse;
+    if (!guildDuck.success) {
+        let content = undefined;
+        if (guildDuck?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        await FollowupMessage(interaction.token, {
+            content: content,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: guildDuck.message === "Key throttle" && typeof guildDuck.retry === "number" ? [
+                        guildDuck.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + guildDuck.retry ) / 1000)}:R>`
+                    ].join("\n") : guildDuck.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: guildDuck.message },
+            { status: 400 }
+        );
+    }
+
+    const guildDucklingPromise = getGuildData("Isle of Ducklings");
+    const guildDucklingUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Fetching",
+                description: "Fetching Isle of Ducklings guild...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    const guildDuckling = await guildDucklingPromise;
+    await guildDucklingUpdateResponse;
+    if (!guildDuckling.success) {
+        let content = undefined;
+        if (guildDuckling?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        await FollowupMessage(interaction.token, {
+            content: content,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: guildDuckling.message === "Key throttle" && typeof guildDuckling.retry === "number" ? [
+                        guildDuckling.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + guildDuckling.retry ) / 1000)}:R>`
+                    ].join("\n") : guildDuckling.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: guildDuckling.message },
+            { status: 400 }
+        );
+    }
+
+    const superlativeDuckResult = await Promise.all(guildDuck.guild.members.map(async (member) => {
+        const mojang = await getUsernameOrUUID(member.uuid);
+        // This should never happen, but Typescript/eslint was complaining
+        if (!superlative.callback) throw new Error("Superlative callback is not defined");
+        const superlativeData = await superlative.callback(member.uuid);
+        // Error = Tough shit bro
+        if (!superlativeData.success) return null;
+
+        return {
+            uuid: member.uuid,
+            name: "name" in mojang ? mojang.name : member.uuid,
+            value: superlativeData.value,
+            formattedValue: superlativeData.formattedValue
+        };
+    })).catch((err) => {
+        console.log(err.message);
+        return {
+            success: false,
+            message: err.message,
+            ping: err.message === "Invalid API key"
+        };
+    });
+    
+    if ("success" in superlativeDuckResult && superlativeDuckResult.success === false) {
+        let content = undefined;
+        if (superlativeDuckResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        await FollowupMessage(interaction.token, {
+            content: content,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: superlativeDuckResult.message.includes("User not found: ") ? [
+                        superlativeDuckResult.message,
+                        `It's likely that the superlative data needs updating, so run the command again in a minute.`,
+                        `(It's currently updating right now)`
+                    ].join("\n") : superlativeDuckResult.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: superlativeDuckResult.message },
+            { status: 400 }
+        );
+    }
+    
+    let resultDuck = superlativeDuckResult as {
+        uuid: string;
+        name: string;
+        value: number;
+        formattedValue: string;
+    }[];
+    // b - a = bigger number first
+    resultDuck.sort((a, b) => b.value - a.value);
+    resultDuck = resultDuck.map((member, index) => {
+        return {
+            rank: index + 1,
+            uuid: member.uuid,
+            name: member.name,
+            value: member.value,
+            formattedValue: member.formattedValue,
+        };
+    });
+    const finalResultDuck = resultDuck as {
+        rank: number;
+        uuid: string;
+        name: string;
+        value: number;
+        formattedValue: string;
+    }[];
+    const fieldArrayDuck = [];
+    for (let i = 0; i < finalResultDuck.length; i += 21) {
+        fieldArrayDuck.push(
+            {
+                name: '\u200b',
+                value: finalResultDuck.slice(i, i + 21).map((field) => {
+                    return `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}`;
+                }).join('\n'),
+                inline: true
+            }
+        );
+    }
+
+    const superlativeDucklingResult = await Promise.all(guildDuck.guild.members.map(async (member) => {
+        const mojang = await getUsernameOrUUID(member.uuid);
+        // This should never happen, but Typescript/eslint was complaining
+        if (!superlative.callback) throw new Error("Superlative callback is not defined");
+        const superlativeData = await superlative.callback(member.uuid);
+        // Error = Tough shit bro
+        if (!superlativeData.success) return null;
+
+        return {
+            uuid: member.uuid,
+            name: "name" in mojang ? mojang.name : member.uuid,
+            value: superlativeData.value,
+            formattedValue: superlativeData.formattedValue
+        };
+    })).catch((err) => {
+        console.log(err.message);
+        return {
+            success: false,
+            message: err.message,
+            ping: err.message === "Invalid API key"
+        };
+    });
+    
+    if ("success" in superlativeDucklingResult && superlativeDucklingResult.success === false) {
+        let content = undefined;
+        if (superlativeDucklingResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        await FollowupMessage(interaction.token, {
+            content: content,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: superlativeDucklingResult.message.includes("User not found: ") ? [
+                        superlativeDucklingResult.message,
+                        `It's likely that the superlative data needs updating, so run the command again in a minute.`,
+                        `(It's currently updating right now)`
+                    ].join("\n") : superlativeDucklingResult.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: superlativeDucklingResult.message },
+            { status: 400 }
+        );
+    }
+    
+    let resultDuckling = superlativeDucklingResult as {
+        uuid: string;
+        name: string;
+        value: number;
+        formattedValue: string;
+    }[];
+    // b - a = bigger number first
+    resultDuckling.sort((a, b) => b.value - a.value);
+    resultDuckling = resultDuckling.map((member, index) => {
+        return {
+            rank: index + 1,
+            uuid: member.uuid,
+            name: member.name,
+            value: member.value,
+            formattedValue: member.formattedValue,
+        };
+    });
+    const finalResultDuckling = resultDuckling as {
+        rank: number;
+        uuid: string;
+        name: string;
+        value: number;
+        formattedValue: string;
+    }[];
+    const fieldArrayDuckling = [];
+    for (let i = 0; i < finalResultDuckling.length; i += 21) {
+        fieldArrayDuckling.push(
+            {
+                name: '\u200b',
+                value: finalResultDuckling.slice(i, i + 21).map((field) => {
+                    return `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}`;
+                }).join('\n'),
+                inline: true
+            }
+        );
+    }
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: `Superlative - ${superlative.title}`,
+                // description: ``,
+                color: 0xFB9B00,
+                fields: fieldArrayDuck,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            },
+            {
+                title: `Superlative - ${superlative.title}`,
+                // description: ``,
+                color: 0xFB9B00,
+                fields: fieldArrayDuckling,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
 }
 
 export default async function Command(
@@ -52,8 +363,6 @@ export default async function Command(
         } | APIInteractionResponse
     >
 > {
-    const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks");
-
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
@@ -75,9 +384,10 @@ export default async function Command(
             }
         ]
     });
-    const superlative = await superlativePromise;
+    const superlativeData = await superlativePromise;
+    const superlative = superlativeData?.superlative;
     await superlativeUpdateResponse;
-    if (superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
+    if (superlativeData == null || superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
@@ -96,6 +406,10 @@ export default async function Command(
             { status: 200 }
         );
     }
+
+    if (superlativeData.new) return superlativeNew(interaction, superlative);
+    
+    let BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks", superlative);
 
     const guildPromise = getGuildData("Isle of Ducks");
     const guildUpdateResponse = FollowupMessage(interaction.token, {
@@ -228,7 +542,7 @@ export default async function Command(
                 }
             ],
         });
-        if (superlativeResult.message.includes("User not found: ")) {
+        if (!superlativeData.new && superlativeResult.message.includes("User not found: ")) {
             const result = await BACKGROUND_SUPERLATIVE_UPDATE;
             if (!result.success) {
                 await FollowupMessage(interaction.token, {
