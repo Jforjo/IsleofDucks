@@ -409,7 +409,7 @@ export default async function Command(
 
     if (superlativeData.new) return superlativeNew(interaction, superlative);
     
-    let BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks", superlative);
+    const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks", superlative);
 
     const guildPromise = getGuildData("Isle of Ducks");
     const guildUpdateResponse = FollowupMessage(interaction.token, {
