@@ -1775,17 +1775,17 @@ const Superlatives = [
                 {
                     id: "TUNA",
                     name: "tuna",
-                    requirement: 3800000,
+                    requirement: 38_000_000,
                 },
                 {
                     id: "SHARK",
                     name: "shark",
-                    requirement: 55000000,
+                    requirement: 55_000_000,
                 },
                 {
                     id: "KRAKEN",
                     name: "kraken",
-                    requirement: 95000000,
+                    requirement: 95_000_000,
                 },
             ],
             ducklings: [
@@ -1797,17 +1797,17 @@ const Superlatives = [
                 {
                     id: "TUNA",
                     name: "tuna",
-                    requirement: 8000000,
+                    requirement: 8_000_000,
                 },
                 {
                     id: "SHARK",
                     name: "shark",
-                    requirement: 15000000,
+                    requirement: 15_000_000,
                 },
                 {
                     id: "KRAKEN",
                     name: "kraken",
-                    requirement: 55000000,
+                    requirement: 55_000_000,
                 },
             ]
         }
