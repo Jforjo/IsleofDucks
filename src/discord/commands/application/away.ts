@@ -18,7 +18,7 @@ async function applyAway(
 > {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    if (!interaction.member || !interaction.user) {
+    if (!interaction.member) {
         await FollowupMessage(interaction.token, {
             content: "Could not find who ran the command!"
         });
@@ -41,7 +41,7 @@ async function applyAway(
         );
     }
 
-    await addAwayPlayer(interaction.user.id, reason, leaveTimestamp, returnTimestamp);
+    await addAwayPlayer(interaction.member.user.id, reason, leaveTimestamp, returnTimestamp);
 
     // await SendMessage(IsleofDucks.channels.staffgeneral, {
     //     embeds: [
@@ -116,7 +116,7 @@ async function removeAway(
 > {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    if (!interaction.member || !interaction.user) {
+    if (!interaction.member) {
         await FollowupMessage(interaction.token, {
             content: "Could not find who ran the command!"
         });
