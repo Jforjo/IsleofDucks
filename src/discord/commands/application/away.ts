@@ -29,8 +29,7 @@ async function applyAway(
     }
     if (!(
         interaction.member.roles.includes(IsleofDucks.roles.staff) ||
-        interaction.member.roles.includes(IsleofDucks.roles.mod_duck) ||
-        interaction.member.roles.includes(IsleofDucks.roles.mod_duckling)
+        interaction.member.roles.includes(IsleofDucks.roles.helper)
     )) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
@@ -169,10 +168,31 @@ async function viewAway(
 > {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
+    if (!interaction.member) {
+        await FollowupMessage(interaction.token, {
+            content: "Could not find who ran the command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+    if (!(
+        interaction.member.roles.includes(IsleofDucks.roles.staff) ||
+        interaction.member.roles.includes(IsleofDucks.roles.helper)
+    )) {
+        await FollowupMessage(interaction.token, {
+            content: "You don't have permission to use this command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        );
+    }
+
     const awayPlayers = await getAwayPlayers();
     if (!awayPlayers) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -193,7 +213,6 @@ async function viewAway(
 
     if (awayPlayers.length === 0) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "There are no players who will be away!",
@@ -259,7 +278,6 @@ export default async function(
 
     if (!interaction.data) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
@@ -280,7 +298,6 @@ export default async function(
     const interactionData = interaction.data as APIChatInputApplicationCommandInteractionData;
     if (!interactionData.options) {
         await FollowupMessage(interaction.token, {
-            content: null,
             embeds: [
                 {
                     title: "Something went wrong!",
