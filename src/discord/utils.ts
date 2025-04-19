@@ -412,12 +412,12 @@ export async function createHyGuessr(data: HyGuessrData[]): Promise<string> {
 }
 
 export async function addAwayPlayer(id: Snowflake, reason: string, leaveTimestamp: number, returnTimestamp: number): Promise<void> {
-    await sql`INSERT INTO awayplayers (id, reason, leaveTimestamp, returnTimestamp) VALUES (${id}, ${reason}, ${leaveTimestamp}, ${returnTimestamp})`;
+    await sql`INSERT INTO away (id, reason, leaveTimestamp, returnTimestamp) VALUES (${id}, ${reason}, ${leaveTimestamp}, ${returnTimestamp})`;
 }
 export async function removeAwayPlayer(id: Snowflake): Promise<void> {
-    await sql`DELETE FROM awayplayers WHERE id = ${id}`;
+    await sql`DELETE FROM away WHERE id = ${id}`;
 }
 export async function getAwayPlayers(): Promise<{ id: Snowflake; reason: string; leaveTimestamp: number; returnTimestamp: number }[]> {
-    const { rows } = await sql`SELECT * FROM awayplayers`;
+    const { rows } = await sql`SELECT * FROM away`;
     return rows as { id: Snowflake; reason: string; leaveTimestamp: number; returnTimestamp: number }[];
 }
