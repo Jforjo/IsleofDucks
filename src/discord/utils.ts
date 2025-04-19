@@ -411,13 +411,13 @@ export async function createHyGuessr(data: HyGuessrData[]): Promise<string> {
     return rows[0].id;
 }
 
-export async function addAwayPlayer(id: Snowflake, reason: string, leaveTimestamp: number, returnTimestamp: number): Promise<void> {
-    await sql`INSERT INTO away (userid, reason, leave, return) VALUES (${id}, ${reason}, ${leaveTimestamp}, ${returnTimestamp})`;
+export async function addAwayPlayer(userid: Snowflake, reason: string, leaveTimestamp: number, returnTimestamp: number): Promise<void> {
+    await sql`INSERT INTO away (userid, reason, leave, return) VALUES (${userid}, ${reason}, ${leaveTimestamp}, ${returnTimestamp})`;
 }
-export async function removeAwayPlayer(id: Snowflake): Promise<void> {
-    await sql`DELETE FROM away WHERE userid = ${id}`;
+export async function removeAwayPlayer(userid: Snowflake): Promise<void> {
+    await sql`DELETE FROM away WHERE userid = ${userid}`;
 }
-export async function getAwayPlayers(): Promise<{ id: Snowflake; reason: string; leaveTimestamp: number; returnTimestamp: number }[]> {
+export async function getAwayPlayers(): Promise<{ userid: Snowflake; reason: string; leave: number; return: number }[]> {
     const { rows } = await sql`SELECT * FROM away`;
-    return rows as { id: Snowflake; reason: string; leaveTimestamp: number; returnTimestamp: number }[];
+    return rows as { userid: Snowflake; reason: string; leave: number; return: number }[];
 }
