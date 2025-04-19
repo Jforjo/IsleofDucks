@@ -1,5 +1,5 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { addAwayPlayer, removeAwayPlayer, getAwayPlayers } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
@@ -42,32 +42,32 @@ async function applyAway(
 
     await addAwayPlayer(interaction.member.user.id, reason, leaveTimestamp, returnTimestamp);
 
-    // await SendMessage(IsleofDucks.channels.staffgeneral, {
-    //     embeds: [
-    //         {
-    //             title: `\`${interaction.user.username}\` has applied to be away!`,
-    //             fields: [
-    //                 {
-    //                     name: "Reason",
-    //                     value: reason
-    //                 },
-    //                 {
-    //                     name: "Leave Time",
-    //                     value: `<t:${leaveTimestamp}:F>`
-    //                 },
-    //                 {
-    //                     name: "Return Time",
-    //                     value: `<t:${returnTimestamp}:F>`
-    //                 }
-    //             ],
-    //             color: 0xFB9B00,
-    //             footer: {
-    //                 text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-    //             },
-    //             timestamp: new Date().toISOString()
-    //         }
-    //     ]
-    // });
+    await SendMessage(IsleofDucks.channels.staffgeneral, {
+        embeds: [
+            {
+                title: `\`${interaction.member.nick ?? interaction.member.user.username}\` has applied to be away!`,
+                fields: [
+                    {
+                        name: "Reason",
+                        value: reason
+                    },
+                    {
+                        name: "Leave Time",
+                        value: `<t:${leaveTimestamp}:F>`
+                    },
+                    {
+                        name: "Return Time",
+                        value: `<t:${returnTimestamp}:F>`
+                    }
+                ],
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
 
     await FollowupMessage(interaction.token, {
         embeds: [
