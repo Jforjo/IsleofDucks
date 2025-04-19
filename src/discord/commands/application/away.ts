@@ -311,8 +311,8 @@ export default async function(
         }
     }));
 
-    if (options.add) {
-        return await applyAway(interaction, options.add.name, options.add.discord, options.add.reason);
+    if (options.apply) {
+        return await applyAway(interaction, options.add.reason, options.add.leave, options.add.return);
     } else if (options.remove) {
         return await removeAway(interaction, options.remove.user);
     } else if (options.view) {
