@@ -215,9 +215,15 @@ async function viewAway(
             {
                 title: "Away Players",
                 color: 0xFB9B00,
-                description: awayPlayers.map(player => {
-                    return `<@${player.userid}>: <t:${player.leave}:F> - <t:${player.return}:F>`;
-                }).join('\n'),
+                fields: awayPlayers.map(player => {
+                    return {
+                        name: `<@${player.userid}>`,
+                        value: [
+                            `**Reason:** ${player.reason}`,
+                            `**Dates:** <t:${player.leave}:F> - <t:${player.return}:F>`,
+                        ].join("\n")
+                    };
+                }),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
