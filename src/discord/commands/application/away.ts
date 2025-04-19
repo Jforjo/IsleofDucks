@@ -312,7 +312,7 @@ export default async function(
     }));
 
     if (options.apply) {
-        return await applyAway(interaction, options.add.reason, options.add.leave, options.add.return);
+        return await applyAway(interaction, options.apply.reason, options.apply.leave, options.apply.return);
     } else if (options.remove) {
         return await removeAway(interaction, options.remove.user);
     } else if (options.view) {
