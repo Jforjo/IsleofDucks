@@ -1,4 +1,4 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIGuildMember, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { addAwayPlayer, removeAwayPlayer, getAwayPlayers } from "@/discord/utils";
 import { NextResponse } from "next/server";
@@ -105,7 +105,7 @@ async function applyAway(
 
 async function removeAway(
     interaction: APIChatInputApplicationCommandInteraction,
-    user: APIGuildMember
+    userid: Snowflake
 ): Promise<
     NextResponse<
         {
@@ -135,15 +135,12 @@ async function removeAway(
         );
     }
 
-    console.log(user);
-    console.log(JSON.stringify(user));
-
-    await removeAwayPlayer(user.user.id);
+    await removeAwayPlayer(userid);
 
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: `<@${user.user.id}> was removed from my away list!`,
+                title: `<@${userid}> was removed from my away list!`,
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
