@@ -140,7 +140,8 @@ async function removeAway(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: `<@${userid}> was removed from my away list!`,
+                title: `Successfully removed user from my away list!`,
+                description: `User: <@${userid}>`,
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
