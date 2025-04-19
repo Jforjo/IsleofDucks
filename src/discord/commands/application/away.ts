@@ -217,8 +217,9 @@ async function viewAway(
                 color: 0xFB9B00,
                 fields: awayPlayers.map(player => {
                     return {
-                        name: `<@${player.userid}>`,
+                        name: '\u200b',
                         value: [
+                            `**User:** <@${player.userid}>`,
                             `**Reason:** ${player.reason}`,
                             `**Dates:** <t:${player.leave}:F> - <t:${player.return}:F>`,
                         ].join("\n")
