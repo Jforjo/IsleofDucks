@@ -135,6 +135,9 @@ async function removeAway(
         );
     }
 
+    console.log(user);
+    console.log(JSON.stringify(user));
+
     await removeAwayPlayer(user.user.id);
 
     await FollowupMessage(interaction.token, {
