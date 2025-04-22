@@ -1,5 +1,6 @@
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { getDiscordRole } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -56,16 +57,18 @@ export default async function(
 
     const users = await Promise.all(rows.map(async (user) => {
         const res = await getUsernameOrUUID(user.uuid);
+        const disc = await getDiscordRole(user.uuid);
         return {
             uuid: user.uuid,
-            name: res.success ? res.name : user.uuid
+            name: res.success ? res.name : user.uuid,
+            disc: disc?.discordid
         }
     }));
 
     const chunkSize = 20;
     for (let i = 0; i < users.length; i += chunkSize) {
         await SendMessage(interaction.channel.id, {
-            content: users.slice(i, i + chunkSize).map((user) => `\`${user.name}\` (${user.uuid})`).join("\n"),
+            content: users.slice(i, i + chunkSize).map((user) => `\`${user.name}\` (${user.uuid}) ${user.disc ? `<@${user.disc}>` : ""}`).join("\n"),
         });
     }
 
