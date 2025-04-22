@@ -1,4 +1,6 @@
-import { CreateInteractionResponse, DeleteMessage, FollowupMessage, GetAllChannelMessages, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -44,18 +46,25 @@ export default async function(
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.ChannelMessageWithSource,
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
         data: {
-            content: `Timer: <t:${Math.floor(Date.now() / 1000) + 60}:R>`,
             flags: MessageFlags.Ephemeral
         }
     });
     
-    const messages = await GetAllChannelMessages(interaction.channel.id);
-    for (const message of messages) {
-        await DeleteMessage(interaction.channel.id, message.id);
-        await new Promise(resolve => setTimeout(resolve, 500));
-    }
+    const { rows } = await sql`SELECT * FROM users`;
+
+    const users = await Promise.all(rows.map(async (user) => {
+        const res = await getUsernameOrUUID(user.uuid);
+        return {
+            uuid: user.uuid,
+            username: res.success ? res.name : ""
+        };
+    }));
+    
+    await FollowupMessage(interaction.token, {
+        content: users.map(user => `${user.username} (${user.uuid})`).join("\n"),
+    });
 
     // await CreateInteractionResponse(interaction.id, interaction.token, {
     //     type: InteractionResponseType.ChannelMessageWithSource,
@@ -65,9 +74,9 @@ export default async function(
     //     }
     // });
 
-    await FollowupMessage(interaction.token, {
-        content: `Done!`,
-    });
+    // await FollowupMessage(interaction.token, {
+    //     content: `Done!`,
+    // });
 
     return NextResponse.json(
         { success: true },
