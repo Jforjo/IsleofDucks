@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
@@ -46,19 +46,28 @@ export default async function(
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+            flags: MessageFlags.Ephemeral
+        }
     });
     
     const { rows } = await sql`SELECT * FROM users`;
 
     const users = await Promise.all(rows.map(async (user) => {
         const res = await getUsernameOrUUID(user.uuid);
-        return res.success ? res.name : user.uuid;
+        return {
+            uuid: user.uuid,
+            name: res.success ? res.name : user.uuid
+        }
     }));
-    
-    await FollowupMessage(interaction.token, {
-        content: users.join("\n"),
-    });
+
+    const chunkSize = 20;
+    for (let i = 0; i < users.length; i += chunkSize) {
+        await SendMessage(interaction.channel.id, {
+            content: users.slice(i, i + chunkSize).map((user) => `\`${user.name}\` (${user.uuid})`).join("\n"),
+        });
+    }
 
     // await CreateInteractionResponse(interaction.id, interaction.token, {
     //     type: InteractionResponseType.ChannelMessageWithSource,
@@ -68,9 +77,9 @@ export default async function(
     //     }
     // });
 
-    // await FollowupMessage(interaction.token, {
-    //     content: `Done!`,
-    // });
+    await FollowupMessage(interaction.token, {
+        content: `Done!`,
+    });
 
     return NextResponse.json(
         { success: true },
