@@ -46,7 +46,7 @@ export default async function(
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.ChannelMessageWithSource,
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
         data: {
             flags: MessageFlags.Ephemeral
         }
