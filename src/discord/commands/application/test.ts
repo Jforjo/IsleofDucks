@@ -47,9 +47,6 @@ export default async function(
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
-        data: {
-            flags: MessageFlags.Ephemeral
-        }
     });
     
     const { rows } = await sql`SELECT * FROM users`;
