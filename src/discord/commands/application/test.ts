@@ -53,14 +53,11 @@ export default async function(
 
     const users = await Promise.all(rows.map(async (user) => {
         const res = await getUsernameOrUUID(user.uuid);
-        return {
-            uuid: user.uuid,
-            username: res.success ? res.name : ""
-        };
+        return res.success ? res.name : user.uuid;
     }));
     
     await FollowupMessage(interaction.token, {
-        content: users.map(user => `${user.username} (${user.uuid})`).join("\n"),
+        content: users.join("\n"),
     });
 
     // await CreateInteractionResponse(interaction.id, interaction.token, {
