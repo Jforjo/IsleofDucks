@@ -104,7 +104,7 @@ async function applyAway(
 
 async function removeAway(
     interaction: APIChatInputApplicationCommandInteraction,
-    userid: Snowflake
+    id: number
 ): Promise<
     NextResponse<
         {
@@ -134,7 +134,7 @@ async function removeAway(
         );
     }
 
-    await removeAwayPlayer(userid);
+    const { userid } = await removeAwayPlayer(id);
 
     await FollowupMessage(interaction.token, {
         embeds: [
@@ -237,7 +237,7 @@ async function viewAway(
                 color: 0xFB9B00,
                 fields: awayPlayers.map(player => {
                     return {
-                        name: '\u200b',
+                        name: `ID: ${player.id}`,
                         value: [
                             `**User:** <@${player.userid}>`,
                             `**Reason:** ${player.reason}`,
@@ -339,7 +339,7 @@ export default async function(
     if (options.apply) {
         return await applyAway(interaction, options.apply.reason, options.apply.leave, options.apply.return);
     } else if (options.remove) {
-        return await removeAway(interaction, options.remove.user);
+        return await removeAway(interaction, options.remove.id);
     } else if (options.view) {
         return await viewAway(interaction);
     }
@@ -397,9 +397,9 @@ export const CommandData = {
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
-                    name: "user",
-                    description: "The user to remove.",
-                    type: ApplicationCommandOptionType.User,
+                    name: "id",
+                    description: "The internal ID of the user to delete. Found by using /away view.",
+                    type: ApplicationCommandOptionType.Integer,
                     required: true
                 }
             ]

@@ -414,10 +414,11 @@ export async function createHyGuessr(data: HyGuessrData[]): Promise<string> {
 export async function addAwayPlayer(userid: Snowflake, reason: string, leaveTimestamp: number, returnTimestamp: number): Promise<void> {
     await sql`INSERT INTO away (userid, reason, leave, return) VALUES (${userid}, ${reason}, ${leaveTimestamp}, ${returnTimestamp})`;
 }
-export async function removeAwayPlayer(userid: Snowflake): Promise<void> {
-    await sql`DELETE FROM away WHERE userid = ${userid}`;
+export async function removeAwayPlayer(id: number): Promise<{ id: number, userid: Snowflake; reason: string; leave: number; return: number }> {
+    const { rows } = await sql`DELETE FROM away WHERE id = ${id} RETURNING *`;
+    return rows[0] as { id: number, userid: Snowflake; reason: string; leave: number; return: number };
 }
-export async function getAwayPlayers(): Promise<{ userid: Snowflake; reason: string; leave: number; return: number }[]> {
+export async function getAwayPlayers(): Promise<{ id: number, userid: Snowflake; reason: string; leave: number; return: number }[]> {
     const { rows } = await sql`SELECT * FROM away`;
-    return rows as { userid: Snowflake; reason: string; leave: number; return: number }[];
+    return rows as { id: number, userid: Snowflake; reason: string; leave: number; return: number }[];
 }
