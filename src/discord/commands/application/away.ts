@@ -1,4 +1,4 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { addAwayPlayer, removeAwayPlayer, getAwayPlayers } from "@/discord/utils";
 import { NextResponse } from "next/server";
