@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
 import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
-import { calcCataLevel, getProfiles } from "./hypixelUtils";
+import { getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
 
