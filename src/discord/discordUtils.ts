@@ -1819,7 +1819,7 @@ const Superlatives = [
         callback: async function(
             uuid: string
         ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-            return await getSuperlativeValue(uuid, (value) => calcCataLevel(value).toFixed(2));
+            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
         },
         update: async function(uuid: string): Promise<number | {
             success: false;
