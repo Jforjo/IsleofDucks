@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
 import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
-import { getProfiles } from "./hypixelUtils";
+import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
 
@@ -1808,6 +1808,73 @@ const Superlatives = [
                     id: "KRAKEN",
                     name: "kraken",
                     requirement: 55_000_000,
+                },
+            ]
+        }
+    },
+    {
+        id: "may25",
+        title: "Catacombs Experience",
+        start: new Date("1 May 2025 UTC").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => calcCataLevel(value).toFixed(2));
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return profile?.dungeons?.dungeon_types?.catacombs?.experience;
+            });
+        },
+        ranks: {
+            ducks: [
+                {
+                    id: "BONZO",
+                    name: "bonzo",
+                    requirement: 0,
+                },
+                {
+                    id: "LIVID",
+                    name: "livid",
+                    requirement: 50_000_000,
+                },
+                {
+                    id: "THORN",
+                    name: "thorn",
+                    requirement: 170_000_000,
+                },
+                {
+                    id: "NECRON",
+                    name: "necron",
+                    requirement: 700_000_000,
+                },
+            ],
+            ducklings: [
+                {
+                    id: "BONZO",
+                    name: "bonzo",
+                    requirement: 0,
+                },
+                {
+                    id: "LIVID",
+                    name: "livid",
+                    requirement: 10_000_000,
+                },
+                {
+                    id: "THORN",
+                    name: "thorn",
+                    requirement: 20_000_000,
+                },
+                {
+                    id: "NECRON",
+                    name: "necron",
+                    requirement: 80_000_000,
                 },
             ]
         }
