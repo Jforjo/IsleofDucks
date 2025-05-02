@@ -58,7 +58,8 @@ export default async function(
         name,
         embeds[name].content,
         embeds[name].data,
-        embeds[name].components
+        embeds[name].components,
+        embeds[name].attachments
     );
 
     await FollowupMessage(interaction.token, {
@@ -205,7 +206,12 @@ const embeds = {
                         }
                     ]
                 }
-            ]
+            ],
+            attachments: [
+                {
+                    id: 0
+                }
+            ],
         }),
         components: JSON.stringify(arrayChunks(IsleofDucks.roles.reaction.partyping, 5).slice(0, 5).map(row => ({
             type: ComponentType.ActionRow,
@@ -219,6 +225,13 @@ const embeds = {
                 }
             }))
         }))),
+        attachments: JSON.stringify([
+            {
+                id: 0,
+                filename: 'title.png',
+                url: "https://cdn.discordapp.com/attachments/1300979867881312347/1367850267151700069/66ef0d1b869b9.png?ex=68161555&is=6814c3d5&hm=312aaff4b9f535991d696035c7146df399a832b31be79ee2fb41852610eb01c0&"
+            }
+        ])
     },
     partyfinder1: {
         content: null,
