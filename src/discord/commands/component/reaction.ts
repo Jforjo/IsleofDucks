@@ -82,15 +82,15 @@ export default async function(
         );
     }
 
-    if (user.roles.includes(role.id)) {
-        await RemoveGuildMemberRole(interaction.guild.id, interaction.member.user.id, role.id);
+    if (user.roles.includes(role.role)) {
+        await RemoveGuildMemberRole(interaction.guild.id, interaction.member.user.id, role.role);
         await FollowupMessage(interaction.token, {
-            content: `You no longer have the <@&${role.id}> role!`,
+            content: `You no longer have the <@&${role.role}> role!`,
         });
     } else {
-        await AddGuildMemberRole(interaction.guild.id, interaction.member.user.id, role.id);
+        await AddGuildMemberRole(interaction.guild.id, interaction.member.user.id, role.role);
         await FollowupMessage(interaction.token, {
-            content: `You now have the <@&${role.id}> role!`,
+            content: `You now have the <@&${role.role}> role!`,
         })
     }
 

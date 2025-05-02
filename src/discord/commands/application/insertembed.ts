@@ -206,6 +206,7 @@ const embeds = {
                 type: ComponentType.Button,
                 style: ButtonStyle.Secondary,
                 emoji: {
+                    name: role.emoji.name,
                     id: role.emoji.id
                 }
             }))
