@@ -4,7 +4,6 @@ import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { updateGuildSuperlative } from "@/discord/utils";
-import { send } from "process";
 
 export async function getSuperlative(): Promise<{
     superlative: Superlative;
