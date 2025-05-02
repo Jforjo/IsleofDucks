@@ -78,7 +78,7 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
 
 const roles = IsleofDucks.roles.reaction.partyping.reduce((acc: Record<string, { role: string; name: string; id: string; }>, role) => {
     acc[role.emoji.name] = {
-        role: role.id,
+        role: role.role,
         name: role.emoji.name,
         id: role.emoji.id,
     };
@@ -100,7 +100,7 @@ const embeds = {
                     fields: [
                         {
                             name: "Global Party Finder",
-                            value: "*What is global party finder?*\nWe manage a server called Guilds Alliance, where top Skyblock guilds collaborate and create valuable connections. SBU's developer, minemort, created a system where we could host/join parties for various activities in skyblock and chat across different Discord servers."
+                            value: "*What is global party finder?*\nWe manage a server called Guilds Alliance, where top SkyBlock guilds collaborate and create valuable connections. SBU's developer, minemort, created a system where we could host/join parties for various activities in SkyBlock and chat across different Discord servers."
                         },
                         {
                             name: "How to create a party",
@@ -118,13 +118,13 @@ const embeds = {
                         {
                             name: "Notifications for F1-F7 parties!",
                             value: [
-                                `<:${roles.f1.name}:${roles.f1.id}:> - <@&${roles.f1.role}>`,
-                                `<:${roles.f2.name}:${roles.f2.id}:> - <@&${roles.f2.role}>`,
-                                `<:${roles.f3.name}:${roles.f3.id}:> - <@&${roles.f3.role}>`,
-                                `<:${roles.f4.name}:${roles.f4.id}:> - <@&${roles.f4.role}>`,
-                                `<:${roles.f5.name}:${roles.f5.id}:> - <@&${roles.f5.role}>`,
-                                `<:${roles.f6.name}:${roles.f6.id}:> - <@&${roles.f6.role}>`,
-                                `<:${roles.f7.name}:${roles.f7.id}:> - <@&${roles.f7.role}>`
+                                `<:${roles.f1.name}:${roles.f1.id}> - <@&${roles.f1.role}>`,
+                                `<:${roles.f2.name}:${roles.f2.id}> - <@&${roles.f2.role}>`,
+                                `<:${roles.f3.name}:${roles.f3.id}> - <@&${roles.f3.role}>`,
+                                `<:${roles.f4.name}:${roles.f4.id}> - <@&${roles.f4.role}>`,
+                                `<:${roles.f5.name}:${roles.f5.id}> - <@&${roles.f5.role}>`,
+                                `<:${roles.f6.name}:${roles.f6.id}> - <@&${roles.f6.role}>`,
+                                `<:${roles.f7.name}:${roles.f7.id}> - <@&${roles.f7.role}>`
                             ].join("\n")
                         }
                     ]
@@ -139,13 +139,13 @@ const embeds = {
                         {
                             name: "Notifications for M1-M7 parties!",
                             value: [
-                                `<:${roles.m1.name}:${roles.m1.id}:> - <@&${roles.m1.role}>`,
-                                `<:${roles.m2.name}:${roles.m2.id}:> - <@&${roles.m2.role}>`,
-                                `<:${roles.m3.name}:${roles.m3.id}:> - <@&${roles.m3.role}>`,
-                                `<:${roles.m4.name}:${roles.m4.id}:> - <@&${roles.m4.role}>`,
-                                `<:${roles.m5.name}:${roles.m5.id}:> - <@&${roles.m5.role}>`,
-                                `<:${roles.m6.name}:${roles.m6.id}:> - <@&${roles.m6.role}>`,
-                                `<:${roles.m7.name}:${roles.m7.id}:> - <@&${roles.m7.role}>`
+                                `<:${roles.m1.name}:${roles.m1.id}> - <@&${roles.m1.role}>`,
+                                `<:${roles.m2.name}:${roles.m2.id}> - <@&${roles.m2.role}>`,
+                                `<:${roles.m3.name}:${roles.m3.id}> - <@&${roles.m3.role}>`,
+                                `<:${roles.m4.name}:${roles.m4.id}> - <@&${roles.m4.role}>`,
+                                `<:${roles.m5.name}:${roles.m5.id}> - <@&${roles.m5.role}>`,
+                                `<:${roles.m6.name}:${roles.m6.id}> - <@&${roles.m6.role}>`,
+                                `<:${roles.m7.name}:${roles.m7.id}> - <@&${roles.m7.role}>`
                             ].join("\n")
                         }
                     ]
@@ -160,11 +160,11 @@ const embeds = {
                         {
                             name: "Notifications for kuudra parties!",
                             value: [
-                                `<:${roles.basic.name}:${roles.basic.id}:> - <@&${roles.basic.role}>`,
-                                `<:${roles.hot.name}:${roles.hot.id}:> - <@&${roles.hot.role}>`,
-                                `<:${roles.burning.name}:${roles.burning.id}:> - <@&${roles.burning.role}>`,
-                                `<:${roles.fiery.name}:${roles.fiery.id}:> - <@&${roles.fiery.role}>`,
-                                `<:${roles.infernal.name}:${roles.infernal.id}:> - <@&${roles.infernal.role}>`
+                                `<:${roles.basic.name}:${roles.basic.id}> - <@&${roles.basic.role}>`,
+                                `<:${roles.hot.name}:${roles.hot.id}> - <@&${roles.hot.role}>`,
+                                `<:${roles.burning.name}:${roles.burning.id}> - <@&${roles.burning.role}>`,
+                                `<:${roles.fiery.name}:${roles.fiery.id}> - <@&${roles.fiery.role}>`,
+                                `<:${roles.infernal.name}:${roles.infernal.id}> - <@&${roles.infernal.role}>`
                             ].join("\n")
                         }
                     ]
@@ -179,9 +179,9 @@ const embeds = {
                         {
                             name: "Notifications for fishing parties!",
                             value: [
-                                `<:${roles.emperorskull.name}:${roles.emperorskull.id}:> - <@&${roles.emperorskull.role}>`,
-                                `<:${roles.lava.name}:${roles.lava.id}:> - <@&${roles.lava.role}>`,
-                                `<:${roles.megalodon.name}:${roles.megalodon.id}:> - <@&${roles.megalodon.role}>`
+                                `<:${roles.emperorskull.name}:${roles.emperorskull.id}> - <@&${roles.emperorskull.role}>`,
+                                `<:${roles.lava.name}:${roles.lava.id}> - <@&${roles.lava.role}>`,
+                                `<:${roles.megalodon.name}:${roles.megalodon.id}> - <@&${roles.megalodon.role}>`
                             ].join("\n")
                         }
                     ]
@@ -196,11 +196,11 @@ const embeds = {
                         {
                             name: "Notifications for other parties!",
                             value: [
-                                `<:${roles.diana.name}:${roles.diana.id}:> - <@&${roles.diana.role}>`,
-                                `<:${roles.edrag.name}:${roles.edrag.id}:> - <@&${roles.edrag.role}>`,
-                                `<:${roles.bestiary.name}:${roles.bestiary.id}:> - <@&${roles.bestiary.role}>`,
-                                `<:${roles.mineshaft.name}:${roles.mineshaft.id}:> - <@&${roles.mineshaft.role}>`,
-                                `<:${roles.other.name}:${roles.other.id}:> - <@&${roles.other.role}>`
+                                `<:${roles.diana.name}:${roles.diana.id}> - <@&${roles.diana.role}>`,
+                                `<:${roles.edrag.name}:${roles.edrag.id}> - <@&${roles.edrag.role}>`,
+                                `<:${roles.bestiary.name}:${roles.bestiary.id}> - <@&${roles.bestiary.role}>`,
+                                `<:${roles.mineshaft.name}:${roles.mineshaft.id}> - <@&${roles.mineshaft.role}>`,
+                                `<:${roles.other.name}:${roles.other.id}> - <@&${roles.other.role}>`
                             ].join("\n")
                         }
                     ]
