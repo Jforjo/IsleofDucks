@@ -618,10 +618,10 @@ export default async function Command(
                     if (!detailed) return main;
                     const result = [
                         main,
-                        `Total: ${Math.floor(field.current)}`,
-                        // `Value: ${field.value}`
+                        `Total: ${field.current}`,
+                        `Value: ${field.value}`
                     ];
-                    if (field.untilNextRank > 0) result.push(`Until: ${Math.ceil(field.untilNextRank)}`);
+                    if (field.untilNextRank > 0) result.push(`Until: ${field.untilNextRank}`);
                     return result.join('\n');
                 }).join('\n'),
                 inline: true
@@ -630,7 +630,22 @@ export default async function Command(
     }
 
     await FollowupMessage(interaction.token, {
-        embeds: [
+        embeds: detailed ? [
+            // Split the fieldarray into 2 embeds
+            {
+                title: `Superlative - ${superlative.title}`,
+                color: 0xFB9B00,
+                fields: fieldArray.slice(0, fieldArray.length / 2),
+            },
+            {
+                color: 0xFB9B00,
+                fields: fieldArray.slice(fieldArray.length / 2),
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ] : [
             {
                 title: `Superlative - ${superlative.title}`,
                 // description: ``,

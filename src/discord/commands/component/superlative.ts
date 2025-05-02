@@ -311,8 +311,22 @@ export default async function Command(
     }
 
     await FollowupMessage(interaction.token, {
-        content: undefined,
-        embeds: [
+        embeds: detailed ? [
+            // Split the fieldarray into 2 embeds
+            {
+                title: `Superlative - ${superlative.title}`,
+                color: 0xFB9B00,
+                fields: fieldArray.slice(0, fieldArray.length / 2),
+            },
+            {
+                color: 0xFB9B00,
+                fields: fieldArray.slice(fieldArray.length / 2),
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ] : [
             {
                 title: `Superlative - ${superlative.title}`,
                 // description: ``,
