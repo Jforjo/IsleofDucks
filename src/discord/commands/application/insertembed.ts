@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "partyfinder1";
+    const name = "partyfinder";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {
@@ -76,6 +76,14 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
     default_member_permissions: "0",
 }
 
+const roles = IsleofDucks.roles.reaction.partyping.reduce((acc: Record<string, { role: string; name: string; id: string; }>, role) => {
+    acc[role.emoji.name] = {
+        role: role.id,
+        name: role.emoji.name,
+        id: role.emoji.id,
+    };
+    return acc;
+}, {});
 
 const embeds = {
     partyfinder: {
@@ -101,7 +109,7 @@ const embeds = {
                     ]
                 },
                 {
-                    title: "Dungeon Floor Ping Roles :skull1:",
+                    title: "Dungeon Floor Ping Roles <:skull1:1087569775292579851>",
                     color: 12403455,
                     image: {
                         url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=68155959&is=681407d9&hm=b8a47ce355a4e5ba57a31bec606024e847d9ca497f3850f0e750b434eeea2b4e&=&format=webp&quality=lossless"
@@ -110,19 +118,19 @@ const embeds = {
                         {
                             name: "Notifications for F1-F7 parties!",
                             value: [
-                                ":f1: - <@&1367341590904836178>",
-                                ":f2: - <@&1367342170289213470>",
-                                ":f3: - <@&1367342276560289862>",
-                                ":f4: - <@&1367342554336592013>",
-                                ":f5: - <@&1367342642861441105>",
-                                ":f6: - <@&1367342754463744031>",
-                                ":f7: - <@&1367342876953935922>"
+                                `<:${roles.f1.name}:${roles.f1.id}:> - <@&${roles.f1.role}>`,
+                                `<:${roles.f2.name}:${roles.f2.id}:> - <@&${roles.f2.role}>`,
+                                `<:${roles.f3.name}:${roles.f3.id}:> - <@&${roles.f3.role}>`,
+                                `<:${roles.f4.name}:${roles.f4.id}:> - <@&${roles.f4.role}>`,
+                                `<:${roles.f5.name}:${roles.f5.id}:> - <@&${roles.f5.role}>`,
+                                `<:${roles.f6.name}:${roles.f6.id}:> - <@&${roles.f6.role}>`,
+                                `<:${roles.f7.name}:${roles.f7.id}:> - <@&${roles.f7.role}>`
                             ].join("\n")
                         }
                     ]
                 },
                 {
-                    title: "Mastermode Floor Ping Roles :mastermode:",
+                    title: "Mastermode Floor Ping Roles <:mastermode:1087569150081249300>",
                     color: 16741120,
                     image: {
                         url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=68155918&is=68140798&hm=e7f91559b4ad96964c038cadfe9df1c20efd60f9e2c73c17b41c7146e1fa792c&=&format=webp&quality=lossless"
@@ -131,19 +139,19 @@ const embeds = {
                         {
                             name: "Notifications for M1-M7 parties!",
                             value: [
-                                ":m1: - <@&1367343091572281436>",
-                                ":m2: - <@&1367343201819689053>",
-                                ":m3: - <@&1367343199974068236>",
-                                ":m4: - <@&1367343204902506607>",
-                                ":m5: - <@&1367343203120054353>",
-                                ":m6: - <@&1367343197948346398>",
-                                ":m7: - <@&1367343195159269396>"
+                                `<:${roles.m1.name}:${roles.m1.id}:> - <@&${roles.m1.role}>`,
+                                `<:${roles.m2.name}:${roles.m2.id}:> - <@&${roles.m2.role}>`,
+                                `<:${roles.m3.name}:${roles.m3.id}:> - <@&${roles.m3.role}>`,
+                                `<:${roles.m4.name}:${roles.m4.id}:> - <@&${roles.m4.role}>`,
+                                `<:${roles.m5.name}:${roles.m5.id}:> - <@&${roles.m5.role}>`,
+                                `<:${roles.m6.name}:${roles.m6.id}:> - <@&${roles.m6.role}>`,
+                                `<:${roles.m7.name}:${roles.m7.id}:> - <@&${roles.m7.role}>`
                             ].join("\n")
                         }
                     ]
                 },
                 {
-                    title: "Kuudra Ping Roles :kuudra:",
+                    title: "Kuudra Ping Roles <:kuudra:1119812565275517019>",
                     color: 12403455,
                     image: {
                         url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=68155959&is=681407d9&hm=b8a47ce355a4e5ba57a31bec606024e847d9ca497f3850f0e750b434eeea2b4e&=&format=webp&quality=lossless"
@@ -152,17 +160,17 @@ const embeds = {
                         {
                             name: "Notifications for kuudra parties!",
                             value: [
-                                ":basic: - <@&1085780744128958555>",
-                                ":hot: - <@&1085781441121636465>",
-                                ":burning: - <@&1085781135537213520>",
-                                ":fiery: - <@&1085781531668262952>",
-                                ":infernal: - <@&1085781213404479518>"
+                                `<:${roles.basic.name}:${roles.basic.id}:> - <@&${roles.basic.role}>`,
+                                `<:${roles.hot.name}:${roles.hot.id}:> - <@&${roles.hot.role}>`,
+                                `<:${roles.burning.name}:${roles.burning.id}:> - <@&${roles.burning.role}>`,
+                                `<:${roles.fiery.name}:${roles.fiery.id}:> - <@&${roles.fiery.role}>`,
+                                `<:${roles.infernal.name}:${roles.infernal.id}:> - <@&${roles.infernal.role}>`
                             ].join("\n")
                         }
                     ]
                 },
                 {
-                    title: "Fishing Ping Roles :fishing:",
+                    title: "Fishing Ping Roles <:fishing:1367681771738497237>",
                     color: 16741120,
                     image: {
                         url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=68155918&is=68140798&hm=e7f91559b4ad96964c038cadfe9df1c20efd60f9e2c73c17b41c7146e1fa792c&=&format=webp&quality=lossless"
@@ -171,15 +179,15 @@ const embeds = {
                         {
                             name: "Notifications for fishing parties!",
                             value: [
-                                ":emperorskull: - <@&1367681222326616215>",
-                                ":lava: - <@&1002999878890311771>",
-                                ":megalodon: - <@&1002999651584200835>"
+                                `<:${roles.emperorskull.name}:${roles.emperorskull.id}:> - <@&${roles.emperorskull.role}>`,
+                                `<:${roles.lava.name}:${roles.lava.id}:> - <@&${roles.lava.role}>`,
+                                `<:${roles.megalodon.name}:${roles.megalodon.id}:> - <@&${roles.megalodon.role}>`
                             ].join("\n")
                         }
                     ]
                 },
                 {
-                    title: "Miscellaneous Ping Roles :hyperion:",
+                    title: "Miscellaneous Ping Roles <:hyperion:1367683086929629215>",
                     color: 12403455,
                     image: {
                         url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=68155959&is=681407d9&hm=b8a47ce355a4e5ba57a31bec606024e847d9ca497f3850f0e750b434eeea2b4e&=&format=webp&quality=lossless"
@@ -188,11 +196,11 @@ const embeds = {
                         {
                             name: "Notifications for other parties!",
                             value: [
-                                ":diana: - <@&1003000369015689306>",
-                                ":edrag: - <@&1085781026929918064>",
-                                ":bestiary: - <@&1367683516338405499>",
-                                ":mineshaft: - <@&1304830215561678848>",
-                                ":other: - <@&1367344619079335987>"
+                                `<:${roles.diana.name}:${roles.diana.id}:> - <@&${roles.diana.role}>`,
+                                `<:${roles.gdrag.name}:${roles.gdrag.id}:> - <@&${roles.gdrag.role}>`,
+                                `<:${roles.bestiary.name}:${roles.bestiary.id}:> - <@&${roles.bestiary.role}>`,
+                                `<:${roles.mineshaft.name}:${roles.mineshaft.id}:> - <@&${roles.mineshaft.role}>`,
+                                `<:${roles.other.name}:${roles.other.id}:> - <@&${roles.other.role}>`
                             ].join("\n")
                         }
                     ]
