@@ -3,6 +3,13 @@ import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { Snowflake } from 'discord-api-types/globals';
 import { Superlative } from './discordUtils';
 
+export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
+    return Array(Math.ceil(array.length / chunk_size))
+        .fill(null)
+        .map((_, index) => index * chunk_size)
+        .map(begin => array.slice(begin, begin + chunk_size));
+}
+
 export async function getImmunePlayers(): Promise<{
     success: boolean;
     players: {
