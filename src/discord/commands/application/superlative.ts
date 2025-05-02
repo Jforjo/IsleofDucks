@@ -608,7 +608,7 @@ export default async function Command(
         rankUp: string | null;
     }[];
     const fieldArray = [];
-    const chunkSize = detailed ? 14 : 21;
+    const chunkSize = detailed ? 7 : 21;
     for (let i = 0; i < finalResult.length; i += chunkSize) {
         fieldArray.push(
             {
