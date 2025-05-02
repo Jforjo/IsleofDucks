@@ -618,10 +618,10 @@ export default async function Command(
                     if (!detailed) return main;
                     const result = [
                         main,
-                        `Total: ${field.current}`,
+                        `Total: ${Math.floor(field.current)}`,
                         // `Value: ${field.value}`
                     ];
-                    if (field.untilNextRank > 0) result.push(`Until: ${field.untilNextRank}`);
+                    if (field.untilNextRank > 0) result.push(`Until: ${Math.ceil(field.untilNextRank)}`);
                     return result.join('\n');
                 }).join('\n'),
                 inline: true
