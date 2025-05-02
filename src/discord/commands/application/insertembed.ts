@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "partyfinder";
+    const name = "partyfinder1";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {

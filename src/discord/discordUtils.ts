@@ -2458,10 +2458,10 @@ export async function GetEmbedData(embedID: string): Promise<{
         attachments: rows[0].attachments
     }
 }
-export async function EditEmbedData(embedID: string, content: string | null, embeds: string, components?: string, attachments?: string): Promise<void> {
+export async function EditEmbedData(embedID: string, content: string | null, embeds: string | null, components?: string, attachments?: string): Promise<void> {
     await sql`UPDATE embeds SET content = ${content}, data = ${embeds}, components = ${components ?? null}, attachments = ${attachments ?? null} WHERE name = ${embedID}`;
 }
-export async function CreateEmbedData(embedID: string, content: string | null, embeds: string, components?: string, attachments?: string): Promise<void> {
+export async function CreateEmbedData(embedID: string, content: string | null, embeds: string | null, components?: string, attachments?: string): Promise<void> {
     await sql`INSERT INTO embeds (name, content, data, components, attachments) VALUES (${embedID}, ${content}, ${embeds}, ${components ?? null}, ${attachments ?? null})`;
 }
 export async function DeleteEmbedData(embedID: string): Promise<void> {
