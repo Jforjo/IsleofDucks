@@ -310,56 +310,86 @@ export default async function Command(
         );
     }
 
-    await FollowupMessage(interaction.token, {
-        embeds: detailed ? [
-            // Split the fieldarray into 2 embeds
-            {
-                title: `Superlative - ${superlative.title}`,
-                color: 0xFB9B00,
-                fields: fieldArray.slice(0, fieldArray.length / 2),
-            },
-            {
-                color: 0xFB9B00,
-                fields: fieldArray.slice(fieldArray.length / 2),
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ] : [
-            {
-                title: `Superlative - ${superlative.title}`,
-                // description: ``,
-                color: 0xFB9B00,
-                fields: fieldArray,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ],
-        components: [
-            {
-                type: ComponentType.ActionRow,
-                components: [
-                    {
-                        custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
-                        type: ComponentType.Button,
-                        label: "Ducks",
-                        style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
-                        disabled: buttonID === "ducks"
+    if (detailed) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: `Superlative - ${superlative.title}`,
+                    color: 0xFB9B00,
+                    fields: fieldArray.slice(0, fieldArray.length / 2),
+                }
+            ]
+        });
+        await SendMessage(interaction.channel.id, {
+            embeds: [
+                {
+                    color: 0xFB9B00,
+                    fields: fieldArray.slice(fieldArray.length / 2),
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
-                    {
-                        custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
-                        type: ComponentType.Button,
-                        label: "Ducklings",
-                        style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
-                        disabled: buttonID === "ducklings"
-                    }
-                ]
-            }
-        ]
-    });
+                    timestamp: new Date().toISOString()
+                }
+            ],
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducks",
+                            style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                            disabled: buttonID === "ducks"
+                        },
+                        {
+                            custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducklings",
+                            style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                            disabled: buttonID === "ducklings"
+                        }
+                    ]
+                }
+            ]
+        });
+    } else {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: `Superlative - ${superlative.title}`,
+                    // description: ``,
+                    color: 0xFB9B00,
+                    fields: fieldArray,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducks",
+                            style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                            disabled: buttonID === "ducks"
+                        },
+                        {
+                            custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducklings",
+                            style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                            disabled: buttonID === "ducklings"
+                        }
+                    ]
+                }
+            ]
+        });
+    }
 
     await BACKGROUND_SUPERLATIVE_UPDATE;
     for (const setrank of setranks) {
