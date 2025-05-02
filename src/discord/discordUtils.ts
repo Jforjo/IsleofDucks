@@ -2006,13 +2006,13 @@ const Superlatives = [
                     requirement: 0,
                 },
                 {
-                    id: "LIVID",
-                    name: "livid",
+                    id: "THORN",
+                    name: "thorn",
                     requirement: 50_000_000,
                 },
                 {
-                    id: "THORN",
-                    name: "thorn",
+                    id: "LIVID",
+                    name: "livid",
                     requirement: 170_000_000,
                 },
                 {
@@ -2028,13 +2028,13 @@ const Superlatives = [
                     requirement: 0,
                 },
                 {
-                    id: "LIVID",
-                    name: "livid",
+                    id: "THORN",
+                    name: "thorn",
                     requirement: 10_000_000,
                 },
                 {
-                    id: "THORN",
-                    name: "thorn",
+                    id: "LIVID",
+                    name: "livid",
                     requirement: 20_000_000,
                 },
                 {
