@@ -199,14 +199,30 @@ const embeds = {
                 }
             ]
         }),
-        components: JSON.stringify(arrayChunks(IsleofDucks.roles.reaction.partyping, 5).map(row => ({
+        components: JSON.stringify(arrayChunks(IsleofDucks.roles.reaction.partyping, 5).slice(0, 5).map(row => ({
             type: ComponentType.ActionRow,
             components: row.map(role => ({
                 custom_id: `reaction-partyping-${role.id}`,
                 type: ComponentType.Button,
                 style: ButtonStyle.Secondary,
                 emoji: {
-                    // name: role.emoji.name,
+                    name: role.emoji.name,
+                    id: role.emoji.id
+                }
+            }))
+        }))),
+    },
+    partyfinder1: {
+        content: null,
+        data: null,
+        components: JSON.stringify(arrayChunks(IsleofDucks.roles.reaction.partyping, 5).slice(5, 10).map(row => ({
+            type: ComponentType.ActionRow,
+            components: row.map(role => ({
+                custom_id: `reaction-partyping-${role.id}`,
+                type: ComponentType.Button,
+                style: ButtonStyle.Secondary,
+                emoji: {
+                    name: role.emoji.name,
                     id: role.emoji.id
                 }
             }))
