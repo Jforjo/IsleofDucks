@@ -197,7 +197,7 @@ const embeds = {
                             name: "Notifications for other parties!",
                             value: [
                                 `<:${roles.diana.name}:${roles.diana.id}:> - <@&${roles.diana.role}>`,
-                                `<:${roles.gdrag.name}:${roles.gdrag.id}:> - <@&${roles.gdrag.role}>`,
+                                `<:${roles.edrag.name}:${roles.edrag.id}:> - <@&${roles.edrag.role}>`,
                                 `<:${roles.bestiary.name}:${roles.bestiary.id}:> - <@&${roles.bestiary.role}>`,
                                 `<:${roles.mineshaft.name}:${roles.mineshaft.id}:> - <@&${roles.mineshaft.role}>`,
                                 `<:${roles.other.name}:${roles.other.id}:> - <@&${roles.other.role}>`
