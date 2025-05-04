@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "partyfinder";
+    const name = "roleinfo";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {
@@ -87,136 +87,131 @@ const roles = IsleofDucks.roles.reaction.partyping.reduce((acc: Record<string, {
 }, {});
 
 const embeds = {
-    partyfinder: {
+    roleinfo: {
         content: null,
         data: JSON.stringify({
             embeds: [
                 {
-                    title: "Party Ping Roles 🌎",
-                    description: "Click on the buttons for parties you would like notifications for!",
+                    title: "Server Role Information and Reaction Roles",
+                    description: "We provide a variety of server roles, including earnable roles, guild roles, donor roles, carrier roles, and reaction roles for ping notifications. This guide will show you how to unlock them!",
                     color: 16741120,
                     image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=68155918&is=68140798&hm=e7f91559b4ad96964c038cadfe9df1c20efd60f9e2c73c17b41c7146e1fa792c&=&format=webp&quality=lossless"
-                    },
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1368312766925897769/title-_Role_Information_-871x37.png?ex=6817c411&is=68167291&hm=bbeb2b4a3f3c88a662f7d114065468c3361aef42e2da510f9fc30c6077fdb52e&=&format=webp&quality=lossless"
+                    }
+                },
+                {
+                    title: "Donator Roles",
+                    description: "These roles can be obtained by hosting giveaways or events!",
+                    color: 12403455,
                     fields: [
                         {
-                            name: "Global Party Finder",
-                            value: "*What is global party finder?*\nWe manage a server called Guilds Alliance, where top SkyBlock guilds collaborate and create valuable connections. SBU's developer, minemort, created a system where we could host/join parties for various activities in SkyBlock and chat across different Discord servers."
+                            name: "Values and Perks",
+                            value: "<@&1368319830025048224> [1B+ Donation] - Custom rank name/color/icon, bridge access, 3x gw entries\n<@&1368319005051322489> [500M+ Donation] - Custom rank name/color/icon, 2x gw entries\n<@&982001040142528512> [100M+ Donation] - Custom rank name/color\n<@&823071806835523624> [50M Donation]\n<@&823071749137629265> [10M Donation]"
+                        }
+                    ],
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1368347752374730933/title-_Donor_Roles_-871x37.png?ex=6817e4a6&is=68169326&hm=1c49262bac64a2e9938dc10db3fcecf63f82dad34c148fa2536a1d2af9ae632b&=&format=webp&quality=lossless"
+                    }
+                },
+                {
+                    title: "Guild Roles",
+                    description: "Guild-specific roles for Duck and Duckling members. They are synced by verification with <@684986294459564042> \n<@&933258162931400764> - Isle of Ducks member\n<@&998380474407846000> - Isle of Ducklings member\n<@&1276013765405704266> - [See more](https://discord.com/channels/823061629812867113/1320463957273739274/1328077452974493768)",
+                    color: 16741120,
+                    fields: [
+                        {
+                            name: "Level Roles",
+                            value: "Auto-synced cosmetic SkyBlock level roles:\n<@&1328090605481627698>\n<@&1328090513793880234>\n<@&1328090470974230680>\n<@&1328090385909809173>\n<@&1328090310470795335>\n<@&1328090223221149786>\n<@&1328089436894007506>"
+                        }
+                    ],
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1368329676891881472/title-_Guild_Roles_-871x37_1.png?ex=6817d3d1&is=68168251&hm=b7d7639d54889e2a0b86b1ea03150e9c563e5034442de53e20c7ceebd7659f60&=&format=webp&quality=lossless"
+                    }
+                },
+                {
+                    title: "Carrier Roles",
+                    description: "Apply to become a carrier here, after fulfilling requirements <#1004135601534152755>",
+                    color: 12403455,
+                    fields: [
+                        {
+                            name: "Dungeon Carrier Roles",
+                            value: "<@&1004131288023830638>\n<@&1004131419553005710>\n<@&1004131451077406750>\n<@&1004131476650070036>\n<@&1004131503640420424>\n<@&1004131520656707686>\n<@&1004131539539468369>\n<@&1004131565124730991>\n<@&1004131581696422109>\n<@&1004131601971675246>"
                         },
                         {
-                            name: "How to create a party",
-                            value: "Members can use commands in <#1054312132365275197> with <@1357548227741749359>, such as:\n`/floor 7 description:Looking for tank!\n/kuudra 5 applications:Enabled\n/view_parties to see active parties.\nAnd more! Use /help for a full list.`\nIf you would like to join a party, click on the embed!"
-                        }
-                    ]
-                },
-                {
-                    title: "Dungeon Floor Ping Roles <:skull1:1087569775292579851>",
-                    color: 12403455,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=68155959&is=681407d9&hm=b8a47ce355a4e5ba57a31bec606024e847d9ca497f3850f0e750b434eeea2b4e&=&format=webp&quality=lossless"
-                    },
-                    fields: [
+                            name: "Slayer Carrier Roles",
+                            value: "<@&1004131669487403078>\n<@&1004131737795833936>\n<@&1004131758616367225>\n<@&1004131780682596352>\n<@&1004131845266493500>\n<@&1004131871774494842>\n<@&1004131911263854713>"
+                        },
                         {
-                            name: "Notifications for F1-F7 parties!",
-                            value: [
-                                `<:${roles.f1.name}:${roles.f1.id}> - <@&${roles.f1.role}>`,
-                                `<:${roles.f2.name}:${roles.f2.id}> - <@&${roles.f2.role}>`,
-                                `<:${roles.f3.name}:${roles.f3.id}> - <@&${roles.f3.role}>`,
-                                `<:${roles.f4.name}:${roles.f4.id}> - <@&${roles.f4.role}>`,
-                                `<:${roles.f5.name}:${roles.f5.id}> - <@&${roles.f5.role}>`,
-                                `<:${roles.f6.name}:${roles.f6.id}> - <@&${roles.f6.role}>`,
-                                `<:${roles.f7.name}:${roles.f7.id}> - <@&${roles.f7.role}>`
-                            ].join("\n")
+                            name: "Kuudra Carrier Roles",
+                            value: "<@&1119807379903623258>\n<@&1119807706841235496>\n<@&1119807771458670654>"
                         }
-                    ]
+                    ],
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1368347769416188015/title-_Carrier_Roles_-871x37.png?ex=6817e4aa&is=6816932a&hm=8e7af934e294ec710e43ddaf489a04b15204771f9b659b7b4d760af795a1fa98&=&format=webp&quality=lossless"
+                    }
                 },
                 {
-                    title: "Mastermode Floor Ping Roles <:mastermode:1087569150081249300>",
+                    title: "Activity Roles",
+                    description: "You can level up by chatting, vcing with people or inviting people to the server.\n\nYou gain:\n▫️10xp per message\n▫️5xp every minute in vc\nSpamming or message splitting you will get <@&985708515484114966> for 1 week (Blocked from gaining xp and participating in giveaways)",
                     color: 16741120,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=68155918&is=68140798&hm=e7f91559b4ad96964c038cadfe9df1c20efd60f9e2c73c17b41c7146e1fa792c&=&format=webp&quality=lossless"
-                    },
                     fields: [
                         {
-                            name: "Notifications for M1-M7 parties!",
-                            value: [
-                                `<:${roles.m1.name}:${roles.m1.id}> - <@&${roles.m1.role}>`,
-                                `<:${roles.m2.name}:${roles.m2.id}> - <@&${roles.m2.role}>`,
-                                `<:${roles.m3.name}:${roles.m3.id}> - <@&${roles.m3.role}>`,
-                                `<:${roles.m4.name}:${roles.m4.id}> - <@&${roles.m4.role}>`,
-                                `<:${roles.m5.name}:${roles.m5.id}> - <@&${roles.m5.role}>`,
-                                `<:${roles.m6.name}:${roles.m6.id}> - <@&${roles.m6.role}>`,
-                                `<:${roles.m7.name}:${roles.m7.id}> - <@&${roles.m7.role}>`
-                            ].join("\n")
+                            name: "Leveling",
+                            value: "Auto-synced cosmetic SkyBlock level roles:\n<@&983211131894128640> - Level 5 - Gain access to <#993685988582895677>\n<@&983211898868752445> - Level 10\n<@&983212247142785074> - Level 15\n<@&983212181501919243> - Level 20\n<@&983212199747133470> - Level 25 - 2x giveaway entries\n<@&983212798072995852> - Level 30\n<@&983212803705933854> - Level 35\n<@&983212794008711188> - Level 40\n<@&983215827111264256> - Level 45\n<@&983215795884683304> - Level 50+"
                         }
-                    ]
+                    ],
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1368347392331481149/title-_Activity_Roles_-871x37.png?ex=6817e450&is=681692d0&hm=65c90dd4d17d503579fb556364cac8fa8a24f1d8b7d238bde68902a102881cc5&=&format=webp&quality=lossless"
+                    }
                 },
                 {
-                    title: "Kuudra Ping Roles <:kuudra:1119812565275517019>",
+                    title: "Miscellaneous Roles",
                     color: 12403455,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=68155959&is=681407d9&hm=b8a47ce355a4e5ba57a31bec606024e847d9ca497f3850f0e750b434eeea2b4e&=&format=webp&quality=lossless"
-                    },
                     fields: [
                         {
-                            name: "Notifications for kuudra parties!",
-                            value: [
-                                `<:${roles.basic.name}:${roles.basic.id}> - <@&${roles.basic.role}>`,
-                                `<:${roles.hot.name}:${roles.hot.id}> - <@&${roles.hot.role}>`,
-                                `<:${roles.burning.name}:${roles.burning.id}> - <@&${roles.burning.role}>`,
-                                `<:${roles.fiery.name}:${roles.fiery.id}> - <@&${roles.fiery.role}>`,
-                                `<:${roles.infernal.name}:${roles.infernal.id}> - <@&${roles.infernal.role}>`
-                            ].join("\n")
+                            name: "Nitro Boosters",
+                            value: "<@&881421446017056799> receive:\n▫️Special <:boost:982021740932780072> icon\n▫️Role is displayed separately from other members\n▫️2x default giveaway entries\n▫️Bypass some giveaway requirements\n\n<@&993257342848213126> receive:\n▫️Special <:nitrodiamond:993267599376912496> icon\n▫️3x default giveaway entries"
+                        },
+                        {
+                            name: "Other",
+                            value: "<@&960351169094516827> - Representative of a partnered Discord server listed in <#960326317230915636>. To apply, review our partnership requirements in <#833548595826917396> and create a support ticket.\n<@&980349849876717579> - Alchemy 50 and brews potions for Bingo god splashes. Create a ticket to apply."
                         }
-                    ]
+                    ],
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1368347794175426643/title-_Other_Roles_-871x37.png?ex=6817e4b0&is=68169330&hm=5ae85c2e4e01c6ce86f63350faadf01099aee620221e77745c067479b7eef66b&=&format=webp&quality=lossless"
+                    }
                 },
                 {
-                    title: "Fishing Ping Roles <:fishing:1367681771738497237>",
+                    title: "Reaction Roles",
+                    description: "Click the buttons for ping notification roles!",
                     color: 16741120,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=68155918&is=68140798&hm=e7f91559b4ad96964c038cadfe9df1c20efd60f9e2c73c17b41c7146e1fa792c&=&format=webp&quality=lossless"
-                    },
                     fields: [
                         {
-                            name: "Notifications for fishing parties!",
+                            name: "Notifications",
                             value: [
-                                `<:${roles.emperorskull.name}:${roles.emperorskull.id}> - <@&${roles.emperorskull.role}>`,
-                                `<:${roles.lava.name}:${roles.lava.id}> - <@&${roles.lava.role}>`,
-                                `<:${roles.megalodon.name}:${roles.megalodon.id}> - <@&${roles.megalodon.role}>`
+                                "<:announcement:1368346213459427389> <@&908496520809160805>",
+                                "<:giveaway:1368346244275114046> <@&882144884428013578>",
+                                "<:event:1368346864461811864> <@&912107961164369971>",
+                                "<:splash:1048865701068292136> <@&927088424408735764>",
+                                "<:partner:1368347024084176926> <@&960328108462997534>",
+                                "<:chat:1368347056288043059> <@&988892995329863710>"
                             ].join("\n")
                         }
-                    ]
-                },
-                {
-                    title: "Miscellaneous Ping Roles <:hyperion:1367683086929629215>",
-                    color: 12403455,
+                    ],
                     image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=68155959&is=681407d9&hm=b8a47ce355a4e5ba57a31bec606024e847d9ca497f3850f0e750b434eeea2b4e&=&format=webp&quality=lossless"
-                    },
-                    fields: [
-                        {
-                            name: "Notifications for other parties!",
-                            value: [
-                                `<:${roles.diana.name}:${roles.diana.id}> - <@&${roles.diana.role}>`,
-                                `<:${roles.edrag.name}:${roles.edrag.id}> - <@&${roles.edrag.role}>`,
-                                `<:${roles.bestiary.name}:${roles.bestiary.id}> - <@&${roles.bestiary.role}>`,
-                                `<:${roles.mineshaft.name}:${roles.mineshaft.id}> - <@&${roles.mineshaft.role}>`,
-                                `<:${roles.other.name}:${roles.other.id}> - <@&${roles.other.role}>`
-                            ].join("\n")
-                        }
-                    ]
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1368347367006277723/title-_Reaction_Roles_-871x37.png?ex=6817e44a&is=681692ca&hm=ff79b70e9847ca5541b25218c30d15d79845974c8233b4766f45795ad5c57378&=&format=webp&quality=lossless"
+                    }
                 }
             ],
             attachments: [
                 {
                     id: 0
                 }
-            ],
+            ]
         }),
-        components: JSON.stringify(arrayChunks(IsleofDucks.roles.reaction.partyping, 5).slice(0, 5).map(row => ({
+        components: JSON.stringify(arrayChunks(IsleofDucks.roles.reaction.general, 5).slice(0, 5).map(row => ({
             type: ComponentType.ActionRow,
             components: row.map(role => ({
-                custom_id: `reaction-partyping-${role.id}`,
+                custom_id: `reaction-general-${role.id}`,
                 type: ComponentType.Button,
                 style: ButtonStyle.Secondary,
                 emoji: {
@@ -229,24 +224,8 @@ const embeds = {
             {
                 id: 0,
                 filename: 'title.png',
-                url: "https://cdn.discordapp.com/attachments/1300979867881312347/1367850267151700069/66ef0d1b869b9.png?ex=68161555&is=6814c3d5&hm=312aaff4b9f535991d696035c7146df399a832b31be79ee2fb41852610eb01c0&"
+                url: "https://cdn.discordapp.com/attachments/1300979867881312347/1368349716655640596/68169435441da.png?ex=6817e67b&is=681694fb&hm=58a52baefb5549c71b203969a7ed5571a42e7f65825150a54d781dd915b60ada&"
             }
         ])
     },
-    partyfinder1: {
-        content: null,
-        data: null,
-        components: JSON.stringify(arrayChunks(IsleofDucks.roles.reaction.partyping, 5).slice(5, 10).map(row => ({
-            type: ComponentType.ActionRow,
-            components: row.map(role => ({
-                custom_id: `reaction-partyping-${role.id}`,
-                type: ComponentType.Button,
-                style: ButtonStyle.Secondary,
-                emoji: {
-                    name: role.emoji.name,
-                    id: role.emoji.id
-                }
-            }))
-        }))),
-    }
 }

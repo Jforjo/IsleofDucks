@@ -1618,6 +1618,56 @@ const Roles = {
                     id: "1367685881678397541"
                 }
             },
+        ],
+        general: [
+            {
+                id: "announcements",
+                role: "908496520809160805",
+                emoji: {
+                    name: "announcement",
+                    id: "1368346213459427389"
+                }
+            },
+            {
+                id: "giveaway",
+                role: "882144884428013578",
+                emoji: {
+                    name: "giveaway",
+                    id: "1368346244275114046"
+                }
+            },
+            {
+                id: "event",
+                role: "912107961164369971",
+                emoji: {
+                    name: "event",
+                    id: "1368346864461811864"
+                }
+            },
+            {
+                id: "splash",
+                role: "927088424408735764",
+                emoji: {
+                    name: "splash",
+                    id: "1048865701068292136"
+                }
+            },
+            {
+                id: "partner",
+                role: "960328108462997534",
+                emoji: {
+                    name: "partner",
+                    id: "1368347024084176926"
+                }
+            },
+            {
+                id: "chat",
+                role: "988892995329863710",
+                emoji: {
+                    name: "chat",
+                    id: "1368347056288043059"
+                }
+            },
         ]
     }
 };
