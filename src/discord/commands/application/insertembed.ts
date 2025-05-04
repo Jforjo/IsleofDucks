@@ -77,14 +77,14 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
     default_member_permissions: "0",
 }
 
-const roles = IsleofDucks.roles.reaction.partyping.reduce((acc: Record<string, { role: string; name: string; id: string; }>, role) => {
-    acc[role.emoji.name] = {
-        role: role.role,
-        name: role.emoji.name,
-        id: role.emoji.id,
-    };
-    return acc;
-}, {});
+// const roles = IsleofDucks.roles.reaction.partyping.reduce((acc: Record<string, { role: string; name: string; id: string; }>, role) => {
+//     acc[role.emoji.name] = {
+//         role: role.role,
+//         name: role.emoji.name,
+//         id: role.emoji.id,
+//     };
+//     return acc;
+// }, {});
 
 const embeds = {
     roleinfo: {
