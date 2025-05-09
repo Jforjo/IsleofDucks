@@ -253,8 +253,8 @@ async function addDonation(
             {
                 title: "Donations updated!",
                 description: [
-                    `Total: <#${IsleofDucks.channels.donationTotal}>`,
-                    `User total: ${newDonation}`
+                    `Total: ${formatNumber(newDonation)}`,
+                    `Raw: ${newDonation}`
                 ].join("\n"),
                 fields: fields.length > 0 ? fields : undefined,
                 color: 0xFB9B00,
@@ -381,8 +381,8 @@ async function removeDonation(
             {
                 title: "Donations updated!",
                 description: [
-                    `Total: <#${IsleofDucks.channels.donationTotal}>`,
-                    `User total: ${newDonation}`
+                    `Total: ${formatNumber(newDonation)}`,
+                    `Raw: ${newDonation}`
                 ].join("\n"),
                 fields: fields.length > 0 ? fields : undefined,
                 color: 0xFB9B00,
