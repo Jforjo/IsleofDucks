@@ -435,7 +435,7 @@ export async function getAwayPlayers(): Promise<{ id: number, userid: Snowflake;
 
 
 export async function setDonation(userid: Snowflake, amount: number): Promise<void> {
-    await sql`UPDATE discordroles SET (donation) = (${amount}) WHERE discordid = ${userid}`;
+    await sql`UPDATE discordroles SET donation = ${amount} WHERE discordid = ${userid}`;
 }
 export async function getDonation(userid: Snowflake): Promise<{ donation: number; discordname: string } | null> {
     const { rows } = await sql`SELECT discordname, donation FROM discordroles WHERE discordid = ${userid}`;
