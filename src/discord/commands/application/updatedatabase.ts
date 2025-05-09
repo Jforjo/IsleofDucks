@@ -240,8 +240,7 @@ export default async function(
                     "Updated Discord Data for Isle of Ducklings.",
                     "Updating Discord Data for existing users...",
                     "",
-                    `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
-                    `Also, please note that this command is VERY likely to throttle the key if ran multiple times in a row.`
+                    `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`
                 ].join("\n"),
                 color: 0xFB9B00,
                 footer: {
@@ -258,11 +257,35 @@ export default async function(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
+                title: "Updating Discord Data...",
+                description: [
+                    "Updated Discord Data for Isle of Ducks.",
+                    "Updated Discord Data for Isle of Ducklings.",
+                    "Updated Discord Data for existing users.",
+                    "Adding more users...",
+                    "",
+                    `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`
+                ].join("\n"),
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+
+    await UpdateAllDiscordIDsInDb();
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
                 title: "Updated Discord Data!",
                 description: [
                     "Updated Discord Data for Isle of Ducks.",
                     "Updated Discord Data for Isle of Ducklings.",
                     "Updated Discord Data for existing users.",
+                    "Added more users."
                 ].join("\n"),
                 color: 0xFB9B00,
                 footer: {
