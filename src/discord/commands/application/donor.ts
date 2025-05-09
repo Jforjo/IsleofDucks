@@ -165,7 +165,8 @@ async function addDonation(
     if (!(
         interaction.member.roles.includes(IsleofDucks.roles.admin) ||
         interaction.member.roles.includes(IsleofDucks.roles.mod_duck) ||
-        interaction.member.roles.includes(IsleofDucks.roles.mod_duckling)
+        interaction.member.roles.includes(IsleofDucks.roles.mod_duckling) ||
+        interaction.member.roles.includes(IsleofDucks.roles.trainee)
     )) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
