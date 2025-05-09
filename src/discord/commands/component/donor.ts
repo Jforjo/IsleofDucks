@@ -64,7 +64,7 @@ async function viewDonations(
             {
                 title: "Banned Players",
                 color: 0xFB9B00,
-                description: donations.map(donation => `<@${donation.discordid}>: ${formatNumber(donation.donation, 3)}`).join('\n'),
+                description: donations.map(donation => `<@${donation.discordid}> - ${formatNumber(donation.donation, 3)}`).join('\n'),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
