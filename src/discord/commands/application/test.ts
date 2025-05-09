@@ -1,7 +1,4 @@
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
-// import { getUsernameOrUUID } from "@/discord/hypixelUtils";
-// import { getDiscordRole } from "@/discord/utils";
-// import { sql } from "@vercel/postgres";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { UpdateAllDiscordIDsInDb } from "./updatedatabase";
