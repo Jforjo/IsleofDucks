@@ -32,11 +32,11 @@ async function updateDonationTotal(number: number): Promise<boolean> {
     if (!match) return false;
 
     const prefix = match[1];
-    const currentNumber = parseNumber(`${match[2]}${match[3]}`);
-    if (!currentNumber) return false;
+    // const currentNumber = parseNumber(`${match[2]}${match[3]}`);
+    // if (!currentNumber) return false;
 
-    const newNumber = currentNumber + number;
-    const newName = `${prefix}${formatNumber(newNumber, 3)}`;
+    // const newNumber = currentNumber + number;
+    const newName = `${prefix}${formatNumber(number, 3)}`;
 
     await EditChannel(channel.id, { name: newName });
 
