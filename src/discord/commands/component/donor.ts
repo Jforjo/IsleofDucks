@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, formatNumber } from "@/discord/discordUtils";
 import { getDonations, getDonationsCount } from "@/discord/utils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -64,7 +64,7 @@ async function viewDonations(
             {
                 title: "Banned Players",
                 color: 0xFB9B00,
-                description: donations.map(donation => `<@${donation.discordid}>: ${donation.donation}`).join('\n'),
+                description: donations.map(donation => `<@${donation.discordid}>: ${formatNumber(donation.donation, 3)}`).join('\n'),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
