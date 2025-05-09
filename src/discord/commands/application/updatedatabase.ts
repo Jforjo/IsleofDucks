@@ -70,24 +70,26 @@ export async function UpdateAllDiscordIDsInDb(): Promise<number> {
     const users = await GetAllGuildMembers(IsleofDucks.serverID);
     if (!users) return 0;
     if (users.length === 0) return 0;
+    let count = 0;
     
-    const results = await Promise.all(users.map(async (user) => {
+    for (const user of users) {
         const userDB = await getDiscordRoleFromDiscordID(user.user.id);
-        if (userDB) return false;
+        if (userDB) continue;
         
         if (user.user?.bot !== true) {
             const userDB2 = await getDiscordRoleFromDiscordName(user.user.username);
             if (userDB2) {
                 await updateDiscordRoleNameFromName(user.user.username, user.user.id);
-                return true;
+                count++
+                continue;
             }
         }
 
         await addDiscordRole(null, user.user?.bot !== true ? user.user.username : null, user.user.id, null);
-        return true;
-    }));
+        count++
+    }
 
-    return results.filter(result => result).length;
+    return count;
 }
 
 export default async function(
