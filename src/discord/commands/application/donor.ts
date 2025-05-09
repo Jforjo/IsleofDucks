@@ -150,11 +150,11 @@ async function addDonation(
         )
     }
 
-    const newDonation = Math.max(0, donation.donation + amountNumber);
+    // Not including this Number bs seems to concat them instead...
+    const newDonation = Math.max(0, Number(Number(donation.donation) + Number(amountNumber)));
 
     await setDonation(userid, newDonation);
 
-    console.log("Updated donation total...");
     const success = await updateDonationTotal(amountNumber);
     if (!success) {
         await FollowupMessage(interaction.token, {
@@ -176,7 +176,6 @@ async function addDonation(
         )
     }
 
-    console.log("Updated donation roles...");
     const roles = await updateDonationRoles(newDonation, userid);
     if (!roles) {
         await FollowupMessage(interaction.token, {
@@ -301,7 +300,7 @@ async function removeDonation(
         )
     }
 
-    const newDonation = Math.max(0, donation.donation - amountNumber);
+    const newDonation = Math.max(0, Number(Number(donation.donation) - Number(amountNumber)));
 
     await setDonation(userid, newDonation);
 
