@@ -1,5 +1,5 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage } from "@/discord/discordUtils";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, CDNRoutes, ImageFormat, InteractionResponseType, MessageFlags, RouteBases } from "discord-api-types/v10";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, ExecuteWebhook, GetAllChannelMessages, GetChannelMessages, EditChannel, DeleteChannel, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
@@ -14,6 +14,11 @@ async function convertUUID(
         } | APIInteractionResponse
     >
 > {
+    // User sees the "[bot] is thinking..." message
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
+    });
+    
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     const uuidResponse = await getUsernameOrUUID(query);
@@ -76,6 +81,11 @@ async function convertTimestamp(
         } | APIInteractionResponse
     >
 > {
+    // User sees the "[bot] is thinking..." message
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
+    });
+
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     const date = new Date(
@@ -110,8 +120,10 @@ async function convertTimestamp(
     );
 }
 
-export default async function(
-    interaction: APIChatInputApplicationCommandInteraction
+async function transcript(
+    interaction: APIChatInputApplicationCommandInteraction,
+    threadID: string,
+    messageID: string
 ): Promise<
     NextResponse<
         {
@@ -123,23 +135,113 @@ export default async function(
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
+        data: { flags: MessageFlags.Ephemeral }
     });
 
+    if (!interaction.user) {
+        await FollowupMessage(interaction.token, {
+            content: "Could not find who ran the command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+    if (interaction.user.id !== IsleofDucks.staticIDs.Jforjo) {
+        await FollowupMessage(interaction.token, {
+            content: "You don't have permission to use this command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        );
+    }
+
+    const messages = await GetChannelMessages(interaction.channel.id, { limit: 100, after: messageID });
+    if (!messages) {
+        await FollowupMessage(interaction.token, {
+            content: "No messages found!",
+        });
+        return NextResponse.json(
+            { success: false, error: 'No messages found' },
+            { status: 404 }
+        )
+    }
+
+    for (const message of messages.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())) {
+    // for await (const message of GetMessagesAfterGenerator(channelID, firstMessageID)) {
+        if (!message) continue;
+        const avatarURL = message.author.avatar ? RouteBases.cdn + CDNRoutes.userAvatar(message.author.id, message.author.avatar, ImageFormat.PNG ) : undefined;
+        const attachments = message.attachments.map((attachment, index) => {
+            attachment.id = index.toString();
+            return attachment;
+        });
+        await ExecuteWebhook({
+            thread_id: threadID,
+            wait: true
+        }, {
+            username: message.author.username,
+            avatar_url: avatarURL,
+            content: message.content,
+            embeds: message.embeds,
+            attachments: attachments,
+            poll: message.poll,
+            flags: MessageFlags.SuppressNotifications,
+            allowed_mentions: {
+                parse: []
+            }
+        }, attachments.map(attachment => ({
+            id: attachment.id,
+            url: attachment.url,
+            filename: attachment.filename
+        })));
+    }
+    
+    await EditChannel(threadID, {
+        locked: true,
+        archived: true
+    });
+
+    await FollowupMessage(interaction.token, {
+        content: "Done!",
+    });
+    
+    await DeleteChannel(interaction.channel.id);
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
+export default async function(
+    interaction: APIChatInputApplicationCommandInteraction
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     if (!interaction.data) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Missing interaction data",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                embeds: [
+                    {
+                        title: "Something went wrong!",
+                        description: "Missing interaction data",
+                        color: 0xB00020,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            }
         });
         return NextResponse.json(
             { success: false, error: "Missing interaction data" },
@@ -148,18 +250,21 @@ export default async function(
     }
     const interactionData = interaction.data as APIChatInputApplicationCommandInteractionData;
     if (!interactionData.options) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Missing interaction data options",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                embeds: [
+                    {
+                        title: "Something went wrong!",
+                        description: "Missing interaction data options",
+                        color: 0xB00020,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            }
         });
         return NextResponse.json(
             { success: false, error: "Missing interaction data options" },
@@ -198,7 +303,7 @@ export default async function(
             options.convert.timestamp.minute,
             options.convert.timestamp.second
         );
-    }
+    } else if (options.transcript) return await transcript(interaction, options.transcript.thread, options.transcript.message);
 
     await FollowupMessage(interaction.token, {
         embeds: [
@@ -222,6 +327,25 @@ export const CommandData = {
     name: "util",
     description: "Various utility commands.",
     options: [
+        {
+            name: "transcript",
+            description: "Resume saving a transcript.",
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "thread",
+                    description: "The ID of the thread to save the transcript to.",
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                },
+                {
+                    name: "message",
+                    description: "The ID of the message to start saving the transcript from. (exclusive)",
+                    type: ApplicationCommandOptionType.String,
+                    required: true
+                }
+            ]
+        },
         {
             name: "convert",
             description: "Various conversion commands.",
