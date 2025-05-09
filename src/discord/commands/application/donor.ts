@@ -304,7 +304,9 @@ async function removeDonation(
 
     await setDonation(userid, newDonation);
 
+    console.log("Before updateDonationTotal");
     const success = await updateDonationTotal(-amountNumber);
+    console.log("After updateDonationTotal");
     if (!success) {
         await FollowupMessage(interaction.token, {
             embeds: [
@@ -325,7 +327,9 @@ async function removeDonation(
         )
     }
 
+    console.log("Before updateDonationRoles");
     const roles = await updateDonationRoles(newDonation, userid);
+    console.log("After updateDonationRoles");
     if (!roles) {
         await FollowupMessage(interaction.token, {
             embeds: [
