@@ -138,7 +138,7 @@ async function transcript(
         data: { flags: MessageFlags.Ephemeral }
     });
 
-    if (!interaction.user) {
+    if (!interaction.member) {
         await FollowupMessage(interaction.token, {
             content: "Could not find who ran the command!"
         });
@@ -147,7 +147,7 @@ async function transcript(
             { status: 400 }
         );
     }
-    if (interaction.user.id !== IsleofDucks.staticIDs.Jforjo) {
+    if (interaction.member.user.id !== IsleofDucks.staticIDs.Jforjo) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
