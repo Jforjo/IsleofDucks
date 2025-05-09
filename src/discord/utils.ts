@@ -459,3 +459,7 @@ export async function getDonationsCount(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM discordroles WHERE donation > 0`;
     return rows[0].count;
 }
+export async function getTotalDonation(): Promise<number> {
+    const { rows } = await sql`SELECT SUM(donation) FROM discordroles WHERE donation > 0`;
+    return rows[0].sum;
+}

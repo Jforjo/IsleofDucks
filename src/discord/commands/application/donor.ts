@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIEmbedField, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, formatNumber, GetChannel, EditChannel, AddGuildMemberRole, GetGuildMember, RemoveGuildMemberRole } from "@/discord/discordUtils";
-import { getDonation, setDonation, getDonations, getDonationsCount } from "@/discord/utils";
+import { getDonation, setDonation, getDonations, getDonationsCount, getTotalDonation } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
 function parseNumber(number: string): number | null {
@@ -38,7 +38,6 @@ async function updateDonationTotal(number: number): Promise<boolean> {
     const newNumber = currentNumber + number;
     const newName = `${prefix}${formatNumber(newNumber, 3)}`;
 
-    console.log(`Updating donation total from ${channel.name} to ${newName}`);
     await EditChannel(channel.id, { name: newName });
 
     return true;
@@ -70,6 +69,74 @@ async function updateDonationRoles(amount: number, userId: Snowflake): Promise<n
     }
 
     return { added: rolesAdded, removed: rolesRemoved };
+}
+
+async function updateDonation(
+    interaction: APIChatInputApplicationCommandInteraction
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    if (!interaction.member) {
+        await FollowupMessage(interaction.token, {
+            content: "Could not find who ran the command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await FollowupMessage(interaction.token, {
+            content: "You don't have permission to use this command!"
+        });
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        );
+    }
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Updating donation total...",
+                description: `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then you may to wait for 10 minutes and run the command again.`,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+
+    const amount = await getTotalDonation();
+    await updateDonationTotal(amount);
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Done!",
+                description: `<#${IsleofDucks.channels.donationTotal}> has been updated to ${formatNumber(amount, 3)}!`,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
 }
 
 async function addDonation(
@@ -155,27 +222,6 @@ async function addDonation(
     const newDonation = Math.max(0, Number(Number(donation.donation) + Number(amountNumber)));
 
     await setDonation(userid, newDonation);
-
-    const success = await updateDonationTotal(amountNumber);
-    if (!success) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Could not update donation total",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ]
-        });
-        return NextResponse.json(
-            { success: false, error: "Could not update donation total" },
-            { status: 400 }
-        )
-    }
 
     const roles = await updateDonationRoles(newDonation, userid);
     if (!roles) {
@@ -304,27 +350,6 @@ async function removeDonation(
     const newDonation = Math.max(0, Number(Number(donation.donation) - Number(amountNumber)));
 
     await setDonation(userid, newDonation);
-
-    const success = await updateDonationTotal(-amountNumber);
-    if (!success) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Could not update donation total",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ]
-        });
-        return NextResponse.json(
-            { success: false, error: "Could not update donation total" },
-            { status: 400 }
-        )
-    }
 
     const roles = await updateDonationRoles(newDonation, userid);
     if (!roles) {
@@ -626,6 +651,8 @@ export default async function(
         return await viewDonations(interaction);
     } else if (options.check) {
         return await checkDonation(interaction, options.check.user);
+    } else if (options.update) {
+        return await updateDonation(interaction);
     }
 
     await FollowupMessage(interaction.token, {
@@ -705,6 +732,11 @@ export const CommandData = {
                     required: true
                 }
             ]
+        },
+        {
+            name: "update",
+            description: "Updates the channel name.",
+            type: ApplicationCommandOptionType.Subcommand
         }
     ]
 }
