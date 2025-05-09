@@ -21,6 +21,7 @@ import { CommandData as Test } from "./test";
 import { CommandData as SuperlativeDetailed } from "./superlativedetailed";
 import { CommandData as Util } from "./util";
 import { CommandData as Away } from "./away";
+import { CommandData as Donor } from "./donor";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -78,7 +79,8 @@ export default async function(
         ReadMessage,
         Test,
         Util,
-        Away
+        Away,
+        Donor
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);

@@ -437,11 +437,25 @@ export async function getAwayPlayers(): Promise<{ id: number, userid: Snowflake;
 export async function setDonation(userid: Snowflake, amount: number): Promise<void> {
     await sql`UPDATE discordroles SET (donation) = (${amount}) WHERE discordid = ${userid}`;
 }
-export async function getDonation(userid: Snowflake): Promise<{ donation: number; discordname: string } | -1> {
+export async function getDonation(userid: Snowflake): Promise<{ donation: number; discordname: string } | null> {
     const { rows } = await sql`SELECT discordname, donation FROM discordroles WHERE discordid = ${userid}`;
-    if (rows.length === 0) return -1;
+    if (rows.length === 0) return null;
     return {
         donation: rows[0].donation,
         discordname: rows[0].discordname
     };
+}
+export async function getDonations(
+    offset = 0,
+    limit = 100
+): Promise<{
+    donation: number;
+    discordid: string;
+}[]> {
+    const { rows } = await sql`SELECT discordid, donation FROM discordroles WHERE donation > 0 ORDER BY donation DESC LIMIT ${limit} OFFSET ${offset}`;
+    return rows as { donation: number; discordid: string; }[];
+}
+export async function getDonationsCount(): Promise<number> {
+    const { rows } = await sql`SELECT COUNT(*) FROM discordroles WHERE donation > 0`;
+    return rows[0].count;
 }
