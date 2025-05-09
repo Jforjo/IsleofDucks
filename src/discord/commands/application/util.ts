@@ -1,5 +1,5 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, CDNRoutes, ImageFormat, InteractionResponseType, MessageFlags, RouteBases } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, ExecuteWebhook, GetAllChannelMessages, GetChannelMessages, EditChannel, DeleteChannel, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, ExecuteWebhook, GetChannelMessages, EditChannel, DeleteChannel, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
