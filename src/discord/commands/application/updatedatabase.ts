@@ -1,6 +1,6 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks } from "@/discord/discordUtils";
 import { getGuildData, getHypixelPlayer } from "@/discord/hypixelUtils";
-import { addDiscordRole, getAllDiscordRolesWhereNameIsNull, getDiscordRole, updateDiscordRoleName } from "@/discord/utils";
+import { addDiscordRole, getAllDiscordRolesWhereIDIsNull, getAllDiscordRolesWhereNameIsNull, getDiscordRole, getDiscordRoleFromDiscordID, getDiscordRoleFromDiscordName, updateDiscordRoleName, updateDiscordRoleNameFromName } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -19,6 +19,8 @@ export async function UpdateDiscord(uuid: string): Promise<boolean> {
     if (!player.socialMedia.links.DISCORD) return false;
 
     if (!discordResult) {
+        const userDB = await getDiscordRoleFromDiscordName(player.socialMedia.links.DISCORD);
+        if (userDB) return false;
         await addDiscordRole(player.uuid, player.socialMedia.links.DISCORD, null, null);
         return true;
     }
@@ -63,6 +65,29 @@ export async function UpdateAllDiscordRolesInDb(): Promise<number> {
         }
     }
     return count;
+}
+export async function UpdateAllDiscordIDsInDb(): Promise<number> {
+    const users = await GetAllGuildMembers(IsleofDucks.serverID);
+    if (!users) return 0;
+    if (users.length === 0) return 0;
+    
+    const results = await Promise.all(users.map(async (user) => {
+        const userDB = await getDiscordRoleFromDiscordID(user.user.id);
+        if (userDB) return false;
+        
+        if (user.user?.bot !== true) {
+            const userDB2 = await getDiscordRoleFromDiscordName(user.user.username);
+            if (userDB2) {
+                await updateDiscordRoleNameFromName(user.user.username, user.user.id);
+                return true;
+            }
+        }
+
+        await addDiscordRole(null, user.user?.bot !== true ? user.user.username : null, user.user.id, null);
+        return true;
+    }));
+
+    return results.filter(result => result).length;
 }
 
 export default async function(

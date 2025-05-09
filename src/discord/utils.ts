@@ -350,14 +350,14 @@ export async function updateGuildSuperlative(
 }
 
 export interface DiscordRole {
-    uuid: string;
+    uuid: string | null;
     discordname: string | null;
     discordid: Snowflake | null;
     discordupdated: number;
     exp: number | null;
     expupdated: number;
 }
-export async function addDiscordRole(uuid: string, discordname: string | null, discordid: Snowflake | null, experience: number | null): Promise<void> {
+export async function addDiscordRole(uuid: string | null, discordname: string | null, discordid: Snowflake | null, experience: number | null): Promise<void> {
     const timestamp = Date.now();
     // Only add timestamps if the data isn't null
     let discordTimestamp = 0;
@@ -366,16 +366,19 @@ export async function addDiscordRole(uuid: string, discordname: string | null, d
     if (experience) experienceTimestamp = timestamp;
     await sql`INSERT INTO discordroles (uuid, discordname, discordid, discordupdated, exp, expupdated) VALUES (${uuid}, ${discordname}, ${discordid}, ${discordTimestamp}, ${experience}, ${experienceTimestamp})`;
 }
-export async function updateDiscordRoleName(uuid: string, discordname: string, discordid: Snowflake | null): Promise<void> {
+export async function updateDiscordRoleName(uuid: string | null, discordname: string, discordid: Snowflake | null): Promise<void> {
     await sql`UPDATE discordroles SET (discordname, discordid, discordupdated) = (${discordname}, ${discordid}, ${Date.now()}) WHERE uuid = ${uuid}`;
 }
-export async function updateDiscordRoleExp(uuid: string, experience: number): Promise<void> {
+export async function updateDiscordRoleNameFromName(discordname: string, discordid: Snowflake | null): Promise<void> {
+    await sql`UPDATE discordroles SET (discordid, discordupdated) = (${discordid}, ${Date.now()}) WHERE discordname = ${discordname}`;
+}
+export async function updateDiscordRoleExp(uuid: string | null, experience: number): Promise<void> {
     await sql`UPDATE discordroles SET (exp, expupdated) = (${experience}, ${Date.now()}) WHERE uuid = ${uuid}`;
 }
-export async function deleteDiscordRole(uuid: string): Promise<void> {
+export async function deleteDiscordRole(uuid: string | null): Promise<void> {
     await sql`DELETE FROM discordroles WHERE uuid = ${uuid}`;
 }
-export async function getDiscordRole(uuid: string): Promise<null | DiscordRole> {
+export async function getDiscordRole(uuid: string | null): Promise<null | DiscordRole> {
     const { rows } = await sql`SELECT * FROM discordroles WHERE uuid = ${uuid}`;
     if (rows.length === 0) return null;
     return rows[0] as DiscordRole;
@@ -428,4 +431,17 @@ export async function removeAwayPlayer(id: number): Promise<{ id: number, userid
 export async function getAwayPlayers(): Promise<{ id: number, userid: Snowflake; reason: string; leave: number; return: number }[]> {
     const { rows } = await sql`SELECT * FROM away`;
     return rows as { id: number, userid: Snowflake; reason: string; leave: number; return: number }[];
+}
+
+
+export async function setDonation(userid: Snowflake, amount: number): Promise<void> {
+    await sql`UPDATE discordroles SET (donation) = (${amount}) WHERE discordid = ${userid}`;
+}
+export async function getDonation(userid: Snowflake): Promise<{ donation: number; discordname: string } | -1> {
+    const { rows } = await sql`SELECT discordname, donation FROM discordroles WHERE discordid = ${userid}`;
+    if (rows.length === 0) return -1;
+    return {
+        donation: rows[0].donation,
+        discordname: rows[0].discordname
+    };
 }
