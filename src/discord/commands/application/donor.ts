@@ -150,8 +150,11 @@ async function addDonation(
         )
     }
 
-    await setDonation(userid, Math.max(0, donation.donation + amountNumber));
+    const newDonation = Math.max(0, donation.donation + amountNumber);
 
+    await setDonation(userid, newDonation);
+
+    console.log("Updated donation total...");
     const success = await updateDonationTotal(amountNumber);
     if (!success) {
         await FollowupMessage(interaction.token, {
@@ -173,7 +176,8 @@ async function addDonation(
         )
     }
 
-    const roles = await updateDonationRoles(donation.donation + amountNumber, userid);
+    console.log("Updated donation roles...");
+    const roles = await updateDonationRoles(newDonation, userid);
     if (!roles) {
         await FollowupMessage(interaction.token, {
             embeds: [
@@ -204,7 +208,7 @@ async function addDonation(
                 title: "Donations updated!",
                 description: [
                     `Total: <#${IsleofDucks.channels.donationTotal}>`,
-                    `User total: ${donation.donation + amountNumber}`
+                    `User total: ${newDonation}`
                 ].join("\n"),
                 fields: fields.length > 0 ? fields : undefined,
                 color: 0xFB9B00,
@@ -297,7 +301,9 @@ async function removeDonation(
         )
     }
 
-    await setDonation(userid, Math.max(0, donation.donation - amountNumber));
+    const newDonation = Math.max(0, donation.donation - amountNumber);
+
+    await setDonation(userid, newDonation);
 
     const success = await updateDonationTotal(-amountNumber);
     if (!success) {
@@ -320,7 +326,7 @@ async function removeDonation(
         )
     }
 
-    const roles = await updateDonationRoles(donation.donation - amountNumber, userid);
+    const roles = await updateDonationRoles(newDonation, userid);
     if (!roles) {
         await FollowupMessage(interaction.token, {
             embeds: [
@@ -351,7 +357,7 @@ async function removeDonation(
                 title: "Donations updated!",
                 description: [
                     `Total: <#${IsleofDucks.channels.donationTotal}>`,
-                    `User total: ${donation.donation - amountNumber}`
+                    `User total: ${newDonation}`
                 ].join("\n"),
                 fields: fields.length > 0 ? fields : undefined,
                 color: 0xFB9B00,
