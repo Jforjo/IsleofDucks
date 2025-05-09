@@ -1,6 +1,6 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks } from "@/discord/discordUtils";
 import { getGuildData, getHypixelPlayer } from "@/discord/hypixelUtils";
-import { addDiscordRole, getAllDiscordRolesWhereIDIsNull, getAllDiscordRolesWhereNameIsNull, getDiscordRole, getDiscordRoleFromDiscordID, getDiscordRoleFromDiscordName, updateDiscordRoleName, updateDiscordRoleNameFromName } from "@/discord/utils";
+import { addDiscordRole, getAllDiscordRolesWhereNameIsNull, getDiscordRole, getDiscordRoleFromDiscordID, getDiscordRoleFromDiscordName, updateDiscordRoleName, updateDiscordRoleNameFromName } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
