@@ -24,29 +24,23 @@ function parseNumber(number: string): number | null {
 }
 
 async function updateDonationTotal(number: number): Promise<boolean> {
-    console.log("updateDonationTotal 1");
     const channel = await GetChannel(IsleofDucks.channels.donationTotal);
-    console.log("updateDonationTotal 2");
     if (!channel || !channel.name) return false;
-    console.log("updateDonationTotal 3");
+
     const regex = /^(.*?)(\d+(?:\.\d{1,3})?)(k|m|b|t)?$/i;
-    console.log("updateDonationTotal 4");
     const match = regex.exec(channel.name);
-    console.log("updateDonationTotal 5");
     if (!match) return false;
-    console.log("updateDonationTotal 6");
+
     const prefix = match[1];
-    console.log("updateDonationTotal 7");
     const currentNumber = parseNumber(`${match[2]}${match[3]}`);
-    console.log("updateDonationTotal 8");
     if (!currentNumber) return false;
-    console.log("updateDonationTotal 9");
+
     const newNumber = currentNumber + number;
-    console.log("updateDonationTotal 10");
     const newName = `${prefix}${formatNumber(newNumber, 3)}`;
-    console.log("updateDonationTotal 11");
+
+    console.log(`Updating donation total from ${channel.name} to ${newName}`);
     await EditChannel(channel.id, { name: newName });
-    console.log("updateDonationTotal 12");
+
     return true;
 }
 

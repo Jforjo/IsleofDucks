@@ -231,6 +231,7 @@ export async function EditChannel(
         if (res.status === 429) {
             const retryAfter = res.headers.get('retry-after');
             if (retryAfter && !isNaN(Number(retryAfter))) {
+                console.log(`EditChanel retrying in ${retryAfter} seconds`);
                 await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
                 return await EditChannel(channelId, options);
             }
