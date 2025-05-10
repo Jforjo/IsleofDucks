@@ -1,7 +1,7 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, APIMessageActionRowComponent, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, APIActionRowComponent, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
 import { getBannedPlayer, getSettingValue } from "@/discord/utils";
@@ -285,8 +285,8 @@ export default async function(
     if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
 
     const buttons: {
-        duck: APIMessageActionRowComponent[],
-        duckling: APIMessageActionRowComponent[]
+        duck: { type: ComponentType.Button; custom_id: string; label: string; style: ButtonStyle.Primary; disabled?: boolean; }[],
+        duckling: { type: ComponentType.Button; custom_id: string; label: string; style: ButtonStyle.Primary; disabled?: boolean; }[]
     } | undefined = !(
         interaction.member.roles.includes(IsleofDucks.roles.staff) || interaction.member.roles.includes(IsleofDucks.roles.helper)
     ) ? undefined : {
