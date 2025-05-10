@@ -46,7 +46,7 @@ export default async function(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
         data: {
-            flags: MessageFlags.Ephemeral + MessageFlags.IsComponentsV2
+            flags: MessageFlags.IsComponentsV2
         }
     });
 
@@ -303,9 +303,9 @@ export default async function(
     //     }
     // });
 
-    await FollowupMessage(interaction.token, {
-        content: `Done!`,
-    });
+    // await FollowupMessage(interaction.token, {
+    //     content: `Done!`,
+    // });
 
     return NextResponse.json(
         { success: true },
