@@ -1,5 +1,5 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, formatNumber } from "@/discord/discordUtils";
-import { getDonations, getDonationsCount } from "@/discord/utils";
+import { getDonations, getDonationsCount, getTotalDonation } from "@/discord/utils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -18,7 +18,8 @@ async function viewDonations(
     const page = interaction.data.custom_id.split("-")[1].split('_')[1];
     const donations = await getDonations(( parseInt(page) - 1 ) * 25, 25);
     const donationCount = await getDonationsCount();
-    if (!donations.length || !donationCount) {
+    const donationsTotal = await getTotalDonation();
+    if (!donations.length || !donationCount || !donationsTotal) {
         await FollowupMessage(interaction.token, {
             content: null,
             embeds: [
@@ -39,7 +40,7 @@ async function viewDonations(
         );
     }
 
-    if (donations.length === 0 || donationCount === 0) {
+    if (donations.length === 0 || donationCount === 0 || donationsTotal === 0) {
         await FollowupMessage(interaction.token, {
             content: null,
             embeds: [
@@ -62,7 +63,7 @@ async function viewDonations(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: "Banned Players",
+                title: `Donations - ${formatNumber(donationsTotal, 3)}`,
                 color: 0xFB9B00,
                 description: donations.map(donation => `<@${donation.discordid}> - ${formatNumber(donation.donation, 3)}`).join('\n'),
                 footer: {
@@ -76,14 +77,14 @@ async function viewDonations(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `banlist-page_${parseInt(page) - 1}`,
+                        custom_id: `donor-page_${parseInt(page) - 1}`,
                         type: ComponentType.Button,
                         label: '◀️',
                         style: ButtonStyle.Primary,
                         disabled: page == '1'
                     },
                     {
-                        custom_id: `banlist-page_${parseInt(page) + 1}`,
+                        custom_id: `donor-page_${parseInt(page) + 1}`,
                         type: ComponentType.Button,
                         label: '▶️',
                         style: ButtonStyle.Primary,

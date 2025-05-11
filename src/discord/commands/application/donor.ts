@@ -415,7 +415,8 @@ async function viewDonations(
 
     const donations = await getDonations(0, 25);
     const donationCount = await getDonationsCount();
-    if (!donations.length || !donationCount) {
+    const donationsTotal = await getTotalDonation();
+    if (!donations.length || !donationCount || !donationsTotal) {
         await FollowupMessage(interaction.token, {
             content: null,
             embeds: [
@@ -436,7 +437,7 @@ async function viewDonations(
         );
     }
 
-    if (donations.length === 0 || donationCount === 0) {
+    if (donations.length === 0 || donationCount === 0 || donationsTotal === 0) {
         await FollowupMessage(interaction.token, {
             content: null,
             embeds: [
@@ -459,7 +460,7 @@ async function viewDonations(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: "Donations",
+                title: `Donations - ${formatNumber(donationsTotal, 3)}`,
                 color: 0xFB9B00,
                 description: donations.map(donation => `<@${donation.discordid}> - ${formatNumber(donation.donation, 3)}`).join('\n'),
                 footer: {
