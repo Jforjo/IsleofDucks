@@ -8,6 +8,8 @@ function parseNumber(number: string): number | null {
     const match = regex.exec(number);
     if (!match) return null;
     const value = parseFloat(match[1]);
+    // Full number, no 'k', 'm', 'b' or 't' etc
+    if (match.length == 1) return value;
     const unit = match[2].toLowerCase();
     switch (unit) {
         case 'k':
