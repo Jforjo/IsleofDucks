@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -46,457 +46,235 @@ export default async function(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-            flags: MessageFlags.IsComponentsV2,
-            components: [
-                {
-                    type: ComponentType.Container,
-                    accent_color: 0xFB9B00,
-                    components: [
-                        {
-                            type: ComponentType.ActionRow,
-                            components: [
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "Test",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "Test",
-                                    style: ButtonStyle.Primary,
-                                },
-                            ]
-                        },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: "Some text"
-                        },
-                        {
-                            type: ComponentType.Separator
-                        },
-                        {
-                            type: ComponentType.Section,
-                            components: [
-                                {
-                                    type: ComponentType.TextDisplay,
-                                    content: "Some more text"
-                                }
-                            ],
-                            accessory: {
+            flags: MessageFlags.IsComponentsV2
+        }
+    });
+
+    await FollowupMessage(interaction.token, {
+        // flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.Container,
+                accent_color: 0xFB9B00,
+                components: [
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [
+                            {
                                 custom_id: "test",
                                 type: ComponentType.Button,
                                 label: "Test",
                                 style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "Test",
+                                style: ButtonStyle.Primary,
+                            },
+                        ]
+                    },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: "Some text"
+                    },
+                    {
+                        type: ComponentType.Separator
+                    },
+                    {
+                        type: ComponentType.Section,
+                        components: [
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: "Some more text"
                             }
-                        },
-                        {
-                            type: ComponentType.ActionRow,
-                            components: [
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "1",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "2",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "3",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "4",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "5",
-                                    style: ButtonStyle.Primary,
-                                },
-                            ]
-                        },
-                        {
-                            type: ComponentType.ActionRow,
-                            components: [
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "1",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "2",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "3",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "4",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "5",
-                                    style: ButtonStyle.Primary,
-                                },
-                            ]
-                        },
-                        {
-                            type: ComponentType.ActionRow,
-                            components: [
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "1",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "2",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "3",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "4",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "5",
-                                    style: ButtonStyle.Primary,
-                                },
-                            ]
-                        },
-                        {
-                            type: ComponentType.ActionRow,
-                            components: [
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "1",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "2",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "3",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "4",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "5",
-                                    style: ButtonStyle.Primary,
-                                },
-                            ]
-                        },
-                        {
-                            type: ComponentType.ActionRow,
-                            components: [
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "1",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "2",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "3",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "4",
-                                    style: ButtonStyle.Primary,
-                                },
-                                {
-                                    custom_id: "test",
-                                    type: ComponentType.Button,
-                                    label: "5",
-                                    style: ButtonStyle.Primary,
-                                },
-                            ]
+                        ],
+                        accessory: {
+                            custom_id: "test",
+                            type: ComponentType.Button,
+                            label: "Test",
+                            style: ButtonStyle.Primary,
                         }
-                    ]
-                }
-            ]
-        }
+                    },
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "1",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "2",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "3",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "4",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "5",
+                                style: ButtonStyle.Primary,
+                            },
+                        ]
+                    },
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "1",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "2",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "3",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "4",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "5",
+                                style: ButtonStyle.Primary,
+                            },
+                        ]
+                    },
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "1",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "2",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "3",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "4",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "5",
+                                style: ButtonStyle.Primary,
+                            },
+                        ]
+                    },
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "1",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "2",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "3",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "4",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "5",
+                                style: ButtonStyle.Primary,
+                            },
+                        ]
+                    },
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "1",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "2",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "3",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "4",
+                                style: ButtonStyle.Primary,
+                            },
+                            {
+                                custom_id: "test",
+                                type: ComponentType.Button,
+                                label: "5",
+                                style: ButtonStyle.Primary,
+                            },
+                        ]
+                    }
+                ]
+            }
+        ]
     });
-
-    // await FollowupMessage(interaction.token, {
-    //     flags: MessageFlags.IsComponentsV2,
-    //     components: [
-    //         {
-    //             type: ComponentType.Container,
-    //             accent_color: 0xFB9B00,
-    //             components: [
-    //                 {
-    //                     type: ComponentType.ActionRow,
-    //                     components: [
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "Test",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "Test",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                     ]
-    //                 },
-    //                 {
-    //                     type: ComponentType.TextDisplay,
-    //                     content: "Some text"
-    //                 },
-    //                 {
-    //                     type: ComponentType.Separator
-    //                 },
-    //                 {
-    //                     type: ComponentType.Section,
-    //                     components: [
-    //                         {
-    //                             type: ComponentType.TextDisplay,
-    //                             content: "Some more text"
-    //                         }
-    //                     ],
-    //                     accessory: {
-    //                         custom_id: "test",
-    //                         type: ComponentType.Button,
-    //                         label: "Test",
-    //                         style: ButtonStyle.Primary,
-    //                     }
-    //                 },
-    //                 {
-    //                     type: ComponentType.ActionRow,
-    //                     components: [
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "1",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "2",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "3",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "4",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "5",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                     ]
-    //                 },
-    //                 {
-    //                     type: ComponentType.ActionRow,
-    //                     components: [
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "1",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "2",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "3",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "4",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "5",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                     ]
-    //                 },
-    //                 {
-    //                     type: ComponentType.ActionRow,
-    //                     components: [
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "1",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "2",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "3",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "4",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "5",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                     ]
-    //                 },
-    //                 {
-    //                     type: ComponentType.ActionRow,
-    //                     components: [
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "1",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "2",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "3",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "4",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "5",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                     ]
-    //                 },
-    //                 {
-    //                     type: ComponentType.ActionRow,
-    //                     components: [
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "1",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "2",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "3",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "4",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                         {
-    //                             custom_id: "test",
-    //                             type: ComponentType.Button,
-    //                             label: "5",
-    //                             style: ButtonStyle.Primary,
-    //                         },
-    //                     ]
-    //                 }
-    //             ]
-    //         }
-    //     ]
-    // });
     
     // const { rows } = await sql`SELECT * FROM users`;
 
