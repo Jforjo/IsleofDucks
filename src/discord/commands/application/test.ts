@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
