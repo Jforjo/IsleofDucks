@@ -9,7 +9,7 @@ function parseNumber(number: string): number | null {
     if (!match) return null;
     const value = parseFloat(match[1]);
     // Full number, no 'k', 'm', 'b' or 't' etc
-    if (match.length == 1) return value;
+    if (!match[2]) return value;
     const unit = match[2].toLowerCase();
     switch (unit) {
         case 'k':
