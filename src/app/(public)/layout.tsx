@@ -25,7 +25,7 @@ export default function RootLayout({
     return (
         <ClerkProvider appearance={{ baseTheme: dark }}>
             <html suppressHydrationWarning lang="en">
-                <body className="flex flex-col min-h-screen dark:bg-neutral-900">
+                <body suppressHydrationWarning className="flex flex-col min-h-screen dark:bg-neutral-900">
                     <Header />
                     <main className="flex-grow">
                         <Suspense fallback={<Loading />}>

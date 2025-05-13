@@ -28,7 +28,7 @@ export default async function RootLayout({
         <ClerkProvider appearance={{ baseTheme: dark }}>
             {/* ClerkProvider already includes the html tag */}
             <html suppressHydrationWarning lang="en">
-                <body className={`flex flex-col min-h-screen dark:bg-neutral-800`}>
+                <body suppressHydrationWarning className={`flex flex-col min-h-screen dark:bg-neutral-800`}>
                     <Header />
                     <div className="flex flex-grow">
                         <Sidebar />
