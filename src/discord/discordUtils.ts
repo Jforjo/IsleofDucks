@@ -2268,6 +2268,7 @@ const Help = {
 }
 
 export const IsleofDucks = {
+    themeColour: "FB9B00",
     serverID: ServerID,
     staticIDs: StaticIDs,
     channels: Channels,
