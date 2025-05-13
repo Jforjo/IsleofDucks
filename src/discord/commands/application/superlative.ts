@@ -3,7 +3,7 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { updateGuildSuperlative } from "@/discord/utils";
+import { saveSuperlativeData, updateGuildSuperlative } from "@/discord/utils";
 
 export async function getSuperlative(): Promise<{
     superlative: Superlative;
@@ -21,6 +21,7 @@ export async function getSuperlative(): Promise<{
     const { rows: reset } = await sql`SELECT value FROM settings WHERE key = 'superlativeReset' LIMIT 1`;
     if (reset.length > 0) {
         if (reset[0].value === "true") {
+            await saveSuperlativeData();
             await sql`TRUNCATE TABLE users`;
             await sql`UPDATE settings SET value = ${"false"} WHERE key = 'superlativeReset'`;
         }
@@ -333,6 +334,11 @@ NextResponse<
                 },
                 timestamp: new Date().toISOString()
             },
+        ],
+    });
+
+    await SendMessage(interaction.channel.id, {
+        embeds: [
             {
                 title: `Superlative - ${superlative.title}`,
                 // description: ``,
@@ -343,7 +349,7 @@ NextResponse<
                 },
                 timestamp: new Date().toISOString()
             }
-        ],
+        ]
     });
 
     return NextResponse.json(

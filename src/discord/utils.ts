@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { Snowflake } from 'discord-api-types/globals';
-import { Superlative } from './discordUtils';
+import { IsleofDucks, Superlative } from './discordUtils';
 
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
     return Array(Math.ceil(array.length / chunk_size))
@@ -462,4 +462,49 @@ export async function getDonationsCount(): Promise<number> {
 export async function getTotalDonation(): Promise<number> {
     const { rows } = await sql`SELECT SUM(donation) FROM discordroles WHERE donation > 0`;
     return rows[0].sum;
+}
+
+export async function saveSuperlativeData(): Promise<boolean> {
+    const { rows: superlativeIDRes } = await sql`SELECT value FROM settings WHERE key = 'superlative' LIMIT 1`;
+    if (superlativeIDRes.length === 0) return false;
+    const superlativeID = superlativeIDRes[0].value as string;
+
+    const superlative = IsleofDucks.superlatives.find((superlative) => superlative.id === superlativeID);
+    if (!superlative) return false;
+    if (!superlative.callback) return false;
+    
+    const ducks = await getGuildData("Isle of Ducks");
+    if (!ducks.success) return false;
+    const ducklings = await getGuildData("Isle of Ducklings");
+    if (!ducklings.success) return false;
+    
+    const duckDataPromise = Promise.all(
+        ducks.guild.members.map(async (member) => {
+            const guildData = await superlative.callback(member.uuid);
+            return {
+                uuid: member.uuid,
+                value: guildData.success ? guildData.value : 0
+            };
+        })
+    );
+    const ducklingDataPromise = Promise.all(
+        ducklings.guild.members.map(async (member) => {
+            const guildData = await superlative.callback(member.uuid);
+            return {
+                uuid: member.uuid,
+                value: guildData.success ? guildData.value : 0
+            };
+        })
+    );
+    const [duckData, ducklingData] = await Promise.all([duckDataPromise, ducklingDataPromise]);
+
+    const { rows } = await sql`
+        INSERT INTO pastsuperlatives (id, title, duckdata, ducklingdata)
+        VALUES (${superlative.id}, ${superlative.title}, ${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
+        ON CONFLICT (id) DO UPDATE
+        SET (title, duckdata, ducklingdata) = (${superlative.title}, ${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
+        RETURNING id
+    `;
+
+    return rows.length > 0 && rows[0].id === superlative.id;
 }
