@@ -32,8 +32,10 @@ export default async function Staff() {
     }, {});
     
     return (
-        <section className="mt-8 flex flex-wrap justify-center gap-4">
-            <StaffBoxes staff={staff} />
+        <section className="my-8">
+            <div className="flex flex-wrap justify-center gap-4">
+                <StaffBoxes staff={staff} />
+            </div>
         </section>
     );
 }
