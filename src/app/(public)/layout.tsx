@@ -27,7 +27,7 @@ export default function RootLayout({
             <html suppressHydrationWarning lang="en">
                 <body suppressHydrationWarning className="flex flex-col min-h-screen dark:bg-neutral-900">
                     <Header />
-                    <main className="flex-grow">
+                    <main className="flex flex-grow">
                         <Suspense fallback={<Loading />}>
                             {children}
                         </Suspense>

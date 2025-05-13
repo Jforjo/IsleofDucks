@@ -4,7 +4,7 @@ import React from "react";
 export default function Home(): React.JSX.Element {
     return (
         <>
-            <section className="flex flex-col justify-center items-center max-w-3xl mx-auto my-64">
+            <section className="grow flex flex-col justify-center items-center max-w-3xl mx-auto">
                 <h1 className="text-6xl font-bold mb-4 dark:text-neutral-300">
                     Isle of Ducks
                 </h1>
