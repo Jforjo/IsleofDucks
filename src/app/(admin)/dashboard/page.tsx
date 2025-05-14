@@ -1,6 +1,6 @@
 import React from "react";
 import DashboardImmunity from "../_components/dashboardImmunity";
-import { ClerkGetUserRoles } from "@/app/_actions";
+import { ClerkGetUserRoles, RolesCompare } from "@/app/_actions";
 import DropdownSection from "../_components/dropdownSection";
 import { redirect } from "next/navigation";
 
@@ -13,7 +13,7 @@ const allowedPerms = new Set([
 export default async function Dashboard(): Promise<React.JSX.Element> {
     const userRoles = await ClerkGetUserRoles();
     if (!userRoles) redirect("/");
-    if (!userRoles.intersection(allowedPerms).size) redirect("/");
+    if (!RolesCompare(userRoles, allowedPerms).length) redirect("/");
     const isAdmin = userRoles.has("admin");
     
     return (
