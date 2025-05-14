@@ -23,6 +23,11 @@ export default function HeaderNav({
                     </Link>
                 </li>
                 <li>
+                    <Link href="/superlative">
+                        <span className={pathname === "/superlative" ? "font-bold dark:text-neutral-200" : "dark:text-neutral-400 dark:hover:text-neutral-300"}>Superlative</span>
+                    </Link>
+                </li>
+                <li>
                     <Link href="/discord">
                         <span className={pathname === "/discord" ? "font-bold dark:text-neutral-200" : "dark:text-neutral-400 dark:hover:text-neutral-300"}>Discord</span>
                     </Link>

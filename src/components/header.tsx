@@ -4,18 +4,14 @@ import React from "react";
 import DiscordLogin from "./ui/login";
 import HoverImage from "./ui/hoverImage";
 import HeaderNav from "./headerNav";
-import { ClerkGetUserRoles } from "@/app/_actions";
-
-const allowedPerms = new Set([
-    "admin",
-    "mod",
-    "trainee",
-]);
+import { ClerkUserHasRole } from "@/app/_actions";
 
 export default async function Header(): Promise<React.JSX.Element> {
-    const userRoles = await ClerkGetUserRoles();
-    let isStaff = false;
-    if (userRoles && userRoles.intersection(allowedPerms).size) isStaff = true;
+    const isStaff = await ClerkUserHasRole([
+        "admin",
+        "mod",
+        "trainee",
+    ]);
     
     return (
         <header className="relative flex justify-between items-center p-3 gap-6 dark:bg-neutral-800">

@@ -8,10 +8,13 @@ export async function ClerkGetUserRoles(): Promise<Set<string> | null> {
     if (!user.publicMetadata.roles) return null;
     return new Set(user.publicMetadata.roles as string[]);
 }
-export async function ClerkUserHasRole(role: string): Promise<boolean> {
+export async function ClerkUserHasRole(roles: string[]): Promise<boolean> {
     const user = await currentUser();
     if (!user) return false;
     if (!user.publicMetadata.roles) return false;
-    const roles = user.publicMetadata.roles as string[];
-    return roles.includes(role);
+    const userRoles = user.publicMetadata.roles as string[];
+    for (const role of roles) {
+        if (userRoles.includes(role)) return true;
+    }
+    return false;
 }
