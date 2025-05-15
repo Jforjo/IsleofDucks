@@ -61,13 +61,13 @@ export default async function(
                         type: ComponentType.ActionRow,
                         components: [
                             {
-                                custom_id: "test",
+                                custom_id: "test1",
                                 type: ComponentType.Button,
                                 label: "Test",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test2",
                                 type: ComponentType.Button,
                                 label: "Test",
                                 style: ButtonStyle.Primary,
@@ -90,7 +90,7 @@ export default async function(
                             }
                         ],
                         accessory: {
-                            custom_id: "test",
+                            custom_id: "test3",
                             type: ComponentType.Button,
                             label: "Test",
                             style: ButtonStyle.Primary,
@@ -100,31 +100,31 @@ export default async function(
                         type: ComponentType.ActionRow,
                         components: [
                             {
-                                custom_id: "test",
+                                custom_id: "test4",
                                 type: ComponentType.Button,
                                 label: "1",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test5",
                                 type: ComponentType.Button,
                                 label: "2",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test6",
                                 type: ComponentType.Button,
                                 label: "3",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test7",
                                 type: ComponentType.Button,
                                 label: "4",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test8",
                                 type: ComponentType.Button,
                                 label: "5",
                                 style: ButtonStyle.Primary,
@@ -135,31 +135,31 @@ export default async function(
                         type: ComponentType.ActionRow,
                         components: [
                             {
-                                custom_id: "test",
+                                custom_id: "test9",
                                 type: ComponentType.Button,
                                 label: "1",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test10",
                                 type: ComponentType.Button,
                                 label: "2",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test11",
                                 type: ComponentType.Button,
                                 label: "3",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test12",
                                 type: ComponentType.Button,
                                 label: "4",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test13",
                                 type: ComponentType.Button,
                                 label: "5",
                                 style: ButtonStyle.Primary,
@@ -170,31 +170,31 @@ export default async function(
                         type: ComponentType.ActionRow,
                         components: [
                             {
-                                custom_id: "test",
+                                custom_id: "test14",
                                 type: ComponentType.Button,
                                 label: "1",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test15",
                                 type: ComponentType.Button,
                                 label: "2",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test16",
                                 type: ComponentType.Button,
                                 label: "3",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test17",
                                 type: ComponentType.Button,
                                 label: "4",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test18",
                                 type: ComponentType.Button,
                                 label: "5",
                                 style: ButtonStyle.Primary,
@@ -205,31 +205,31 @@ export default async function(
                         type: ComponentType.ActionRow,
                         components: [
                             {
-                                custom_id: "test",
+                                custom_id: "test19",
                                 type: ComponentType.Button,
                                 label: "1",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test20",
                                 type: ComponentType.Button,
                                 label: "2",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test21",
                                 type: ComponentType.Button,
                                 label: "3",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test22",
                                 type: ComponentType.Button,
                                 label: "4",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test23",
                                 type: ComponentType.Button,
                                 label: "5",
                                 style: ButtonStyle.Primary,
@@ -240,31 +240,31 @@ export default async function(
                         type: ComponentType.ActionRow,
                         components: [
                             {
-                                custom_id: "test",
+                                custom_id: "test24",
                                 type: ComponentType.Button,
                                 label: "1",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test25",
                                 type: ComponentType.Button,
                                 label: "2",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test26",
                                 type: ComponentType.Button,
                                 label: "3",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test27",
                                 type: ComponentType.Button,
                                 label: "4",
                                 style: ButtonStyle.Primary,
                             },
                             {
-                                custom_id: "test",
+                                custom_id: "test28",
                                 type: ComponentType.Button,
                                 label: "5",
                                 style: ButtonStyle.Primary,
