@@ -1,5 +1,6 @@
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { arrayChunks } from "@/discord/utils";
+import { APIButtonComponent, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -50,228 +51,23 @@ export default async function(
         }
     });
 
+
+
     await SendMessage(interaction.channel.id, {
         flags: MessageFlags.IsComponentsV2,
         components: [
             {
                 type: ComponentType.Container,
                 accent_color: 0xFB9B00,
-                components: [
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                custom_id: "test1",
-                                type: ComponentType.Button,
-                                label: "Test",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test2",
-                                type: ComponentType.Button,
-                                label: "Test",
-                                style: ButtonStyle.Primary,
-                            },
-                        ]
-                    },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: "Some text"
-                    },
-                    {
-                        type: ComponentType.Separator
-                    },
-                    {
-                        type: ComponentType.Section,
-                        components: [
-                            {
-                                type: ComponentType.TextDisplay,
-                                content: "Some more text"
-                            }
-                        ],
-                        accessory: {
-                            custom_id: "test3",
-                            type: ComponentType.Button,
-                            label: "Test",
-                            style: ButtonStyle.Primary,
-                        }
-                    },
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                custom_id: "test4",
-                                type: ComponentType.Button,
-                                label: "1",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test5",
-                                type: ComponentType.Button,
-                                label: "2",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test6",
-                                type: ComponentType.Button,
-                                label: "3",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test7",
-                                type: ComponentType.Button,
-                                label: "4",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test8",
-                                type: ComponentType.Button,
-                                label: "5",
-                                style: ButtonStyle.Primary,
-                            },
-                        ]
-                    },
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                custom_id: "test9",
-                                type: ComponentType.Button,
-                                label: "1",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test10",
-                                type: ComponentType.Button,
-                                label: "2",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test11",
-                                type: ComponentType.Button,
-                                label: "3",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test12",
-                                type: ComponentType.Button,
-                                label: "4",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test13",
-                                type: ComponentType.Button,
-                                label: "5",
-                                style: ButtonStyle.Primary,
-                            },
-                        ]
-                    },
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                custom_id: "test14",
-                                type: ComponentType.Button,
-                                label: "1",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test15",
-                                type: ComponentType.Button,
-                                label: "2",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test16",
-                                type: ComponentType.Button,
-                                label: "3",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test17",
-                                type: ComponentType.Button,
-                                label: "4",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test18",
-                                type: ComponentType.Button,
-                                label: "5",
-                                style: ButtonStyle.Primary,
-                            },
-                        ]
-                    },
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                custom_id: "test19",
-                                type: ComponentType.Button,
-                                label: "1",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test20",
-                                type: ComponentType.Button,
-                                label: "2",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test21",
-                                type: ComponentType.Button,
-                                label: "3",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test22",
-                                type: ComponentType.Button,
-                                label: "4",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test23",
-                                type: ComponentType.Button,
-                                label: "5",
-                                style: ButtonStyle.Primary,
-                            },
-                        ]
-                    },
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                custom_id: "test24",
-                                type: ComponentType.Button,
-                                label: "1",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test25",
-                                type: ComponentType.Button,
-                                label: "2",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test26",
-                                type: ComponentType.Button,
-                                label: "3",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test27",
-                                type: ComponentType.Button,
-                                label: "4",
-                                style: ButtonStyle.Primary,
-                            },
-                            {
-                                custom_id: "test28",
-                                type: ComponentType.Button,
-                                label: "5",
-                                style: ButtonStyle.Primary,
-                            },
-                        ]
-                    }
-                ]
+                components: arrayChunks([...Array(40).keys()].map(num => ({
+                    type: ComponentType.Button,
+                    custom_id: `test-${num}`,
+                    label: `${num}`,
+                    style: ButtonStyle.Primary
+                }) as APIButtonComponent), 5).map(row => ({
+                    type: ComponentType.ActionRow,
+                    components: row
+                }))
             }
         ]
     });
