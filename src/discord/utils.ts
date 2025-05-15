@@ -429,7 +429,7 @@ export async function removeAwayPlayer(id: number): Promise<{ id: number, userid
     return rows[0] as { id: number, userid: Snowflake; reason: string; leave: number; return: number };
 }
 export async function getAwayPlayers(): Promise<{ id: number, userid: Snowflake; reason: string; leave: number; return: number }[]> {
-    const { rows } = await sql`SELECT * FROM away`;
+    const { rows } = await sql`SELECT * FROM away ORDER BY leave ASC`;
     return rows as { id: number, userid: Snowflake; reason: string; leave: number; return: number }[];
 }
 
