@@ -59,7 +59,7 @@ export default async function(
             {
                 type: ComponentType.Container,
                 accent_color: 0xFB9B00,
-                components: arrayChunks([...Array(40).keys()].map(num => ({
+                components: arrayChunks([...Array(32).keys()].map(num => ({
                     type: ComponentType.Button,
                     custom_id: `test-${num}`,
                     label: `${num}`,
