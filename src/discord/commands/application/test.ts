@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -44,14 +44,14 @@ export default async function(
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.ChannelMessageWithSource,
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
         data: {
-            flags: MessageFlags.IsComponentsV2
+            flags: MessageFlags.Ephemeral
         }
     });
 
-    await FollowupMessage(interaction.token, {
-        // flags: MessageFlags.IsComponentsV2,
+    await SendMessage(interaction.token, {
+        flags: MessageFlags.IsComponentsV2,
         components: [
             {
                 type: ComponentType.Container,
@@ -304,9 +304,9 @@ export default async function(
     //     }
     // });
 
-    // await FollowupMessage(interaction.token, {
-    //     content: `Done!`,
-    // });
+    await FollowupMessage(interaction.token, {
+        content: `Done!`,
+    });
 
     return NextResponse.json(
         { success: true },
