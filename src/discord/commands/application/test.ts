@@ -50,7 +50,7 @@ export default async function(
         }
     });
 
-    await SendMessage(interaction.token, {
+    await SendMessage(interaction.channel.id, {
         flags: MessageFlags.IsComponentsV2,
         components: [
             {
