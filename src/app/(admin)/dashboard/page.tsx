@@ -1,8 +1,9 @@
 import React from "react";
 import DashboardImmunity from "../_components/dashboardImmunity";
-import { ClerkGetUserRoles, RolesCompare } from "@/app/_actions";
+import { ClerkGetUserRoles } from "@/app/_actions";
 import DropdownSection from "../_components/dropdownSection";
 import { redirect } from "next/navigation";
+import { RolesCompare } from "@/app/_utils";
 
 const allowedPerms = new Set([
     "admin",
