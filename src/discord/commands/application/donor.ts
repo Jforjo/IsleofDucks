@@ -40,6 +40,8 @@ async function updateDonationTotal(number: number): Promise<boolean> {
     // const newNumber = currentNumber + number;
     const newName = `${prefix}${formatNumber(number, 3)}`;
 
+    if (newName === channel.name) return false;
+
     await EditChannel(channel.id, { name: newName });
 
     return true;
@@ -269,6 +271,9 @@ async function addDonation(
         ]
     });
 
+    const totalDonation = await getTotalDonation();
+    await updateDonationTotal(totalDonation);
+
     return NextResponse.json(
         { success: true },
         { status: 200 }
@@ -397,6 +402,9 @@ async function removeDonation(
         ]
     });
 
+    const totalDonation = await getTotalDonation();
+    await updateDonationTotal(totalDonation);
+
     return NextResponse.json(
         { success: true },
         { status: 200 }
@@ -494,6 +502,8 @@ async function viewDonations(
         ]
     });
 
+    await updateDonationTotal(donationsTotal);
+
     return NextResponse.json(
         { success: true },
         { status: 200 }
@@ -561,6 +571,9 @@ async function checkDonation(
             }
         ],
     });
+
+    const totalDonation = await getTotalDonation();
+    await updateDonationTotal(totalDonation);
 
     return NextResponse.json(
         { success: true },
