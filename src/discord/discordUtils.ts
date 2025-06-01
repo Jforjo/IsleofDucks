@@ -2227,10 +2227,10 @@ const Superlatives = [
         }> {
             return await updateSuperlativeValue(uuid, (profile) => {
                 return ( profile.nether_island_player_data?.kuudra_completed_tiers?.none ?? 0 ) +
-                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.hot ?? 0 ) +
-                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.burning ?? 0 ) +
-                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.fiery ?? 0 ) +
-                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.infernal ?? 0 )
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.hot ?? 0 ) * 2 +
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.burning ?? 0 ) * 3 +
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.fiery ?? 0 ) * 4 +
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.infernal ?? 0 ) * 5
                 ;
             });
         },
