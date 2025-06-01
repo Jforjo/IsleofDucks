@@ -2208,6 +2208,78 @@ const Superlatives = [
                 },
             ]
         }
+    },
+    {
+        id: "jun25",
+        title: "Kuudra Collection",
+        start: new Date("1 June 2025 UTC").getTime(),
+        callback: async function(
+            uuid: string
+        ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+            return await getSuperlativeValue(uuid, (value) => formatNumber(value));
+        },
+        update: async function(uuid: string): Promise<number | {
+            success: false;
+            status?: number;
+            message: string;
+            ping?: boolean;
+            retry?: number | null;
+        }> {
+            return await updateSuperlativeValue(uuid, (profile) => {
+                return ( profile.nether_island_player_data?.kuudra_completed_tiers?.none ?? 0 ) +
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.hot ?? 0 ) +
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.burning ?? 0 ) +
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.fiery ?? 0 ) +
+                    ( profile.nether_island_player_data?.kuudra_completed_tiers?.infernal ?? 0 )
+                ;
+            });
+        },
+        ranks: {
+            ducks: [
+                {
+                    id: "CINDER",
+                    name: "cinder",
+                    requirement: 0,
+                },
+                {
+                    id: "EMBER",
+                    name: "ember",
+                    requirement: 100,
+                },
+                {
+                    id: "FLARE",
+                    name: "flare",
+                    requirement: 700,
+                },
+                {
+                    id: "BLAZE",
+                    name: "blaze",
+                    requirement: 2000,
+                },
+            ],
+            ducklings: [
+                {
+                    id: "CINDER",
+                    name: "cinder",
+                    requirement: 0,
+                },
+                {
+                    id: "EMBER",
+                    name: "ember",
+                    requirement: 50,
+                },
+                {
+                    id: "FLARE",
+                    name: "flare",
+                    requirement: 200,
+                },
+                {
+                    id: "BLAZE",
+                    name: "blaze",
+                    requirement: 1000,
+                },
+            ]
+        }
     }
 ];
 // WIP. Currently not used anywhere.
