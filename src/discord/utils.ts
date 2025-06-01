@@ -469,7 +469,11 @@ export async function saveSuperlativeData(): Promise<boolean> {
     if (superlativeIDRes.length === 0) return false;
     const superlativeID = superlativeIDRes[0].value as string;
 
-    const superlative = IsleofDucks.superlatives.find((superlative) => superlative.id === superlativeID);
+    const superlativeCurrent = IsleofDucks.superlatives.find((superlative) => superlative.id === superlativeID);
+    if (!superlativeCurrent) return false;
+    const superlativeIndex = IsleofDucks.superlatives.indexOf(superlativeCurrent);
+    const superlative = IsleofDucks.superlatives[superlativeIndex - 1];
+
     if (!superlative) return false;
     if (!superlative.callback) return false;
     
