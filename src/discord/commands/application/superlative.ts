@@ -745,7 +745,9 @@ export const CommandData = {
         {
             name: "total",
             description: "Displays total superlative data for Isle of Ducks",
-            type: ApplicationCommandOptionType.Subcommand
+            type: ApplicationCommandOptionType.Boolean,
+            required: false,
+            default: false
         }
     ]
 }
