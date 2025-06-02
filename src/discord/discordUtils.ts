@@ -2244,17 +2244,17 @@ const Superlatives = [
                 {
                     id: "EMBER",
                     name: "ember",
-                    requirement: 100,
+                    requirement: 1000,
                 },
                 {
                     id: "FLARE",
                     name: "flare",
-                    requirement: 700,
+                    requirement: 5000,
                 },
                 {
                     id: "BLAZE",
                     name: "blaze",
-                    requirement: 2000,
+                    requirement: 10000,
                 },
             ],
             ducklings: [
