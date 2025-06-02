@@ -380,14 +380,14 @@ export default async function Command(
                     type: ComponentType.ActionRow,
                     components: [
                         {
-                            custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
+                            custom_id: `superlative-ducks${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                             type: ComponentType.Button,
                             label: "Ducks",
                             style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
                             disabled: buttonID === "ducks"
                         },
                         {
-                            custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
+                            custom_id: `superlative-ducklings${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                             type: ComponentType.Button,
                             label: "Ducklings",
                             style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
