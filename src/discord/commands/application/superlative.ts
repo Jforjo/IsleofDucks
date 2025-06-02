@@ -375,11 +375,28 @@ export default async function Command(
     });
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
+    
+    const options = interaction.data.options && Object.fromEntries(interaction.data.options.map(option => {
+        if ('value' in option) {
+            return [option.name, option.value];
+        } else if (option.options) {
+            return [option.name, Object.fromEntries(option.options.map(option => {
+                if ('value' in option) {
+                    return [option.name, option.value];
+                } else if (option.options) {
+                    return [option.name, Object.fromEntries(option.options.map(option => {
+                        return [option.name, option.value]
+                }   ))];
+                } else {
+                    return [option.name, null];
+                }
+        }   ))];
+        } else {
+            return [option.name, null];
+        }
+    }));
 
-    let displayTotals = false;
-    if (interaction.data?.options) {
-        displayTotals = "total" in interaction.data.options;
-    }
+    const displayTotals = options?.total === true;
 
     const superlativePromise = getSuperlative();
     const superlativeUpdateResponse = FollowupMessage(interaction.token, {
