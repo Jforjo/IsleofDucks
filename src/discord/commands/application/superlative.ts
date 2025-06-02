@@ -235,7 +235,7 @@ NextResponse<
         );
     }
 
-    const superlativeDucklingResult = await Promise.all(guildDuck.guild.members.map(async (member) => {
+    const superlativeDucklingResult = await Promise.all(guildDuckling.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         // This should never happen, but Typescript/eslint was complaining
         if (!superlative.callback) throw new Error("Superlative callback is not defined");
