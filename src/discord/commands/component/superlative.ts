@@ -322,7 +322,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
-                    title: `Superlative - ${superlative.title}`,
+                    title: `Superlative - ${superlative.title}${displayTotals ? " (total)" : ""}`,
                     color: 0xFB9B00,
                     fields: fieldArray.slice(0, fieldArray.length / 2),
                 }
@@ -365,7 +365,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
-                    title: `Superlative - ${superlative.title}`,
+                    title: `Superlative - ${superlative.title}${displayTotals ? " (total)" : ""}`,
                     // description: ``,
                     color: 0xFB9B00,
                     fields: fieldArray,
