@@ -21,12 +21,17 @@ export default async function Command(
     });
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    const buttonID = interaction.data.custom_id.split("-")[1];
+    const customIds = interaction.data.custom_id.split("-");
+    const buttonID = customIds[1];
     // Default to Ducks
     const guildName = buttonID === "ducks" ? "Isle of Ducks" :
         buttonID === "ducklings" ? "Isle of Ducklings" :
         "Isle of Ducks";
-    const detailed = interaction.data.custom_id.split("-")[2] === "detailed";
+    let detailed = customIds[2] === "detailed";
+    const displayTotals = customIds[2] === "total";
+    if (customIds.length === 4) {
+        detailed = customIds[3] === "detailed";
+    }
 
     // Disable all buttons while it loads, since people could spam it
     await FollowupMessage(interaction.token, {
@@ -35,14 +40,14 @@ export default async function Command(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
+                        custom_id: `superlative-ducks${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducks",
                         style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
                         disabled: true
                     },
                     {
-                        custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
+                        custom_id: `superlative-ducklings${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                         type: ComponentType.Button,
                         label: "Ducklings",
                         style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
@@ -265,7 +270,10 @@ export default async function Command(
         rankUp: string | null;
     }[];
     // b - a = bigger number first
-    result.sort((a, b) => b.value - a.value);
+    result.sort((a, b) => {
+        if (displayTotals) return b.current - a.current;
+        return b.value - a.value
+    });
     result = result.map((member, index) => {
         return {
             rank: index + 1,
@@ -295,7 +303,7 @@ export default async function Command(
             {
                 name: '\u200b',
                 value: finalResult.slice(i, i + chunkSize).map((field) => {
-                    const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
+                    const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${displayTotals ? field.current : field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
                     if (!detailed) return main;
                     const result = [
                         main,
@@ -336,14 +344,14 @@ export default async function Command(
                     type: ComponentType.ActionRow,
                     components: [
                         {
-                            custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
+                            custom_id: `superlative-ducks${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                             type: ComponentType.Button,
                             label: "Ducks",
                             style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
                             disabled: buttonID === "ducks"
                         },
                         {
-                            custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
+                            custom_id: `superlative-ducklings${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                             type: ComponentType.Button,
                             label: "Ducklings",
                             style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,

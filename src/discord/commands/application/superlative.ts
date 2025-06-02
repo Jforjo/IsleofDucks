@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, type Superlative, Emojis, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
@@ -376,6 +376,11 @@ export default async function Command(
     
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
+    let displayTotals = false;
+    if (interaction.data?.options) {
+        displayTotals = "total" in interaction.data.options;
+    }
+
     const superlativePromise = getSuperlative();
     const superlativeUpdateResponse = FollowupMessage(interaction.token, {
         embeds: [
@@ -590,7 +595,10 @@ export default async function Command(
         rankUp: string | null;
     }[];
     // b - a = bigger number first
-    result.sort((a, b) => b.value - a.value);
+    result.sort((a, b) => {
+        if (displayTotals) return b.current - a.current;
+        return b.value - a.value
+    });
     result = result.map((member, index) => {
         return {
             rank: index + 1,
@@ -620,7 +628,7 @@ export default async function Command(
             {
                 name: '\u200b',
                 value: finalResult.slice(i, i + chunkSize).map((field) => {
-                    const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
+                    const main = `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${displayTotals ? field.current : field.formattedValue}${field.rankUp ? ` ${field.rankUp}` : ''}`;
                     if (!detailed) return main;
                     const result = [
                         main,
@@ -661,14 +669,14 @@ export default async function Command(
                     type: ComponentType.ActionRow,
                     components: [
                         {
-                            custom_id: `superlative-ducks${detailed ? "-detailed" : ""}`,
+                            custom_id: `superlative-ducks${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                             type: ComponentType.Button,
                             label: "Ducks",
                             style: ButtonStyle.Success,
                             disabled: true
                         },
                         {
-                            custom_id: `superlative-ducklings${detailed ? "-detailed" : ""}`,
+                            custom_id: `superlative-ducklings${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
                             type: ComponentType.Button,
                             label: "Ducklings",
                             style: ButtonStyle.Primary,
@@ -733,4 +741,11 @@ export const CommandData = {
     name: "superlative",
     description: "Displays the superlative data for Isle of Ducks",
     type: ApplicationCommandType.ChatInput,
+    options: [
+        {
+            name: "total",
+            description: "Displays total superlative data for Isle of Ducks",
+            type: ApplicationCommandOptionType.Subcommand
+        }
+    ]
 }
