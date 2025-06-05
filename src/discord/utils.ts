@@ -533,8 +533,7 @@ export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> 
     const { rows } = await sql`
         SELECT type, start, dp, duckranks, ducklingranks
         FROM superlatives
-        WHERE start < NOW()
-        ORDER BY start DESC
+        WHERE EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now())
         LIMIT 1
     `;
 
