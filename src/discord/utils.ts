@@ -551,10 +551,17 @@ type SuperlativeStats = {
     uuid: string;
     value: number;
 }
-export async function updateSuperlativeStats(start: string, duckStats: SuperlativeStats[], ducklingStats: SuperlativeStats[]): Promise<void> {
+export async function updateSuperlativeStatsDuck(start: string, duckStats: SuperlativeStats[]): Promise<void> {
     await sql`
         UPDATE superlatives
-        SET duckstats = ${JSON.stringify(duckStats)}, ducklingstats = ${JSON.stringify(ducklingStats)}
+        SET duckstats = ${JSON.stringify(duckStats)}
+        WHERE start = ${start}
+    `;
+}
+export async function updateSuperlativeStatsDuckling(start: string, ducklingStats: SuperlativeStats[]): Promise<void> {
+    await sql`
+        UPDATE superlatives
+        SET ducklingstats = ${JSON.stringify(ducklingStats)}
         WHERE start = ${start}
     `;
 }
