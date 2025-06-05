@@ -1,0 +1,98 @@
+import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember"
+
+export default {
+    skyblockLevel: {
+        title: "SkyBlock Level",
+        value: (profile: SkyBlockProfileMember) => profile?.leveling?.experience ?? 0
+    },
+    catacombsExperience: {
+        title: "Catacombs Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0
+    },
+    alchemyExperience: {
+        title: "Alchemy Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_ALCHEMY ?? 0
+    },
+    carpentryExperience: {
+        title: "Carpentry Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_CARPENTRY ?? 0
+    },
+    combatExperience: {
+        title: "Combat Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_COMBAT ?? 0
+    },
+    enchantingExperience: {
+        title: "Enchanting Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_ENCHANTING ?? 0
+    },
+    farmingExperience: {
+        title: "Farming Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_FARMING ?? 0
+    },
+    fishingExperience: {
+        title: "Fishing Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_FISHING ?? 0
+    },
+    foragingExperience: {
+        title: "Foraging Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_FORAGING ?? 0
+    },
+    miningExperience: {
+        title: "Mining Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_MINING ?? 0
+    },
+    runecraftingExperience: {
+        title: "Runecrafting Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_RUNECRAFTING ?? 0
+    },
+    socialExperience: {
+        title: "Social Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_SOCIAL ?? 0
+    },
+    tamingExperience: {
+        title: "Taming Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_TAMING ?? 0
+    },
+    spiderlayerExperience: {
+        title: "Spider Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.spider?.xp ?? 0
+    },
+    zombieSlayerExperience: {
+        title: "Zombie Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.zombie?.xp ?? 0
+    },
+    wolfSlayerExperience: {
+        title: "Wolf Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.wolf?.xp ?? 0
+    },
+    endermanSlayerExperience: {
+        title: "Enderman Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.enderman?.xp ?? 0
+    },
+    blazeSlayerExperience: {
+        title: "Blaze Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.blaze?.xp ?? 0
+    },
+    vampireSlayerExperience: {
+        title: "Vampire Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.vampire?.xp ?? 0
+    },
+    kuudraCompletions: {
+        title: "Kuudra Completions",
+        value: (profile: SkyBlockProfileMember) =>
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.none ?? 0 ) +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.hot ?? 0 ) +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.burning ?? 0 ) +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.fiery ?? 0 ) +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.infernal ?? 0 )
+    },
+    kuudraCollection: {
+        title: "Kuudra Collection",
+        value: (profile: SkyBlockProfileMember) =>
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.none ?? 0 ) +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.hot ?? 0 ) * 2 +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.burning ?? 0 ) * 3 +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.fiery ?? 0 ) * 4 +
+            ( profile?.nether_island_player_data?.kuudra_completed_tiers?.infernal ?? 0 ) * 5
+    },
+}

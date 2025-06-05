@@ -2,6 +2,7 @@ import { sql } from '@vercel/postgres';
 import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { Snowflake } from 'discord-api-types/globals';
 import { IsleofDucks, Superlative } from './discordUtils';
+import superlativeTypes from './superlatives';
 
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
     return Array(Math.ceil(array.length / chunk_size))
@@ -503,12 +504,83 @@ export async function saveSuperlativeData(): Promise<boolean> {
     const [duckData, ducklingData] = await Promise.all([duckDataPromise, ducklingDataPromise]);
 
     const { rows } = await sql`
-        INSERT INTO pastsuperlatives (id, title, duckdata, ducklingdata)
-        VALUES (${superlative.id}, ${superlative.title}, ${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
+        INSERT INTO pastsuperlatives (id, duckdata, ducklingdata)
+        VALUES (${superlative.id}, ${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
         ON CONFLICT (id) DO UPDATE
-        SET (title, duckdata, ducklingdata) = (${superlative.title}, ${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
+        SET (duckdata, ducklingdata) = (${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
         RETURNING id
     `;
 
     return rows.length > 0 && rows[0].id === superlative.id;
+}
+
+type ActiveSuperlative = {
+    data: typeof superlativeTypes[keyof typeof superlativeTypes];
+    start: string;
+    dp: number;
+    duckranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[];
+    ducklingranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[];
+}
+export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> {
+    const { rows } = await sql`
+        SELECT type, start, dp, duckranks, ducklingranks
+        FROM superlatives
+        WHERE start < NOW()
+        ORDER BY start DESC
+        LIMIT 1
+    `;
+
+    if (rows.length === 0) return null;
+
+    return {
+        data: superlativeTypes[rows[0].type as keyof typeof superlativeTypes],
+        start: rows[0].start,
+        dp: rows[0].dp,
+        duckranks: JSON.parse(rows[0].duckranks),
+        ducklingranks: JSON.parse(rows[0].ducklingranks)
+    };
+}
+type SuperlativeStats = {
+    uuid: string;
+    value: number;
+}
+export async function updateSuperlativeStats(start: string, duckStats: SuperlativeStats[], ducklingStats: SuperlativeStats[]): Promise<void> {
+    await sql`
+        UPDATE superlatives
+        SET duckstats = ${JSON.stringify(duckStats)}, ducklingstats = ${JSON.stringify(ducklingStats)}
+        WHERE start = ${start}
+    `;
+}
+export async function createSuperlative(
+    start: string,
+    type: keyof typeof superlativeTypes,
+    duckranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[],
+    ducklingranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[]
+): Promise<boolean> {
+    const { rows } = await sql`SELECT COUNT(*) FROM superlatives WHERE start = ${start}`;
+    if (rows[0].count > 0) return false;
+    await sql`
+        INSERT INTO superlatives (start, type, duckranks, ducklingranks)
+        VALUES (${start}, ${type}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)})
+    `;
+    return true;
+}
+export async function deleteSuperlative(start: string): Promise<void> {
+    await sql`DELETE FROM superlatives WHERE start = ${start}`;
 }
