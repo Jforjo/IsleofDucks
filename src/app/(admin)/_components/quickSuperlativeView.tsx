@@ -1,8 +1,8 @@
-import { getSuperlative } from "@/discord/commands/application/superlative";
+import { getActiveSuperlative } from "@/discord/utils";
 import React from "react";
 
 async function getCurrentSuperlativeData() {
-    const superlative = await getSuperlative();
+    const superlative = await getActiveSuperlative();
     if (superlative == null) return null;
     return superlative;
 }
@@ -15,11 +15,11 @@ export default async function QuickSuperlativeView() {
             <h2 className="text-xl">Current Superlative</h2>
             <div className="flex flex-col rounded-lg p-2 gap-2 dark:bg-neutral-900">
                 <h3 className={`pb-1 text-lg ${superlative && "border-b border-neutral-800"} dark:text-neutral-400`}>
-                    { superlative && superlative.superlative.title }
+                    { superlative && superlative.data.title }
                 </h3>
                 { superlative && (
                     <span className="dark:text-neutral-500">
-                        Starts: { new Date(superlative.superlative.start).toLocaleString() }
+                        Starts: { new Date(superlative.start).toLocaleString() }
                     </span>
                 ) }
             </div>

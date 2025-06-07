@@ -1,8 +1,7 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { updateGuildSuperlative } from "@/discord/utils";
-import { getSuperlative } from "./superlative";
+import { getActiveSuperlative, updateGuildSuperlative } from "@/discord/utils";
 
 
 
@@ -47,8 +46,8 @@ export default async function(
         ]
     });
     
-    const superlativeData = await getSuperlative();
-    if (superlativeData == null) {
+    const superlative = await getActiveSuperlative();
+    if (superlative == null) {
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
@@ -68,7 +67,7 @@ export default async function(
         );
     }
 
-    const ducks = await updateGuildSuperlative("Isle of Ducks", superlativeData.superlative);
+    const ducks = await updateGuildSuperlative("Isle of Ducks", superlative);
     if (!ducks.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
@@ -119,7 +118,7 @@ export default async function(
         ]
     });
 
-    const ducklings = await updateGuildSuperlative("Isle of Ducklings", superlativeData.superlative);
+    const ducklings = await updateGuildSuperlative("Isle of Ducklings", superlative);
     if (!ducklings.success) {
         await FollowupMessage(interaction.token, {
             embeds: [
