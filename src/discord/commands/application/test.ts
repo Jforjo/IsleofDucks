@@ -1,6 +1,6 @@
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { arrayChunks } from "@/discord/utils";
-import { APIButtonComponent, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIButtonComponent, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -109,63 +109,9 @@ export default async function(
         { status: 200 }
     );
 }
-// export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
-//     name: "test",
-//     description: "Test command",
-//     type: ApplicationCommandType.ChatInput,
-//     default_member_permissions: "0",
-// }
 export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
     name: "test",
     description: "Test command",
-    options: [
-        {
-            name: "testgroup1",
-            description: "testgroup1",
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: [
-                {
-                    name: "testcommand1",
-                    description: "testcommand1",
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: "testoption1",
-                            description: "testoption1",
-                            type: ApplicationCommandOptionType.String,
-                            autocomplete: true,
-                            required: true
-                        },
-                        {
-                            name: "testoption2",
-                            description: "testoption2",
-                            type: ApplicationCommandOptionType.String,
-                            autocomplete: true
-                        },
-                    ]
-                },
-            ]
-        },
-        {
-            name: "testcommand2",
-            description: "testcommand2",
-            type: ApplicationCommandOptionType.Subcommand,
-            options: [
-                {
-                    name: "testoption3",
-                    description: "testoption3",
-                    type: ApplicationCommandOptionType.String,
-                    autocomplete: true,
-                    required: true
-                },
-                {
-                    name: "testoption4",
-                    description: "testoption4",
-                    type: ApplicationCommandOptionType.String,
-                    autocomplete: true
-                },
-            ]
-        },
-    ],
+    type: ApplicationCommandType.ChatInput,
     default_member_permissions: "0",
 }
