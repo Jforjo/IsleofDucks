@@ -355,8 +355,8 @@ export default async function Command(
         );
     }
 
-    // if (superlative.duckstats.length === 0 && superlative.ducklingsstats.length === 0) return await superlativeNew(interaction, superlative);
-    if (superlative.duckstats.length === 0 && superlative.ducklingsstats.length === 0) await saveSuperlative();
+    // if (superlative.duckstats.length === 0 && superlative.ducklingstats.length === 0) return await superlativeNew(interaction, superlative);
+    if (superlative.duckstats.length === 0 && superlative.ducklingstats.length === 0) await saveSuperlative();
     
     const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks", superlative);
 

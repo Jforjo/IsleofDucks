@@ -488,15 +488,15 @@ export async function saveSuperlativeData(superlative: ActiveSuperlative): Promi
     const [duckData, ducklingData] = await Promise.all([duckDataPromise, ducklingDataPromise]);
 
     const duckStats = updateSuperlativeStatsDuck(superlative.start, duckData);
-    const ducklingsStats = updateSuperlativeStatsDuck(superlative.start, ducklingData);
-    await Promise.all([duckStats, ducklingsStats]);
+    const ducklingstats = updateSuperlativeStatsDuck(superlative.start, ducklingData);
+    await Promise.all([duckStats, ducklingstats]);
     return true;
 }
 export async function saveSuperlative(): Promise<boolean> {
     const activeSuperlative = await getActiveSuperlative();
     if (!activeSuperlative) return false;
     
-    if (activeSuperlative.duckstats.length === 0 && activeSuperlative.ducklingsstats.length === 0) {
+    if (activeSuperlative.duckstats.length === 0 && activeSuperlative.ducklingstats.length === 0) {
         const prevSuperlative = await getPreviousSuperlative();
         if (!prevSuperlative) return false;
         await Promise.all([
@@ -532,11 +532,11 @@ export interface ActiveSuperlative {
         requirement: number;
     }[];
     duckstats: SuperlativeStats[];
-    ducklingsstats: SuperlativeStats[];
+    ducklingstats: SuperlativeStats[];
 }
 export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> {
     const { rows } = await sql`
-        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingsstats
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats
         FROM superlatives
         WHERE EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now())
         LIMIT 1
@@ -551,12 +551,12 @@ export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> 
         duckranks: JSON.parse(rows[0].duckranks),
         ducklingranks: JSON.parse(rows[0].ducklingranks),
         duckstats: JSON.parse(rows[0].duckstats),
-        ducklingsstats: JSON.parse(rows[0].ducklingsstats)
+        ducklingstats: JSON.parse(rows[0].ducklingstats)
     };
 }
 export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null> {
     const { rows } = await sql`
-        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingsstats
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats
         FROM superlatives
         WHERE EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now()) - 1
         LIMIT 1
@@ -571,7 +571,7 @@ export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null
         duckranks: JSON.parse(rows[0].duckranks),
         ducklingranks: JSON.parse(rows[0].ducklingranks),
         duckstats: JSON.parse(rows[0].duckstats),
-        ducklingsstats: JSON.parse(rows[0].ducklingsstats)
+        ducklingstats: JSON.parse(rows[0].ducklingstats)
     };
 }
 interface SuperlativeStats {
