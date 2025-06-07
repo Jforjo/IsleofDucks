@@ -77,6 +77,16 @@ export async function POST(
                 { status: 404 }
             );
         }
+    } else if (interaction.type === InteractionType.ApplicationCommandAutocomplete) {
+        const { default: command } = await import(`@/discord/commands/autocomplete/${interaction.data.name.toLowerCase()}.ts`);
+        if (command) {
+            return await command(interaction);
+        } else {
+            return NextResponse.json(
+                { success: false, error: 'Unknown Command', },
+                { status: 404 }
+            );
+        }
     } else if (interaction.type === InteractionType.ModalSubmit) {
         const { default: command } = await import(`@/discord/commands/modal/${interaction.data.custom_id.split('-')[0].toLowerCase()}.ts`);
         if (command) {

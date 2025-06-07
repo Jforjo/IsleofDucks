@@ -18,7 +18,6 @@ import { CommandData as UpdateSuperlative } from "./updatesuperlative";
 import { CommandData as UpdateDatabase } from "./updatedatabase";
 import { CommandData as ReadMessage } from "./readmessage";
 import { CommandData as Test } from "./test";
-import { CommandData as SuperlativeDetailed } from "./superlativedetailed";
 import { CommandData as Util } from "./util";
 import { CommandData as Away } from "./away";
 import { CommandData as Donor } from "./donor";
@@ -65,7 +64,6 @@ export default async function(
         CommandData,
         CheckAPI,
         Superlative,
-        SuperlativeDetailed,
         Ping,
         Embed,
         Immune,
