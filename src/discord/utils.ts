@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { Snowflake } from 'discord-api-types/globals';
-import { formatNumber, getSuperlativeValue, IsleofDucks, Superlative, updateSuperlativeValue } from './discordUtils';
+import { formatNumber, getSuperlativeValue, updateSuperlativeValue } from './discordUtils';
 import superlativeTypes from './superlatives';
 
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
