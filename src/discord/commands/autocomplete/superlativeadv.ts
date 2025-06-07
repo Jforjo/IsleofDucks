@@ -1,8 +1,8 @@
 import { APIApplicationCommandAutocompleteInteraction, APIInteractionResponse, ApplicationCommandOptionType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
-function flattenObject(data: { [key: string]: any }): { [key: string]: any } {
-    const result: { [key: string]: any } = {};
+function flattenObject(data: Record<string, any>): Record<string, any> {
+    const result: Record<string, any> = {};
     
     function recurse(cur: any, prop: string) {
         if (typeof cur !== "object" || cur === null) {
@@ -56,6 +56,9 @@ export default async function(
         value: string;
         focused: boolean;
     };
+
+    // no-unused-vars
+    console.log(focused);
 
     return NextResponse.json(
         { success: true },
