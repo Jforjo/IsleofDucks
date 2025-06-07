@@ -1,6 +1,5 @@
 import type { NextRequest } from "next/server";
-import { updateGuildSuperlative } from "@/discord/utils";
-import { getSuperlative } from "@/discord/commands/application/superlative";
+import { getActiveSuperlative, updateGuildSuperlative } from "@/discord/utils";
 
 export async function GET(request: NextRequest): Promise<Response> {
     const authHeader = request.headers.get("authorization");
@@ -10,11 +9,11 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
     
-    const superlativeData = await getSuperlative();
-    if (superlativeData == null) return new Response("Superlative not found", { status: 404 });
+    const superlative = await getActiveSuperlative();
+    if (superlative == null) return new Response("Superlative not found", { status: 404 });
     
-    const resultDucksPromise = updateGuildSuperlative("Isle of Ducks", superlativeData.superlative);
-    const resultDucklingsPromise = updateGuildSuperlative("Isle of Ducklings", superlativeData.superlative);
+    const resultDucksPromise = updateGuildSuperlative("Isle of Ducks", superlative);
+    const resultDucklingsPromise = updateGuildSuperlative("Isle of Ducklings", superlative);
 
     const resultDucks = await resultDucksPromise;
     const resultDucklings = await resultDucklingsPromise;
