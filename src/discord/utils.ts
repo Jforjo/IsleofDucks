@@ -1,7 +1,8 @@
 import { sql } from '@vercel/postgres';
 import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { Snowflake } from 'discord-api-types/globals';
-import { IsleofDucks, Superlative } from './discordUtils';
+import { formatNumber, getSuperlativeValue, updateSuperlativeValue } from './discordUtils';
+import superlativeTypes from './superlatives';
 
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
     return Array(Math.ceil(array.length / chunk_size))
@@ -265,9 +266,10 @@ export function progressPromise(promises: Promise<unknown>[], tickCallback: (pro
 
     return Promise.all(promises.map(tick));
 }
+
 export async function updateGuildSuperlative(
     guildName: string,
-    superlative: Superlative
+    superlative: ActiveSuperlative
 ): Promise<
     {
         success: false;
@@ -316,12 +318,7 @@ export async function updateGuildSuperlative(
         // console.log(`(${index}/${guild.guild.members.length}) SQL statement returned. Hour: ${Date.now() - 1000 * 60 * 60}. Continue?: ${rows.length !== 0 && rows[0].lastUpdated > Date.now() - 1000 * 60 * 60}. Rows: ${JSON.stringify(rows)}`);
         if (rows.length !== 0 && rows[0].lastupdated > Date.now() - 1000 * 60 * 60) continue;
 
-        // This should never happen, but Typescript/eslint was complaining
-        if (!superlative.update) return {
-            success: false,
-            message: "Superlative update function is not defined"
-        };
-        const updated = await superlative.update(member.uuid);
+        const updated = await updateSuperlativeValue(member.uuid, superlative.data.value);
         if (typeof updated === "object" && "success" in updated && !updated.success) return updated;
         // Shouldn't happen
         if (typeof updated !== "number") continue;
@@ -464,19 +461,7 @@ export async function getTotalDonation(): Promise<number> {
     return rows[0].sum;
 }
 
-export async function saveSuperlativeData(): Promise<boolean> {
-    const { rows: superlativeIDRes } = await sql`SELECT value FROM settings WHERE key = 'superlative' LIMIT 1`;
-    if (superlativeIDRes.length === 0) return false;
-    const superlativeID = superlativeIDRes[0].value as string;
-
-    const superlativeCurrent = IsleofDucks.superlatives.find((superlative) => superlative.id === superlativeID);
-    if (!superlativeCurrent) return false;
-    const superlativeIndex = IsleofDucks.superlatives.indexOf(superlativeCurrent);
-    const superlative = IsleofDucks.superlatives[superlativeIndex - 1];
-
-    if (!superlative) return false;
-    if (!superlative.callback) return false;
-    
+export async function saveSuperlativeData(superlative: ActiveSuperlative): Promise<boolean> {
     const ducks = await getGuildData("Isle of Ducks");
     if (!ducks.success) return false;
     const ducklings = await getGuildData("Isle of Ducklings");
@@ -484,7 +469,7 @@ export async function saveSuperlativeData(): Promise<boolean> {
     
     const duckDataPromise = Promise.all(
         ducks.guild.members.map(async (member) => {
-            const guildData = await superlative.callback(member.uuid);
+            const guildData = await getSuperlativeValue(member.uuid, (value) => formatNumber(value, superlative.dp));
             return {
                 uuid: member.uuid,
                 value: guildData.success ? guildData.value : 0
@@ -493,7 +478,7 @@ export async function saveSuperlativeData(): Promise<boolean> {
     );
     const ducklingDataPromise = Promise.all(
         ducklings.guild.members.map(async (member) => {
-            const guildData = await superlative.callback(member.uuid);
+            const guildData = await getSuperlativeValue(member.uuid, (value) => formatNumber(value, superlative.dp));
             return {
                 uuid: member.uuid,
                 value: guildData.success ? guildData.value : 0
@@ -502,13 +487,133 @@ export async function saveSuperlativeData(): Promise<boolean> {
     );
     const [duckData, ducklingData] = await Promise.all([duckDataPromise, ducklingDataPromise]);
 
+    const duckStats = updateSuperlativeStatsDuck(superlative.start, duckData);
+    const ducklingsStats = updateSuperlativeStatsDuck(superlative.start, ducklingData);
+    await Promise.all([duckStats, ducklingsStats]);
+    return true;
+}
+export async function saveSuperlative(): Promise<boolean> {
+    const activeSuperlative = await getActiveSuperlative();
+    if (!activeSuperlative) return false;
+    
+    if (activeSuperlative.duckstats.length === 0 && activeSuperlative.ducklingsstats.length === 0) {
+        const prevSuperlative = await getPreviousSuperlative();
+        if (!prevSuperlative) return false;
+        await Promise.all([
+            saveSuperlativeData(prevSuperlative),
+            updateSuperlativeStatsDuck(activeSuperlative.start, [{
+                uuid: "",
+                value: 0
+            }]),
+            updateSuperlativeStatsDuckling(activeSuperlative.start, [{
+                uuid: "",
+                value: 0
+            }]),
+        ]);
+        await sql`TRUNCATE TABLE users`;
+    } else {
+        await saveSuperlativeData(activeSuperlative);
+    }
+    return true;
+}
+
+export interface ActiveSuperlative {
+    data: typeof superlativeTypes[keyof typeof superlativeTypes];
+    start: string;
+    dp: number;
+    duckranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[];
+    ducklingranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[];
+    duckstats: SuperlativeStats[];
+    ducklingsstats: SuperlativeStats[];
+}
+export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> {
     const { rows } = await sql`
-        INSERT INTO pastsuperlatives (id, title, duckdata, ducklingdata)
-        VALUES (${superlative.id}, ${superlative.title}, ${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
-        ON CONFLICT (id) DO UPDATE
-        SET (title, duckdata, ducklingdata) = (${superlative.title}, ${JSON.stringify(duckData)}, ${JSON.stringify(ducklingData)})
-        RETURNING id
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingsstats
+        FROM superlatives
+        WHERE EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now())
+        LIMIT 1
     `;
 
-    return rows.length > 0 && rows[0].id === superlative.id;
+    if (rows.length === 0) return null;
+
+    return {
+        data: superlativeTypes[rows[0].type as keyof typeof superlativeTypes],
+        start: rows[0].start,
+        dp: rows[0].dp,
+        duckranks: JSON.parse(rows[0].duckranks),
+        ducklingranks: JSON.parse(rows[0].ducklingranks),
+        duckstats: JSON.parse(rows[0].duckstats),
+        ducklingsstats: JSON.parse(rows[0].ducklingsstats)
+    };
+}
+export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null> {
+    const { rows } = await sql`
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingsstats
+        FROM superlatives
+        WHERE EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now()) - 1
+        LIMIT 1
+    `;
+
+    if (rows.length === 0) return null;
+
+    return {
+        data: superlativeTypes[rows[0].type as keyof typeof superlativeTypes],
+        start: rows[0].start,
+        dp: rows[0].dp,
+        duckranks: JSON.parse(rows[0].duckranks),
+        ducklingranks: JSON.parse(rows[0].ducklingranks),
+        duckstats: JSON.parse(rows[0].duckstats),
+        ducklingsstats: JSON.parse(rows[0].ducklingsstats)
+    };
+}
+interface SuperlativeStats {
+    uuid: string;
+    value: number;
+}
+export async function updateSuperlativeStatsDuck(start: string, duckStats: SuperlativeStats[]): Promise<void> {
+    await sql`
+        UPDATE superlatives
+        SET duckstats = ${JSON.stringify(duckStats)}
+        WHERE start = ${start}
+    `;
+}
+export async function updateSuperlativeStatsDuckling(start: string, ducklingStats: SuperlativeStats[]): Promise<void> {
+    await sql`
+        UPDATE superlatives
+        SET ducklingstats = ${JSON.stringify(ducklingStats)}
+        WHERE start = ${start}
+    `;
+}
+export async function createSuperlative(
+    start: string,
+    type: keyof typeof superlativeTypes,
+    duckranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[],
+    ducklingranks: {
+        id: string;
+        name: string;
+        requirement: number;
+    }[]
+): Promise<boolean> {
+    const { rows } = await sql`SELECT COUNT(*) FROM superlatives WHERE start = ${start}`;
+    if (rows[0].count > 0) return false;
+    await sql`
+        INSERT INTO superlatives (start, type, duckranks, ducklingranks)
+        VALUES (${start}, ${type}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)})
+    `;
+    return true;
+}
+export async function deleteSuperlative(start: string): Promise<void> {
+    await sql`DELETE FROM superlatives WHERE start = ${start}`;
 }

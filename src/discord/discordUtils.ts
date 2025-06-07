@@ -1212,7 +1212,7 @@ export interface SuperlativeCallbackError {
     ping?: boolean;
 }
 
-async function getSuperlativeValue(
+export async function getSuperlativeValue(
     uuid: string,
     formatValue: (value: number) => string
 ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
@@ -1232,7 +1232,7 @@ async function getSuperlativeValue(
         current: user.cataxp != null ? user.cataxp : user.oldxp
     }
 }
-async function updateSuperlativeValue(
+export async function updateSuperlativeValue(
     uuid: string,
     func: (profile: SkyBlockProfileMember) => number | undefined
 ): Promise<number | {

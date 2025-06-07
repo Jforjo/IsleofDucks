@@ -1,9 +1,8 @@
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, SendMessage } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, SendMessage, formatNumber, getSuperlativeValue } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { updateGuildSuperlative } from "@/discord/utils";
-import { getSuperlative } from "../application/superlative";
+import { getActiveSuperlative, saveSuperlative, updateGuildSuperlative } from "@/discord/utils";
 
 export default async function Command(
     interaction: APIMessageComponentButtonInteraction
@@ -58,7 +57,7 @@ export default async function Command(
         ]
     });
 
-    const superlativePromise = getSuperlative();
+    const superlativePromise = getActiveSuperlative();
     const superlativeUpdateResponse = FollowupMessage(interaction.token, {
         embeds: [
             {
@@ -72,10 +71,9 @@ export default async function Command(
             }
         ]
     });
-    const superlativeData = await superlativePromise;
-    const superlative = superlativeData?.superlative;
+    const superlative = await superlativePromise;
     await superlativeUpdateResponse;
-    if (superlativeData == null || superlative == null || superlative.callback === undefined || typeof superlative.callback !== 'function') {
+    if (superlative == null) {
         await FollowupMessage(interaction.token, {
             content: undefined,
             embeds: [
@@ -95,6 +93,9 @@ export default async function Command(
             { status: 200 }
         );
     }
+
+    // if (superlative.duckstats.length === 0 && superlative.ducklingsstats.length === 0) return await superlativeNew(interaction, superlative);
+    if (superlative.duckstats.length === 0 && superlative.ducklingsstats.length === 0) await saveSuperlative();
     
     const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative(guildName, superlative);
 
@@ -156,9 +157,7 @@ export default async function Command(
     const superlativeResult = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
-        // THis should never happen, but Typescript/eslint was complaining
-        if (!superlative.callback) throw new Error("Superlative callback is not defined");
-        const superlativeData = await superlative.callback(member.uuid);
+        const superlativeData = await getSuperlativeValue(member.uuid, (value) => formatNumber(value, superlative.dp));
         if (!superlativeData.success) throw new Error(superlativeData.message);
         
         let rankUp = null;
@@ -167,7 +166,7 @@ export default async function Command(
         let untilNextRank = 0;
         let rankShould = "";
         if (buttonID === "ducks" || buttonID === "ducklings") {
-            superlative.ranks?.[buttonID].forEach((rank, index) => {
+            superlative[buttonID === "ducks" ? "duckranks" : "ducklingranks"].forEach((rank, index) => {
                 if (rank.requirement <= superlativeData.current) {
                     bracketShould = index;
                     rankShould = rank.name.toLowerCase();
@@ -322,7 +321,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
-                    title: `Superlative - ${superlative.title}${displayTotals ? " (total)" : ""}`,
+                    title: `Superlative - ${superlative.data.title}${displayTotals ? " (total)" : ""}`,
                     color: 0xFB9B00,
                     fields: fieldArray.slice(0, fieldArray.length / 2),
                 }
@@ -365,7 +364,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
-                    title: `Superlative - ${superlative.title}${displayTotals ? " (total)" : ""}`,
+                    title: `Superlative - ${superlative.data.title}${displayTotals ? " (total)" : ""}`,
                     // description: ``,
                     color: 0xFB9B00,
                     fields: fieldArray,
@@ -409,6 +408,7 @@ export default async function Command(
         });
         await new Promise(resolve => setTimeout(resolve, 500));
     }
+    await saveSuperlative();
 
     return NextResponse.json(
         { success: true },
