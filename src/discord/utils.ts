@@ -548,10 +548,10 @@ export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> 
         data: superlativeTypes[rows[0].type as keyof typeof superlativeTypes],
         start: rows[0].start,
         dp: rows[0].dp,
-        duckranks: JSON.parse(rows[0].duckranks),
-        ducklingranks: JSON.parse(rows[0].ducklingranks),
-        duckstats: JSON.parse(rows[0].duckstats),
-        ducklingstats: JSON.parse(rows[0].ducklingstats)
+        duckranks: rows[0].duckranks,
+        ducklingranks: rows[0].ducklingranks,
+        duckstats: rows[0].duckstats,
+        ducklingstats: rows[0].ducklingstats
     };
 }
 export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null> {
@@ -568,10 +568,10 @@ export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null
         data: superlativeTypes[rows[0].type as keyof typeof superlativeTypes],
         start: rows[0].start,
         dp: rows[0].dp,
-        duckranks: JSON.parse(rows[0].duckranks),
-        ducklingranks: JSON.parse(rows[0].ducklingranks),
-        duckstats: JSON.parse(rows[0].duckstats),
-        ducklingstats: JSON.parse(rows[0].ducklingstats)
+        duckranks: rows[0].duckranks,
+        ducklingranks: rows[0].ducklingranks,
+        duckstats: rows[0].duckstats,
+        ducklingstats: rows[0].ducklingstats
     };
 }
 interface SuperlativeStats {
