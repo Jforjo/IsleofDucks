@@ -24,7 +24,7 @@ export default async function(
         if (/^page_[0-9]+$/gm.test(customIds[2])) {
             const page = parseInt(customIds[2].split("_")[1]);
             return await viewSuperlativeAdv(interaction, page);
-        } else if (/^[0-9]{2}_[0-9]{2}_01$/gm.test(customIds[2])) {
+        } else if (/^[0-9]{4}_[0-9]{2}_01$/gm.test(customIds[2])) {
             const date = customIds[2].replaceAll("_", "-");
             return await viewSuperlativeAdvWithDate(interaction, date);
         }
