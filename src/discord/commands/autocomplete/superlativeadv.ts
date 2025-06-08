@@ -37,7 +37,7 @@ async function viewDate(
             { status: 400 }
         );
     }
-    const startDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-01`;
+    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
 
     if (!dates.map(d => d.start).includes(startDate)) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -107,7 +107,7 @@ async function createDate(
             { status: 400 }
         );
     }
-    const startDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-01`;
+    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
 
     if (dates.map(d => d.start).includes(startDate)) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -177,7 +177,7 @@ async function deleteDate(
             { status: 400 }
         );
     }
-    const startDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-01`;
+    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
 
     if (!dates.map(d => d.start).includes(startDate)) {
         await CreateInteractionResponse(interaction.id, interaction.token, {

@@ -45,7 +45,7 @@ export async function viewSuperlativeAdvWithDate(
         );
     }
 
-    if (date.getFullYear() === new Date().getFullYear() && date.getMonth() === new Date().getMonth()) {
+    if (date.getUTCFullYear() === new Date().getUTCFullYear() && date.getUTCMonth() === new Date().getUTCMonth()) {
         /// check if the type of interaction is APIMessageComponentButtonInteraction
         if (interaction.type === InteractionType.MessageComponent) {
             await FollowupMessage(interaction.token, {
@@ -305,28 +305,31 @@ export async function viewSuperlativeAdv(
                         type: ComponentType.TextDisplay,
                         content: "## Superlatives",
                     },
-                    ...superlatives.map(superlative => ({
-                        type: ComponentType.Section,
-                        components: [
-                            {
-                                type: ComponentType.TextDisplay,
-                                content: `**${new Date(superlative.start).toLocaleDateString("en-US", {
-                                    month: "long",
-                                    year: "numeric"
-                                })}**`
-                            },
-                            {
-                                type: ComponentType.TextDisplay,
-                                content: superlative.data.title
+                    ...superlatives.map(superlative => {
+                        const startDate = new Date(superlative.start);
+                        return {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: `**${startDate.toLocaleDateString("en-US", {
+                                        month: "long",
+                                        year: "numeric"
+                                    })}**`
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: superlative.data.title
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-view-${startDate.getUTCFullYear()}_${(startDate.getUTCMonth() + 1).toString().padStart(2, '0')}_01`,
+                                label: "View",
+                                style: ButtonStyle.Primary
                             }
-                        ],
-                        accessory: {
-                            type: ComponentType.Button,
-                            custom_id: `superlativeadv-view-${superlative.start.replaceAll('-', '_')}`,
-                            label: "View",
-                            style: ButtonStyle.Primary
                         }
-                    })) as APISectionComponent[]
+                    }) as APISectionComponent[]
                 ]
             },
             {
