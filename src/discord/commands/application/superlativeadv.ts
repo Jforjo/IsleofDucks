@@ -26,19 +26,25 @@ export async function viewSuperlativeAdvWithDate(
 
     const date = new Date(value);
     if (date.toString() === "Invalid Date") {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Missing interaction data options",
-                    color: IsleofDucks.colours.error,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
-        });
+        if (interaction.type === InteractionType.MessageComponent) {
+            await FollowupMessage(interaction.token, {
+                content: "Invalid date.",
+            });
+        } else {
+            await FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Something went wrong!",
+                        description: "Invalid date.",
+                        color: IsleofDucks.colours.error,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            });
+        }
         return NextResponse.json(
             { success: false, error: "Invalid date" },
             { status: 400 }
@@ -61,19 +67,25 @@ export async function viewSuperlativeAdvWithDate(
 
     const superlative = await getSuperlative(value);
     if (superlative == null) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Superlative not found.",
-                    color: IsleofDucks.colours.error,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
-        });
+        if (interaction.type === InteractionType.MessageComponent) {
+            await FollowupMessage(interaction.token, {
+                content: "Superlative not found.",
+            });
+        } else {
+            await FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Something went wrong!",
+                        description: "Superlative not found.",
+                        color: IsleofDucks.colours.error,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            });
+        }
         return NextResponse.json(
             { success: false, error: "Superlative not found" },
             { status: 404 }
@@ -82,47 +94,34 @@ export async function viewSuperlativeAdvWithDate(
 
     if (superlative.duckstats === null || superlative.ducklingstats === null) {
         await SendMessage(interaction.channel.id, {
-        embeds: [
-            {
-                title: `Superlative - ${superlative.data.title}`,
-                description: [
-                    `This is a future superlative!`,
-                    `It will start on ${date.toLocaleDateString("en-US", {
-                        month: "long",
-                        year: "numeric"
-                    })}`,
-                    `Which is ${Math.floor((date.getTime() - Date.now()) / 1000)}`
-                ].join('\n'),
-                color: IsleofDucks.colours.main,
-                fields: [
-                    {
-                        name: "Duck Ranks",
-                        value: superlative.duckranks.map((rank) => {
-                            return `[${rank.id}] ${rank.name}: ${formatNumber(rank.requirement, superlative.dp)}`;
-                        }).join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: "Duckling Ranks",
-                        value: superlative.ducklingranks.map((rank) => {
-                            return `[${rank.id}] ${rank.name}: ${formatNumber(rank.requirement, superlative.dp)}`;
-                        }).join('\n'),
-                        inline: true
-                    }
-                ],
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ],
-        })
-        await FollowupMessage(interaction.token, {
             embeds: [
                 {
-                    title: "Something went wrong!",
-                    description: "This is a future superlative.",
+                    title: `Superlative - ${superlative.data.title}`,
+                    description: [
+                        `This is a future superlative!`,
+                        `It will start on ${date.toLocaleDateString("en-US", {
+                            month: "long",
+                            year: "numeric"
+                        })}`,
+                        `Which is ${Math.floor((date.getTime() - Date.now()) / 1000)}`
+                    ].join('\n'),
                     color: IsleofDucks.colours.main,
+                    fields: [
+                        {
+                            name: "Duck Ranks",
+                            value: superlative.duckranks.map((rank) => {
+                                return `[${rank.id}] ${rank.name}: ${formatNumber(rank.requirement, superlative.dp)}`;
+                            }).join('\n'),
+                            inline: true
+                        },
+                        {
+                            name: "Duckling Ranks",
+                            value: superlative.ducklingranks.map((rank) => {
+                                return `[${rank.id}] ${rank.name}: ${formatNumber(rank.requirement, superlative.dp)}`;
+                            }).join('\n'),
+                            inline: true
+                        }
+                    ],
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -137,19 +136,25 @@ export async function viewSuperlativeAdvWithDate(
     }
 
     if (superlative.duckstats.length === 0 || superlative.ducklingstats.length === 0) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Superlative data not found.",
-                    color: IsleofDucks.colours.error,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
-        });
+        if (interaction.type === InteractionType.MessageComponent) {
+            await FollowupMessage(interaction.token, {
+                content: "Superlative data not found.",
+            });
+        } else {
+            await FollowupMessage(interaction.token, {
+                embeds: [
+                    {
+                        title: "Something went wrong!",
+                        description: "Superlative data not found.",
+                        color: IsleofDucks.colours.error,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            });
+        }
         return NextResponse.json(
             { success: false, error: "Superlative data not found" },
             { status: 404 }
@@ -257,11 +262,11 @@ export async function viewSuperlativeAdvWithDate(
                 timestamp: new Date().toISOString()
             }
         ]
-    })
+    });
 
     await FollowupMessage(interaction.token, {
         content: "Done!"
-    })
+    });
 
     return NextResponse.json(
         { success: true },
