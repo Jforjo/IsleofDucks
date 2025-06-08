@@ -1,5 +1,5 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, CreateThread, EditChannel, ExecuteWebhook, FollowupMessage, GetAllChannelMessages, IsleofDucks } from "@/discord/discordUtils";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, RouteBases, Snowflake } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, MessageFlags, RouteBases, Snowflake } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export async function CreateTranscript(
@@ -63,25 +63,45 @@ export async function CreateTranscript(
             attachment.id = index.toString();
             return attachment;
         });
-        await ExecuteWebhook({
-            thread_id: thread.id,
-            wait: true
-        }, {
-            username: message.author.username,
-            avatar_url: avatarURL,
-            content: message.content,
-            embeds: message.embeds,
-            attachments: attachments,
-            poll: message.poll,
-            flags: 1 << 12,
-            allowed_mentions: {
-                parse: []
-            }
-        }, attachments.map(attachment => ({
-            id: attachment.id,
-            url: attachment.url,
-            filename: attachment.filename
-        })));
+        
+        const isComponentsV2 = message.flags ? (message.flags & MessageFlags.IsComponentsV2) !== 0 : false;
+
+        if (isComponentsV2) {
+            await ExecuteWebhook({
+                thread_id: thread.id,
+                wait: true,
+                with_components: true
+            }, {
+                username: message.author.username,
+                avatar_url: avatarURL,
+                components: message.components,
+                attachments: attachments,
+                flags: MessageFlags.SuppressNotifications + MessageFlags.IsComponentsV2,
+                allowed_mentions: {
+                    parse: []
+                }
+            });
+        } else {
+            await ExecuteWebhook({
+                thread_id: thread.id,
+                wait: true
+            }, {
+                username: message.author.username,
+                avatar_url: avatarURL,
+                content: message.content,
+                embeds: message.embeds,
+                attachments: attachments,
+                poll: message.poll,
+                flags: MessageFlags.SuppressNotifications,
+                allowed_mentions: {
+                    parse: []
+                }
+            }, attachments.map(attachment => ({
+                id: attachment.id,
+                url: attachment.url,
+                filename: attachment.filename
+            })));
+        }
     }
     
     await EditChannel(thread.id, {
