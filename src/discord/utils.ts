@@ -516,11 +516,12 @@ export async function saveSuperlative(): Promise<boolean> {
     }
     return true;
 }
-
-export interface ActiveSuperlative {
+export interface PartialActiveSuperlative {
     data: typeof superlativeTypes[keyof typeof superlativeTypes];
     start: string;
-    dp: number;
+}
+export interface ActiveSuperlative extends PartialActiveSuperlative {
+    dp: number | null;
     duckranks: {
         id: string;
         name: string;
@@ -559,6 +560,60 @@ export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null
         SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats
         FROM superlatives
         WHERE EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now()) - 1
+        LIMIT 1
+    `;
+
+    if (rows.length === 0) return null;
+
+    return {
+        data: superlativeTypes[rows[0].type as keyof typeof superlativeTypes],
+        start: rows[0].start,
+        dp: rows[0].dp,
+        duckranks: rows[0].duckranks,
+        ducklingranks: rows[0].ducklingranks,
+        duckstats: rows[0].duckstats,
+        ducklingstats: rows[0].ducklingstats
+    };
+}
+export async function getSuperlativesList(): Promise<PartialActiveSuperlative[]> {
+    const { rows } = await sql`
+        SELECT type, start
+        FROM superlatives
+    `;
+
+    if (rows.length === 0) return [];
+
+    return rows.map((row) => ({
+        data: superlativeTypes[row.type as keyof typeof superlativeTypes],
+        start: row.start
+    }));
+}
+export async function getSuperlativesListLimit(offset = 0, limit = 5): Promise<PartialActiveSuperlative[]> {
+    const { rows } = await sql`
+        SELECT type, start
+        FROM superlatives
+        LIMIT ${limit} OFFSET ${offset}
+    `;
+
+    if (rows.length === 0) return [];
+
+    return rows.map((row) => ({
+        data: superlativeTypes[row.type as keyof typeof superlativeTypes],
+        start: row.start
+    }));
+}
+export async function getTotalSuperlatives(): Promise<number> {
+    const { rows } = await sql`
+        SELECT COUNT(*)
+        FROM superlatives
+    `;
+    return rows[0].count;
+}
+export async function getSuperlative(start: string): Promise<ActiveSuperlative | null> {
+    const { rows } = await sql`
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats
+        FROM superlatives
+        WHERE start = ${start}
         LIMIT 1
     `;
 
