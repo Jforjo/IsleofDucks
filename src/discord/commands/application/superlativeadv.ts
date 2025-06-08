@@ -518,6 +518,7 @@ export default async function(
         }
     }));
 
+    console.log(JSON.stringify(options));
     if (options.view) {
         if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.date.value);
         return await viewSuperlativeAdv(interaction);
