@@ -236,7 +236,7 @@ async function createType(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ApplicationCommandAutocompleteResult,
         data: {
-            choices: Object.entries(SuperlativeTypes).filter(([_, v]) =>
+            choices: Object.entries(SuperlativeTypes).filter(([, v]) =>
                 v.title.toLowerCase().includes(value.toLowerCase())
             ).map(([k, v]) => ({
                 name: v.title,
