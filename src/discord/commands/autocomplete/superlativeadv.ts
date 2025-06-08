@@ -257,6 +257,7 @@ export default async function(
 
     if ('view' in options && 'date' in options.view && options.view.date.focused === true) return await viewDate(interaction, options.view.date.value);
     else if ('create' in options && 'date' in options.create && options.create.date.focused === true) return await createDate(interaction, options.create.date.value);
+    else if ('delete' in options && 'date' in options.delete && options.delete.date.focused === true) return await deleteDate(interaction, options.delete.date.value);
 
     return NextResponse.json(
         { success: true },
