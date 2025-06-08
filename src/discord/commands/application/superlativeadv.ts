@@ -400,7 +400,7 @@ async function createSuperlativeAdv(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-            flags: MessageFlags.IsComponentsV2,
+            flags: MessageFlags.Ephemeral,
             content: [
                 `This feature hasn't been implemented yet!`,
                 `Here's the values you inputted:`,
