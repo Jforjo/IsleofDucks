@@ -1,6 +1,6 @@
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
-import { arrayChunks } from "@/discord/utils";
-import { APIButtonComponent, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { getSuperlativesList } from "@/discord/utils";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -51,26 +51,28 @@ export default async function(
         }
     });
 
+    const superlative = await getSuperlativesList();
+    console.log(JSON.stringify(superlative));
+    console.log(typeof superlative[0].start);
 
-
-    await SendMessage(interaction.channel.id, {
-        flags: MessageFlags.IsComponentsV2,
-        components: [
-            {
-                type: ComponentType.Container,
-                accent_color: 0xFB9B00,
-                components: arrayChunks([...Array(32).keys()].map(num => ({
-                    type: ComponentType.Button,
-                    custom_id: `test-${num}`,
-                    label: `${num}`,
-                    style: ButtonStyle.Primary
-                }) as APIButtonComponent), 5).map(row => ({
-                    type: ComponentType.ActionRow,
-                    components: row
-                }))
-            }
-        ]
-    });
+    // await SendMessage(interaction.channel.id, {
+    //     flags: MessageFlags.IsComponentsV2,
+    //     components: [
+    //         {
+    //             type: ComponentType.Container,
+    //             accent_color: 0xFB9B00,
+    //             components: arrayChunks([...Array(32).keys()].map(num => ({
+    //                 type: ComponentType.Button,
+    //                 custom_id: `test-${num}`,
+    //                 label: `${num}`,
+    //                 style: ButtonStyle.Primary
+    //             }) as APIButtonComponent), 5).map(row => ({
+    //                 type: ComponentType.ActionRow,
+    //                 components: row
+    //             }))
+    //         }
+    //     ]
+    // });
     
     // const { rows } = await sql`SELECT * FROM users`;
 
