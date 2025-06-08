@@ -555,7 +555,7 @@ export const CommandData = {
                 {
                     name: "date",
                     description: "The date of the superlative.",
-                    type: ApplicationCommandOptionType.Integer,
+                    type: ApplicationCommandOptionType.String,
                     autocomplete: true,
                     required: true
                 }

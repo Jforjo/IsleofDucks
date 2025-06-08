@@ -178,7 +178,7 @@ async function deleteDate(
     const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
     const startDateObj = new Date(startDate);
 
-    if (dates.map(d => new Date(d.start).getTime()).includes(startDateObj.getTime())) {
+    if (!dates.map(d => new Date(d.start).getTime()).includes(startDateObj.getTime())) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ApplicationCommandAutocompleteResult,
             data: { choices: [] }
