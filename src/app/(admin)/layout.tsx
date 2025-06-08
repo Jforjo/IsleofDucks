@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
     width: "device-width",
     initialScale: 1,
-    themeColor: IsleofDucks.themeColour,
+    themeColor: `#${IsleofDucks.colours.main.toString(16)}`,
 };
 
 export default async function RootLayout({
