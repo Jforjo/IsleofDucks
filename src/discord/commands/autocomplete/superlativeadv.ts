@@ -2,6 +2,7 @@ import { CreateInteractionResponse } from "@/discord/discordUtils";
 import { getSuperlativesList } from "@/discord/utils";
 import { APIApplicationCommandAutocompleteInteraction, APIInteractionResponse, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
+import SuperlativeTypes from "@/discord/superlatives";
 
 async function viewDate(
     interaction: APIApplicationCommandAutocompleteInteraction,
@@ -221,6 +222,35 @@ async function deleteDate(
     );
 }
 
+async function createType(
+    interaction: APIApplicationCommandAutocompleteInteraction,
+    value: string
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.ApplicationCommandAutocompleteResult,
+        data: {
+            choices: Object.entries(SuperlativeTypes).filter(([_, v]) =>
+                v.title.toLowerCase().includes(value.toLowerCase())
+            ).map(([k, v]) => ({
+                name: v.title,
+                value: k
+            }))
+        }
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
 export default async function(
     interaction: APIApplicationCommandAutocompleteInteraction
 ): Promise<
@@ -253,8 +283,10 @@ export default async function(
     }));
 
     if ('view' in options && 'date' in options.view && options.view.date.focused === true) return await viewDate(interaction, options.view.date.value);
-    else if ('create' in options && 'date' in options.create && options.create.date.focused === true) return await createDate(interaction, options.create.date.value);
-    else if ('delete' in options && 'date' in options.delete && options.delete.date.focused === true) return await deleteDate(interaction, options.delete.date.value);
+    else if ('create' in options) {
+        if ('date' in options.create && options.create.date.focused === true) return await createDate(interaction, options.create.date.value);
+        else if ('type' in options.create && options.create.type.focused === true) return await createType(interaction, options.create.type.value);
+    } else if ('delete' in options && 'date' in options.delete && options.delete.date.focused === true) return await deleteDate(interaction, options.delete.date.value);
 
     return NextResponse.json(
         { success: true },

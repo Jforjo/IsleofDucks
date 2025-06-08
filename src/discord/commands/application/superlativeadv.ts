@@ -386,7 +386,8 @@ export async function viewSuperlativeAdv(
 
 async function createSuperlativeAdv(
     interaction: APIChatInputApplicationCommandInteraction,
-    value: string
+    date: string,
+    type: string
 ): Promise<
     NextResponse<
         {
@@ -395,13 +396,16 @@ async function createSuperlativeAdv(
         } | APIInteractionResponse
     >
 > {
+    // const rankRegex = /^\[?([a-zA-Z]{1,6})\]?$/gm;
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-            flags: MessageFlags.Ephemeral,
+            flags: MessageFlags.IsComponentsV2,
             content: [
                 `This feature hasn't been implemented yet!`,
-                `Here's the value you inputted: ${value}`
+                `Here's the values you inputted:`,
+                `Date: ${date}`,
+                `Type: ${type}`
             ].join('\n')
         },
     });
@@ -522,7 +526,7 @@ export default async function(
         if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.date);
         return await viewSuperlativeAdv(interaction);
     }
-    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date);
+    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date, options.create.type);
     else if (options.delete) return await deleteSuperlativeAdv(interaction, options.delete.date);
 
     return NextResponse.json(
@@ -552,6 +556,13 @@ export const CommandData = {
             description: "Create a superlative.",
             type: ApplicationCommandOptionType.Subcommand,
             options: [
+                {
+                    name: "type",
+                    description: "The type of the superlative.",
+                    type: ApplicationCommandOptionType.String,
+                    autocomplete: true,
+                    required: true
+                },
                 {
                     name: "date",
                     description: "The date of the superlative.",
