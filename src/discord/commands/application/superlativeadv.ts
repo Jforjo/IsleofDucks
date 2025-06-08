@@ -331,7 +331,7 @@ export async function viewSuperlativeAdv(
                                 type: ComponentType.Button,
                                 custom_id: `superlativeadv-view-${startDate.getUTCFullYear()}_${(startDate.getUTCMonth() + 1).toString().padStart(2, '0')}_01`,
                                 label: "View",
-                                style: ButtonStyle.Primary
+                                style: ButtonStyle.Secondary
                             }
                         }
                     }) as APISectionComponent[]
@@ -519,7 +519,7 @@ export default async function(
     }));
 
     if (options.view) {
-        if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.past.date.value);
+        if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.date.value);
         return await viewSuperlativeAdv(interaction);
     }
     else if (options.create) return await createSuperlativeAdv(interaction, options.create.date.value);
