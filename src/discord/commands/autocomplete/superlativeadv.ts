@@ -238,7 +238,7 @@ async function createType(
         data: {
             choices: Object.entries(SuperlativeTypes).filter(([, v]) =>
                 v.title.toLowerCase().includes(value.toLowerCase())
-            ).map(([k, v]) => ({
+            ).slice(0, 25).map(([k, v]) => ({
                 name: v.title,
                 value: k
             }))
