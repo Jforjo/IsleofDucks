@@ -518,13 +518,12 @@ export default async function(
         }
     }));
 
-    console.log(JSON.stringify(options));
     if (options.view) {
-        if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.date.value);
+        if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.date);
         return await viewSuperlativeAdv(interaction);
     }
-    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date.value);
-    else if (options.delete) return await deleteSuperlativeAdv(interaction, options.delete.date.value);
+    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date);
+    else if (options.delete) return await deleteSuperlativeAdv(interaction, options.delete.date);
 
     return NextResponse.json(
         { success: true },
