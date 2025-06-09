@@ -109,11 +109,17 @@ async function createSuperlativeAdv(
         if (!btnId.includes("duckrank") && !btnId.includes("ducklingrank")) return;
 
         const rankMatch = rankRegex.exec(section.components[0].content);
-        if (!rankMatch) return false;
+        if (!rankMatch) {
+            console.log(section);
+            console.log(section.components[0].content);
+            return false;
+        }
         const reqMatch = reqRegex.exec(section.components[1].content);
-        if (!reqMatch) return false;
-
-        console.log(JSON.stringify(section));
+        if (!reqMatch) {
+            console.log(section);
+            console.log(section.components[1].content);
+            return false;
+        }
 
         return {
             type: btnId.includes("duckrank") ? "duck" : "duckling",
@@ -122,8 +128,6 @@ async function createSuperlativeAdv(
             requirement: Number(reqMatch[1])
         }
     }).filter((section) => section !== undefined);
-
-    console.log(JSON.stringify(sections));
 
     if (sections.filter((section) => section === false).length > 0) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
