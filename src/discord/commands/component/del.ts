@@ -39,8 +39,7 @@ export default async function(
             { status: 400 }
         );
     }
-
-    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+    if (interaction.member.user.id !== interaction.message.interaction_metadata?.user.id) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
