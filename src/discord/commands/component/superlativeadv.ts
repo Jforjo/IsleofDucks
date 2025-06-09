@@ -1,4 +1,4 @@
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { viewSuperlativeAdv, viewSuperlativeAdvWithDate } from "../application/superlativeadv";
 import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
@@ -71,7 +71,7 @@ async function createSuperlativeAdv(
 
     const rankRegex = /^\[?([a-zA-Z]{1,6})\]? ([a-zA-Z\s]+)$/gm;
     const reqRegex = /^Req: ([0-9]+)$/gm;
-    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z]+)\*\*$/gm.exec(interaction.message.components[0].components[1].content);
+    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z]+)\*\*\nDecimals: \*\*([0-3])\*\*$/gm.exec(interaction.message.components[0].components[1].content);
     if (!dataText) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -124,6 +124,7 @@ async function createSuperlativeAdv(
     const created = await createSuperlative(
         startDate,
         dataText[2] as keyof typeof superlativeTypes,
+        Number(dataText[3]),
         sections.filter((section) => section.type === "duck").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
         sections.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement }))
     );
@@ -204,21 +205,61 @@ async function createRanks(
             { status: 403 }
         )
     }
-    // temp
-    if (input) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                flags: MessageFlags.Ephemeral,
-                content: "Invalid input"
-            }
-        });
-        return NextResponse.json(
-            { success: false, error: "Invalid input" },
-            { status: 400 }
-        );
-    }
-    // const rankRegex = /^\[?([a-zA-Z]{1,6})\]?$/gm;
+    
+    const type = input.includes("duck") ? "Duck" : "Duckling";
+
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.Modal,
+        data: {
+            custom_id: `superlativeadv_create_${input}`,
+            title: `Create ${type} Rank`,
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.TextInput,
+                            custom_id: "rankid",
+                            label: `${type} Rank ID (i.e. "[RANK]")`,
+                            style: TextInputStyle.Short,
+                            min_length: 1,
+                            max_length: 8,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.TextInput,
+                            custom_id: "rankname",
+                            label: `${type} Rank Name`,
+                            style: TextInputStyle.Short,
+                            min_length: 1,
+                            max_length: 16,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.TextInput,
+                            custom_id: "rankreq",
+                            label: `${type} Rank Requirement`,
+                            style: TextInputStyle.Short,
+                            min_length: 1,
+                            max_length: 16,
+                            required: true
+                        }
+                    ]
+                }
+            ]
+        }
+    });
+
     return NextResponse.json(
         { success: true },
         { status: 200 }
