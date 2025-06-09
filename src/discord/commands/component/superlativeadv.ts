@@ -1,6 +1,162 @@
-import { APIInteractionResponse, APIMessageComponentButtonInteraction } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { viewSuperlativeAdv, viewSuperlativeAdvWithDate } from "../application/superlativeadv";
+import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { createSuperlative } from "@/discord/utils";
+import superlativeTypes from "@/discord/superlatives";
+
+async function createSuperlativeAdv(
+    interaction: APIMessageComponentButtonInteraction
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    if (!interaction.message.components) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Missing components"
+            }
+        })
+        return NextResponse.json(
+            { success: false, error: "Missing components" },
+            { status: 400 }
+        );
+    }
+    if (interaction.message.components[0].type !== ComponentType.Container || interaction.message.components[0].components[1].type !== ComponentType.TextDisplay) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid components"
+            }
+        })
+        return NextResponse.json(
+            { success: false, error: "Invalid components" },
+            { status: 400 }
+        );
+    }
+
+    const rankRegex = /^\[?([a-zA-Z]{1,6})\]? ([a-zA-Z\s]+)$/gm;
+    const reqRegex = /^Req: ([0-9]+)$/gm;
+    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z]+)\*\*$/gm.exec(interaction.message.components[0].components[1].content);
+    if (!dataText) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid data"
+            }
+        })
+        return NextResponse.json(
+            { success: false, error: "Invalid data" },
+            { status: 400 }
+        );
+    }
+    const startDateObj = new Date(dataText[1]);
+    if (startDateObj.toString() === "Invalid Date") {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid date"
+            }
+        })
+        return NextResponse.json(
+            { success: false, error: "Invalid date" },
+            { status: 400 }
+        );
+    }
+    const startDate = `${startDateObj.getUTCFullYear()}-${(startDateObj.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
+
+    const sections = interaction.message.components[0].components.filter((component) => component.type === ComponentType.Section).map((section) => {
+        if (section.accessory.type !== ComponentType.Button) return;
+        if (section.accessory.style !== ButtonStyle.Secondary) return;
+        const btnId = section.accessory.custom_id.split("-")[2];
+        if (!btnId.includes("duckrank") && !btnId.includes("ducklingrank")) return;
+
+        const rankMatch = rankRegex.exec(section.components[0].content);
+        if (!rankMatch) return;
+        const reqMatch = reqRegex.exec(section.components[1].content);
+        if (!reqMatch) return;
+
+        return {
+            type: btnId.includes("duckrank") ? "duck" : "duckling",
+            id: rankMatch[1],
+            name: rankMatch[2],
+            requirement: Number(reqMatch[1])
+        }
+    }).filter((section): section is { type: "duck" | "duckling", id: string, name: string, requirement: number } => !!section);
+
+
+    const created = await createSuperlative(
+        startDate,
+        dataText[2] as keyof typeof superlativeTypes,
+        sections.filter((section) => section.type === "duck").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
+        sections.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement }))
+    );
+
+    if (!created) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Failed to create superlative"
+            }
+        })
+        return NextResponse.json(
+            { success: false, error: "Failed to create superlative" },
+            { status: 400 }
+        );
+    }
+
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.UpdateMessage,
+        data: {
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `## Superlative Created!`
+                        }
+                    ]
+                }
+            ]
+        }
+    })
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
+async function createRanks(
+    interaction: APIMessageComponentButtonInteraction,
+    input: string
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    // const rankRegex = /^\[?([a-zA-Z]{1,6})\]?$/gm;
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
 
 export default async function(
     interaction: APIMessageComponentButtonInteraction
@@ -28,6 +184,9 @@ export default async function(
             const date = customIds[2].replaceAll("_", "-");
             return await viewSuperlativeAdvWithDate(interaction, date);
         }
+    } else if (customIds[1] === "create") {
+        if (customIds[2] === "create") return await createSuperlativeAdv(interaction);
+        else return await createRanks(interaction, customIds[2]);
     }
 
     return NextResponse.json(

@@ -444,7 +444,6 @@ async function createSuperlativeAdv(
         );
     }
 
-    // const rankRegex = /^\[?([a-zA-Z]{1,6})\]?$/gm;
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
