@@ -650,6 +650,7 @@ export async function updateSuperlativeStatsDuckling(start: string, ducklingStat
 export async function createSuperlative(
     start: string,
     type: keyof typeof superlativeTypes,
+    dp: number | null,
     duckranks: {
         id: string;
         name: string;
@@ -664,8 +665,8 @@ export async function createSuperlative(
     const { rows } = await sql`SELECT COUNT(*) FROM superlatives WHERE start = ${start}`;
     if (rows[0].count > 0) return false;
     await sql`
-        INSERT INTO superlatives (start, type, duckranks, ducklingranks)
-        VALUES (${start}, ${type}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)})
+        INSERT INTO superlatives (start, type, dp, duckranks, ducklingranks)
+        VALUES (${start}, ${type}, ${dp}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)})
     `;
     return true;
 }

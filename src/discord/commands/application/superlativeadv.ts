@@ -388,7 +388,8 @@ export async function viewSuperlativeAdv(
 async function createSuperlativeAdv(
     interaction: APIChatInputApplicationCommandInteraction,
     dateInput: string,
-    typeInput: string
+    typeInput: string,
+    decimals = 2
 ): Promise<
     NextResponse<
         {
@@ -423,7 +424,21 @@ async function createSuperlativeAdv(
             { status: 403 }
         )
     }
-    
+
+    if (decimals < 0 || decimals > 3) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid decmial value."
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid decmial value." },
+            { status: 404 }
+        );
+    }
+
     if (!Object.keys(SuperlativeTypes).includes(typeInput)) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -491,7 +506,8 @@ async function createSuperlativeAdv(
                                     month: "long",
                                     year: "numeric"
                                 })}**`,
-                                `Type: **${superlativeType.title}**`
+                                `Type: **${superlativeType.title}**`,
+                                `Decimals: **${decimals}**`
                             ].join('\n'),
                         },
                         {
@@ -868,7 +884,7 @@ export default async function(
         if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.date);
         return await viewSuperlativeAdv(interaction);
     }
-    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date, options.create.type);
+    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date, options.create.type, options.create.decimals);
     else if (options.delete) return await deleteSuperlativeAdv(interaction, options.delete.date);
 
     return NextResponse.json(
@@ -911,6 +927,11 @@ export const CommandData = {
                     type: ApplicationCommandOptionType.String,
                     autocomplete: true,
                     required: true
+                },
+                {
+                    name: "decimals",
+                    description: "The amount of decimal places to show when displaying the superlative. (default: 2)",
+                    type: ApplicationCommandOptionType.Integer
                 }
             ]
         },
