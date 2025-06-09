@@ -70,8 +70,6 @@ async function createSuperlativeAdv(
         );
     }
 
-    const rankRegex = /^\[?([a-zA-Z]{1,6})\]? ([a-zA-Z\s]+)$/gm;
-    const reqRegex = /^Req: ([0-9]+)$/gm;
     const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z\s]+)\*\*\nDecimals: \*\*([0-3])\*\*$/gm.exec(interaction.message.components[0].components[1].content);
     if (!dataText) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -108,16 +106,12 @@ async function createSuperlativeAdv(
         const btnId = section.accessory.custom_id.split("-")[2];
         if (!btnId.includes("duckrank") && !btnId.includes("ducklingrank")) return;
 
-        const rankMatch = rankRegex.exec(section.components[0].content);
+        const rankMatch = /^\[?([a-zA-Z]{1,6})\]? ([a-zA-Z\s]+)$/gm.exec(section.components[0].content);
         if (!rankMatch) {
-            console.log(section);
-            console.log(section.components[0].content);
             return false;
         }
-        const reqMatch = reqRegex.exec(section.components[1].content);
+        const reqMatch = /^Req: ([0-9]+)$/gm.exec(section.components[1].content);
         if (!reqMatch) {
-            console.log(section);
-            console.log(section.components[1].content);
             return false;
         }
 
