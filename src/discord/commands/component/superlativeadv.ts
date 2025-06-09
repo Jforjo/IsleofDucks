@@ -72,7 +72,7 @@ async function createSuperlativeAdv(
 
     const rankRegex = /^\[?([a-zA-Z]{1,6})\]? ([a-zA-Z\s]+)$/gm;
     const reqRegex = /^Req: ([0-9]+)$/gm;
-    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\\nType: \*\*([a-zA-Z\s]+)\*\*\\nDecimals: \*\*([0-3])\*\*$/gm.exec(interaction.message.components[0].components[1].content);
+    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z\s]+)\*\*\nDecimals: \*\*([0-3])\*\*$/gm.exec(interaction.message.components[0].components[1].content);
     if (!dataText) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
