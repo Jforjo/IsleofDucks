@@ -119,7 +119,7 @@ async function createSuperlativeAdv(
             name: rankMatch[2],
             requirement: Number(reqMatch[1])
         }
-    }).filter((section): section is { type: "duck" | "duckling", id: string, name: string, requirement: number } => !!section);
+    }).filter((section) => section !== undefined);
 
     const superlativeType = Object.entries(SuperlativeTypes).filter(([, v]) => v.title === dataText[2]).map(([k,]) => k)[0] as keyof typeof superlativeTypes;
 
