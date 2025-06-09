@@ -4,6 +4,7 @@ import { viewSuperlativeAdv, viewSuperlativeAdvWithDate } from "../application/s
 import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
 import { createSuperlative } from "@/discord/utils";
 import superlativeTypes from "@/discord/superlatives";
+import SuperlativeTypes from "@/discord/superlatives";
 
 async function createSuperlativeAdv(
     interaction: APIMessageComponentButtonInteraction
@@ -71,7 +72,7 @@ async function createSuperlativeAdv(
 
     const rankRegex = /^\[?([a-zA-Z]{1,6})\]? ([a-zA-Z\s]+)$/gm;
     const reqRegex = /^Req: ([0-9]+)$/gm;
-    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z]+)\*\*\nDecimals: \*\*([0-3])\*\*$/gm.exec(interaction.message.components[0].components[1].content);
+    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\\nType: \*\*([a-zA-Z\s]+)\*\*\\nDecimals: \*\*([0-3])\*\*$/gm.exec(interaction.message.components[0].components[1].content);
     if (!dataText) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -120,10 +121,11 @@ async function createSuperlativeAdv(
         }
     }).filter((section): section is { type: "duck" | "duckling", id: string, name: string, requirement: number } => !!section);
 
+    const superlativeType = Object.entries(SuperlativeTypes).filter(([, v]) => v.title === dataText[2]).map(([k,]) => k)[0] as keyof typeof superlativeTypes;
 
     const created = await createSuperlative(
         startDate,
-        dataText[2] as keyof typeof superlativeTypes,
+        superlativeType,
         Number(dataText[3]),
         sections.filter((section) => section.type === "duck").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
         sections.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement }))
