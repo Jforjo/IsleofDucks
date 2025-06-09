@@ -15,6 +15,33 @@ async function createSuperlativeAdv(
         } | APIInteractionResponse
     >
 > {
+    if (!interaction.member) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Could not find who ran the command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        )
+    }
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "You do not have permission to run this command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "You do not have permission to run this command" },
+            { status: 403 }
+        )
+    }
+
     if (!interaction.message.components) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -151,6 +178,46 @@ async function createRanks(
         } | APIInteractionResponse
     >
 > {
+    if (!interaction.member) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Could not find who ran the command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        )
+    }
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "You do not have permission to run this command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "You do not have permission to run this command" },
+            { status: 403 }
+        )
+    }
+    // temp
+    if (input) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid input"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid input" },
+            { status: 400 }
+        );
+    }
     // const rankRegex = /^\[?([a-zA-Z]{1,6})\]?$/gm;
     return NextResponse.json(
         { success: true },

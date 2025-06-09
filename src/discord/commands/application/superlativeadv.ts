@@ -397,6 +397,33 @@ async function createSuperlativeAdv(
         } | APIInteractionResponse
     >
 > {
+    if (!interaction.member) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Could not find who ran the command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        )
+    }
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "You do not have permission to run this command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "You do not have permission to run this command" },
+            { status: 403 }
+        )
+    }
+    
     if (!Object.keys(SuperlativeTypes).includes(typeInput)) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -668,6 +695,33 @@ async function deleteSuperlativeAdv(
         } | APIInteractionResponse
     >
 > {
+    if (!interaction.member) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Could not find who ran the command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        )
+    }
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "You do not have permission to run this command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "You do not have permission to run this command" },
+            { status: 403 }
+        )
+    }
+
     const date = new Date(dateInput);
     if (date.toString() === "Invalid Date") {
         await CreateInteractionResponse(interaction.id, interaction.token, {
