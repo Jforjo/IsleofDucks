@@ -107,12 +107,13 @@ async function createSuperlativeAdv(
         if (section.accessory.style !== ButtonStyle.Secondary) return;
         const btnId = section.accessory.custom_id.split("-")[2];
         if (!btnId.includes("duckrank") && !btnId.includes("ducklingrank")) return;
-        console.log(JSON.stringify(section));
 
         const rankMatch = rankRegex.exec(section.components[0].content);
-        if (!rankMatch) return;
+        if (!rankMatch) return false;
         const reqMatch = reqRegex.exec(section.components[1].content);
-        if (!reqMatch) return;
+        if (!reqMatch) return false;
+
+        console.log(JSON.stringify(section));
 
         return {
             type: btnId.includes("duckrank") ? "duck" : "duckling",
@@ -122,14 +123,32 @@ async function createSuperlativeAdv(
         }
     }).filter((section) => section !== undefined);
 
+    console.log(JSON.stringify(sections));
+
+    if (sections.filter((section) => section === false).length > 0) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Failed to read rank values"
+            }
+        })
+        return NextResponse.json(
+            { success: false, error: "Failed to read rank values" },
+            { status: 400 }
+        );
+    }
+
+    const rankData = sections.filter((section) => section !== false);
+
     const superlativeType = Object.entries(SuperlativeTypes).filter(([, v]) => v.title === dataText[2]).map(([k,]) => k)[0] as keyof typeof superlativeTypes;
 
     const created = await createSuperlative(
         startDate,
         superlativeType,
         Number(dataText[3]),
-        sections.filter((section) => section.type === "duck").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
-        sections.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement }))
+        rankData.filter((section) => section.type === "duck").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
+        rankData.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement }))
     );
 
     if (!created) {
