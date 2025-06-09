@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, DeleteMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, DeleteMessage } from "@/discord/discordUtils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
