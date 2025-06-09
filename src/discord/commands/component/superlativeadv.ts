@@ -107,6 +107,7 @@ async function createSuperlativeAdv(
         if (section.accessory.style !== ButtonStyle.Secondary) return;
         const btnId = section.accessory.custom_id.split("-")[2];
         if (!btnId.includes("duckrank") && !btnId.includes("ducklingrank")) return;
+        console.log(JSON.stringify(section));
 
         const rankMatch = rankRegex.exec(section.components[0].content);
         if (!rankMatch) return;
