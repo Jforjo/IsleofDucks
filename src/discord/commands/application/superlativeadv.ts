@@ -1,9 +1,10 @@
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage, formatNumber } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { getSuperlative, getSuperlativesListLimit, getTotalSuperlatives } from "@/discord/utils";
+import { deleteSuperlative, getSuperlative, getSuperlativesListLimit, getTotalSuperlatives } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, APIMessageComponentButtonInteraction, APISectionComponent, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, InteractionType, MessageFlags, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import SuperlativeDefault from "./superlative";
+import SuperlativeTypes from "@/discord/superlatives";
 
 export async function viewSuperlativeAdvWithDate(
     interaction: APIChatInputApplicationCommandInteraction | APIMessageComponentButtonInteraction,
@@ -386,8 +387,8 @@ export async function viewSuperlativeAdv(
 
 async function createSuperlativeAdv(
     interaction: APIChatInputApplicationCommandInteraction,
-    date: string,
-    type: string
+    dateInput: string,
+    typeInput: string
 ): Promise<
     NextResponse<
         {
@@ -396,17 +397,258 @@ async function createSuperlativeAdv(
         } | APIInteractionResponse
     >
 > {
+    if (!Object.keys(SuperlativeTypes).includes(typeInput)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid type."
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid type." },
+            { status: 404 }
+        );
+    }
+    const superlativeType = SuperlativeTypes[typeInput as keyof typeof SuperlativeTypes];
+
+    const date = new Date(dateInput);
+    if (date.toString() === "Invalid Date") {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid date."
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid date." },
+            { status: 400 }
+        );
+    }
+
+    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
+    const superlative = await getSuperlative(startDate);
+
+    if (superlative) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Superlative already exists."
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Superlative already exists." },
+            { status: 404 }
+        );
+    }
+
     // const rankRegex = /^\[?([a-zA-Z]{1,6})\]?$/gm;
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-            flags: MessageFlags.Ephemeral,
-            content: [
-                `This feature hasn't been implemented yet!`,
-                `Here's the values you inputted:`,
-                `Date: ${date}`,
-                `Type: ${type}`
-            ].join('\n')
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: "## Create Superlative",
+                        },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: [
+                                `Start Date: **${date.toLocaleDateString("en-US", {
+                                    month: "long",
+                                    year: "numeric"
+                                })}**`,
+                                `Type: **${superlativeType.title}**`
+                            ].join('\n'),
+                        },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: "### Duck Ranks",
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-duckrank1`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-duckrank2`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-duckrank3`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-duckrank4`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: "### Duckling Ranks",
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-ducklingrank1`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-ducklingrank2`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-ducklingrank3`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "[RANK] Placeholder"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Req: Placeholder"
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                custom_id: `superlativeadv-create-ducklingrank4`,
+                                label: "Edit",
+                                style: ButtonStyle.Secondary
+                            }
+                        }
+                    ]
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            custom_id: `superlativeadv-create-create`,
+                            label: "Create",
+                            style: ButtonStyle.Success,
+                            disabled: true
+                        },
+                        {
+                            type: ComponentType.Button,
+                            custom_id: `del`,
+                            label: "Cancel",
+                            style: ButtonStyle.Danger
+                        }
+                    ]
+                }
+            ]
         },
     });
 
@@ -418,7 +660,7 @@ async function createSuperlativeAdv(
 
 async function deleteSuperlativeAdv(
     interaction: APIChatInputApplicationCommandInteraction,
-    value: string
+    dateInput: string
 ): Promise<
     NextResponse<
         {
@@ -427,15 +669,62 @@ async function deleteSuperlativeAdv(
         } | APIInteractionResponse
     >
 > {
+    const date = new Date(dateInput);
+    if (date.toString() === "Invalid Date") {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid date."
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid date." },
+            { status: 400 }
+        );
+    }
+
+    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
+    const startDateObj = new Date(startDate);
+
+    if (startDateObj <= new Date()) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Cannot delete the current or a previous superlative."
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Cannot delete the current or a previous superlative." },
+            { status: 403 }
+        );
+    }
+
+    const superlative = await getSuperlative(startDate);
+
+    if (!superlative) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Superlative doesn't exists."
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Superlative doesn't exists." },
+            { status: 404 }
+        );
+    }
+
+    await deleteSuperlative(startDate);
+
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
             flags: MessageFlags.Ephemeral,
-            content: [
-                `This feature hasn't been implemented yet!`,
-                `Here's the value you inputted: ${value}`
-            ].join('\n')
-        },
+            content: "Superlative deleted."
+        }
     });
 
     return NextResponse.json(
