@@ -166,7 +166,7 @@ export default async function Command(
         let untilNextRank = 0;
         let rankShould = "";
         if (buttonID === "ducks" || buttonID === "ducklings") {
-            superlative[buttonID === "ducks" ? "duckranks" : "ducklingranks"].forEach((rank, index) => {
+            superlative[buttonID === "ducks" ? "duckranks" : "ducklingranks"].sort((a, b) => a.requirement - b.requirement).forEach((rank, index) => {
                 if (rank.requirement <= superlativeData.current) {
                     bracketShould = index;
                     rankShould = rank.name.toLowerCase();

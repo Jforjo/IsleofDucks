@@ -429,7 +429,7 @@ export default async function Command(
         let bracketShould = 0;
         let untilNextRank = 0;
         let rankShould = "";
-        superlative.duckranks.forEach((rank, index) => {
+        superlative.duckranks.sort((a, b) => a.requirement - b.requirement).forEach((rank, index) => {
             if (rank.requirement <= superlativeData.current) {
                 bracketShould = index;
                 rankShould = rank.name.toLowerCase();
