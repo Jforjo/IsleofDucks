@@ -104,7 +104,7 @@ export async function viewSuperlativeAdvWithDate(
                             month: "long",
                             year: "numeric"
                         })}`,
-                        `Which is <t:${Math.floor((date.getTime() - Date.now()) / 1000)}:R>`
+                        `Which is <t:${Math.floor(date.getTime() / 1000)}:R>`
                     ].join('\n'),
                     color: IsleofDucks.colours.main,
                     fields: [
