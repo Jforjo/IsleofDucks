@@ -211,7 +211,7 @@ async function createRanks(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.Modal,
         data: {
-            custom_id: `superlativeadv_create_${input}`,
+            custom_id: `superlativeadv-create-${input}`,
             title: `Create ${type} Rank`,
             components: [
                 {
