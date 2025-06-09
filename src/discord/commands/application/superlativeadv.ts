@@ -679,8 +679,7 @@ async function createSuperlativeAdv(
                             type: ComponentType.Button,
                             custom_id: `superlativeadv-create-create`,
                             label: "Create",
-                            style: ButtonStyle.Success,
-                            disabled: true
+                            style: ButtonStyle.Success
                         },
                         {
                             type: ComponentType.Button,
