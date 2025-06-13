@@ -413,7 +413,7 @@ export default async function(
                         name: "Guild",
                         value: guildResponse.isInGuild ?
                             [
-                                `${no} [${guildResponse.guild.name}](<https://plancke.io/hypixel/guild/player/${mojang.uuid}>) [${guildResponse.guild.tag}] (${guildResponse.guild.members.length}/125)`,
+                                `${no} [${guildResponse.guild.name}](<https://plancke.io/hypixel/guild/player/${mojang.uuid}>)${guildResponse.guild.tag ? ` [${guildResponse.guild.tag}]` : ''} (${guildResponse.guild.members.length}/125)`,
                                 `Rank: ${guildResponse.guild.members.find(member => member.uuid === mojang.uuid)?.rank}`
                             ].join('\n') :
                             `${yes} They are not in a guild`,
