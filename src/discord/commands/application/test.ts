@@ -74,7 +74,7 @@ export default async function(
         );
     }
 
-    for (const chunk of arrayChunks(bzData, 50)) {
+    for (const chunk of arrayChunks(bzData, 39)) {
         await SendMessage(interaction.channel.id, {
             flags: MessageFlags.IsComponentsV2,
             components: [
