@@ -11,8 +11,8 @@ async function getShards() {
     if (!bzData.success) return;
     // return the key and value of bzData.products where the key of the object starts with "SHARD_"
     return Object.entries(bzData.products)
-        .filter(([key, _value]) => key.startsWith("SHARD_"))
-        .sort(([_keyA, valueA], [_keyB, valueB]) => valueA.buy_summary[0].pricePerUnit - valueB.buy_summary[0].pricePerUnit)
+        .filter(([key,]) => key.startsWith("SHARD_"))
+        .sort(([, valueA], [, valueB]) => valueA.buy_summary[0].pricePerUnit - valueB.buy_summary[0].pricePerUnit)
     ;
 }
 
