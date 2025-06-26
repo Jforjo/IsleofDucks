@@ -74,7 +74,7 @@ export default async function(
         );
     }
 
-    for (const chunk of arrayChunks(bzData, 30)) {
+    for (const chunk of arrayChunks(bzData, 50)) {
         await SendMessage(interaction.channel.id, {
             flags: MessageFlags.IsComponentsV2,
             components: [
@@ -83,7 +83,7 @@ export default async function(
                     accent_color: IsleofDucks.colours.main,
                     components: chunk.map(([key, value]) => ({
                         type: ComponentType.TextDisplay,
-                        content: `**${key}** - ${value.quick_status.sellPrice} / ${value.quick_status.buyPrice}`,
+                        content: `**${key}** - ${Number(value.quick_status.sellPrice).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })} / ${Number(value.quick_status.buyPrice).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}`,
                     }))
                 }
             ]
