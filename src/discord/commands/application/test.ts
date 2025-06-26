@@ -1,7 +1,20 @@
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
-import { getSuperlativesList } from "@/discord/utils";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { arrayChunks } from "@/discord/utils";
+import { SkyblockBazaarResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
+
+async function getShards() {
+    const bzRes = await fetch("https://api.hypixel.net/v2/skyblock/bazaar");
+    if (!bzRes.ok) return;
+    const bzData = await bzRes.json() as SkyblockBazaarResponse;
+    if (!bzData.success) return;
+    // return the key and value of bzData.products where the key of the object starts with "SHARD_"
+    return Object.entries(bzData.products)
+        .filter(([key, _value]) => key.startsWith("SHARD_"))
+        .sort(([_keyA, valueA], [_keyB, valueB]) => valueA.buy_summary[0].pricePerUnit - valueB.buy_summary[0].pricePerUnit)
+    ;
+}
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -13,36 +26,36 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    const member = interaction.member;
-    if (!member) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                content: "Could not find who ran the command!",
-                flags: MessageFlags.Ephemeral
-            }
-        });
-        return NextResponse.json(
-            { success: false, error: "Could not find who ran the command" },
-            { status: 400 }
-        );
-    }
-    if (!(
-        member.user.id === IsleofDucks.staticIDs.Jforjo
-        // || member.roles.includes(IsleofDucks.roles.admin)
-    )) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                content: "You do not have permission to run this command!",
-                flags: MessageFlags.Ephemeral
-            }
-        });
-        return NextResponse.json(
-            { success: false, error: "You do not have permission to run this command" },
-            { status: 400 }
-        );
-    }
+    // const member = interaction.member;
+    // if (!member) {
+    //     await CreateInteractionResponse(interaction.id, interaction.token, {
+    //         type: InteractionResponseType.ChannelMessageWithSource,
+    //         data: {
+    //             content: "Could not find who ran the command!",
+    //             flags: MessageFlags.Ephemeral
+    //         }
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Could not find who ran the command" },
+    //         { status: 400 }
+    //     );
+    // }
+    // if (!(
+    //     member.user.id === IsleofDucks.staticIDs.Jforjo
+    //     // || member.roles.includes(IsleofDucks.roles.admin)
+    // )) {
+    //     await CreateInteractionResponse(interaction.id, interaction.token, {
+    //         type: InteractionResponseType.ChannelMessageWithSource,
+    //         data: {
+    //             content: "You do not have permission to run this command!",
+    //             flags: MessageFlags.Ephemeral
+    //         }
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "You do not have permission to run this command" },
+    //         { status: 400 }
+    //     );
+    // }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
@@ -51,9 +64,32 @@ export default async function(
         }
     });
 
-    const superlative = await getSuperlativesList();
-    console.log(JSON.stringify(superlative));
-    console.log(typeof superlative[0].start);
+    const bzData = await getShards();
+    if (!bzData) {
+        await FollowupMessage(interaction.token, {
+            content: "Failed to fetch shards"
+        });
+        return NextResponse.json(
+            { success: false, error: "Failed to fetch shards" },
+            { status: 400 }
+        );
+    }
+
+    for (const chunk of arrayChunks(bzData, 30)) {
+        await SendMessage(interaction.channel.id, {
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: chunk.map(([key, value]) => ({
+                        type: ComponentType.TextDisplay,
+                        content: `**${key}** - ${value.quick_status.sellPrice} / ${value.quick_status.buyPrice}`,
+                    }))
+                }
+            ]
+        })
+    }
 
     // await SendMessage(interaction.channel.id, {
     //     flags: MessageFlags.IsComponentsV2,
