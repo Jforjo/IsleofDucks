@@ -9,7 +9,6 @@ async function getShards() {
     if (!bzRes.ok) return;
     const bzData = await bzRes.json() as SkyblockBazaarResponse;
     if (!bzData.success) return;
-    // return the key and value of bzData.products where the key of the object starts with "SHARD_"
     return Object.entries(bzData.products)
         .filter(([key,]) => key.startsWith("SHARD_"))
         .sort(([, valueA], [, valueB]) => valueA.buy_summary[0].pricePerUnit - valueB.buy_summary[0].pricePerUnit)
@@ -151,5 +150,4 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
     name: "test",
     description: "Test command",
     type: ApplicationCommandType.ChatInput,
-    default_member_permissions: "0",
 }
