@@ -5,10 +5,21 @@ export default {
         title: "SkyBlock Level",
         value: (profile: SkyBlockProfileMember) => profile?.leveling?.experience ?? 0
     },
+    totalHunts: {
+        title: "Total Hunts",
+        value: (profile: SkyBlockProfileMember) => 
+            ( profile?.player_stats?.shard_trap_hunts ?? 0 ) +
+            ( profile?.player_stats?.shard_combat_hunts ?? 0 ) +
+            ( profile?.player_stats?.shard_forest_hunts ?? 0 ) +
+            ( profile?.player_stats?.shard_fishing_hunts ?? 0 )
+    },
     catacombsExperience: {
         title: "Catacombs Experience",
         value: (profile: SkyBlockProfileMember) => profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0
     },
+    /**
+     *  SKILLS
+     */ 
     alchemyExperience: {
         title: "Alchemy Experience",
         value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_ALCHEMY ?? 0
@@ -53,6 +64,9 @@ export default {
         title: "Taming Experience",
         value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_TAMING ?? 0
     },
+    /**
+     *  SLAYERS
+     */
     spiderlayerExperience: {
         title: "Spider Slayer Experience",
         value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.spider?.xp ?? 0
@@ -77,6 +91,9 @@ export default {
         title: "Vampire Slayer Experience",
         value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.vampire?.xp ?? 0
     },
+    /**
+     *  KUUDRA
+     */
     kuudraCompletions: {
         title: "Kuudra Completions",
         value: (profile: SkyBlockProfileMember) =>
@@ -94,5 +111,16 @@ export default {
             ( profile?.nether_island_player_data?.kuudra_completed_tiers?.burning ?? 0 ) * 3 +
             ( profile?.nether_island_player_data?.kuudra_completed_tiers?.fiery ?? 0 ) * 4 +
             ( profile?.nether_island_player_data?.kuudra_completed_tiers?.infernal ?? 0 ) * 5
+    },
+    /**
+     * COLLECTIONS
+     */
+    mangroveCollection: {
+        title: "Mangrove Collection",
+        value: (profile: SkyBlockProfileMember) => profile?.collection?.MANGROVE_LOG ?? 0
+    },
+    seaLumiesCollection: {
+        title: "Sea Lumies Collection",
+        value: (profile: SkyBlockProfileMember) => profile?.collection?.SEA_LUMIES ?? 0
     },
 }
