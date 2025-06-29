@@ -28,7 +28,7 @@ export async function getImmunePlayers(): Promise<{
         if (nameRes.success === true) name = nameRes.name;
         const level = await sql`SELECT exp FROM discordroles WHERE uuid = ${row.uuid}`;
         if (level.rows.length > 0 && level.rows[0].exp) {
-            name = `**${name}** (${Math.floor(level.rows[0].exp)})`;
+            name = `**${name}** (${Math.floor(level.rows[0].exp / 100)})`;
         }
         return {
             uuid: row.uuid,
