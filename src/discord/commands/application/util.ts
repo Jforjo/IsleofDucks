@@ -147,7 +147,7 @@ async function transcript(
             { status: 400 }
         );
     }
-    if (interaction.member.user.id !== IsleofDucks.staticIDs.Jforjo) {
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
