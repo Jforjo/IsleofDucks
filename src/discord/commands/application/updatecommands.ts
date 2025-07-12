@@ -22,6 +22,7 @@ import { CommandData as Util } from "./util";
 import { CommandData as Away } from "./away";
 import { CommandData as Donor } from "./donor";
 import { CommandData as SuperlativeAdv } from "./superlativeadv";
+import { CommandData as cheapestshards } from "./cheapestshards";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -80,7 +81,8 @@ export default async function(
         Util,
         Away,
         Donor,
-        SuperlativeAdv
+        SuperlativeAdv,
+        cheapestshards
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
