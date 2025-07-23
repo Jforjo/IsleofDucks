@@ -38,7 +38,8 @@ interface GetScammerResponseError extends GetScammerResponse {
 }
 
 export async function getScammerFromUUID(
-    uuid: string
+    uuid: string,
+    tries = 0
 ): Promise<
     GetScammerResponseSuccess | GetScammerResponseError
 >{
@@ -60,6 +61,10 @@ export async function getScammerFromUUID(
         return {
             success: false,
             reason: "Invalid token"
+        }
+    } else if (res.status === 525) {
+        if (tries < 3) {
+            return getScammerFromUUID(uuid, tries + 1);
         }
     }
 
