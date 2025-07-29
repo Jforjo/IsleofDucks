@@ -700,6 +700,10 @@ export async function getBridgeFilters(
     const { rows } = await sql`SELECT replacetext, withtext FROM bridgefilters ORDER BY replacetext ASC LIMIT ${limit} OFFSET ${offset}`;
     return rows as { replacetext: number; withtext: string; }[];
 }
+export async function getAllBridgeFilters(): Promise<{ replacetext: number; withtext: string }[]> {
+    const { rows } = await sql`SELECT replacetext, withtext FROM bridgefilters ORDER BY replacetext ASC`;
+    return rows as { replacetext: number; withtext: string; }[];
+}
 export async function getTotalBridgeFilters(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters`;
     return rows[0].count;

@@ -8,7 +8,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     if (!authHeader?.includes('Bearer ')) {
         return Response.json({
             success: false,
-            reason: "Missing authorization header"
+            message: "Missing authorization header"
         });
     }
     const APIKey = authHeader.split(' ')[1];
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     if (APIKey !== process.env.BRIDGE_API_KEY) {
         return Response.json({
             success: false,
-            reason: "Invalid API key"
+            message: "Invalid API key"
         });
     }
 
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     if (!uuid) {
         return Response.json({
             success: false,
-            reason: "Missing UUID"
+            message: "Missing UUID"
         });
     }
     
