@@ -23,6 +23,7 @@ import { CommandData as Away } from "./away";
 import { CommandData as Donor } from "./donor";
 import { CommandData as SuperlativeAdv } from "./superlativeadv";
 import { CommandData as cheapestshards } from "./cheapestshards";
+import { CommandData as Bridge } from "./bridge";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -82,7 +83,8 @@ export default async function(
         Away,
         Donor,
         SuperlativeAdv,
-        cheapestshards
+        cheapestshards,
+        Bridge
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
