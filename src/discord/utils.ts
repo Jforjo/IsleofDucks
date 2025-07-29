@@ -677,3 +677,30 @@ export async function createSuperlative(
 export async function deleteSuperlative(start: string): Promise<void> {
     await sql`DELETE FROM superlatives WHERE start = ${start}`;
 }
+
+export async function checkBridgeFilter(query: string): Promise<boolean> {
+    const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters WHERE replace ILIKE ${query}`;
+    return rows[0].count > 0;
+}
+export async function addBridgeFilter(replace: string, withText: string): Promise<void> {
+    // if (await checkBridgeFilter(replace)) return false;
+    await sql`INSERT INTO bridgefilters (replace, with) VALUES (${replace}, ${withText})`;
+    // return true;
+}
+export async function removeBridgeFilter(replace: string): Promise<void> {
+    await sql`DELETE FROM bridgefilters WHERE replace = ${replace}`;
+}
+export async function getBridgeFilters(
+    offset = 0,
+    limit = 100
+): Promise<{
+    replace: number;
+    with: string;
+}[]> {
+    const { rows } = await sql`SELECT replace, with FROM bridgefilters ORDER BY replace ASC LIMIT ${limit} OFFSET ${offset}`;
+    return rows as { replace: number; with: string; }[];
+}
+export async function getTotalBridgeFilters(): Promise<number> {
+    const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters`;
+    return rows[0].count;
+}
