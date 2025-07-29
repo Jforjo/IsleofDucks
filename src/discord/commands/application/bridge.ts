@@ -435,7 +435,7 @@ export default async function(
     );
 }
 export const CommandData = {
-    name: "util",
+    name: "bridge",
     description: "Various bridge commands.",
     options: [
         {
