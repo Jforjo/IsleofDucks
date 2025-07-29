@@ -62,7 +62,7 @@ async function viewFilters(
             {
                 title: "Filters",
                 color: IsleofDucks.colours.main,
-                description: filters.map(filter => `${filter.replace}: ${filter.with}`).join("\n"),
+                description: filters.map(filter => `${filter.replaceText}: ${filter.withText}`).join("\n"),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
