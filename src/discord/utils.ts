@@ -679,26 +679,26 @@ export async function deleteSuperlative(start: string): Promise<void> {
 }
 
 export async function checkBridgeFilter(query: string): Promise<boolean> {
-    const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters WHERE replaceText ILIKE ${query}`;
+    const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters WHERE replacetext ILIKE ${query}`;
     return rows[0].count > 0;
 }
-export async function addBridgeFilter(replaceText: string, withText: string): Promise<void> {
-    // if (await checkBridgeFilter(replaceText)) return false;
-    await sql`INSERT INTO bridgefilters (replaceText, with) VALUES (${replaceText}, ${withText})`;
+export async function addBridgeFilter(replacetext: string, withtext: string): Promise<void> {
+    // if (await checkBridgeFilter(replacetext)) return false;
+    await sql`INSERT INTO bridgefilters (replacetext, with) VALUES (${replacetext}, ${withtext})`;
     // return true;
 }
-export async function removeBridgeFilter(replaceText: string): Promise<void> {
-    await sql`DELETE FROM bridgefilters WHERE replaceText = ${replaceText}`;
+export async function removeBridgeFilter(replacetext: string): Promise<void> {
+    await sql`DELETE FROM bridgefilters WHERE replacetext = ${replacetext}`;
 }
 export async function getBridgeFilters(
     offset = 0,
     limit = 100
 ): Promise<{
-    replaceText: number;
-    withText: string;
+    replacetext: number;
+    withtext: string;
 }[]> {
-    const { rows } = await sql`SELECT replaceText, withText FROM bridgefilters ORDER BY replaceText ASC LIMIT ${limit} OFFSET ${offset}`;
-    return rows as { replaceText: number; withText: string; }[];
+    const { rows } = await sql`SELECT replacetext, withtext FROM bridgefilters ORDER BY replacetext ASC LIMIT ${limit} OFFSET ${offset}`;
+    return rows as { replacetext: number; withtext: string; }[];
 }
 export async function getTotalBridgeFilters(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters`;
