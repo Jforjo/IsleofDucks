@@ -684,7 +684,7 @@ export async function checkBridgeFilter(query: string): Promise<boolean> {
 }
 export async function addBridgeFilter(replacetext: string, withtext: string): Promise<void> {
     // if (await checkBridgeFilter(replacetext)) return false;
-    await sql`INSERT INTO bridgefilters (replacetext, with) VALUES (${replacetext}, ${withtext})`;
+    await sql`INSERT INTO bridgefilters (replacetext, withtext) VALUES (${replacetext}, ${withtext})`;
     // return true;
 }
 export async function removeBridgeFilter(replacetext: string): Promise<void> {
