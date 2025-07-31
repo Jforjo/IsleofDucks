@@ -67,13 +67,23 @@ export default {
     /**
      *  SLAYERS
      */
-    spiderlayerExperience: {
-        title: "Spider Slayer Experience",
-        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.spider?.xp ?? 0
+    totalSlayerExperience: {
+        title: "Total Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => 
+            ( profile?.slayer?.slayer_bosses?.zombie?.xp ?? 0 ) +
+            ( profile?.slayer?.slayer_bosses?.spider?.xp ?? 0 ) +
+            ( profile?.slayer?.slayer_bosses?.wolf?.xp ?? 0 ) +
+            ( profile?.slayer?.slayer_bosses?.enderman?.xp ?? 0 ) +
+            ( profile?.slayer?.slayer_bosses?.blaze?.xp ?? 0 ) +
+            ( profile?.slayer?.slayer_bosses?.vampire?.xp ?? 0 )
     },
     zombieSlayerExperience: {
         title: "Zombie Slayer Experience",
         value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.zombie?.xp ?? 0
+    },
+    spiderSlayerExperience: {
+        title: "Spider Slayer Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.slayer?.slayer_bosses?.spider?.xp ?? 0
     },
     wolfSlayerExperience: {
         title: "Wolf Slayer Experience",
