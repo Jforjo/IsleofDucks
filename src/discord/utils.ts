@@ -668,9 +668,11 @@ export async function createSuperlative(
 ): Promise<boolean> {
     const { rows } = await sql`SELECT COUNT(*) FROM superlatives WHERE start = ${start}`;
     if (rows[0].count > 0) return false;
+    const duckTemp: string[] = [];
+    const ducklingTemp: string[] = [];
     await sql`
-        INSERT INTO superlatives (start, type, dp, duckranks, ducklingranks)
-        VALUES (${start}, ${type}, ${dp}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)})
+        INSERT INTO superlatives (start, type, dp, duckranks, ducklingranks, duckstats, ducklingstats)
+        VALUES (${start}, ${type}, ${dp}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)}, ${JSON.stringify(duckTemp)}, ${JSON.stringify(ducklingTemp)})
     `;
     return true;
 }
