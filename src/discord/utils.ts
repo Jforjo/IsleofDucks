@@ -492,7 +492,7 @@ export async function saveSuperlativeData(superlative: ActiveSuperlative): Promi
     const [duckData, ducklingData] = await Promise.all([duckDataPromise, ducklingDataPromise]);
 
     const duckStats = updateSuperlativeStatsDuck(superlative.start, duckData);
-    const ducklingstats = updateSuperlativeStatsDuck(superlative.start, ducklingData);
+    const ducklingstats = updateSuperlativeStatsDuckling(superlative.start, ducklingData);
     await Promise.all([duckStats, ducklingstats]);
     return true;
 }
