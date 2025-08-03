@@ -212,7 +212,15 @@ export default async function(
         );
     }
     // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
-    const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
+    let scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
+    if (!scammerResponse.success) {
+        console.log("Scammer Error:", scammerResponse.reason);
+        scammerResponse = await getScammerFromUUID(mojang.uuid);
+    }
+    if (!scammerResponse.success) {
+        console.log("Scammer Error:", scammerResponse.reason);
+        scammerResponse = await getScammerFromUUID(mojang.uuid);
+    }
     if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
     if (scammerResponse.success && scammerResponse.scammer) {
         if (scammerResponse.details?.discordIds) {
@@ -233,9 +241,9 @@ export default async function(
                     description: `Automatic ban for being on the Jerry Scammer List. Detected through ${TICKET.name}.`,
                     fields: [
                         {
-                            name: `Discord - <@${member.user.id}>`,
+                            name: `Discord - ${member.user.id}`,
                             value: [
-                                `ID: ${member.user.id}`,
+                                `User: <@${member.user.id}>`,
                                 `Username: ${member.user.username.replaceAll('_', '\\_')}`,
                                 `Nickname: ${member.nick?.replaceAll('_', '\\_') ?? ""}`
                             ].join('\n')

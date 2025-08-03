@@ -212,8 +212,15 @@ export default async function(
         );
     }
     // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
-    const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
-    if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
+    let scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
+    if (!scammerResponse.success) {
+        console.log("Scammer Error:", scammerResponse.reason);
+        scammerResponse = await getScammerFromUUID(mojang.uuid);
+    }
+    if (!scammerResponse.success) {
+        console.log("Scammer Error:", scammerResponse.reason);
+        scammerResponse = await getScammerFromUUID(mojang.uuid);
+    }
     if (scammerResponse.success && scammerResponse.scammer) {
         if (scammerResponse.details?.discordIds) {
             for (const discord of scammerResponse.details.discordIds) {
