@@ -37,7 +37,9 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     const avatar = await loadImage(avatarURL);
     const frames: GifFrame[] = [];
-    const gifFrames = await getGifFrames("/images/welcome.gif");
+    const baseUrl = request.nextUrl.origin;
+    const gifUrl = `${baseUrl}/images/welcome.gif`;
+    const gifFrames = await getGifFrames(gifUrl);
     
     const gifWidth = gifFrames[0].bitmap.width;
     const gifHeight = gifFrames[0].bitmap.height;
