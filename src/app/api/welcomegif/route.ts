@@ -81,7 +81,8 @@ export async function GET(request: NextRequest): Promise<Response> {
 
         GifUtil.quantizeDekker(frame, 256);
 
-        frames.push(new GifFrame(new BitmapImage(frame.bitmap)));
+        // frames.push(new GifFrame(new BitmapImage(frame.bitmap)));
+        frames.push(frame);
     }
 
     const codec = new GifCodec();
