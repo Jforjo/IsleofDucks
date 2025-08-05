@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { BitmapImage, GifCodec, GifFrame, GifUtil } from "gifwrap";
 import { createCanvas, loadImage } from "canvas";
+import path from "path";
 
 async function getGifFrames(file: string): Promise<GifFrame[]> {
     return new Promise((resolve) => {
@@ -37,9 +38,8 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     const avatar = await loadImage(avatarURL);
     const frames: GifFrame[] = [];
-    const baseUrl = request.nextUrl.origin;
-    const gifUrl = `${baseUrl}/images/welcome.gif`;
-    const gifFrames = await getGifFrames(gifUrl);
+    const filePath = path.join(process.cwd(), "public", "images", "welcome.gif");
+    const gifFrames = await getGifFrames(filePath);
     
     const gifWidth = gifFrames[0].bitmap.width;
     const gifHeight = gifFrames[0].bitmap.height;
