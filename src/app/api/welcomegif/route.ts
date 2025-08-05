@@ -43,7 +43,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     
     const gifWidth = gifFrames[0].bitmap.width;
     const gifHeight = gifFrames[0].bitmap.height;
-    const width = 256;
+    const width = 288;
     const height = width;
     const xCenter = (gifHeight - height) / 2 + width / 2;
     const yCenter = gifHeight / 2;
