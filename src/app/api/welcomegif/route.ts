@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { BitmapImage, GifCodec, GifFrame, GifUtil } from "gifwrap";
+import { GifCodec, GifFrame, GifUtil } from "gifwrap";
 import { createCanvas, loadImage, ImageData } from "canvas";
 import path from "path";
 
