@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { BitmapImage, GifCodec, GifFrame, GifUtil } from "gifwrap";
-import { createCanvas, loadImage } from "canvas";
+import { createCanvas, loadImage, ImageData } from "canvas";
 import path from "path";
 
 async function getGifFrames(file: string): Promise<GifFrame[]> {
