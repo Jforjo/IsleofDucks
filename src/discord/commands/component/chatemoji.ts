@@ -62,7 +62,7 @@ async function viewEmojis(
             {
                 title: "Emojis",
                 color: IsleofDucks.colours.main,
-                description: emojis.map(emoji => `"\:${emoji.replacetext}\:" -> "${emoji.withtext}"`).join("\n"),
+                description: emojis.map(emoji => `":${emoji.replacetext}:" -> "${emoji.withtext}"`).join("\n"),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
