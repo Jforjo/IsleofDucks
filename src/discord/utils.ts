@@ -710,3 +710,35 @@ export async function getTotalBridgeFilters(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters`;
     return rows[0].count;
 }
+
+
+export async function checkEmoji(query: string): Promise<boolean> {
+    const { rows } = await sql`SELECT COUNT(*) FROM emojis WHERE replacetext ILIKE ${query}`;
+    return rows[0].count > 0;
+}
+export async function addEmoji(replacetext: string, withtext: string): Promise<void> {
+    // if (await checkEmoji(replacetext)) return false;
+    await sql`INSERT INTO emojis (replacetext, withtext) VALUES (${replacetext}, ${withtext})`;
+    // return true;
+}
+export async function removeEmoji(replacetext: string): Promise<void> {
+    await sql`DELETE FROM emojis WHERE replacetext = ${replacetext}`;
+}
+export async function getEmojis(
+    offset = 0,
+    limit = 100
+): Promise<{
+    replacetext: number;
+    withtext: string;
+}[]> {
+    const { rows } = await sql`SELECT replacetext, withtext FROM emojis ORDER BY replacetext ASC LIMIT ${limit} OFFSET ${offset}`;
+    return rows as { replacetext: number; withtext: string; }[];
+}
+export async function getAllEmojis(): Promise<{ replacetext: number; withtext: string }[]> {
+    const { rows } = await sql`SELECT replacetext, withtext FROM emojis ORDER BY replacetext ASC`;
+    return rows as { replacetext: number; withtext: string; }[];
+}
+export async function getTotalEmojis(): Promise<number> {
+    const { rows } = await sql`SELECT COUNT(*) FROM emojis`;
+    return rows[0].count;
+}
