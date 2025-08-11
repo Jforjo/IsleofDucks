@@ -435,8 +435,7 @@ async function addChatEmoji(
         embeds: [
             {
                 title: "Emoji added",
-                // @ts-ignore no-useless-escape
-                description: `Emoji added: \:${replace}\: -> ${withText}`,
+                description: `Emoji added: \`:${replace}:\` -> ${withText}`,
                 color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -533,8 +532,7 @@ async function removeChatEmoji(
         embeds: [
             {
                 title: "Emoji removed",
-                // @ts-ignore no-useless-escape
-                description: `Emoji removed: \:${replace}\:`,
+                description: `Emoji removed: \`:${replace}:\``,
                 color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
