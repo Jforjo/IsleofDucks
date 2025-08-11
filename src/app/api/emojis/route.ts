@@ -1,4 +1,4 @@
-import { getAllBridgeFilters, getAllEmojis } from "@/discord/utils";
+import { getAllEmojis } from "@/discord/utils";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest): Promise<Response> {
