@@ -388,7 +388,7 @@ async function addChatEmoji(
 
     replace = replace.toLowerCase().replaceAll(":", "");
 
-    if (/[^a-zA-Z]/.test(replace)) {
+    if (/[^a-zA-Z_]/.test(replace)) {
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
