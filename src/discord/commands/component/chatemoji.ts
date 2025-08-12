@@ -74,14 +74,14 @@ async function viewEmojis(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `chateomji-page_${parseInt(page) - 1}`,
+                        custom_id: `chatemoji-page_${parseInt(page) - 1}`,
                         type: ComponentType.Button,
                         label: '◀️',
                         style: ButtonStyle.Primary,
                         disabled: page == '1'
                     },
                     {
-                        custom_id: `chateomji-page_${parseInt(page) + 1}`,
+                        custom_id: `chatemoji-page_${parseInt(page) + 1}`,
                         type: ComponentType.Button,
                         label: '▶️',
                         style: ButtonStyle.Primary,
