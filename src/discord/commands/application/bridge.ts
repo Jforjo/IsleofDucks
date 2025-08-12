@@ -435,7 +435,7 @@ async function addChatEmoji(
         embeds: [
             {
                 title: "Emoji added",
-                description: `Emoji added: \`:${replace}:\` -> ${withText}`,
+                description: `Emoji added: \`:${replace}: -> ${withText}\``,
                 color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -649,7 +649,7 @@ async function viewChatEmojis(
             {
                 title: "Emojis",
                 color: IsleofDucks.colours.main,
-                description: emojis.map(emoji => `":${emoji.replacetext}:" -> "${emoji.withtext}"`).join("\n"),
+                description: emojis.map(emoji => `\`:${emoji.replacetext}: -> ${emoji.withtext}\``).join("\n"),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`
                 },
