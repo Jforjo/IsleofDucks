@@ -158,15 +158,23 @@ export default async function Command(
         let logMessage: APIMessage | undefined;
         messages.forEach(message => {
             if (!message.author.bot) return;
-            if (!message.embeds.length) return;
-            if (!message.embeds[0].description) return;
-            const description = message.embeds[0].description;
-            if (description === "There are no logs to display.") {
+            if (!message.flags) return;
+            if (!(message.flags & MessageFlags.IsComponentsV2)) return;
+            if (!message.components) return;
+            if (message.components.length !== 1) return;
+            if (message.components[0].type !== ComponentType.Container) return;
+
+            if (!message.components[0].components) return;
+            if (message.components[0].components.length !== 1) return;
+            if (message.components[0].components[0].type !== ComponentType.TextDisplay) return;
+
+            const content = message.components[0].components[0].content;
+            if (content === "There are no logs to display.") {
                 logMessage = message;
                 return;
             }
-            if (!description.split("\n")[1].includes('Guild Log')) return;
-            if (!description.includes(username)) return;
+            if (!content.split("\n")[1].includes('Guild Log')) return;
+            if (!content.includes(username)) return;
             logMessage = message;
             return;
         });
@@ -240,19 +248,178 @@ export default async function Command(
             }))
         });
     } else if (buttonID === "invite") {
+        await FollowupMessage(interaction.token, {
+            content: interaction.message.content,
+            embeds: [...interaction.message.embeds, {
+                title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                description: "Sending invite command...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }],
+            components: interaction.message.components,
+            attachments: interaction.message.attachments.map(attachment => ({
+                id: attachment.id,
+            }))
+        });
+
+        let message: APIMessage | undefined;
         if (type === "duck") {
-            await SendMessage(IsleofDucks.channels.duckoc, {
+            message = await SendMessage(IsleofDucks.channels.duckoc, {
                 content: `invite ${username}`
             });
         } else if (type === "duckling") {
-            await SendMessage(IsleofDucks.channels.ducklingoc, {
+            message = await SendMessage(IsleofDucks.channels.ducklingoc, {
                 content: `invite ${username}`
             });
+        }
+        if (!message) await new Promise(resolve => setTimeout(resolve, 1000));
+        if (!message) {
+            await FollowupMessage(interaction.token, {
+                content: interaction.message.content,
+                embeds: [...interaction.message.embeds, {
+                    title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                    description: "Failed to send the invite command.",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }],
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
+            });
+            return NextResponse.json(
+                { success: false, error: "Failed to send the invite command." },
+                { status: 400 }
+            );
         }
         
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: interaction.message.embeds,
+            embeds: [...interaction.message.embeds, {
+                title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                description: "Fetching invite confirmation...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }],
+            components: interaction.message.components,
+            attachments: interaction.message.attachments.map(attachment => ({
+                id: attachment.id,
+            }))
+        });
+
+        let messages = await GetChannelMessages(message.channel_id, {
+            limit: 5,
+            after: message.id
+        });
+        let count = 0;
+        while (!messages || messages.length === 0) {
+            if (count > 30) break;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            messages = await GetChannelMessages(message.channel_id, {
+                limit: 5,
+                after: message.id
+            });
+            count++;
+        }
+        if (!messages) {
+            await FollowupMessage(interaction.token, {
+                content: interaction.message.content,
+                embeds: [...interaction.message.embeds, {
+                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                    description: "Failed to fetch invite confirmation.",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }],
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
+            });
+            return NextResponse.json(
+                { success: false, error: "Failed to fetch invite confirmation." },
+                { status: 400 }
+            );
+        }
+
+        let logMessage: string | undefined;
+        messages.forEach(message => {
+            if (!message.author.bot) return;
+            if (!message.flags) return;
+            if (!(message.flags & MessageFlags.IsComponentsV2)) return;
+            if (!message.components) return;
+            if (message.components.length !== 1) return;
+            if (message.components[0].type !== ComponentType.Container) return;
+
+            if (!message.components[0].components) return;
+            if (message.components[0].components.length !== 1) return;
+            if (message.components[0].components[0].type !== ComponentType.TextDisplay) return;
+
+            const content = message.components[0].components[0].content;
+            if (content === "Your guild is full!") {
+                logMessage = content;
+                return;
+            }
+            if (!content.includes('have 5 minutes to accept')) return;
+            if (!content.includes(username)) return;
+            logMessage = content;
+            return;
+        });
+        if (!logMessage) {
+            await FollowupMessage(interaction.token, {
+                content: interaction.message.content,
+                embeds: [...interaction.message.embeds, {
+                    title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                    description: "Failed to fetch invite confirmation message.",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }],
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
+            });
+            return NextResponse.json(
+                { success: false, error: "Failed to fetch invite confirmation message." },
+                { status: 400 }
+            );
+        }
+
+        await FollowupMessage(interaction.token, {
+            content: interaction.message.content,
+            embeds: [...interaction.message.embeds.map(embed => {
+                return {
+                    ...embed,
+                    thumbnaill: embed.thumbnail && {
+                        url: `attachment://${embed.thumbnail.url.split('/').pop()?.split('?')[0]}`
+                    },
+                    image: embed.image && {
+                        url: `attachment://${embed.image.url.split('/').pop()?.split('?')[0]}`
+                    }
+                }
+            }), {
+                title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                description: logMessage,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }],
             components: interaction.message.components?.map(row => {
                 if (row.type !== ComponentType.ActionRow) return row;
                 return {
