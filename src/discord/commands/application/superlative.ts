@@ -606,12 +606,12 @@ export default async function Command(
     });
 
     await BACKGROUND_SUPERLATIVE_UPDATE;
-    for (const setrank of setranks) {
+    // for (const setrank of setranks) {
         await SendMessage(IsleofDucks.channels.duckoc, {
-            content: setrank
+            content: setranks.join("\n")
         });
-        await new Promise(resolve => setTimeout(resolve, 500));
-    }
+        // await new Promise(resolve => setTimeout(resolve, 500));
+    // }
     await saveSuperlative();
 
     return NextResponse.json(
