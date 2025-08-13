@@ -155,7 +155,7 @@ export default async function Command(
             );
         }
 
-        let logMessage: APIMessage | undefined;
+        let logMessage: string | undefined;
         messages.forEach(message => {
             if (!message.author.bot) return;
             if (!message.flags) return;
@@ -170,12 +170,12 @@ export default async function Command(
 
             const content = message.components[0].components[0].content;
             if (content === "There are no logs to display.") {
-                logMessage = message;
+                logMessage = content;
                 return;
             }
             if (!content.split("\n")[1].includes('Guild Log')) return;
             if (!content.includes(username)) return;
-            logMessage = message;
+            logMessage = content;
             return;
         });
         if (!logMessage) {
@@ -215,7 +215,7 @@ export default async function Command(
                 }
             }), {
                 title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
-                description: logMessage.embeds[0].description,
+                description: logMessage,
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
