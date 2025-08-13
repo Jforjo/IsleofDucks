@@ -371,7 +371,10 @@ export default async function Command(
                 logMessage = content;
                 return;
             }
-            if (!content.includes('have 5 minutes to accept')) return;
+            if (
+                !content.includes('has been sent an offline invite!') &&
+                !content.includes('has been invited!')
+            ) return;
             if (!content.includes(username)) return;
             logMessage = content;
             return;
