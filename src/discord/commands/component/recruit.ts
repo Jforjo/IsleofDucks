@@ -370,16 +370,20 @@ export default async function Command(
             const content = message.components[0].components[0].content;
             if (content === "Your guild is full!") {
                 logMessage = content;
-                return;
+                disableButton = false;
+            }
+            if (content === "You can't invite this player!") {
+                logMessage = content;
+                disableButton = false;
             }
             if (!content.includes(username)) return;
-            if (content.includes('has been sent an offline invite!')) {
+            if (content.includes("has been sent an offline invite!")) {
                 disableButton = true;
-            } else if (content.includes('has been invited!')) {
+            } else if (content.includes("has been invited!")) {
                 disableButton = true;
-            } else if (content.includes('Could not find a player by the name of')) {
-                disableButton = false;
-            } else if (content.includes('is already in another guild!')) {
+            } else if (content.includes("Could not find a player by the name of")) {
+                disableButton = true;
+            } else if (content.includes("is already in another guild!")) {
                 disableButton = false;
             } else return;
             logMessage = content;
