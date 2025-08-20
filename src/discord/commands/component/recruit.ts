@@ -354,6 +354,7 @@ export default async function Command(
         }
 
         let logMessage: string | undefined;
+        let disableButton = true;
         messages.forEach(message => {
             if (!message.author.bot) return;
             if (!message.flags) return;
@@ -371,11 +372,16 @@ export default async function Command(
                 logMessage = content;
                 return;
             }
-            if (
-                !content.includes('has been sent an offline invite!') &&
-                !content.includes('has been invited!')
-            ) return;
             if (!content.includes(username)) return;
+            if (content.includes('has been sent an offline invite!')) {
+
+            } else if (content.includes('has been invited!')) {
+
+            } else if (content.includes('Could not find a player by the name of')) {
+                disableButton = false;
+            } else if (content.includes('is already in another guild!')) {
+                disableButton = false;
+            } else return;
             logMessage = content;
             return;
         });
@@ -433,7 +439,7 @@ export default async function Command(
                         if (component.custom_id.split('-')[1] === "invite" &&
                             component.custom_id.split('-')[2] === type) return {
                             ...component,
-                            disabled: true
+                            disabled: disableButton
                         };
                         return component;
                     })
