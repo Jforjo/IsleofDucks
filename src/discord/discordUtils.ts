@@ -1391,6 +1391,10 @@ const Roles = {
     booster2x: "993257342848213126",
     levels: [
         {
+            id: "1411410585417154693",
+            requirement: 48000
+        },
+        {
             id: "1328090605481627698",
             requirement: 44000
         },
