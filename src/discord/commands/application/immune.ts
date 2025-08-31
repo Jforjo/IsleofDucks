@@ -115,7 +115,7 @@ async function addImmune(
 async function removeImmune(
     interaction: APIChatInputApplicationCommandInteraction,
     name: string,
-    reason: string
+    reason?: string
 ): Promise<
     NextResponse<
         {
@@ -543,6 +543,10 @@ export const CommandData = {
                         {
                             name: "Loyalty",
                             value: "Loyalty"
+                        },
+                        {
+                            name: "Staff",
+                            value: "Staff"
                         }
                     ]
                 }
@@ -563,7 +567,7 @@ export const CommandData = {
                     name: "reason",
                     description: "The type of immune list.",
                     type: ApplicationCommandOptionType.String,
-                    required: true,
+                    required: false,
                     choices: [
                         {
                             name: "Level",
@@ -572,6 +576,10 @@ export const CommandData = {
                         {
                             name: "Loyalty",
                             value: "Loyalty"
+                        },
+                        {
+                            name: "Staff",
+                            value: "Staff"
                         }
                     ]
                 }
