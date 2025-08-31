@@ -199,7 +199,7 @@ async function removeImmune(
     await FollowupMessage(interaction.token, {
         embeds: [
             {
-                title: `\`${uuidResponse.name}\` was removed from the ${reason} immune list!`,
+                title: `\`${uuidResponse.name}\` was removed from the${reason ? ` ${reason}` : ""} immune list!`,
                 description: [
                     `${roleRemoved ? "Immunity role removed" : `Failed to remove immunity role from <@${discordRes?.discordid}>`}`,
                 ].join('\n'),
