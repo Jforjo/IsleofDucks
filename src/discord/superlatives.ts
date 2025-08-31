@@ -133,4 +133,8 @@ export default {
         title: "Sea Lumies Collection",
         value: (profile: SkyBlockProfileMember) => profile?.collection?.SEA_LUMIES ?? 0
     },
+    pumpkinCollection: {
+        title: "Pumpkin Collection",
+        value: (profile: SkyBlockProfileMember) => profile?.collection?.PUMPKIN ?? 0
+    },
 }
