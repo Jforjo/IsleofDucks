@@ -302,45 +302,122 @@ const embeds = {
                         custom_id: "carrier-apply",
                         options: [
                             {
-                                label: "Dungeon Carrier",
-                                description: "Apply to become a dungeon carrier",
-                                value: "dungeon"
+                                label: "F1-4",
+                                description: "Apply to become a Floors 1-4 carrier",
+                                value: "f4",
+                                emoji: {
+                                    name: "f1",
+                                    id: "993373840744914994"
+                                }
                             },
                             {
-                                label: "Mastermode Carrier",
-                                description: "Apply to become a mastermode carrier",
-                                value: "mastermode"
+                                label: "F6",
+                                description: "Apply to become a Floor 6 carrier",
+                                value: "f6",
+                                emoji: {
+                                    name: "f5",
+                                    id: "993374590342529024"
+                                }
+                            },
+                            {
+                                label: "F7",
+                                description: "Apply to become a Floor 7 carrier",
+                                value: "f7",
+                                emoji: {
+                                    name: "f7",
+                                    id: "993374993088008212"
+                                }
+                            },
+                            {
+                                label: "M1-3",
+                                description: "Apply to become a Mastermode 1-3 carrier",
+                                value: "m3",
+                                emoji: {
+                                    name: "m1",
+                                    id: "993379795142447124"
+                                }
+                            },
+                            {
+                                label: "M4-6",
+                                description: "Apply to become a Mastermode 4-6 carrier",
+                                value: "m4",
+                                emoji: {
+                                    name: "m4",
+                                    id: "993380134855905300"
+                                }
+                            },
+                            {
+                                label: "M7",
+                                description: "Apply to become a Mastermode 7 carrier",
+                                value: "m7",
+                                emoji: {
+                                    name: "m7",
+                                    id: "993380168632639568"
+                                }
                             },
                             {
                                 label: "Revenant Carrier",
                                 description: "Apply to become a revenant carrier",
-                                value: "revenant"
+                                value: "revenant",
+                                emoji: {
+                                    name: "rev5",
+                                    id: "993695057850925066"
+                                }
                             },
                             {
                                 label: "Tarantula Carrier",
                                 description: "Apply to become a tarantula carrier",
-                                value: "tarantula"
+                                value: "tarantula",
+                                emoji: {
+                                    name: "tara1",
+                                    id: "993695654410997770"
+                                }
                             },
                             {
                                 label: "Sven Carrier",
                                 description: "Apply to become a sven carrier",
-                                value: "sven"
+                                value: "sven",
+                                emoji: {
+                                    name: "sven1",
+                                    id: "993695666213757088"
+                                }
                             },
                             {
                                 label: "Voidgloom Carrier",
                                 description: "Apply to become a voidgloom carrier",
-                                value: "voidgloom"
+                                value: "voidgloom",
+                                emoji: {
+                                    name: "voidgloom1",
+                                    id: "993695676292681738"
+                                }
                             },
                             {
                                 label: "Inferno Carrier",
                                 description: "Apply to become an inferno carrier",
-                                value: "inferno"
+                                value: "inferno",
+                                emoji: {
+                                    name: "inferno1",
+                                    id: "993695699776569396"
+                                }
                             },
                             {
-                                label: "Kuudra Carrier",
-                                description: "Apply to become a kuudra carrier",
-                                value: "kuudra"
+                                label: "T1-2 Kuudra Carrier",
+                                description: "Apply to become a T1-2 Kuudra carrier",
+                                value: "kuudra2",
+                                emoji: {
+                                    name: "kuudra",
+                                    id: "1119812565275517019"
+                                }
                             },
+                            {
+                                label: "T3-5 Kuudra Carrier",
+                                description: "Apply to become a T3-5 Kuudra carrier",
+                                value: "kuudra5",
+                                emoji: {
+                                    name: "kuudra",
+                                    id: "1119812565275517019"
+                                }
+                            }
                         ],
                         placeholder: "Become a carrier ⚔️"
                     }
