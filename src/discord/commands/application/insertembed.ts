@@ -300,6 +300,7 @@ const embeds = {
                     {
                         type: 3,
                         custom_id: "carrier-apply",
+                        max_values: 13,
                         options: [
                             {
                                 label: "F1-4",
