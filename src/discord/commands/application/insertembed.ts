@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "roleinfo";
+    const name = "carrierpolicy";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {
@@ -228,4 +228,131 @@ const embeds = {
             }
         ])
     },
+    carrierpolicy: {
+        content: null,
+        data: JSON.stringify({
+            embeds: [
+                {
+                    title: "Service Information",
+                    description: "We offer carry services to help players complete dungeon runs, slayer bosses, and Kuudra. Whether you’re aiming for completions, XP, or level requirements, our team is here to ensure you succeed.\n\n### Our Terms of Service:",
+                    color: 16741120,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1320132348041236572/2191214_attack_game_gaming_multimedia_play_icon.png?ex=6899070e&is=6897b58e&hm=ac702036e41e5a6bdef6e0257eb5c87029f0d57c639fa32a49a2d64e18806a2b&=&format=webp&quality=lossless"
+                    },
+                    fields: [
+                        {
+                            name: "Payment Policy",
+                            value: "▫️All carries must be paid upfront to prevent scamming.\n▫️The order limit is 20M at a time for security reasons.\n▫️If you believe a carrier scammed you, provide evidence so we can investigate and decide on a refund. "
+                        },
+                        {
+                            name: "Carrier Rules",
+                            value: "▫️Scamming a client will get you permanently banned.\n▫️You are responsible for explaining to your client what to do and what items to have prepared before starting.\n▫️If you fail the carry, you are obligated to do it again unless the client is the reason you failed."
+                        },
+                        {
+                            name: "Buyer Rules",
+                            value: "▫️Scamming a carrier will get you permanently banned.\n▫️Treat carriers respectfully, and be patient if ticket responses take time.\n▫️Creating troll tickets will result in punishment.\n▫️Listen to your carrier’s guidance on surviving dungeons and slayer bosses. If you are not properly prepared for the carries and fail the runs or bosses then they are not obligated to refund you or continue to help."
+                        }
+                    ]
+                },
+                {
+                    title: "Become a Carrier",
+                    description: "Want to join the carry service team? Help players defeat dungeons and slayer bosses while earning rewards for your time and skill. Apply once you meet the following requirements!",
+                    color: 12403455,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881617587441794/title-Carry_Services_-871x37_1.png?ex=68992a24&is=6897d8a4&hm=9db10b0820f64d6ba90b7e805dd205003264fa96d6bfaaed4ff04aac5ef25563&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340814151286657168/7585315_adventure_journey_bow_arrow_icon.png?ex=68991efc&is=6897cd7c&hm=1a87b9f0342a18deb50b571de1335f7c1a58b083a5fc4e94dbfe3eb3eb2a106d&=&format=webp&quality=lossless"
+                    },
+                    fields: [
+                        {
+                            name: "Dungeon Carrier Requirements",
+                            value: "<:f1:993373840744914994> <@1004131288023830638> 100+ F4 completions\n<:f5:993374590342529024> <@1004131419553005710> 200+ F6 completions and Cata 30+\n<:f7:993374993088008212> <@1004131451077406750> 300+ F7 completions, a solo/duo completion screenshot and Cata 35+"
+                        },
+                        {
+                            name: "Mastermode Carrier Requirements",
+                            value: "<:m1:993379795142447124> <@1004131539539468369> 100+ M3 completions and Cata 35+\n<:m4:993380134855905300> <@1004131581696422109> 200+ M6 completions and Cata 40+\n<:m7:993380168632639568> <@1004131601971675246> 300+ M7 completions, a solo/duo completion screenshot and Cata 45+"
+                        },
+                        {
+                            name: "Slayer Carriers Requirements",
+                            value: "<:rev5:993695057850925066> <@1004131669487403078> Screenshot of sub 15s T5 kill\n<:tara1:993695654410997770> <@1004131737795833936> Screenshot of sub 35s T5 kill\n<:sven1:993695666213757088> <@1004131758616367225> Screenshot of sub 15s T5 kill\n<:voidgloom1:993695676292681738> <@1004131845266493500> Screenshot of sub 35s T5 kill\n<:inferno1:993695699776569396> <@1004131911263854713> Screenshot of sub 35s T5 kill"
+                        },
+                        {
+                            name: "Kuudra Carriers Requirements",
+                            value: "<:kuudra:1119812565275517019> <@1119807379903623258> Screenshot of sub 5min T2 solo/duo completion \n<:kuudra:1119812565275517019> <@1119807771458670654> Screenshot of sub 9min T5 solo/duo completion "
+                        }
+                    ]
+                }
+            ],
+            attachments: [
+                {
+                    id: 0
+                }
+            ]
+        }),
+        components: JSON.stringify([
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 3,
+                        custom_id: "carrier-apply",
+                        options: [
+                            {
+                                label: "Dungeon Carrier",
+                                description: "Apply to become a dungeon carrier",
+                                value: "dungeon"
+                            },
+                            {
+                                label: "Mastermode Carrier",
+                                description: "Apply to become a mastermode carrier",
+                                value: "mastermode"
+                            },
+                            {
+                                label: "Revenant Carrier",
+                                description: "Apply to become a revenant carrier",
+                                value: "revenant"
+                            },
+                            {
+                                label: "Tarantula Carrier",
+                                description: "Apply to become a tarantula carrier",
+                                value: "tarantula"
+                            },
+                            {
+                                label: "Sven Carrier",
+                                description: "Apply to become a sven carrier",
+                                value: "sven"
+                            },
+                            {
+                                label: "Voidgloom Carrier",
+                                description: "Apply to become a voidgloom carrier",
+                                value: "voidgloom"
+                            },
+                            {
+                                label: "Inferno Carrier",
+                                description: "Apply to become an inferno carrier",
+                                value: "inferno"
+                            },
+                            {
+                                label: "Kuudra Carrier",
+                                description: "Apply to become a kuudra carrier",
+                                value: "kuudra"
+                            },
+                        ],
+                        placeholder: "Become a carrier ⚔️"
+                    }
+                ]
+            }
+        ]),
+        attachments: JSON.stringify([
+            {
+                id: 0,
+                filename: 'title.png',
+                url: "https://cdn.discordapp.com/attachments/1300979867881312347/1423269281197723798/image.png?ex=68dfb24f&is=68de60cf&hm=2821356b2e0a540ff6a238ac0c73e976b5a95d5348e1e7f3715d03560f7dadce&"
+            }
+        ])
+    }
 }
