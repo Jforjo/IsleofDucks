@@ -137,4 +137,11 @@ export default {
         title: "Pumpkin Collection",
         value: (profile: SkyBlockProfileMember) => profile?.collection?.PUMPKIN ?? 0
     },
+    /**
+     * BESTIARY
+     */
+    headlesshorsemanBestiary: {
+        title: "Headless Horseman Bestiary",
+        value: (profile: SkyBlockProfileMember) => profile?.bestiary?.kills?.horseman_horse_100 ?? 0
+    }
 }
