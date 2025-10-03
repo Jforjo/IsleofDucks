@@ -312,8 +312,8 @@ const embeds = {
                                 }
                             },
                             {
-                                label: "F6",
-                                description: "Apply to become a Floor 6 carrier",
+                                label: "F5-6",
+                                description: "Apply to become a Floor 5-6 carrier",
                                 value: "f6",
                                 emoji: {
                                     name: "f5",
@@ -341,7 +341,7 @@ const embeds = {
                             {
                                 label: "M4-6",
                                 description: "Apply to become a Mastermode 4-6 carrier",
-                                value: "m4",
+                                value: "m6",
                                 emoji: {
                                     name: "m4",
                                     id: "993380134855905300"
