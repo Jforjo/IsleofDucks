@@ -299,7 +299,7 @@ const embeds = {
                 components: [
                     {
                         type: 3,
-                        custom_id: "carrier-apply",
+                        custom_id: "ticket-carrierapp",
                         max_values: 13,
                         options: [
                             {
