@@ -452,7 +452,7 @@ export default async function(
                     },
                     {
                         name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
-                        value: scammerResponse.success ? `⚠️ Failed to check scammer status` : `${yes} They are not in the Jerry scammer list`,
+                        value: !scammerResponse.success ? `⚠️ Failed to check scammer status` : `${yes} They are not in the Jerry scammer list`,
                         inline: false
                     }
                 ],
