@@ -384,6 +384,10 @@ export default async function(
         ],
     });
 
+    await FollowupMessage(interaction.token, {
+        content: `Created your ticket: <#${channel.id}>`,
+    });
+
     return NextResponse.json(
         { success: true },
         { status: 200 }
