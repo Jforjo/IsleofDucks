@@ -317,7 +317,7 @@ export default async function(
             deny: null
         },
         {
-            id: IsleofDucks.roles.staff,
+            id: IsleofDucks.roles.service_management,
             type: 0,
             allow: ToPermissions({
                 view_channel: true,
