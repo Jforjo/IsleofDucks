@@ -1901,13 +1901,13 @@ export const CarrierRequirements = {
         cata: calcCataLevel(profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0) >= 45,
     }),
     // These have no requirements that you can check for in the API
-    revenant: (_profile: SkyBlockProfileMember) => true,
-    tarantula: (_profile: SkyBlockProfileMember) => true,
-    sven: (_profile: SkyBlockProfileMember) => true,
-    voidgloom: (_profile: SkyBlockProfileMember) => true,
-    inferno: (_profile: SkyBlockProfileMember) => true,
-    kuudra2: (_profile: SkyBlockProfileMember) => true,
-    kuudra5: (_profile: SkyBlockProfileMember) => true,
+    revenant: (profile: SkyBlockProfileMember) => !!profile,
+    tarantula: (profile: SkyBlockProfileMember) => !!profile,
+    sven: (profile: SkyBlockProfileMember) => !!profile,
+    voidgloom: (profile: SkyBlockProfileMember) => !!profile,
+    inferno: (profile: SkyBlockProfileMember) => !!profile,
+    kuudra2: (profile: SkyBlockProfileMember) => !!profile,
+    kuudra5: (profile: SkyBlockProfileMember) => !!profile,
 }
 
 export type CarrierAppChoicesType =
@@ -1925,7 +1925,7 @@ export type CarrierAppChoicesType =
     "kuudra2" |
     "kuudra5"
 ;
-export const CarrierAppChoices: Array<CarrierAppChoicesType> = [
+export const CarrierAppChoices: CarrierAppChoicesType[] = [
     "f4",
     "f6",
     "f7",
