@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
 import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
-import { getProfiles } from "./hypixelUtils";
+import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
 
@@ -1348,6 +1348,15 @@ const TicketTypes = [
         excludes: [
             "claim"
         ]
+    },
+    {
+        id: "carrierapp",
+        name: "Carrier Application",
+        catagory: ChannelGroups.tickets,
+        ticketName: "carrier",
+        excludes: [
+            "carrier"
+        ]
     }
 ];
 const TranscriptForum = {
@@ -1371,6 +1380,14 @@ const TranscriptForum = {
         {
             id: "1320812842685042698",
             name: "claim",
+        },
+        {
+            id: "1424075693976715424",
+            name: "carrierapp",
+        },
+        {
+            id: "1424075791624310804",
+            name: "carry",
         }
     ]
 };
@@ -1856,6 +1873,84 @@ export const IsleofDucks = {
     surveys: Surveys,
     // WIP. Currently not used anywhere.
     help: Help
+}
+
+export const CarrierRequirements = {
+    f4: (profile: SkyBlockProfileMember) => ({
+        runs: ( profile?.dungeons?.dungeon_types?.catacombs?.tier_completions?.[4] ?? 0 ) >= 100,
+        cata: true,
+    }),
+    f6: (profile: SkyBlockProfileMember) => ({
+        runs: ( profile?.dungeons?.dungeon_types?.catacombs?.tier_completions?.[6] ?? 0 ) >= 200,
+        cata: calcCataLevel(profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0) >= 30,
+    }),
+    f7: (profile: SkyBlockProfileMember) => ({
+        runs: ( profile?.dungeons?.dungeon_types?.catacombs?.tier_completions?.[7] ?? 0 ) >= 300,
+        cata: calcCataLevel(profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0) >= 35,
+    }),
+    m3: (profile: SkyBlockProfileMember) => ({
+        runs: ( profile?.dungeons?.dungeon_types?.master_catacombs?.tier_completions?.[3] ?? 0 ) >= 100,
+        cata: calcCataLevel(profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0) >= 35,
+    }),
+    m6: (profile: SkyBlockProfileMember) => ({
+        runs: ( profile?.dungeons?.dungeon_types?.master_catacombs?.tier_completions?.[6] ?? 0 ) >= 200,
+        cata: calcCataLevel(profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0) >= 40,
+    }),
+    m7: (profile: SkyBlockProfileMember) => ({
+        runs: ( profile?.dungeons?.dungeon_types?.master_catacombs?.tier_completions?.[7] ?? 0 ) >= 300,
+        cata: calcCataLevel(profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0) >= 45,
+    }),
+    // These have no requirements that you can check for in the API
+    revenant: (_profile: SkyBlockProfileMember) => true,
+    tarantula: (_profile: SkyBlockProfileMember) => true,
+    sven: (_profile: SkyBlockProfileMember) => true,
+    voidgloom: (_profile: SkyBlockProfileMember) => true,
+    inferno: (_profile: SkyBlockProfileMember) => true,
+    kuudra2: (_profile: SkyBlockProfileMember) => true,
+    kuudra5: (_profile: SkyBlockProfileMember) => true,
+}
+
+export type CarrierAppChoicesType =
+    "f4" |
+    "f6" |
+    "f7" |
+    "m3" |
+    "m6" |
+    "m7" |
+    "revenant" |
+    "tarantula" |
+    "sven" |
+    "voidgloom" |
+    "inferno" |
+    "kuudra2" |
+    "kuudra5"
+;
+export const CarrierAppChoices: Array<CarrierAppChoicesType> = [
+    "f4",
+    "f6",
+    "f7",
+    "m3",
+    "m6",
+    "m7",
+    "revenant",
+    "tarantula",
+    "sven",
+    "voidgloom",
+    "inferno",
+    "kuudra2",
+    "kuudra5"
+];
+
+export function jsonToBitfield<T extends string>(flags: Record<T, boolean>, keys: T[]): number {
+    return keys.reduce((bitfield, key, index) => {
+        return flags[key] ? bitfield | (1 << index) : bitfield;
+    }, 0);
+}
+export function bitfieldToJson<T extends string>(bitfield: number, keys: T[]): Record<T, boolean> {
+    return keys.reduce((acc, key, index) => {
+        acc[key] = Boolean(bitfield & (1 << index));
+        return acc;
+    }, {} as Record<T, boolean>);
 }
 
 export const CloseTicketPermissions = {
