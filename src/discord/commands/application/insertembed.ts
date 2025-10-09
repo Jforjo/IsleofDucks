@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "carrierpolicy";
+    const name = "carry";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {
@@ -225,6 +225,210 @@ const embeds = {
                 id: 0,
                 filename: 'title.png',
                 url: "https://cdn.discordapp.com/attachments/1300979867881312347/1368349716655640596/68169435441da.png?ex=6817e67b&is=681694fb&hm=58a52baefb5549c71b203969a7ed5571a42e7f65825150a54d781dd915b60ada&"
+            }
+        ])
+    },
+    carry: {
+        content: null,
+        data: JSON.stringify({
+            embeds: [
+                {
+                    description: "Ready to buy a carry? Check out our prices and open a ticket! Please make sure you have read our [policies](https://discord.com/channels/823061629812867113/1424099154472472739/1424099483976995011) beforehand.",
+                    color: 16741120,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403889662308909249/order-now.png?ex=689931a2&is=6897e022&hm=5ba661a99ae81644e15858933e7850d921be79586cb2baea466c44820566a888&=&format=webp&quality=lossless"
+                    }
+                },
+                {
+                    title: "Dungeons",
+                    description: "<:f1:993373840744914994> F1 Completion Score: 50k\n<:f2:993374018289803324> F2 Completion Score: 75k\n<:f3:993374302189670482> F3 Completion Score: 100k\n<:f4:993374418954895390> F4 Completion Score: 350k • S+ Rank Score: 500k\n<:f5:993374590342529024> F5 Completion Score: 400k • S+ Rank Score: 750k\n<:f6:993374890839248897> F6 Completion Score: 500k • S+ Rank Score: 1M\n<:f7:993374993088008212> F7 Completion Score: 5M • S+ Rank Score: 10M",
+                    color: 12403455,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881617587441794/title-Carry_Services_-871x37_1.png?ex=68992a24&is=6897d8a4&hm=9db10b0820f64d6ba90b7e805dd205003264fa96d6bfaaed4ff04aac5ef25563&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403891109821677691/dungeon.png?ex=689932fb&is=6897e17b&hm=fdd46a694db0d7fe428f4fa174fb4b60815b3c371766cd774a7d3e40b8190345&=&format=webp&quality=lossless"
+                    }
+                },
+                {
+                    title: "Mastermode",
+                    description: "<:m1:993379795142447124> M1 S Rank Score: 1M\n<:m2:993379836833828888> M2 S Rank Score: 1.7M\n<:m3:993379969621295194> M3 S Rank Score: 2.5M\n<:m4:993380134855905300> M4 S Rank Score: 10M\n<:m5:993380146910347365> M5 S Rank Score: 5M\n<:m6:993380158696333312> M6 S Rank Score: 7M\n<:m7:993380168632639568> M7 S Rank Score: 25M",
+                    color: 16741120,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403891470653722624/death.png?ex=68993351&is=6897e1d1&hm=443359a35f18fc0241ac9b6773dc76e0f8ecf3c421bd2c58aca22f66d19f980d&=&format=webp&quality=lossless"
+                    }
+                },
+                {
+                    title: "Slayers",
+                    description: "<:rev1:993695021259833344> Revenant T1: 5k\n<:rev1:993695021259833344> Revenant T2: 10k\n<:rev3:993695044785680454> Revenant T3: 25k\n<:rev3:993695044785680454> Revenant T4: 100k\n<:rev5:993695057850925066> Revenant T5: 200k\n\n<:tara1:993695654410997770> Tarantula T1: 5k\n<:tara1:993695654410997770> Tarantula T2: 10k\n<:tara1:993695654410997770> Tarantula T3: 25k\n<:tara1:993695654410997770> Tarantula T4: 200k\n<:tara1:993695654410997770> Tarantula T5: 500k\n\n<:sven1:993695666213757088> Sven T1: 5k\n<:sven1:993695666213757088> Sven T2: 10k\n<:sven1:993695666213757088> Sven T3: 25k\n<:sven1:993695666213757088> Sven T4: 100k\n\n<:voidgloom1:993695676292681738> Voidgloom T1: 50k\n<:voidgloom1:993695676292681738> Voidgloom T2: 250k\n<:voidgloom1:993695676292681738> Voidgloom T3: 500k\n<:voidgloom1:993695676292681738> Voidgloom T4: 1.5M\n\n<:inferno1:993695699776569396> Inferno T1: 500k\n<:inferno1:993695699776569396> Inferno T2: 800k\n<:inferno1:993695699776569396> Inferno T3: 2M\n<:inferno1:993695699776569396> Inferno T4: 5M",
+                    color: 12403455,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881617587441794/title-Carry_Services_-871x37_1.png?ex=68992a24&is=6897d8a4&hm=9db10b0820f64d6ba90b7e805dd205003264fa96d6bfaaed4ff04aac5ef25563&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403891987081461931/zombie.png?ex=689933cc&is=6897e24c&hm=f0b5a57f21558f4e65c787f118bf6f2826ed9808576c5b7ef17df5839e6b5458&=&format=webp&quality=lossless"
+                    }
+                },
+                {
+                    title: "Kuudra",
+                    description: "<:kuudra:1119812565275517019>  Kuudra T1: 5m\n<:kuudra:1119812565275517019>  Kuudra T2: 8m\n<:kuudra:1119812565275517019>  Kuudra T3: 12m\n<:kuudra:1119812565275517019>  Kuudra T4: 15m\n<:kuudra:1119812565275517019>  Kuudra T5: 35m",
+                    color: 16741120,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1403892500640563310/volcano.png?ex=68993447&is=6897e2c7&hm=e35949a7294feb8fa8201cf41092307f3f1d0eb93a6f70f14770fdf5ff37a103&=&format=webp&quality=lossless"
+                    }
+                }
+            ],
+            attachments: [
+                {
+                    id: 0
+                }
+            ]
+        }),
+        components: JSON.stringify([
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 3,
+                        custom_id: "ticket-carry",
+                        options: [
+                            {
+                                label: "F1-4",
+                                description: "Request a Floor 1-4 carry",
+                                value: "f4",
+                                emoji: {
+                                    name: "f1",
+                                    id: "993373840744914994"
+                                }
+                            },
+                            {
+                                label: "F5-6",
+                                description: "Request a Floor 5-6 carry",
+                                value: "f6",
+                                emoji: {
+                                    name: "f5",
+                                    id: "993374590342529024"
+                                }
+                            },
+                            {
+                                label: "F7",
+                                description: "Request a Floor 7 carry",
+                                value: "f7",
+                                emoji: {
+                                    name: "f7",
+                                    id: "993374993088008212"
+                                }
+                            },
+                            {
+                                label: "M1-3",
+                                description: "Request a Mastermode 1-3 carry",
+                                value: "m3",
+                                emoji: {
+                                    name: "m1",
+                                    id: "993379795142447124"
+                                }
+                            },
+                            {
+                                label: "M4-6",
+                                description: "Request a Mastermode 4-6 carry",
+                                value: "m6",
+                                emoji: {
+                                    name: "m4",
+                                    id: "993380134855905300"
+                                }
+                            },
+                            {
+                                label: "M7",
+                                description: "Request a Mastermode 7 carry",
+                                value: "m7",
+                                emoji: {
+                                    name: "m7",
+                                    id: "993380168632639568"
+                                }
+                            },
+                            {
+                                label: "Revenant",
+                                description: "Request a revenant carry",
+                                value: "revenant",
+                                emoji: {
+                                    name: "rev5",
+                                    id: "993695057850925066"
+                                }
+                            },
+                            {
+                                label: "Tarantula",
+                                description: "Request a tarantula carry",
+                                value: "tarantula",
+                                emoji: {
+                                    name: "tara1",
+                                    id: "993695654410997770"
+                                }
+                            },
+                            {
+                                label: "Sven",
+                                description: "Request a sven carry",
+                                value: "sven",
+                                emoji: {
+                                    name: "sven1",
+                                    id: "993695666213757088"
+                                }
+                            },
+                            {
+                                label: "Voidgloom",
+                                description: "Request a voidgloom carry",
+                                value: "voidgloom",
+                                emoji: {
+                                    name: "voidgloom1",
+                                    id: "993695676292681738"
+                                }
+                            },
+                            {
+                                label: "Inferno",
+                                description: "Request an inferno carry",
+                                value: "inferno",
+                                emoji: {
+                                    name: "inferno1",
+                                    id: "993695699776569396"
+                                }
+                            },
+                            {
+                                label: "T1-2 Kuudra",
+                                description: "Request a T1-2 Kuudra carry",
+                                value: "kuudra2",
+                                emoji: {
+                                    name: "kuudra",
+                                    id: "1119812565275517019"
+                                }
+                            },
+                            {
+                                label: "T3-5 Kuudra",
+                                description: "Request a T3-5 Kuudra carry",
+                                value: "kuudra5",
+                                emoji: {
+                                    name: "kuudra",
+                                    id: "1119812565275517019"
+                                }
+                            }
+                        ],
+                        placeholder: "Purchase carry 💵",
+                    }
+                ]
+            }
+        ]),
+        attachments: JSON.stringify([
+            {
+                id: 0,
+                filename: 'title.png',
+                url: "https://media.discordapp.net/attachments/1300979867881312347/1423269281583595540/68de60bf63add.png?ex=68e5a10f&is=68e44f8f&hm=2ca42447b655ac91af0e8e27375bdc9305cd2e9bdc1cad6c85a9d504401d7f2f"
             }
         ])
     },
