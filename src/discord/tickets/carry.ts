@@ -59,6 +59,20 @@ export default async function(
                         },
                     ],
                 },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.TextInput,
+                            custom_id: "timezone",
+                            label: "Enter timezone (e.g. UTC+0, UTC-5)",
+                            style: TextInputStyle.Short,
+                            min_length: 3,
+                            max_length: 8,
+                            required: true,
+                        },
+                    ],
+                },
             ],
         }
     });
