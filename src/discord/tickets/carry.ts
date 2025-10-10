@@ -64,10 +64,24 @@ export default async function(
                     components: [
                         {
                             type: ComponentType.TextInput,
+                            custom_id: "number",
+                            label: "Enter the number of carries you want",
+                            style: TextInputStyle.Short,
+                            min_length: 1,
+                            max_length: 2,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.TextInput,
                             custom_id: "timezone",
                             label: "Enter timezone (e.g. UTC+0, UTC-5)",
                             style: TextInputStyle.Short,
-                            min_length: 3,
+                            min_length: 2,
                             max_length: 8,
                             required: true,
                         },
