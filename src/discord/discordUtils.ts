@@ -1357,6 +1357,15 @@ const TicketTypes = [
         excludes: [
             "carrier"
         ]
+    },
+    {
+        id: "carry",
+        name: "Carry Request",
+        catagory: ChannelGroups.carrytickets,
+        ticketName: "carry",
+        excludes: [
+            "carry"
+        ]
     }
 ];
 const TranscriptForum = {
@@ -1440,26 +1449,21 @@ const Roles = {
             requirement: 0
         },
     ],
-    carrier_f1_4: "1004131288023830638",
-    carrier_f5_6: "1004131419553005710",
-    carrier_f7: "1004131451077406750",
-    carrier_m1: "1004131476650070036",
-    carrier_m2: "1004131503640420424",
-    carrier_m3: "1004131520656707686",
-    carrier_m4: "1004131539539468369",
-    carrier_m5: "1004131565124730991",
-    carrier_m6: "1004131581696422109",
-    carrier_m7: "1004131601971675246",
-    carrier_rev: "1004131669487403078",
-    carrier_tara: "1004131737795833936",
-    carrier_sven: "1004131758616367225",
-    carrier_eman1_3: "1004131780682596352",
-    carrier_eman4: "1004131845266493500",
-    carrier_inferno1_3: "1004131871774494842",
-    carrier_inferno4: "1004131911263854713",
-    carrier_kuudra1_2: "1119807379903623258",
-    carrier_kuudra3_4: "1119807706841235496",
-    carrier_kuudra5: "1119807771458670654",
+    carrier: {
+        f4: "1004131288023830638",
+        f6: "1004131419553005710",
+        f7: "1004131451077406750",
+        m3: "1004131539539468369",
+        m6: "1004131581696422109",
+        m7: "1004131601971675246",
+        revenant: "1004131669487403078",
+        tarantula: "1004131737795833936",
+        sven: "1004131758616367225",
+        voidgloom: "1004131845266493500",
+        inferno: "1004131911263854713",
+        kuudra2: "1119807379903623258",
+        kuudra5: "1119807771458670654",
+    },
     reaction: {
         partyping: [
             {
@@ -2016,171 +2020,6 @@ export interface Superlative {
             requirement: number;
         }[],
     };
-}
-export function encodeCarrierData(data: {
-    f1_4: boolean;
-    f5_6: boolean;
-    f7: boolean;
-    m1: boolean;
-    m2: boolean;
-    m3: boolean;
-    m4: boolean;
-    m5: boolean;
-    m6: boolean;
-    m7: boolean;
-    rev: boolean;
-    tara: boolean;
-    sven: boolean;
-    eman: boolean;
-    eman4: boolean;
-    inferno: boolean;
-    inferno4: boolean;
-    kuudrabasic: boolean;
-    kuudrahot: boolean;
-    kuudraburning: boolean;
-    kuudrafiery: boolean;
-    kuudrainfernal: boolean;
-}): string {
-    let bitfield = 0;
-    if (data.f1_4 === true)              bitfield |= 0x1;
-    if (data.f5_6 === true)              bitfield |= 0x2;
-    if (data.f7 === true)                bitfield |= 0x4;
-    if (data.m1 === true)                bitfield |= 0x8;
-    if (data.m2 === true)                bitfield |= 0x10;
-    if (data.m3 === true)                bitfield |= 0x20;
-    if (data.m4 === true)                bitfield |= 0x40;
-    if (data.m5 === true)                bitfield |= 0x80;
-    if (data.m6 === true)                bitfield |= 0x100;
-    if (data.m7 === true)                bitfield |= 0x200;
-    if (data.rev === true)               bitfield |= 0x400;
-    if (data.tara === true)              bitfield |= 0x800;
-    if (data.sven === true)              bitfield |= 0x1000;
-    if (data.eman === true)              bitfield |= 0x2000;
-    if (data.eman4 === true)             bitfield |= 0x4000;
-    if (data.inferno === true)           bitfield |= 0x8000;
-    if (data.inferno4 === true)          bitfield |= 0x10000;
-    if (data.kuudrabasic === true)       bitfield |= 0x20000;
-    if (data.kuudrahot === true)         bitfield |= 0x40000;
-    if (data.kuudraburning === true)     bitfield |= 0x80000;
-    if (data.kuudrafiery === true)       bitfield |= 0x100000;
-    if (data.kuudrainfernal === true)    bitfield |= 0x200000;
-    return bitfield.toString();
-}
-export function decodeCarrierData(data: string): {
-    f1_4: { value: boolean; role: string; };
-    f5_6: { value: boolean; role: string; };
-    f7: { value: boolean; role: string; };
-    m1: { value: boolean; role: string; };
-    m2: { value: boolean; role: string; };
-    m3: { value: boolean; role: string; };
-    m4: { value: boolean; role: string; };
-    m5: { value: boolean; role: string; };
-    m6: { value: boolean; role: string; };
-    m7: { value: boolean; role: string; };
-    rev: { value: boolean; role: string; };
-    tara: { value: boolean; role: string; };
-    sven: { value: boolean; role: string; };
-    eman: { value: boolean; role: string; };
-    eman4: { value: boolean; role: string; };
-    inferno: { value: boolean; role: string; };
-    inferno4: { value: boolean; role: string; };
-    kuudrabasic: { value: boolean; role: string; };
-    kuudrahot: { value: boolean; role: string; };
-    kuudraburning: { value: boolean; role: string; };
-    kuudrafiery: { value: boolean; role: string; };
-    kuudrainfernal: { value: boolean; role: string; };
-} {
-    const bitfield = Number(data);
-    return {
-        f1_4: {
-            value: (bitfield & 0x1) !== 0,
-            role: IsleofDucks.roles.carrier_f1_4
-        },
-        f5_6: {
-            value: (bitfield & 0x2) !== 0,
-            role: IsleofDucks.roles.carrier_f5_6
-        },
-        f7: {
-            value: (bitfield & 0x4) !== 0,
-            role: IsleofDucks.roles.carrier_f7
-        },
-        m1: {
-            value: (bitfield & 0x8) !== 0,
-            role: IsleofDucks.roles.carrier_m1
-        },
-        m2: {
-            value: (bitfield & 0x10) !== 0,
-            role: IsleofDucks.roles.carrier_m2
-        },
-        m3: {
-            value: (bitfield & 0x20) !== 0,
-            role: IsleofDucks.roles.carrier_m3
-        },
-        m4: {
-            value: (bitfield & 0x40) !== 0,
-            role: IsleofDucks.roles.carrier_m4
-        },
-        m5: {
-            value: (bitfield & 0x80) !== 0,
-            role: IsleofDucks.roles.carrier_m5
-        },
-        m6: {
-            value: (bitfield & 0x100) !== 0,
-            role: IsleofDucks.roles.carrier_m6
-        },
-        m7: {
-            value: (bitfield & 0x200) !== 0,
-            role: IsleofDucks.roles.carrier_m7
-        },
-        rev: {
-            value: (bitfield & 0x400) !== 0,
-            role: IsleofDucks.roles.carrier_rev
-        },
-        tara: {
-            value: (bitfield & 0x800) !== 0,
-            role: IsleofDucks.roles.carrier_tara
-        },
-        sven: {
-            value: (bitfield & 0x1000) !== 0,
-            role: IsleofDucks.roles.carrier_sven
-        },
-        eman: {
-            value: (bitfield & 0x2000) !== 0,
-            role: IsleofDucks.roles.carrier_eman1_3
-        },
-        eman4: {
-            value: (bitfield & 0x4000) !== 0,
-            role: IsleofDucks.roles.carrier_eman4
-        },
-        inferno: {
-            value: (bitfield & 0x8000) !== 0,
-            role: IsleofDucks.roles.carrier_inferno1_3
-        },
-        inferno4: {
-            value: (bitfield & 0x10000) !== 0,
-            role: IsleofDucks.roles.carrier_inferno4
-        },
-        kuudrabasic: {
-            value: (bitfield & 0x20000) !== 0,
-            role: IsleofDucks.roles.carrier_kuudra1_2
-        },
-        kuudrahot: {
-            value: (bitfield & 0x40000) !== 0,
-            role: IsleofDucks.roles.carrier_kuudra1_2
-        },
-        kuudraburning: {
-            value: (bitfield & 0x80000) !== 0,
-            role: IsleofDucks.roles.carrier_kuudra3_4
-        },
-        kuudrafiery: {
-            value: (bitfield & 0x100000) !== 0,
-            role: IsleofDucks.roles.carrier_kuudra3_4
-        },
-        kuudrainfernal: {
-            value: (bitfield & 0x200000) !== 0,
-            role: IsleofDucks.roles.carrier_kuudra5
-        },
-    }
 }
 
 export const Emojis = {
