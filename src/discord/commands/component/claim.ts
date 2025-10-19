@@ -1,7 +1,6 @@
-import { CloseTicketPermissions, ConvertSnowflakeToDate, CreateInteractionResponse, DeleteChannel, EditChannel, FollowupMessage, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, OverwriteType } from "discord-api-types/v10";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, FollowupMessage, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, MessageFlags, OverwriteType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
-import { CreateTranscript } from "./transcript";
 
 export default async function(
     interaction: APIMessageComponentButtonInteraction
@@ -13,7 +12,7 @@ export default async function(
         } | APIInteractionResponse
     >
 > {    
-    const timestamp = ConvertSnowflakeToDate(interaction.id);
+    // const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     if (!interaction.guild) {
         await CreateInteractionResponse(interaction.id, interaction.token, {

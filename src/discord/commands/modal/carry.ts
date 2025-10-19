@@ -1,5 +1,5 @@
-import { BanGuildMember, bitfieldToJson, CarrierAppChoices, CarrierAppChoicesType, CarrierRequirements, CheckChannelExists, ConvertSnowflakeToDate, CreateChannel, CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
-import { getProfiles, getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { BanGuildMember, bitfieldToJson, CarrierAppChoices, CarrierAppChoicesType, CheckChannelExists, ConvertSnowflakeToDate, CreateChannel, CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
+import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
 import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
 import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, MessageFlags, OverwriteType, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
