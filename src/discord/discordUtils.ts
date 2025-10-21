@@ -1990,7 +1990,7 @@ export const CloseTicketPermissions = {
         IsleofDucks.roles.mod_duckling,
         IsleofDucks.roles.service_management,
     ]),
-    carryapp: new Set([
+    carrierapp: new Set([
         IsleofDucks.roles.admin,
         IsleofDucks.roles.mod_duck,
         IsleofDucks.roles.mod_duckling,
