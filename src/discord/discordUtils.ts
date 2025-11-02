@@ -1235,7 +1235,7 @@ export async function getSuperlativeValue(
 }
 export async function updateSuperlativeValue(
     uuid: string,
-    func: (profile: SkyBlockProfileMember) => number | undefined
+    func: (profile: SkyBlockProfileMember) => number | undefined | Promise<number | undefined>
 ): Promise<number | {
     success: false;
     status?: number;
@@ -1248,8 +1248,9 @@ export async function updateSuperlativeValue(
     let value = 0;
     const profiles = await getProfiles(uuid);
     if (profiles.success === false) return profiles;
-    profiles.profiles.forEach((profile) => {
-        const temp = func(profile.members[uuid]);
+
+    for (const profile of profiles.profiles) {
+        const temp = await func(profile.members[uuid]);
         if (temp && temp > 0) {
             if (value < temp) value = temp;
         }
@@ -1257,7 +1258,7 @@ export async function updateSuperlativeValue(
         if (exp && exp > 0) {
             if (totalExp < exp) totalExp = exp;
         }
-    });
+    }
 
     const PlayerInDB = await getDiscordRole(uuid);
     if (PlayerInDB) {
