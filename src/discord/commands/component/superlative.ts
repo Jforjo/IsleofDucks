@@ -3,7 +3,6 @@ import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, SendMessage, formatNumber, getSuperlativeValue } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { getActiveSuperlative, saveSuperlative, updateGuildSuperlative } from "@/discord/utils";
-import { channel } from "diagnostics_channel";
 
 export default async function Command(
     interaction: APIMessageComponentButtonInteraction
