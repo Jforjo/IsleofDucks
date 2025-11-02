@@ -1,4 +1,5 @@
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember"
+import { getHypixelCollections } from "./hypixelUtils";
 
 export default {
     skyblockLevel: {
@@ -125,6 +126,26 @@ export default {
     /**
      * COLLECTIONS
      */
+    totalTiersCollections: {
+        title: "Total Collection Tiers",
+        value: async (profile: SkyBlockProfileMember) => {
+            if (!profile?.collection) return 0;
+            const collections = await getHypixelCollections();
+            if (!collections.success || !collections.collections) return 0;
+            let totalTiers = 0;
+            for (const [, collectionGroup] of Object.entries(collections.collections)) {
+                if (!collectionGroup) continue;
+                for (const [collectionKey, collectionData] of Object.entries(collectionGroup.items)) {
+                    collectionData.tiers.forEach(tier => {
+                        if (profile.collection?.[collectionKey] && profile.collection[collectionKey] >= tier.amountRequired) {
+                            totalTiers += 1;
+                        }
+                    });
+                }
+            }
+            return totalTiers
+        }
+    },
     mangroveCollection: {
         title: "Mangrove Collection",
         value: (profile: SkyBlockProfileMember) => profile?.collection?.MANGROVE_LOG ?? 0
