@@ -144,6 +144,7 @@ export default async function(
                 view_channel: true,
                 send_messages: true,
                 use_application_commands: true,
+                attach_files: true,
             }),
             deny: null
         },
