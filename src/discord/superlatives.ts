@@ -4,7 +4,7 @@ import { getHypixelCollections } from "./hypixelUtils";
 export default {
     skyblockLevel: {
         title: "SkyBlock Level",
-        value: (profile: SkyBlockProfileMember) => profile?.leveling?.experience ?? 0
+        value: (profile: SkyBlockProfileMember) => (profile?.leveling?.experience ?? 0) / 100
     },
     totalHunts: {
         title: "Total Hunts",
@@ -143,7 +143,7 @@ export default {
                     });
                 }
             }
-            return totalTiers
+            return totalTiers;
         }
     },
     mangroveCollection: {
