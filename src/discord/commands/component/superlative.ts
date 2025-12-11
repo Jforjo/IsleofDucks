@@ -414,7 +414,7 @@ export default async function Command(
                 }
                 setrankmsg += `${setrank}\n`;
             }
-            await SendMessage(IsleofDucks.channels.duckoc, {
+            await SendMessage(channelName, {
                 content: setrankmsg
             });
         }
