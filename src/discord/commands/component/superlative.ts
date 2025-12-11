@@ -398,32 +398,28 @@ export default async function Command(
         });
     }
 
+    let channelName = "";
+    if (buttonID === "ducks") {
+        channelName = IsleofDucks.channels.duckoc;
+    } else if (buttonID === "ducklings") {
+        channelName = IsleofDucks.channels.ducklingoc;
+    }
+    
+    if (channelName !== "") {
+        let setrankmsg = "";
+        if (setranks.length > 0) {
+            for (const setrank of setranks) {
+                if (setrankmsg.length + setrank.length + 1 > 2000) {
+                    continue;
+                }
+                setrankmsg += `${setrank}\n`;
+            }
+            await SendMessage(IsleofDucks.channels.duckoc, {
+                content: setrankmsg
+            });
+        }
+    }
     await BACKGROUND_SUPERLATIVE_UPDATE;
-    // for (const setrank of setranks) {
-        let channelName = "";
-        if (buttonID === "ducks") {
-            channelName = IsleofDucks.channels.duckoc;
-        } else if (buttonID === "ducklings") {
-            channelName = IsleofDucks.channels.ducklingoc;
-        }
-        const half = Math.ceil(setranks.length / 2);
-        const firstHalf = setranks.slice(0, half);
-        const secondHalf = setranks.slice(half);
-        
-        if (channelName !== "") {
-            if (firstHalf.length > 0) {
-                await SendMessage(channelName, {
-                    content: firstHalf.join("\n")
-                });
-            }
-            if (secondHalf.length > 0) {
-                await SendMessage(channelName, {
-                    content: secondHalf.join("\n")
-                });
-            }
-        }
-        // await new Promise(resolve => setTimeout(resolve, 500));
-    // }
     await saveSuperlative();
 
     return NextResponse.json(
