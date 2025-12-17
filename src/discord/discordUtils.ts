@@ -1422,7 +1422,8 @@ const Roles = {
         carrier: "1004178714734633020",
         utilities: "1004180318246412288",
         partyping: "1003245217077526528",
-        activity: "1004175170812002384"
+        activity: "1004175170812002384",
+        donor: "1004177858534572082"
     },
     levels: [
         {
@@ -1928,6 +1929,11 @@ const RoleGroups = [
             Roles.guild_member,
             ...Roles.levels.map(l => l.id),
         ]
+    },
+    {
+        name: "donor",
+        id: Roles.groups.donor,
+        roles: Roles.donor.map(d => d.id)
     },
     {
         name: "carrier",
