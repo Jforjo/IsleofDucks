@@ -286,6 +286,20 @@ export default async function(
         );
     }
 
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Updating roles...",
+                description: [
+                    "This may take a while depending on how many users need their roles updated.",
+                    `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
+                ].join("\n"),
+                color: 0xFB9B00,
+                timestamp: new Date().toISOString()
+            }
+        ],
+    });
+
     const {
         rolesAdded,
         rolesRemoved,
