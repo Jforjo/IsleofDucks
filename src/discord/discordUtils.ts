@@ -1413,9 +1413,17 @@ const Roles = {
     verified: "1287098228067664004",
     duck_guild_member: "933258162931400764",
     duckling_guild_member: "998380474407846000",
+    guild_member: "1450726539594567791",
     immune: "1276013765405704266",
     booster: "881421446017056799",
     booster2x: "993257342848213126",
+    groups: {
+        guild: "1004178428657930311",
+        carrier: "1004178714734633020",
+        utilities: "1004180318246412288",
+        partyping: "1003245217077526528",
+        activity: "1004175170812002384"
+    },
     levels: [
         {
             id: "1411410585417154693",
@@ -1756,6 +1764,52 @@ const Roles = {
             id: "1368319830025048224",
             requirement: 1_000_000_000
         }
+    ],
+    activity: [
+        {
+            tier: 10,
+            role: "983215795884683304"
+        },
+        {
+            tier: 9,
+            role: "983215827111264256"
+        },
+        {
+            tier: 8,
+            role: "983212794008711188"
+        },
+        {
+            tier: 7,
+            role: "983212803705933854"
+        },
+        {
+            tier: 6,
+            role: "983212798072995852"
+        },
+        {
+            tier: 5,
+            role: "983212199747133470"
+        },
+        {
+            tier: 4,
+            role: "983212181501919243"
+        },
+        {
+            tier: 3,
+            role: "983212247142785074"
+        },
+        {
+            tier: 2,
+            role: "983211898868752445"
+        },
+        {
+            tier: 1,
+            role: "983211131894128640"
+        },
+        {
+            tier: 0,
+            role: "985708515484114966"
+        }
     ]
 };
 const Surveys = [
@@ -1863,6 +1917,43 @@ const Help = {
     ]
 }
 
+const RoleGroups = [
+    {
+        name: "guild",
+        id: Roles.groups.guild,
+        roles: [
+            Roles.immune,
+            Roles.duck_guild_member,
+            Roles.duckling_guild_member,
+            Roles.guild_member,
+            ...Roles.levels.map(l => l.id),
+        ]
+    },
+    {
+        name: "carrier",
+        id: Roles.groups.carrier,
+        roles: Roles.carrier ? Object.values(Roles.carrier) : []
+    },
+    {
+        name: "utilities",
+        id: Roles.groups.utilities,
+        roles: [
+            Roles.verified,
+            ...Roles.reaction.general.map(r => r.role),
+        ]
+    },
+    {
+        name: "partyping",
+        id: Roles.groups.partyping,
+        roles: Roles.reaction.partyping.map(r => r.role)
+    },
+    {
+        name: "activity",
+        id: Roles.groups.activity,
+        roles: Roles.activity.map(r => r.role)
+    }
+]
+
 export const IsleofDucks = {
     colours: {
         main: 0xFB9B00,
@@ -1875,6 +1966,7 @@ export const IsleofDucks = {
     ticketTypes: TicketTypes,
     transcriptForum: TranscriptForum,
     roles: Roles,
+    roleGroups: RoleGroups,
     surveys: Surveys,
     // WIP. Currently not used anywhere.
     help: Help

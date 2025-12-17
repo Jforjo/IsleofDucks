@@ -11,12 +11,14 @@ export async function UpdateLevelRoles(
     false | {
         rolesAdded: number;
         rolesRemoved: number;
-        usersHadRolesAdded: number;
-        usersHadRolesRemoved: number;
+        usersHadRoleAdded: string[];
+        usersHadRoleRemoved: string[];
     }
 > {
     let rolesAdded = 0;
     let rolesRemoved = 0;
+    const usersHadRoleAdded: string[] = [];
+    const usersHadRoleRemoved: string[] = [];
 
     // If they don't contain either of the guild roles then remove all level roles
     if (
@@ -27,13 +29,14 @@ export async function UpdateLevelRoles(
             if (member.roles.includes(role.id)) {
                 await RemoveGuildMemberRole(guildID, member.user.id, role.id);
                 rolesRemoved++;
+                usersHadRoleRemoved.push(role.id);
             }
         }
         return {
             rolesAdded: rolesAdded,
             rolesRemoved: rolesRemoved,
-            usersHadRolesAdded: rolesAdded === 0 ? 0 : 1,
-            usersHadRolesRemoved: rolesRemoved === 0 ? 0 : 1
+            usersHadRoleAdded: usersHadRoleAdded,
+            usersHadRoleRemoved: usersHadRoleRemoved
         }
     }
 
@@ -83,6 +86,8 @@ export async function UpdateLevelRoles(
             if (role !== expectedRole) {
                 await RemoveGuildMemberRole(guildID, member.user.id, role);
                 rolesRemoved++;
+                if (!usersHadRoleRemoved.includes(role))
+                    usersHadRoleRemoved.push(role);
             } else {
                 newRoles.push(role);
             }
@@ -94,14 +99,16 @@ export async function UpdateLevelRoles(
     if (currentRoles.length < 1) {
         await AddGuildMemberRole(guildID, member.user.id, expectedRole);
         rolesAdded++;
+        if (!usersHadRoleAdded.includes(expectedRole))
+            usersHadRoleAdded.push(expectedRole);
     }
 
     if (rolesAdded === 0 && rolesRemoved === 0) return false;
     return {
         rolesAdded: rolesAdded,
         rolesRemoved: rolesRemoved,
-        usersHadRolesAdded: rolesAdded === 0 ? 0 : 1,
-        usersHadRolesRemoved: rolesRemoved === 0 ? 0 : 1
+        usersHadRoleAdded: usersHadRoleAdded,
+        usersHadRoleRemoved: usersHadRoleRemoved
     }
 }
 
@@ -132,15 +139,15 @@ export async function UpdateRoles(
     // Should probably change this to use a generator function
     const members = await GetAllGuildMembers(guildID);
     for (const member of members) {
-        // let userRoleAdded = false;
-        // let userRoleRemoved = false;
+        let userHadRoleRemoved = false;
+        let userHadRoleAdded = false;
         // promises.push(UpdateLevelRoles(guildID, member));
         const LevelResult = await UpdateLevelRoles(guildID, member);
         if (LevelResult) {
             rolesAdded += LevelResult.rolesAdded;
             rolesRemoved += LevelResult.rolesRemoved;
-            usersHadRolesAdded += LevelResult.usersHadRolesAdded;
-            usersHadRolesRemoved += LevelResult.usersHadRolesRemoved;
+            if (LevelResult.usersHadRoleAdded.includes(member.user.id)) userHadRoleAdded = true;
+            if (LevelResult.usersHadRoleRemoved.includes(member.user.id)) userHadRoleRemoved = true;
         }
 
         if (member.premium_since) {
@@ -152,39 +159,59 @@ export async function UpdateRoles(
             if (boosts.length >= 4 && !member.roles.includes(IsleofDucks.roles.booster2x)) {
                 await AddGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesAdded++;
-                if (LevelResult && LevelResult.usersHadRolesAdded === 0) usersHadRolesAdded++;
-                else usersHadRolesAdded++;
+                userHadRoleAdded = true;
             } else if (boosts.length < 4 && member.roles.includes(IsleofDucks.roles.booster2x)) {
                 await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesRemoved++;
-                if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
-                else usersHadRolesRemoved++;
+                userHadRoleRemoved = true;
             }
         } else {
             if (member.roles.includes(IsleofDucks.roles.booster2x)) {
                 await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.booster2x);
                 rolesRemoved++;
-                if (LevelResult && LevelResult.usersHadRolesRemoved === 0) usersHadRolesRemoved++;
-                else usersHadRolesRemoved++;
+                userHadRoleRemoved = true;
             }
         }
 
-        // if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
-        //     if (!member.roles.includes(tempRole)) {
-        //         // await AddGuildMemberRole(guildID, member.user.id, tempRole);
-        //         rolesAdded++;
-        //         userRoleAdded = true;
-        //     }
-        // } else {
-        //     if (member.roles.includes(tempRole)) {
-        //         // await RemoveGuildMemberRole(guildID, member.user.id, tempRole);
-        //         rolesRemoved++;
-        //         userRoleRemoved = true;
-        //     }
-        // }
+        if (member.roles.includes(IsleofDucks.roles.duck_guild_member) || member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
+            if (!member.roles.includes(IsleofDucks.roles.guild_member)) {
+                await AddGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.guild_member);
+                rolesAdded++;
+                userHadRoleAdded = true;
+            }
+        } else {
+            if (member.roles.includes(IsleofDucks.roles.guild_member)) {
+                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.guild_member);
+                rolesRemoved++;
+                userHadRoleRemoved = true;
+            }
+        }
 
-        // if (userRoleAdded) usersHadRolesAdded++;
-        // if (userRoleRemoved) usersHadRolesRemoved++;
+        for (const group of IsleofDucks.roleGroups) {
+            let hasRoleInGroup = false;
+            for (const roleID of group.roles) {
+                if (member.roles.includes(roleID)) {
+                    hasRoleInGroup = true;
+                    break;
+                }
+            }
+            if (!hasRoleInGroup) {
+                if (member.roles.includes(group.id)) {
+                    await RemoveGuildMemberRole(guildID, member.user.id, group.id);
+                    rolesRemoved++;
+                    userHadRoleRemoved = true;
+                }
+            } else {
+                if (!member.roles.includes(group.id)) {
+                    await AddGuildMemberRole(guildID, member.user.id, group.id);
+                    rolesAdded++;
+                    userHadRoleAdded = true;
+                }
+            }
+        }
+
+        if (userHadRoleAdded) usersHadRolesAdded++;
+        if (userHadRoleRemoved) usersHadRolesRemoved++;
     }
 
     // const result = await Promise.all(promises);
