@@ -1300,107 +1300,7 @@ const ChannelGroups = {
     tickets: "988883238292451378",
     carrytickets: "1004180629551845466",
 };
-const TicketTypes = [
-    {
-        id: "duckapp",
-        name: "Duck Application",
-        catagory: ChannelGroups.tickets,
-        ticketName: "duck",
-        // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
-        excludes: [
-            "duck",
-            "duckling"
-        ]
-    },
-    {
-        id: "ducklingapp",
-        name: "Duckling Application",
-        catagory: ChannelGroups.tickets,
-        ticketName: "duckling",
-        // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
-        excludes: [
-            "duck",
-            "duckling"
-        ]
-    },
-    {
-        id: "support",
-        name: "Support",
-        catagory: ChannelGroups.tickets,
-        ticketName: "support",
-        excludes: [
-            "support"
-        ]
-    },
-    {
-        id: "sponsor",
-        name: "Sponsor Giveaway",
-        catagory: ChannelGroups.tickets,
-        ticketName: "sponsor",
-        excludes: [
-            "sponsor"
-        ]
-    },
-    {
-        id: "claim",
-        name: "Claim Giveaway",
-        catagory: ChannelGroups.tickets,
-        ticketName: "claim",
-        excludes: [
-            "claim"
-        ]
-    },
-    {
-        id: "carrierapp",
-        name: "Carrier Application",
-        catagory: ChannelGroups.tickets,
-        ticketName: "carrier",
-        excludes: [
-            "carrier"
-        ]
-    },
-    {
-        id: "carry",
-        name: "Carry Request",
-        catagory: ChannelGroups.carrytickets,
-        ticketName: "carry",
-        excludes: [
-            "carry"
-        ]
-    }
-];
-const TranscriptForum = {
-    tags: [
-        {
-            id: "1320673664441782313",
-            name: "duckapp",
-        },
-        {
-            id: "1320673729675788428",
-            name: "ducklingapp",
-        },
-        {
-            id: "1320813268230733995",
-            name: "support",
-        },
-        {
-            id: "1329003228020604928",
-            name: "sponsor",
-        },
-        {
-            id: "1320812842685042698",
-            name: "claim",
-        },
-        {
-            id: "1424075693976715424",
-            name: "carrierapp",
-        },
-        {
-            id: "1424075791624310804",
-            name: "carry",
-        }
-    ]
-};
+
 const Roles = {
     owner: "823071305795633163",
     admin: "824393734921650247",
@@ -1810,6 +1710,128 @@ const Roles = {
         {
             tier: 0,
             role: "985708515484114966"
+        }
+    ]
+};
+const TicketTypes = [
+    {
+        id: "duckapp",
+        name: "Duck Application",
+        catagory: ChannelGroups.tickets,
+        ticketName: "duck",
+        denyRoles: [
+            Roles.activity.sort((a, b) => a.tier - b.tier)[0].role
+        ],
+        // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
+        excludes: [
+            "duck",
+            "duckling"
+        ]
+    },
+    {
+        id: "ducklingapp",
+        name: "Duckling Application",
+        catagory: ChannelGroups.tickets,
+        ticketName: "duckling",
+        denyRoles: [
+            Roles.activity.sort((a, b) => a.tier - b.tier)[0].role
+        ],
+        // Can't open a ticket if one of the following is already open (ticketName + "-" + username)
+        excludes: [
+            "duck",
+            "duckling"
+        ]
+    },
+    {
+        id: "support",
+        name: "Support",
+        catagory: ChannelGroups.tickets,
+        ticketName: "support",
+        denyRoles: [
+            Roles.activity.sort((a, b) => a.tier - b.tier)[0].role
+        ],
+        excludes: [
+            "support"
+        ]
+    },
+    {
+        id: "sponsor",
+        name: "Sponsor Giveaway",
+        catagory: ChannelGroups.tickets,
+        ticketName: "sponsor",
+        denyRoles: [
+            Roles.activity.sort((a, b) => a.tier - b.tier)[0].role
+        ],
+        excludes: [
+            "sponsor"
+        ]
+    },
+    {
+        id: "claim",
+        name: "Claim Giveaway",
+        catagory: ChannelGroups.tickets,
+        ticketName: "claim",
+        denyRoles: [
+            Roles.activity.sort((a, b) => a.tier - b.tier)[0].role
+        ],
+        excludes: [
+            "claim"
+        ]
+    },
+    {
+        id: "carrierapp",
+        name: "Carrier Application",
+        catagory: ChannelGroups.tickets,
+        ticketName: "carrier",
+        denyRoles: [
+            Roles.activity.sort((a, b) => a.tier - b.tier)[0].role
+        ],
+        excludes: [
+            "carrier"
+        ]
+    },
+    {
+        id: "carry",
+        name: "Carry Request",
+        catagory: ChannelGroups.carrytickets,
+        ticketName: "carry",
+        denyRoles: [
+            Roles.activity.sort((a, b) => a.tier - b.tier)[0].role
+        ],
+        excludes: [
+            "carry"
+        ]
+    }
+];
+const TranscriptForum = {
+    tags: [
+        {
+            id: "1320673664441782313",
+            name: "duckapp",
+        },
+        {
+            id: "1320673729675788428",
+            name: "ducklingapp",
+        },
+        {
+            id: "1320813268230733995",
+            name: "support",
+        },
+        {
+            id: "1329003228020604928",
+            name: "sponsor",
+        },
+        {
+            id: "1320812842685042698",
+            name: "claim",
+        },
+        {
+            id: "1424075693976715424",
+            name: "carrierapp",
+        },
+        {
+            id: "1424075791624310804",
+            name: "carry",
         }
     ]
 };

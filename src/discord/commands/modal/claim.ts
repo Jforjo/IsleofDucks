@@ -124,6 +124,16 @@ export default async function(
         );
     }
 
+    if (member.roles.some(role => TICKET.denyRoles?.includes(role))) {
+        await FollowupMessage(interaction.token, {
+            content: `You cannot create this ticket type as you have a role that denies you from creating it!`,
+        });
+        return NextResponse.json(
+            { success: false, error: "You cannot create this ticket type as you have a role that denies you from creating it" },
+            { status: 400 }
+        );
+    }
+
     const hasTicket = await CheckChannelExists.names(guildID, TICKET.excludes.map(id => `${id}-${member.user.username}`));
     if (hasTicket.exists) {
         await FollowupMessage(interaction.token, {

@@ -273,6 +273,16 @@ export default async function(
         );
     }
 
+    if (member.roles.some(role => TICKET.denyRoles?.includes(role))) {
+        await FollowupMessage(interaction.token, {
+            content: `You cannot create this ticket type as you have a role that denies you from creating it!`,
+        });
+        return NextResponse.json(
+            { success: false, error: "You cannot create this ticket type as you have a role that denies you from creating it" },
+            { status: 400 }
+        );
+    }
+
     const profileAPIResponse = await checkPlayer(mojang.uuid);
     if (!profileAPIResponse.success) {
         await FollowupMessage(interaction.token, {
