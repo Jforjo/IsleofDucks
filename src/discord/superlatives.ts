@@ -164,5 +164,25 @@ export default {
     headlesshorsemanBestiary: {
         title: "Headless Horseman Bestiary",
         value: (profile: SkyBlockProfileMember) => profile?.bestiary?.kills?.horseman_horse_100 ?? 0
-    }
+    },
+    totalPestsBestiary: {
+        title: "Total Pests Bestiary",
+        value: (profile: SkyBlockProfileMember) => 
+            ( profile?.bestiary?.kills?.pest_mosquito_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_rat_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_fly_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_locust_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_slug_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_beetle_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_cricket_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_mite_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_moth_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_worm_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_mouse_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_praying_mantis_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_firefly_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.pest_dragonfly_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.zombuddy_1 ?? 0 ) +
+            ( profile?.bestiary?.kills?.timestalk_clone_100 ?? 0 )
+    },
 }
