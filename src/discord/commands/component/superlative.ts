@@ -209,25 +209,25 @@ export default async function Command(
     if ("success" in superlativeResult && superlativeResult.success === false) {
         let content = undefined;
         if (superlativeResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
-        await FollowupMessage(interaction.token, {
-            content: content,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: superlativeResult.message.includes("User not found: ") ? [
-                        superlativeResult.message,
-                        `It's likely that the superlative data needs updating, so run the command again in a minute.`,
-                        `(It's currently updating right now)`
-                    ].join("\n") : superlativeResult.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
-        });
         if (superlativeResult.message.includes("User not found: ")) {
+            await FollowupMessage(interaction.token, {
+                content: content,
+                embeds: [
+                    {
+                        title: "Updating Users...",
+                        description: [
+                            superlativeResult.message,
+                            `Superlative data is being updated right now.`,
+                            `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
+                        ].join("\n"),
+                        color: 0xFB9B00,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            });
             const result = await BACKGROUND_SUPERLATIVE_UPDATE;
             if (!result.success) {
                 await FollowupMessage(interaction.token, {
@@ -252,6 +252,21 @@ export default async function Command(
                 );
             }
             return await Command(interaction);
+        } else {
+            await FollowupMessage(interaction.token, {
+                content: content,
+                embeds: [
+                    {
+                        title: "Something went wrong!",
+                        description: superlativeResult.message,
+                        color: 0xB00020,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ],
+            });
         }
         return NextResponse.json(
             { success: false, error: superlativeResult.message },
