@@ -36,9 +36,9 @@ export function isSkillsAPI(profiledata: SkyBlockProfileMember): boolean {
     return true;
 }
 
-async function checkAPI(
+export async function checkAPI(
     uuid: string,
-    profilename: string
+    profilename?: string
 ): Promise<
     {
         success: false;
@@ -101,7 +101,7 @@ async function checkAPI(
             message: 'Bad response from Hypixel',
         };
     }
-    if (data.profiles.length === 0) {
+    if (!data.profiles || data.profiles.length === 0) {
         return {
             success: false,
             status: res.status,
