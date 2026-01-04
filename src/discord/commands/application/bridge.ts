@@ -1,5 +1,5 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { addBridgeFilter, checkBridgeFilter, checkEmoji, addEmoji, getBridgeFilters, getTotalBridgeFilters, removeBridgeFilter, removeEmoji, getEmojis, getTotalEmojis } from "@/discord/utils";
 
@@ -92,6 +92,10 @@ async function addFilter(
                 timestamp: new Date().toISOString()
             }
         ],
+    });
+
+    await SendMessage(IsleofDucks.channels.duckoc, {
+        content: "updatefilters"
     });
 
     return NextResponse.json(
@@ -187,6 +191,10 @@ async function removeFilter(
                 timestamp: new Date().toISOString()
             }
         ],
+    });
+
+    await SendMessage(IsleofDucks.channels.duckoc, {
+        content: "updatefilters"
     });
 
     return NextResponse.json(
@@ -445,6 +453,10 @@ async function addChatEmoji(
         ],
     });
 
+    await SendMessage(IsleofDucks.channels.duckoc, {
+        content: "updatefilters"
+    });
+
     return NextResponse.json(
         { success: true },
         { status: 200 }
@@ -540,6 +552,10 @@ async function removeChatEmoji(
                 timestamp: new Date().toISOString()
             }
         ],
+    });
+
+    await SendMessage(IsleofDucks.channels.duckoc, {
+        content: "updatefilters"
     });
 
     return NextResponse.json(
