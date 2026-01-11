@@ -170,50 +170,50 @@ export default async function(
             );
         }
         await DeleteChannel(interaction.channel.id);
-    }
-
-    await SendMessage(interaction.channel.id, {
-        embeds: [
-            {
-                title: "Closed Ticket",
-                fields: [
-                    {
-                        name: "Closed by:",
-                        value: [
-                            `<@${interaction.member.user.id}>`,
-                            `Discord ID: ${interaction.member.user.id}`,
-                            `Username: ${interaction.member.user.username}`,
-                            `Nickname: ${interaction.member.nick ?? ""}`,
-                        ].join("\n"),
-                    }
-                ],
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ],
-        components: [
-            {
-                type: ComponentType.ActionRow,
-                components: [
-                    {
-                        custom_id: `transcript-${ticketID}-${interaction.message.id}-${ticketOwnerID}`,
-                        type: ComponentType.Button,
-                        label: "Save Transcript",
-                        style: ButtonStyle.Primary,
+    } else {
+        await SendMessage(interaction.channel.id, {
+            embeds: [
+                {
+                    title: "Closed Ticket",
+                    fields: [
+                        {
+                            name: "Closed by:",
+                            value: [
+                                `<@${interaction.member.user.id}>`,
+                                `Discord ID: ${interaction.member.user.id}`,
+                                `Username: ${interaction.member.user.username}`,
+                                `Nickname: ${interaction.member.nick ?? ""}`,
+                            ].join("\n"),
+                        }
+                    ],
+                    color: 0xFB9B00,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
-                    {
-                        custom_id: `delete-${ticketID}`,
-                        type: ComponentType.Button,
-                        label: "Delete Ticket",
-                        style: ButtonStyle.Danger,
-                    }
-                ]
-            }
-        ]
-    });
+                    timestamp: new Date().toISOString()
+                }
+            ],
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            custom_id: `transcript-${ticketID}-${interaction.message.id}-${ticketOwnerID}`,
+                            type: ComponentType.Button,
+                            label: "Save Transcript",
+                            style: ButtonStyle.Primary,
+                        },
+                        {
+                            custom_id: `delete-${ticketID}`,
+                            type: ComponentType.Button,
+                            label: "Delete Ticket",
+                            style: ButtonStyle.Danger,
+                        }
+                    ]
+                }
+            ]
+        });
+    }
 
     return NextResponse.json(
         { success: true },

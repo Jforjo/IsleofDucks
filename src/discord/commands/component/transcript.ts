@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, CreateThread, EditChannel, ExecuteWebhook, FollowupMessage, GetAllChannelMessages, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, CreateThread, EditChannel, ExecuteWebhook, FollowupMessage, GetAllChannelMessages, GetCurrentTranscript, IsleofDucks } from "@/discord/discordUtils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, CDNRoutes, ComponentType, ImageFormat, InteractionResponseType, MessageFlags, RouteBases, Snowflake } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -16,10 +16,18 @@ export async function CreateTranscript(
         success: true;
     }
 > {
-    const thread = await CreateThread(IsleofDucks.channels.transcriptForum, {
+    const transcript = await GetCurrentTranscript();
+    if (!transcript) {
+        return {
+            success: false,
+            message: "Failed to fetch transcript data"
+        }
+    }
+
+    const thread = await CreateThread(transcript.channelId, {
         name: channelName ?? "Transcript",
         auto_archive_duration: 60,
-        applied_tags: IsleofDucks.transcriptForum.tags.filter(tag => tag.name === ticketID).map(tag => tag.id),
+        applied_tags: transcript.tags.filter(tag => tag.name === ticketID).map(tag => tag.id),
         message: {
             embeds: [
                 {
@@ -129,7 +137,7 @@ export default async function(
         type: InteractionResponseType.DeferredMessageUpdate,
     });
     
-    const timestamp = ConvertSnowflakeToDate(interaction.id);
+    // const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     if (!interaction.guild) {
         await FollowupMessage(interaction.token, {
@@ -209,20 +217,20 @@ export default async function(
         });
     });
 
-    await FollowupMessage(interaction.token, {
-        embeds: [
-            ...interaction.message.embeds,
-            {
-                title: "Transcript saved!",
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ],
-        components: components
-    });
+    // await FollowupMessage(interaction.token, {
+    //     embeds: [
+    //         ...interaction.message.embeds,
+    //         {
+    //             title: "Transcript saved!",
+    //             color: 0xFB9B00,
+    //             footer: {
+    //                 text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+    //             },
+    //             timestamp: new Date().toISOString()
+    //         }
+    //     ],
+    //     components: components
+    // });
 
     return NextResponse.json(
         { success: true },

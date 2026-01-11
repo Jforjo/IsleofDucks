@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
@@ -1134,6 +1134,45 @@ export const CheckChannelExists = {
     }
 }
 
+export async function UpdateWebhook(webhookID: Snowflake, options: RESTPatchAPIWebhookJSONBody): Promise<RESTPatchAPIWebhookResult | undefined> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.webhook(webhookID);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'Content-Type': 'application/json',
+        },
+        method: 'PATCH',
+        body: JSON.stringify(options),
+    });
+
+    let data;
+    try {
+        data = await res.json() as RESTPatchAPIWebhookResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error("res", res);
+    }
+    
+    if (!res.ok) {
+        if (res.status === 429) {
+            const retryAfter = res.headers.get('retry-after');
+            if (retryAfter && !isNaN(Number(retryAfter))) {
+                await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
+                return await UpdateWebhook(webhookID, options);
+            }
+        }
+        console.error(data);
+        console.error(JSON.stringify(data));
+    }
+
+    return data;
+}
+
 export function ToPermissions(permissions: DiscordPermissions): Permissions {
     // https://discord.com/developers/docs/topics/permissions
     let perms = 0;
@@ -1284,8 +1323,6 @@ const Channels = {
     staffgeneral: "823077540654612492",
     support: "910160132233658408",
     carrierapps: "1004135601534152755",
-    transcriptForum: "1320673392801878036",
-    surveyResponses: "1337447048672448576",
     giveaways: "882151291340611605",
     reqgiveaways: "980520250766426142",
     flashgiveaways: "1066461763266154537",
@@ -1299,6 +1336,7 @@ const Channels = {
 const ChannelGroups = {
     tickets: "988883238292451378",
     carrytickets: "1004180629551845466",
+    staff: "823077464040931338"
 };
 
 const Roles = {
@@ -1806,32 +1844,39 @@ const TicketTypes = [
 const TranscriptForum = {
     tags: [
         {
-            id: "1320673664441782313",
-            name: "duckapp",
+            id: "duckapp",
+            name: "Duck Application",
+            emojiName: "🦆",
         },
         {
-            id: "1320673729675788428",
-            name: "ducklingapp",
+            id: "ducklingapp",
+            name: "Duckling Application",
+            emojiName: "🦆",
         },
         {
-            id: "1320813268230733995",
-            name: "support",
+            id: "support",
+            name: "Support",
+            emojiName: "🎟️",
         },
         {
-            id: "1329003228020604928",
-            name: "sponsor",
+            id: "sponsor",
+            name: "Sponsor Giveaway",
+            emojiName: "💰",
         },
         {
-            id: "1320812842685042698",
-            name: "claim",
+            id: "claim",
+            name: "Giveaway Claim",
+            emojiName: "🎉",
         },
         {
-            id: "1424075693976715424",
-            name: "carrierapp",
+            id: "carrierapp",
+            name: "Carrier Application",
+            emojiId: "993695057850925066",
         },
         {
-            id: "1424075791624310804",
-            name: "carry",
+            id: "carry",
+            name: "Carry",
+            emojiId: "993695057850925066",
         }
     ]
 };
@@ -2221,3 +2266,69 @@ export async function CreateEmbedData(embedID: string, content: string | null, e
 export async function DeleteEmbedData(embedID: string): Promise<void> {
     await sql`DELETE FROM embeds WHERE name = ${embedID}`;
 }
+
+export async function GetCurrentTranscript(): Promise<{
+    channelId: Snowflake;
+    tags: {
+        id: string;
+        name: string;
+    }[];
+    surveyId: Snowflake;
+} | undefined> {
+    const year = new Date().getUTCFullYear();
+    const { rows } = await sql`SELECT tags, channelid, surveyid FROM transcriptchannels WHERE year = ${year}`;
+    if (rows.length === 0) return;
+    return {
+        channelId: rows[0].channelid,
+        tags: JSON.parse(rows[0].tags),
+        surveyId: rows[0].surveyid,
+    };
+}
+
+// export async function CreateNewTranscriptChannel(guildId: Snowflake): Promise<Snowflake> {
+//     const year = new Date().getUTCFullYear();
+//     const { rows } = await sql`SELECT channelid FROM transcriptchannels WHERE year = ${year}`;
+//     if (!(!rows || rows.length === 0)) return rows[0].channelid;
+
+//     const channel = await CreateChannel(guildId, {
+//         name: `ticket-transcripts-${year}`,
+//         type: ChannelType.GuildForum,
+//         parent_id: IsleofDucks.channelGroups.staff,
+//         available_tags: TranscriptForum.tags.map(tag => ({
+//             name: tag.name,
+//             emoji_id: tag.emojiId ?? null,
+//             emoji_name: tag.emojiName ?? null,
+//             moderated: true,
+//         })),
+//         default_forum_layout: ForumLayoutType.ListView,
+//         permission_overwrites: [
+//             {
+//                 id: guildId,
+//                 type: OverwriteType.Role,
+//                 deny: PermissionFlagsBits.ViewChannel.toString(),
+//             },
+//             {
+//                 id: IsleofDucks.roles.staff,
+//                 type: OverwriteType.Role,
+//                 allow: PermissionFlagsBits.ViewChannel.toString(),
+//             }
+//         ]
+//     });
+
+//     if (!channel || channel.type !== ChannelType.GuildForum) throw new Error("Failed to create transcript channel");
+
+//     const channelTags = channel.available_tags.map(tag => {
+//         const t = TranscriptForum.tags.find(t => t.name === tag.name);
+//         if (!t) return;
+//         return {
+//             id: tag.id,
+//             name: t.id
+//         };
+//     }).filter(tag => tag !== undefined);
+
+//     await sql`INSERT INTO transcriptchannels (year, channelid, tags) VALUES (${year}, ${channel.id}, ${JSON.stringify(channelTags)})`;
+
+//     const updateWebhookRes = await UpdateWebhook("1320694367622533232", {
+//         channel_id: channel.id
+//     });
+// }

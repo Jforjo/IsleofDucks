@@ -1,5 +1,5 @@
 import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessage, EditMessage } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessage, EditMessage, GetCurrentTranscript } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function Command(
@@ -79,8 +79,23 @@ export default async function Command(
             { status: 400 }
         );
     }
+
+    const transcript = await GetCurrentTranscript();
+    if (!transcript) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Could not access transcripts",
+                flags: MessageFlags.Ephemeral
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not access transcripts" },
+            { status: 400 }
+        );
+    }
     
-    const totalMessage = await GetChannelMessage(IsleofDucks.channels.surveyResponses, "1337447048672448576");
+    const totalMessage = await GetChannelMessage(transcript.channelId, transcript.surveyId);
     if (!totalMessage) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -107,7 +122,7 @@ export default async function Command(
     let missing = survey.questions[questionNumber - 1].options.flatMap(row => row);
     
     if (!interaction.member.roles.includes(IsleofDucks.roles.staff)) {
-        await EditMessage(IsleofDucks.channels.surveyResponses, "1337447048672448576", {
+        await EditMessage(transcript.channelId, transcript.surveyId, {
             content: totalMessage.content.split('\n').filter(line => {
                 const surveyType = line.split(' ').slice(1).join(' ');
                 const temp = survey.questions[questionNumber - 1].options.flatMap(row => row);
@@ -143,7 +158,7 @@ export default async function Command(
         });
     }
 
-    const message = await SendMessage(IsleofDucks.channels.surveyResponses, {
+    const message = await SendMessage(transcript.channelId, {
         embeds: [
             {
                 title: `Survey - ${survey.name}`,
