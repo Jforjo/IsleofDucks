@@ -95,7 +95,7 @@ export default async function Command(
         );
     }
     
-    const totalMessage = await GetChannelMessage(transcript.channelId, transcript.surveyId);
+    const totalMessage = await GetChannelMessage(transcript.surveyId, transcript.surveyId);
     if (!totalMessage) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,

@@ -95,13 +95,7 @@ export default async function Command(
         );
     }
     
-    const totalMessage = await GetChannelMessage(transcript.channelId, transcript.surveyId);
-    try {
-        console.log(totalMessage);
-        console.log(JSON.stringify(totalMessage));
-    } catch (e) {
-        console.error(e);
-    }
+    const totalMessage = await GetChannelMessage(transcript.surveyId, transcript.surveyId);
     if (!totalMessage) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -112,19 +106,6 @@ export default async function Command(
         });
         return NextResponse.json(
             { success: false, error: "Survey results channel not found" },
-            { status: 400 }
-        );
-    }
-    if (!totalMessage.content) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                content: "Survey results message content not found",
-                flags: MessageFlags.Ephemeral
-            }
-        });
-        return NextResponse.json(
-            { success: false, error: "Survey results message content not found" },
             { status: 400 }
         );
     }
