@@ -81,16 +81,16 @@ export default async function Command(
     }
 
     const transcript = await GetCurrentTranscript();
-    if (!transcript) {
+    if (!transcript.success) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                content: "Could not access transcripts",
+                content: transcript.message ?? "Could not access transcripts",
                 flags: MessageFlags.Ephemeral
             }
         });
         return NextResponse.json(
-            { success: false, error: "Could not access transcripts" },
+            { success: false, error: transcript.message ?? "Could not access transcripts" },
             { status: 400 }
         );
     }

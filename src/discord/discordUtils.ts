@@ -2268,22 +2268,33 @@ export async function DeleteEmbedData(embedID: string): Promise<void> {
 }
 
 export async function GetCurrentTranscript(): Promise<{
+    success: true;
     channelId: Snowflake;
     tags: {
         id: string;
         name: string;
     }[];
     surveyId: Snowflake;
-} | undefined> {
+} | {
+    success: false;
+    message: string;
+}> {
     const year = new Date().getUTCFullYear();
     const { rows } = await sql`SELECT tags, channelid, surveyid FROM transcriptchannels WHERE year = ${year}`;
-    if (rows.length === 0) return;
+    if (rows.length === 0) return {
+        success: false,
+        message: "No transcript data found for this year",
+    };
     try {
         JSON.parse(rows[0].tags);
     } catch {
-        return;
+        return {
+            success: false,
+            message: "Transcript tags data is corrupted",
+        };
     }
     return {
+        success: true,
         channelId: rows[0].channelid.toString(),
         tags: JSON.parse(rows[0].tags),
         surveyId: rows[0].surveyid.toString(),
