@@ -117,6 +117,8 @@ export default async function Command(
                 flags: MessageFlags.Ephemeral
             }
         });
+        console.log(totalMessage);
+        console.log(JSON.stringify(totalMessage));
         return NextResponse.json(
             { success: false, error: "Survey results message content not found" },
             { status: 400 }
