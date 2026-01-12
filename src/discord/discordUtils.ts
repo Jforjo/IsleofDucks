@@ -2285,18 +2285,10 @@ export async function GetCurrentTranscript(): Promise<{
         success: false,
         message: "No transcript data found for this year",
     };
-    try {
-        JSON.parse(rows[0].tags);
-    } catch {
-        return {
-            success: false,
-            message: "Transcript tags data is corrupted",
-        };
-    }
     return {
         success: true,
         channelId: rows[0].channelid.toString(),
-        tags: JSON.parse(rows[0].tags),
+        tags: rows[0].tags,
         surveyId: rows[0].surveyid.toString(),
     };
 }
