@@ -2278,6 +2278,11 @@ export async function GetCurrentTranscript(): Promise<{
     const year = new Date().getUTCFullYear();
     const { rows } = await sql`SELECT tags, channelid, surveyid FROM transcriptchannels WHERE year = ${year}`;
     if (rows.length === 0) return;
+    try {
+        JSON.parse(rows[0].tags);
+    } catch {
+        return;
+    }
     return {
         channelId: rows[0].channelid,
         tags: JSON.parse(rows[0].tags),
