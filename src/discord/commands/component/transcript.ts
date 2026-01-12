@@ -17,10 +17,10 @@ export async function CreateTranscript(
     }
 > {
     const transcript = await GetCurrentTranscript();
-    if (!transcript.success) {
+    if (!transcript) {
         return {
             success: false,
-            message: transcript.message ?? "Failed to fetch transcript data"
+            message: "Failed to fetch transcript data"
         }
     }
 

@@ -81,16 +81,16 @@ export default async function Command(
     }
 
     const transcript = await GetCurrentTranscript();
-    if (!transcript.success) {
+    if (!transcript) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                content: transcript.message ?? "Could not access transcripts",
+                content: "Could not access transcripts",
                 flags: MessageFlags.Ephemeral
             }
         });
         return NextResponse.json(
-            { success: false, error: transcript.message ?? "Could not access transcripts" },
+            { success: false, error: "Could not access transcripts" },
             { status: 400 }
         );
     }
@@ -106,6 +106,19 @@ export default async function Command(
         });
         return NextResponse.json(
             { success: false, error: "Survey results channel not found" },
+            { status: 400 }
+        );
+    }
+    if (!totalMessage.content) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Survey results message content not found",
+                flags: MessageFlags.Ephemeral
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Survey results message content not found" },
             { status: 400 }
         );
     }
