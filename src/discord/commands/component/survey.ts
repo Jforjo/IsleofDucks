@@ -148,7 +148,7 @@ export default async function Command(
     let missing = survey.questions[questionNumber - 1].options.flatMap(row => row);
     
     if (!interaction.member.roles.includes(IsleofDucks.roles.staff)) {
-        await EditMessage(transcript.channelId, transcript.surveyId, {
+        await EditMessage(transcript.surveyId, transcript.surveyId, {
             content: totalMessage.content.split('\n').filter(line => {
                 const surveyType = line.split(' ').slice(1).join(' ');
                 const temp = survey.questions[questionNumber - 1].options.flatMap(row => row);
@@ -184,7 +184,7 @@ export default async function Command(
         });
     }
 
-    const message = await SendMessage(transcript.channelId, {
+    const message = await SendMessage(transcript.surveyId, {
         embeds: [
             {
                 title: `Survey - ${survey.name}`,
