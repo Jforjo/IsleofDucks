@@ -2284,9 +2284,9 @@ export async function GetCurrentTranscript(): Promise<{
         return;
     }
     return {
-        channelId: rows[0].channelid,
+        channelId: rows[0].channelid.toString(),
         tags: JSON.parse(rows[0].tags),
-        surveyId: rows[0].surveyid,
+        surveyId: rows[0].surveyid.toString(),
     };
 }
 
