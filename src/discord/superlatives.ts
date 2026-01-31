@@ -158,6 +158,10 @@ export default {
         title: "Pumpkin Collection",
         value: (profile: SkyBlockProfileMember) => profile?.collection?.PUMPKIN ?? 0
     },
+    wildroseCollection: {
+        title: "Wild Rose Collection",
+        value: (profile: SkyBlockProfileMember) => profile?.collection?.WILD_ROSE ?? 0
+    },
     /**
      * BESTIARY
      */
