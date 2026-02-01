@@ -19,16 +19,15 @@ export default async function(
             title: "Support",
             components: [
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "reason",
-                            label: "Please state the purpose of your ticket",
-                            style: TextInputStyle.Paragraph,
-                            required: true,
-                        },
-                    ],
+                    type: ComponentType.Label,
+                    label: "Reason",
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "reason",
+                        placeholder: "Please state the purpose of your ticket",
+                        style: TextInputStyle.Paragraph,
+                        required: true,
+                    },
                 },
             ],
         }

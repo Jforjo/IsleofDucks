@@ -118,16 +118,15 @@ export default async function Command(
                 title: selectedOption.name,
                 components: [
                     {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                type: ComponentType.TextInput,
-                                custom_id: `survey-${selectedOption.id}`,
-                                label: "Other",
-                                style: selectedOption.type === "shorttext" ? TextInputStyle.Short : TextInputStyle.Paragraph,
-                                required: true
-                            }
-                        ]
+                        type: ComponentType.Label,
+                        label: "Answer",
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: `survey-${selectedOption.id}`,
+                            placeholder: "Enter your answer here",
+                            style: selectedOption.type === "shorttext" ? TextInputStyle.Short : TextInputStyle.Paragraph,
+                            required: true
+                        }
                     }
                 ]
             }

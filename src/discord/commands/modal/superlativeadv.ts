@@ -53,8 +53,30 @@ export default async function(
             { status: 400 }
         )
     }
+    
+    if (interaction.data.components[0].type !== ComponentType.Label ||
+        interaction.data.components[0].component.type !== ComponentType.TextInput ||
+        interaction.data.components[1].type !== ComponentType.Label ||
+        interaction.data.components[1].component.type !== ComponentType.TextInput ||
+        interaction.data.components[2].type !== ComponentType.Label ||
+        interaction.data.components[2].component.type !== ComponentType.TextInput
+    ) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Invalid modal response"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid modal response" },
+            { status: 400 }
+        );
+    }
+    
+    const rankName = interaction.data.components[1].component.value;
 
-    const rankIdMatch = /^\[?([a-zA-Z]{1,6})\]?$/gm.exec(interaction.data.components[0].components[0].value);
+    const rankIdMatch = /^\[?([a-zA-Z]{1,6})\]?$/gm.exec(interaction.data.components[0].component.value);
     if (!rankIdMatch) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -70,7 +92,7 @@ export default async function(
     }
     const rankId = rankIdMatch[1].replaceAll("[", "").replaceAll("]", "").toUpperCase();
 
-    const rankReqMatch = /^[0-9]+$/.exec(interaction.data.components[2].components[0].value);
+    const rankReqMatch = /^[0-9]+$/.exec(interaction.data.components[2].component.value);
     if (!rankReqMatch) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -106,7 +128,7 @@ export default async function(
                             components: [
                                 {
                                     type: ComponentType.TextDisplay,
-                                    content: `[${rankId}] ${interaction.data.components[1].components[0].value}`,
+                                    content: `[${rankId}] ${rankName}`,
                                 },
                                 {
                                     type: ComponentType.TextDisplay,

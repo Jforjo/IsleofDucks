@@ -19,18 +19,17 @@ export default async function(
             title: "Duckling Application",
             components: [
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "username",
-                            label: "Enter your username",
-                            style: TextInputStyle.Short,
-                            min_length: 3,
-                            max_length: 16,
-                            required: true,
-                        },
-                    ],
+                    type: ComponentType.Label,
+                    label: "Username",
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "username",
+                        placeholder: "Enter your Minecraft username",
+                        style: TextInputStyle.Short,
+                        min_length: 3,
+                        max_length: 16,
+                        required: true,
+                    },
                 },
             ],
         }

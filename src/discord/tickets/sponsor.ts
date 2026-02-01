@@ -19,52 +19,60 @@ export default async function(
             title: "Sponsor Giveaway",
             components: [
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "item",
-                            label: "What would you like to give away?",
-                            style: TextInputStyle.Short,
-                            required: true,
-                        },
-                    ],
+                    type: ComponentType.Label,
+                    label: "Item to Give Away",
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "item",
+                        placeholder: "What would you like to give away?",
+                        style: TextInputStyle.Short,
+                        required: true,
+                    },
                 },
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "winners",
-                            label: "How many winners are there?",
-                            style: TextInputStyle.Short,
-                            required: true,
-                        },
-                    ],
+                    type: ComponentType.Label,
+                    label: "Number of Winners",
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "winners",
+                        placeholder: "How many winners are there?",
+                        style: TextInputStyle.Short,
+                        required: true,
+                    },
                 },
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "type",
-                            label: "What type of giveaway? (everyone/guild-only)",
-                            style: TextInputStyle.Short,
-                            required: true,
-                        },
-                    ],
+                    type: ComponentType.Label,
+                    label: "Giveaway Type",
+                    component: {
+                        type: ComponentType.StringSelect,
+                        custom_id: "type",
+                        placeholder: "What type of giveaway?",
+                        options: [
+                            {
+                                label: "Everyone",
+                                description: "Everyone can enter",
+                                value: "everyone",
+                            },
+                            {
+                                label: "Guild Only",
+                                description: "Only guild members can enter. This is BOTH Isle of Ducks and Isle of Ducklings.",
+                                value: "guild",
+                            }
+                        ],
+                        required: true,
+                    },
                 },
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "time",
-                            label: "Roughly how long should the giveaway last?",
-                            style: TextInputStyle.Short,
-                            required: true,
-                        },
-                    ],
+                    type: ComponentType.Label,
+                    label: "Duration",
+                    description: "e.g. 1d, 3d, 1w",
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "time",
+                        placeholder: "Roughly how long should the giveaway last?",
+                        style: TextInputStyle.Short,
+                        required: true,
+                    },
                 },
             ],
         }

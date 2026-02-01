@@ -41,8 +41,20 @@ export default async function(
     let userinput = "";
     if (!tickerButton) {
         // If statement needed because TS complains
-        if ('data' in interaction && 'components' in interaction.data)
-            userinput = interaction.data.components[0].components[0].value;
+        if ('data' in interaction && 'components' in interaction.data) {
+            if (interaction.data.components[0].type !== ComponentType.Label ||
+                interaction.data.components[0].component.type !== ComponentType.TextInput
+            ) {
+                await FollowupMessage(interaction.token, {
+                    content: "Invalid modal response!",
+                });
+                return NextResponse.json(
+                    { success: false, error: "Invalid modal response" },
+                    { status: 400 }
+                );
+            }
+            userinput = interaction.data.components[0].component.value;
+        }
     }
 
     const guildID = interaction.guild_id;

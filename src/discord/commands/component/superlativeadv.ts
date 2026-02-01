@@ -235,46 +235,44 @@ async function createRanks(
             title: `Create ${type} Rank`,
             components: [
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "rankid",
-                            label: `${type} Rank ID (i.e. "[RANK]")`,
-                            style: TextInputStyle.Short,
-                            min_length: 1,
-                            max_length: 8,
-                            required: true
-                        }
-                    ]
+                    type: ComponentType.Label,
+                    label: `${type} Rank Tag`,
+                    description: `i.e. "[RANK]"`,
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "rankid",
+                        placeholder: `Enter the ${type} Rank Tag`,
+                        style: TextInputStyle.Short,
+                        min_length: 1,
+                        max_length: 8,
+                        required: true
+                    }
                 },
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "rankname",
-                            label: `${type} Rank Name`,
-                            style: TextInputStyle.Short,
-                            min_length: 1,
-                            max_length: 16,
-                            required: true
-                        }
-                    ]
+                    type: ComponentType.Label,
+                    label: `${type} Rank Name`,
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "rankname",
+                        placeholder: `Enter the ${type} Rank Name`,
+                        style: TextInputStyle.Short,
+                        min_length: 1,
+                        max_length: 16,
+                        required: true
+                    }
                 },
                 {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.TextInput,
-                            custom_id: "rankreq",
-                            label: `${type} Rank Requirement`,
-                            style: TextInputStyle.Short,
-                            min_length: 1,
-                            max_length: 16,
-                            required: true
-                        }
-                    ]
+                    type: ComponentType.Label,
+                    label: `${type} Rank Requirement`,
+                    component: {
+                        type: ComponentType.TextInput,
+                        custom_id: "rankreq",
+                        placeholder: `Enter the ${type} Rank Requirement`,
+                        style: TextInputStyle.Short,
+                        min_length: 1,
+                        max_length: 16,
+                        required: true
+                    }
                 }
             ]
         }

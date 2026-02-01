@@ -77,9 +77,24 @@ export default async function(
     }
 
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    const username = interaction.data.components[0].components[0].value;
-    const number = interaction.data.components[1].components[0].value;
-    const timezone = interaction.data.components[2].components[0].value;
+    if (interaction.data.components[0].type !== ComponentType.Label ||
+        interaction.data.components[0].component.type !== ComponentType.TextInput ||
+        interaction.data.components[1].type !== ComponentType.Label ||
+        interaction.data.components[1].component.type !== ComponentType.TextInput ||
+        interaction.data.components[2].type !== ComponentType.Label ||
+        interaction.data.components[2].component.type !== ComponentType.TextInput
+    ) {
+        await FollowupMessage(interaction.token, {
+            content: "Invalid modal response!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid modal response" },
+            { status: 400 }
+        );
+    }
+    const username = interaction.data.components[0].component.value;
+    const number = interaction.data.components[1].component.value;
+    const timezone = interaction.data.components[2].component.value;
 
     if (isNaN(parseInt(number)) || parseInt(number) < 1 || parseInt(number) > 99) {
         await FollowupMessage(interaction.token, {

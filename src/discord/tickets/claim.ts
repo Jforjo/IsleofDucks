@@ -1,4 +1,4 @@
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, Snowflake, TextInputStyle } from "discord-api-types/v10";
+import { APIInteractionResponse, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, MessageFlags, Snowflake, TextInputStyle } from "discord-api-types/v10";
 import { CreateInteractionResponse, GetChannelMessages, IsleofDucks } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
@@ -120,7 +120,7 @@ export default async function(
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
                 content: "Failed to detect the server member",
-                flags: 1 << 6
+                flags: MessageFlags.Ephemeral,
             }
         });
         return NextResponse.json(
@@ -139,16 +139,15 @@ export default async function(
                 title: "Claim Giveaway",
                 components: [
                     {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                type: ComponentType.TextInput,
-                                custom_id: "giveaway",
-                                label: "The message link for the giveaway you won",
-                                style: TextInputStyle.Short,
-                                required: true,
-                            },
-                        ],
+                        type: ComponentType.Label,
+                        label: "Giveaway Message Link",
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: "giveaway",
+                            placeholder: "The message link for the giveaway you won",
+                            style: TextInputStyle.Short,
+                            required: true,
+                        },
                     },
                 ],
             }

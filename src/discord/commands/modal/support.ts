@@ -33,7 +33,18 @@ export default async function(
         );
     }
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    const reason = interaction.data.components[0].components[0].value;
+    if (interaction.data.components[0].type !== ComponentType.Label ||
+        interaction.data.components[0].component.type !== ComponentType.TextInput
+    ) {
+        await FollowupMessage(interaction.token, {
+            content: "Invalid modal response!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid modal response" },
+            { status: 400 }
+        );
+    }
+    const reason = interaction.data.components[0].component.value;
 
     const guildID = interaction.guild_id;
     if (!guildID) {

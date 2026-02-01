@@ -1,9 +1,9 @@
-import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
+import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, MessageFlags, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember, CheckChannelExists } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "../application/recruit";
-import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
+import { capitalizeFirstLetter, getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
 
 export default async function(
@@ -20,23 +20,15 @@ export default async function(
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
         data: {
-            flags: 1 << 6
+            flags: MessageFlags.Ephemeral,
         }
     });
-    
-    const TICKET = IsleofDucks.ticketTypes.filter((ticket) => ticket.id === interaction.data.custom_id)[0];
-    if (!TICKET) {
-        await FollowupMessage(interaction.token, {
-            content: "Ticket type not found!",
-        });
-        return NextResponse.json(
-            { success: false, error: "Ticket type not found" },
-            { status: 400 }
-        );
-    }
+
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     if (interaction.data.components[0].type !== ComponentType.Label ||
-        interaction.data.components[0].component.type !== ComponentType.TextInput
+        interaction.data.components[0].component.type !== ComponentType.StringSelect ||
+        interaction.data.components[1].type !== ComponentType.Label ||
+        interaction.data.components[1].component.type !== ComponentType.TextInput
     ) {
         await FollowupMessage(interaction.token, {
             content: "Invalid modal response!",
@@ -46,7 +38,19 @@ export default async function(
             { status: 400 }
         );
     }
-    const username = interaction.data.components[0].component.value;
+    const username = interaction.data.components[1].component.value;
+    const appType = interaction.data.components[0].component.values[0];
+    
+    const TICKET = IsleofDucks.ticketTypes.filter((ticket) => ticket.id === `${appType}app`)[0];
+    if (!TICKET) {
+        await FollowupMessage(interaction.token, {
+            content: "Ticket type not found!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Ticket type not found" },
+            { status: 400 }
+        );
+    }
 
     const guildID = interaction.guild_id;
     if (!guildID) {
@@ -318,9 +322,17 @@ export default async function(
             { status: profileAPIResponse.status }
         );
     }
-    if (profileAPIResponse.experience < profileAPIResponse.duckReq) {
+    if (appType === "duck" && profileAPIResponse.experience < profileAPIResponse.duckReq) {
         await FollowupMessage(interaction.token, {
             content: `You do not meet the level requirements to join Isle of Ducks (${profileAPIResponse.experience / 100}/${profileAPIResponse.duckReq / 100})!`,
+        });
+        return NextResponse.json(
+            { success: true },
+            { status: 200 }
+        );
+    } else if (appType === "duckling" && profileAPIResponse.experience < profileAPIResponse.ducklingReq) {
+        await FollowupMessage(interaction.token, {
+            content: `You do not meet the level requirements to join Isle of Ducklings (${profileAPIResponse.experience / 100}/${profileAPIResponse.ducklingReq / 100})!`,
         });
         return NextResponse.json(
             { success: true },
@@ -351,7 +363,18 @@ export default async function(
             { status: guildResponse.status }
         );
     }
-    if (guildResponse.isInGuild && guildResponse.guild.name_lower === "isle of ducks" && !member.roles.includes(IsleofDucks.roles.staff)) {
+    if (appType === "duck" && guildResponse.isInGuild && guildResponse.guild.name_lower === "isle of ducks" && !member.roles.includes(IsleofDucks.roles.staff)) {
+        await FollowupMessage(interaction.token, {
+            content: [
+                `You are already in the guild!`,
+                `If you have any queries then please open a support ticket instead: <#${IsleofDucks.channels.support}>`
+            ].join('\n')
+        });
+        return NextResponse.json(
+            { success: false, error: "You are already in the guild" },
+            { status: 400 }
+        );
+    } else if (appType === "duckling" && guildResponse.isInGuild && guildResponse.guild.name_lower === "isle of ducklings" && !member.roles.includes(IsleofDucks.roles.staff)) {
         await FollowupMessage(interaction.token, {
             content: [
                 `You are already in the guild!`,
@@ -522,13 +545,13 @@ export default async function(
                         label: "Duckling Log",
                         style: ButtonStyle.Primary
                     },
-                    // {
-                    //     type: ComponentType.Button,
-                    //     custom_id: `recruit-invite-duckling-${mojang.name}`,
-                    //     label: "Duckling Invite",
-                    //     style: ButtonStyle.Primary,
-                    //     disabled: true
-                    // }
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-invite-duckling-${mojang.name}`,
+                        label: "Duckling Invite",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    }
                 ]
             }
         ],

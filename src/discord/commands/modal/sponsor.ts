@@ -33,10 +33,27 @@ export default async function(
         );
     }
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    const inputs = Object.fromEntries(interaction.data.components.map(component => {
-        const input = component.components[0];
-        return [input.custom_id, input.value];
-    }));
+    if (interaction.data.components[0].type !== ComponentType.Label ||
+        interaction.data.components[0].component.type !== ComponentType.TextInput ||
+        interaction.data.components[1].type !== ComponentType.Label ||
+        interaction.data.components[1].component.type !== ComponentType.TextInput ||
+        interaction.data.components[2].type !== ComponentType.Label ||
+        interaction.data.components[2].component.type !== ComponentType.TextInput ||
+        interaction.data.components[3].type !== ComponentType.Label ||
+        interaction.data.components[3].component.type !== ComponentType.TextInput
+    ) {
+        await FollowupMessage(interaction.token, {
+            content: "Invalid modal response!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid modal response" },
+            { status: 400 }
+        );
+    }
+    const item = interaction.data.components[0].component.value;
+    const winners = interaction.data.components[1].component.value;
+    const type = interaction.data.components[2].component.value;
+    const time = interaction.data.components[3].component.value;
 
     const guildID = interaction.guild_id;
     if (!guildID) {
@@ -198,19 +215,19 @@ export default async function(
                 fields: [
                     {
                         name: "What they want to give away:",
-                        value: `\`\`\`${inputs.item.replaceAll('`', '\'')}\`\`\``
+                        value: `\`\`\`${item.replaceAll('`', '\'')}\`\`\``
                     },
                     {
                         name: "Number of winners:",
-                        value: `\`\`\`${inputs.winners.replaceAll('`', '\'')}\`\`\``
+                        value: `\`\`\`${winners.replaceAll('`', '\'')}\`\`\``
                     },
                     {
                         name: "Type of giveaway:",
-                        value: `\`\`\`${inputs.type.replaceAll('`', '\'')}\`\`\``
+                        value: `\`\`\`${type.replaceAll('`', '\'')}\`\`\``
                     },
                     {
                         name: "Length of giveaway:",
-                        value: `\`\`\`${inputs.time.replaceAll('`', '\'')}\`\`\``
+                        value: `\`\`\`${time.replaceAll('`', '\'')}\`\`\``
                     },
                 ],
                 color: 0xFB9B00,

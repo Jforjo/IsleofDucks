@@ -44,6 +44,22 @@ export default async function Command(
         );
     }
     
+    if (interaction.data.components[0].type !== ComponentType.Label ||
+        interaction.data.components[0].component.type !== ComponentType.TextInput
+    ) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Invalid modal response",
+                flags: MessageFlags.Ephemeral
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid modal response" },
+            { status: 400 }
+        );
+    }
+    
     const survey = IsleofDucks.surveys.find(survey => survey.id === surveyID);
     if (!survey) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -110,7 +126,7 @@ export default async function Command(
         );
     }
 
-    const input = interaction.data.components[0].components[0].value;
+    const input = interaction.data.components[0].component.value;
 
     // ACK response and update the original message
     await CreateInteractionResponse(interaction.id, interaction.token, {

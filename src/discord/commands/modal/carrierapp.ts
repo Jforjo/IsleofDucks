@@ -77,7 +77,18 @@ export default async function(
     }
 
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    const username = interaction.data.components[0].components[0].value;
+    if (interaction.data.components[0].type !== ComponentType.Label ||
+        interaction.data.components[0].component.type !== ComponentType.TextInput
+    ) {
+        await FollowupMessage(interaction.token, {
+            content: "Invalid modal response!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid modal response" },
+            { status: 400 }
+        );
+    }
+    const username = interaction.data.components[0].component.value;
 
     const scammerDiscordResponse = await getScammerFromDiscord(member.user.id);
     if (scammerDiscordResponse.success && scammerDiscordResponse.scammer) {
