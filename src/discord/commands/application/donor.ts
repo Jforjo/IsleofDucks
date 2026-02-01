@@ -75,7 +75,7 @@ async function updateDonationRoles(amount: number, userId: Snowflake): Promise<n
     return { added: rolesAdded, removed: rolesRemoved };
 }
 
-async function updateDonation(
+export async function updateDonation(
     interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
@@ -143,7 +143,7 @@ async function updateDonation(
     );
 }
 
-async function addDonation(
+export async function addDonation(
     interaction: APIChatInputApplicationCommandInteraction,
     userid: Snowflake,
     amount: string
@@ -280,7 +280,7 @@ async function addDonation(
     );
 }
 
-async function removeDonation(
+export async function removeDonation(
     interaction: APIChatInputApplicationCommandInteraction,
     userid: Snowflake,
     amount: string
@@ -411,7 +411,7 @@ async function removeDonation(
     );
 }
 
-async function viewDonations(
+export async function viewDonations(
     interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
     NextResponse<
@@ -510,7 +510,7 @@ async function viewDonations(
     );
 }
 
-async function checkDonation(
+export async function checkDonation(
     interaction: APIChatInputApplicationCommandInteraction,
     userid: Snowflake,
 ): Promise<
