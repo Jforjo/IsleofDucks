@@ -77,7 +77,7 @@ export default async function Command(
                 content: `log ${username} 1`
             });
         }
-        if (!message) await new Promise(resolve => setTimeout(resolve, 1000));
+        if (!message) await new Promise(resolve => setTimeout(resolve, 2000));
         if (!message) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
