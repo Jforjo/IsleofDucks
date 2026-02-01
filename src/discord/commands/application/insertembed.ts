@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "carry";
+    const name = "info";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {
@@ -228,413 +228,120 @@ const embeds = {
             }
         ])
     },
-    carry: {
+    info: {
         content: null,
         data: JSON.stringify({
             embeds: [
                 {
-                    description: "Ready to buy a carry? Check out our prices and open a ticket! Please make sure you have read our [policies](https://discord.com/channels/823061629812867113/1424099154472472739/1424099483976995011) beforehand.",
+                    title: "˗ˏˋ 🦆 ˎˊ˗  ISLE OF DUCKS DISCORD  ˗ˏˋ 🦆 ˎˊ˗",
+                    description: "Welcome to Isle of Ducks! We are a community of Hypixel SkyBlock players who support and help one another. We regularly host giveaways, events, manage our guilds, offer services, and more. Make sure you read our <#823061630300192790> and verify for full server access here <#1287099048796356608>!",
                     color: 16741120,
                     image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=6857ecd8&is=68569b58&hm=e16f0749b9b10b4a0966e97cad45a52d0452c065440058ba878adae6c03e85ae&=&format=webp&quality=lossless"
                     },
                     thumbnail: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403889662308909249/order-now.png?ex=689931a2&is=6897e022&hm=5ba661a99ae81644e15858933e7850d921be79586cb2baea466c44820566a888&=&format=webp&quality=lossless"
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1320123627307401266/6383229_baby_cartoon_cute_duck_icon.png?ex=6857bcaf&is=68566b2f&hm=4a05bcee7689894f822af591e1bb07e4fd6f7c0f633f7874dda8b707e7599c35&=&format=webp&quality=lossless"
                     }
                 },
                 {
-                    title: "Dungeons",
-                    description: "<:f1:993373840744914994> F1 Completion Score: 50k\n<:f2:993374018289803324> F2 Completion Score: 75k\n<:f3:993374302189670482> F3 Completion Score: 100k\n<:f4:993374418954895390> F4 Completion Score: 350k • S+ Rank Score: 500k\n<:f5:993374590342529024> F5 Completion Score: 400k • S+ Rank Score: 750k\n<:f6:993374890839248897> F6 Completion Score: 500k • S+ Rank Score: 1M\n<:f7:993374993088008212> F7 Completion Score: 5M • S+ Rank Score: 10M",
+                    title: "OUR GUILDS  ˗ˏˋ ⚔️ ˎˊ˗",
+                    description: "Isle of Ducks is consistently ranked as a top 20 SkyBlock guild, bringing together some of the best players in the game. Our mission is to foster a friendly community of players from all areas of SkyBlock, primarily focusing on game progression and advancing levels. For lower-level players, we offer a supportive entry point through our baby guild, Isle of Ducklings.",
                     color: 12403455,
                     image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881617587441794/title-Carry_Services_-871x37_1.png?ex=68992a24&is=6897d8a4&hm=9db10b0820f64d6ba90b7e805dd205003264fa96d6bfaaed4ff04aac5ef25563&=&format=webp&quality=lossless"
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=6857ed19&is=68569b99&hm=6625deb1415cd54ea4500a5575fb1656111b64f348c21fd1ab0842ee78b4d3a3&=&format=webp&quality=lossless"
                     },
                     thumbnail: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403891109821677691/dungeon.png?ex=689932fb&is=6897e17b&hm=fdd46a694db0d7fe428f4fa174fb4b60815b3c371766cd774a7d3e40b8190345&=&format=webp&quality=lossless"
-                    }
-                },
-                {
-                    title: "Mastermode",
-                    description: "<:m1:993379795142447124> M1 S Rank Score: 1M\n<:m2:993379836833828888> M2 S Rank Score: 1.7M\n<:m3:993379969621295194> M3 S Rank Score: 2.5M\n<:m4:993380134855905300> M4 S Rank Score: 10M\n<:m5:993380146910347365> M5 S Rank Score: 5M\n<:m6:993380158696333312> M6 S Rank Score: 7M\n<:m7:993380168632639568> M7 S Rank Score: 25M",
-                    color: 16741120,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
-                    },
-                    thumbnail: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403891470653722624/death.png?ex=68993351&is=6897e1d1&hm=443359a35f18fc0241ac9b6773dc76e0f8ecf3c421bd2c58aca22f66d19f980d&=&format=webp&quality=lossless"
-                    }
-                },
-                {
-                    title: "Slayers",
-                    description: "<:rev1:993695021259833344> Revenant T1: 5k\n<:rev1:993695021259833344> Revenant T2: 10k\n<:rev3:993695044785680454> Revenant T3: 25k\n<:rev3:993695044785680454> Revenant T4: 100k\n<:rev5:993695057850925066> Revenant T5: 200k\n\n<:tara1:993695654410997770> Tarantula T1: 5k\n<:tara1:993695654410997770> Tarantula T2: 10k\n<:tara1:993695654410997770> Tarantula T3: 25k\n<:tara1:993695654410997770> Tarantula T4: 200k\n<:tara1:993695654410997770> Tarantula T5: 500k\n\n<:sven1:993695666213757088> Sven T1: 5k\n<:sven1:993695666213757088> Sven T2: 10k\n<:sven1:993695666213757088> Sven T3: 25k\n<:sven1:993695666213757088> Sven T4: 100k\n\n<:voidgloom1:993695676292681738> Voidgloom T1: 50k\n<:voidgloom1:993695676292681738> Voidgloom T2: 250k\n<:voidgloom1:993695676292681738> Voidgloom T3: 500k\n<:voidgloom1:993695676292681738> Voidgloom T4: 1.5M\n\n<:inferno1:993695699776569396> Inferno T1: 500k\n<:inferno1:993695699776569396> Inferno T2: 800k\n<:inferno1:993695699776569396> Inferno T3: 2M\n<:inferno1:993695699776569396> Inferno T4: 5M",
-                    color: 12403455,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881617587441794/title-Carry_Services_-871x37_1.png?ex=68992a24&is=6897d8a4&hm=9db10b0820f64d6ba90b7e805dd205003264fa96d6bfaaed4ff04aac5ef25563&=&format=webp&quality=lossless"
-                    },
-                    thumbnail: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403891987081461931/zombie.png?ex=689933cc&is=6897e24c&hm=f0b5a57f21558f4e65c787f118bf6f2826ed9808576c5b7ef17df5839e6b5458&=&format=webp&quality=lossless"
-                    }
-                },
-                {
-                    title: "Kuudra",
-                    description: "<:kuudra:1119812565275517019>  Kuudra T1: 5m\n<:kuudra:1119812565275517019>  Kuudra T2: 8m\n<:kuudra:1119812565275517019>  Kuudra T3: 12m\n<:kuudra:1119812565275517019>  Kuudra T4: 15m\n<:kuudra:1119812565275517019>  Kuudra T5: 35m",
-                    color: 16741120,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
-                    },
-                    thumbnail: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403892500640563310/volcano.png?ex=68993447&is=6897e2c7&hm=e35949a7294feb8fa8201cf41092307f3f1d0eb93a6f70f14770fdf5ff37a103&=&format=webp&quality=lossless"
-                    }
-                }
-            ],
-            attachments: [
-                {
-                    id: 0
-                }
-            ]
-        }),
-        components: JSON.stringify([
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 3,
-                        custom_id: "ticket-carry",
-                        options: [
-                            {
-                                label: "F1-4",
-                                description: "Request a Floor 1-4 carry",
-                                value: "f4",
-                                emoji: {
-                                    name: "f1",
-                                    id: "993373840744914994"
-                                }
-                            },
-                            {
-                                label: "F5-6",
-                                description: "Request a Floor 5-6 carry",
-                                value: "f6",
-                                emoji: {
-                                    name: "f5",
-                                    id: "993374590342529024"
-                                }
-                            },
-                            {
-                                label: "F7",
-                                description: "Request a Floor 7 carry",
-                                value: "f7",
-                                emoji: {
-                                    name: "f7",
-                                    id: "993374993088008212"
-                                }
-                            },
-                            {
-                                label: "M1-3",
-                                description: "Request a Mastermode 1-3 carry",
-                                value: "m3",
-                                emoji: {
-                                    name: "m1",
-                                    id: "993379795142447124"
-                                }
-                            },
-                            {
-                                label: "M4-6",
-                                description: "Request a Mastermode 4-6 carry",
-                                value: "m6",
-                                emoji: {
-                                    name: "m4",
-                                    id: "993380134855905300"
-                                }
-                            },
-                            {
-                                label: "M7",
-                                description: "Request a Mastermode 7 carry",
-                                value: "m7",
-                                emoji: {
-                                    name: "m7",
-                                    id: "993380168632639568"
-                                }
-                            },
-                            {
-                                label: "Revenant",
-                                description: "Request a revenant carry",
-                                value: "revenant",
-                                emoji: {
-                                    name: "rev5",
-                                    id: "993695057850925066"
-                                }
-                            },
-                            {
-                                label: "Tarantula",
-                                description: "Request a tarantula carry",
-                                value: "tarantula",
-                                emoji: {
-                                    name: "tara1",
-                                    id: "993695654410997770"
-                                }
-                            },
-                            {
-                                label: "Sven",
-                                description: "Request a sven carry",
-                                value: "sven",
-                                emoji: {
-                                    name: "sven1",
-                                    id: "993695666213757088"
-                                }
-                            },
-                            {
-                                label: "Voidgloom",
-                                description: "Request a voidgloom carry",
-                                value: "voidgloom",
-                                emoji: {
-                                    name: "voidgloom1",
-                                    id: "993695676292681738"
-                                }
-                            },
-                            {
-                                label: "Inferno",
-                                description: "Request an inferno carry",
-                                value: "inferno",
-                                emoji: {
-                                    name: "inferno1",
-                                    id: "993695699776569396"
-                                }
-                            },
-                            {
-                                label: "T1-2 Kuudra",
-                                description: "Request a T1-2 Kuudra carry",
-                                value: "kuudra2",
-                                emoji: {
-                                    name: "kuudra",
-                                    id: "1119812565275517019"
-                                }
-                            },
-                            {
-                                label: "T3-5 Kuudra",
-                                description: "Request a T3-5 Kuudra carry",
-                                value: "kuudra5",
-                                emoji: {
-                                    name: "kuudra",
-                                    id: "1119812565275517019"
-                                }
-                            }
-                        ],
-                        placeholder: "Purchase carry 💵",
-                    }
-                ]
-            }
-        ]),
-        attachments: JSON.stringify([
-            {
-                id: 0,
-                filename: 'title.png',
-                url: "https://media.discordapp.net/attachments/1300979867881312347/1423269281583595540/68de60bf63add.png?ex=68e5a10f&is=68e44f8f&hm=2ca42447b655ac91af0e8e27375bdc9305cd2e9bdc1cad6c85a9d504401d7f2f"
-            }
-        ])
-    },
-    carrierpolicy: {
-        content: null,
-        data: JSON.stringify({
-            embeds: [
-                {
-                    title: "Service Information",
-                    description: "We offer carry services to help players complete dungeon runs, slayer bosses, and Kuudra. Whether you’re aiming for completions, XP, or level requirements, our team is here to ensure you succeed.\n\n### Our Terms of Service:",
-                    color: 16741120,
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881577108475914/title-Carry_Services_-871x37.png?ex=68992a1a&is=6897d89a&hm=1d10d4aebff5b8d158d11b11ae11cdc82114ee03d621a8cd3f2d7c2f2f713b1e&=&format=webp&quality=lossless"
-                    },
-                    thumbnail: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1320132348041236572/2191214_attack_game_gaming_multimedia_play_icon.png?ex=6899070e&is=6897b58e&hm=ac702036e41e5a6bdef6e0257eb5c87029f0d57c639fa32a49a2d64e18806a2b&=&format=webp&quality=lossless"
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340470711520596059/2191214_attack_game_gaming_multimedia_play_icon.png?ex=6857ee62&is=68569ce2&hm=be551379738ee9a8399adf993ab93b12ec0de28714fdf28793972c8733e91df4&=&format=webp&quality=lossless"
                     },
                     fields: [
                         {
-                            name: "Payment Policy",
-                            value: "▫️All carries must be paid upfront to prevent scamming.\n▫️The order limit is 20M at a time for security reasons.\n▫️If you believe a carrier scammed you, provide evidence so we can investigate and decide on a refund. "
+                            name: "Isle of Ducks",
+                            value: "▫️Level 320+"
                         },
                         {
-                            name: "Carrier Rules",
-                            value: "▫️Scamming a client will get you permanently banned.\n▫️You are responsible for explaining to your client what to do and what items to have prepared before starting.\n▫️If you fail the carry, you are obligated to do it again unless the client is the reason you failed."
+                            name: "Isle of Ducklings",
+                            value: "▫️Level 240+"
                         },
                         {
-                            name: "Buyer Rules",
-                            value: "▫️Scamming a carrier will get you permanently banned.\n▫️Treat carriers respectfully, and be patient if ticket responses take time.\n▫️Creating troll tickets will result in punishment.\n▫️Listen to your carrier’s guidance on surviving dungeons and slayer bosses. If you are not properly prepared for the carries and fail the runs or bosses then they are not obligated to refund you or continue to help."
+                            name: '\u200b',
+                            value: "More info and applications here <#1320463957273739274>!"
                         }
                     ]
                 },
                 {
-                    title: "Become a Carrier",
-                    description: "Want to join the carry service team? Help players defeat dungeons and slayer bosses while earning rewards for your time and skill. Apply once you meet the following requirements!",
-                    color: 12403455,
+                    title: "GIVEAWAYS  ˗ˏˋ🎁 ˎˊ˗",
+                    description: "We love giving back to our community by hosting exciting giveaways for SkyBlock coins and prizes!",
+                    color: 16741120,
                     image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1403881617587441794/title-Carry_Services_-871x37_1.png?ex=68992a24&is=6897d8a4&hm=9db10b0820f64d6ba90b7e805dd205003264fa96d6bfaaed4ff04aac5ef25563&=&format=webp&quality=lossless"
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=6857ecd8&is=68569b58&hm=e16f0749b9b10b4a0966e97cad45a52d0452c065440058ba878adae6c03e85ae&=&format=webp&quality=lossless"
                     },
                     thumbnail: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340814151286657168/7585315_adventure_journey_bow_arrow_icon.png?ex=68991efc&is=6897cd7c&hm=1a87b9f0342a18deb50b571de1335f7c1a58b083a5fc4e94dbfe3eb3eb2a106d&=&format=webp&quality=lossless"
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340477358699712592/5443031_box_christmas_gift_present_xmas_icon.png?ex=6857f493&is=6856a313&hm=52b40fa18c3a74ffdb430ecf75e2031da739f95b340f5368b38c8e7f97f0bb92&=&format=webp&quality=lossless"
                     },
                     fields: [
                         {
-                            name: "Dungeon Carrier Requirements",
-                            value: "<:f1:993373840744914994> <@1004131288023830638> 100+ F4 completions\n<:f5:993374590342529024> <@1004131419553005710> 200+ F6 completions and Cata 30+\n<:f7:993374993088008212> <@1004131451077406750> 300+ F7 completions, a solo/duo completion screenshot and Cata 35+"
+                            name: "Regular Giveaways",
+                            value: "> <#882151291340611605> These are giveaways open to all verified server members. They are normally our big ticket giveaways!"
                         },
                         {
-                            name: "Mastermode Carrier Requirements",
-                            value: "<:m1:993379795142447124> <@1004131539539468369> 100+ M3 completions and Cata 35+\n<:m4:993380134855905300> <@1004131581696422109> 200+ M6 completions and Cata 40+\n<:m7:993380168632639568> <@1004131601971675246> 300+ M7 completions, a solo/duo completion screenshot and Cata 45+"
+                            name: "Requirement Giveaways",
+                            value: "> <#980520250766426142> These are normally exclusive to guild members, but can also be for certain activity ranks, nitro boosters, partnerships, and more!"
                         },
                         {
-                            name: "Slayer Carriers Requirements",
-                            value: "<:rev5:993695057850925066> <@1004131669487403078> Screenshot of sub 15s T5 kill\n<:tara1:993695654410997770> <@1004131737795833936> Screenshot of sub 35s T5 kill\n<:sven1:993695666213757088> <@1004131758616367225> Screenshot of sub 15s T5 kill\n<:voidgloom1:993695676292681738> <@1004131845266493500> Screenshot of sub 35s T5 kill\n<:inferno1:993695699776569396> <@1004131911263854713> Screenshot of sub 35s T5 kill"
+                            name: "Flash Giveaways",
+                            value: "> <#1066461763266154537> These giveaways last less than 24 hours and typically have smaller prizes, but participants have better odds of winning because there are fewer entries."
                         },
                         {
-                            name: "Kuudra Carriers Requirements",
-                            value: "<:kuudra:1119812565275517019> <@1119807379903623258> Screenshot of sub 5min T2 solo/duo completion \n<:kuudra:1119812565275517019> <@1119807771458670654> Screenshot of sub 9min T5 solo/duo completion "
+                            name: "Donor Roles 🎀",
+                            value: "Roles and perks can be found [here](https://discord.com/channels/823061629812867113/843010913158299669/1368484625839816796)."
+                        },
+                        {
+                            name: '\u200b',
+                            value: "Sponsor or claim a giveaway here <#1330207810872676403>!"
+                        }
+                    ]
+                },
+                {
+                    title: "EVENTS  ˗ˏˋ 🏆 ˎˊ˗",
+                    description: "Our server hosts exciting events with valuable prizes, giving players a chance to compete, have fun, and win rewards!",
+                    color: 12403455,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=6857ed19&is=68569b99&hm=6625deb1415cd54ea4500a5575fb1656111b64f348c21fd1ab0842ee78b4d3a3&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340483600100884550/4579061_marketing_outline_trophy_winner_icon.png?ex=6857fa63&is=6856a8e3&hm=feb04c3b1ace1bf0c103998ff0b65d8c124d879180c3822c9003256c0bfaea4f&=&format=webp&quality=lossless"
+                    },
+                    fields: [
+                        {
+                            name: "Types of Events",
+                            value: "▫️`SkyBlock` - Grinding certain areas of the game, including skills, dungeons, collections, and more. Our guilds have unique SkyBlock Superlative competitions every month.\n▫️`Hypixel games` - Contests outside of SkyBlock, such as PvP gamemodes. We also collaborate with partnered servers and other guilds.\n▫️`Creative corner` - Making art, edits, and emotes."
+                        }
+                    ]
+                },
+                {
+                    title: "ROLES  ˗ˏˋ 📢 ˎˊ˗",
+                    description: "Our server offers a variety of roles, including reaction roles, auto-assigned roles, and roles that must be earned. You can find information about all our server roles here <#843010913158299669>.",
+                    color: 16741120,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=6857ecd8&is=68569b58&hm=e16f0749b9b10b4a0966e97cad45a52d0452c065440058ba878adae6c03e85ae&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340803649450016989/4313120_chat_communication_conversation_message_speech_icon_1.png?ex=6857d2f4&is=68568174&hm=486c45c6af590d17c892c6e56d77fe9e1acd75a06abb949baf512dea972ba8ae&=&format=webp&quality=lossless"
+                    },
+                    fields: [
+                        {
+                            name: "Reaction Roles",
+                            value: "These are selected upon onboarding, but can be edited [here](https://discord.com/channels/823061629812867113/843010913158299669/1368484625839816796). You can also discover <#1367849368459153470>, used to create parties for dungeons, kuudra, diana, fishing, and more!"
+                        },
+                        {
+                            name: "Auto-roles",
+                            value: "Only Hypxiel-linked members gain full server access with <@1287098228067664004> by verifying with <@684986294459564042>\nGuild  members will automatically be assigned:\n▫️<@&933258162931400764>\n▫️<@&998380474407846000>"
                         }
                     ]
                 }
             ],
-            attachments: [
-                {
-                    id: 0
-                }
-            ]
         }),
-        components: JSON.stringify([
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 3,
-                        custom_id: "ticket-carrierapp",
-                        max_values: 13,
-                        options: [
-                            {
-                                label: "F1-4",
-                                description: "Apply to become a Floors 1-4 carrier",
-                                value: "f4",
-                                emoji: {
-                                    name: "f1",
-                                    id: "993373840744914994"
-                                }
-                            },
-                            {
-                                label: "F5-6",
-                                description: "Apply to become a Floor 5-6 carrier",
-                                value: "f6",
-                                emoji: {
-                                    name: "f5",
-                                    id: "993374590342529024"
-                                }
-                            },
-                            {
-                                label: "F7",
-                                description: "Apply to become a Floor 7 carrier",
-                                value: "f7",
-                                emoji: {
-                                    name: "f7",
-                                    id: "993374993088008212"
-                                }
-                            },
-                            {
-                                label: "M1-3",
-                                description: "Apply to become a Mastermode 1-3 carrier",
-                                value: "m3",
-                                emoji: {
-                                    name: "m1",
-                                    id: "993379795142447124"
-                                }
-                            },
-                            {
-                                label: "M4-6",
-                                description: "Apply to become a Mastermode 4-6 carrier",
-                                value: "m6",
-                                emoji: {
-                                    name: "m4",
-                                    id: "993380134855905300"
-                                }
-                            },
-                            {
-                                label: "M7",
-                                description: "Apply to become a Mastermode 7 carrier",
-                                value: "m7",
-                                emoji: {
-                                    name: "m7",
-                                    id: "993380168632639568"
-                                }
-                            },
-                            {
-                                label: "Revenant Carrier",
-                                description: "Apply to become a revenant carrier",
-                                value: "revenant",
-                                emoji: {
-                                    name: "rev5",
-                                    id: "993695057850925066"
-                                }
-                            },
-                            {
-                                label: "Tarantula Carrier",
-                                description: "Apply to become a tarantula carrier",
-                                value: "tarantula",
-                                emoji: {
-                                    name: "tara1",
-                                    id: "993695654410997770"
-                                }
-                            },
-                            {
-                                label: "Sven Carrier",
-                                description: "Apply to become a sven carrier",
-                                value: "sven",
-                                emoji: {
-                                    name: "sven1",
-                                    id: "993695666213757088"
-                                }
-                            },
-                            {
-                                label: "Voidgloom Carrier",
-                                description: "Apply to become a voidgloom carrier",
-                                value: "voidgloom",
-                                emoji: {
-                                    name: "voidgloom1",
-                                    id: "993695676292681738"
-                                }
-                            },
-                            {
-                                label: "Inferno Carrier",
-                                description: "Apply to become an inferno carrier",
-                                value: "inferno",
-                                emoji: {
-                                    name: "inferno1",
-                                    id: "993695699776569396"
-                                }
-                            },
-                            {
-                                label: "T1-2 Kuudra Carrier",
-                                description: "Apply to become a T1-2 Kuudra carrier",
-                                value: "kuudra2",
-                                emoji: {
-                                    name: "kuudra",
-                                    id: "1119812565275517019"
-                                }
-                            },
-                            {
-                                label: "T3-5 Kuudra Carrier",
-                                description: "Apply to become a T3-5 Kuudra carrier",
-                                value: "kuudra5",
-                                emoji: {
-                                    name: "kuudra",
-                                    id: "1119812565275517019"
-                                }
-                            }
-                        ],
-                        placeholder: "Become a carrier ⚔️"
-                    }
-                ]
-            }
-        ]),
-        attachments: JSON.stringify([
-            {
-                id: 0,
-                filename: 'title.png',
-                url: "https://cdn.discordapp.com/attachments/1300979867881312347/1423269281197723798/image.png?ex=68dfb24f&is=68de60cf&hm=2821356b2e0a540ff6a238ac0c73e976b5a95d5348e1e7f3715d03560f7dadce&"
-            }
-        ])
+        components: undefined,
+        attachments: undefined
     }
 }
