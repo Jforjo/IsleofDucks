@@ -4,6 +4,15 @@ import { Snowflake } from 'discord-api-types/globals';
 import { formatNumber, getSuperlativeValue, updateSuperlativeValue } from './discordUtils';
 import superlativeTypes from './superlatives';
 
+/**
+ * Returns a new string with the first letter capitalized.
+ * @param {string} string The string to capitalize.
+ * @returns {string} The capitalized string.
+ */
+export function capitalizeFirstLetter(string: string): string {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
     return Array(Math.ceil(array.length / chunk_size))
         .fill(null)
