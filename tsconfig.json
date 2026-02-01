@@ -27,6 +27,7 @@
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts",
+        ".next/dev/types/**/*.ts",
         "src/discord/utils.js",
         "src/discord/commands/application/checkapi.ts",
         "src/app/api/discord/route.ts"
