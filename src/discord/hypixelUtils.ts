@@ -251,6 +251,7 @@ export async function getProfiles(
     }
     const res = await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`, {
         method: 'GET',
+        next: { revalidate: 600 },
         headers: {
             'API-Key': process.env.HYPIXEL_API_KEY
         }
