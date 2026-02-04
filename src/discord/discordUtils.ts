@@ -1315,6 +1315,7 @@ export async function updateSuperlativeValue(
 
 const ServerID = "823061629812867113";
 const StaticIDs = {
+    IsleofDucksBot: "1287662103414571009",
     Jforjo: "791380888197660722",
     Ducksicle: "474770139363934219",
     GiveawayBoat: "530082442967646230"
