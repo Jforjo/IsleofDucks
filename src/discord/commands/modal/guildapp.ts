@@ -421,7 +421,7 @@ export default async function(
     const channel = await CreateChannel(guildID, {
         type: ChannelType.GuildText,
         name: `${TICKET.ticketName}-${member.user.username}`,
-        topic: `${mojang.name} | ${TICKET.name} for ${member.nick ?? member.user.username} - ${member.user.id}`,
+        topic: `${TICKET.id} | ${mojang.name} | ${member.user.id} | ${TICKET.name} for ${member.nick ?? member.user.username}`,
         parent_id: TICKET.catagory,
         permission_overwrites: channelPermissions
     });
