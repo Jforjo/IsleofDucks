@@ -757,7 +757,7 @@ export async function getScrambleScores(): Promise<{
     discordid: string | null;
     score: number;
 }[]> {
-    const { rows } = await sql`SELECT uuid, discordid, scramble as score FROM discordroles WHERE score > 0 ORDER BY score DESC`;
+    const { rows } = await sql`SELECT uuid, discordid, scramble as score FROM discordroles WHERE scramble > 0 ORDER BY scramble DESC`;
     return rows as { uuid: string; discordid: string | null; score: number; }[];
 }
 export async function getScrambleScoreFromDiscordID(discordid: string): Promise<{
