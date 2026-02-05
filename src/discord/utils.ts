@@ -778,3 +778,6 @@ export async function getScrambleScoreFromUUID(uuid: string): Promise<{
     if (rows.length === 0) return null;
     return rows[0] as { uuid: string; discordid: string | null; score: number; };
 }
+export async function updateScrambleScore(uuid: string, score: number): Promise<void> {
+    await sql`UPDATE discordroles SET scramble = ${score} WHERE uuid = ${uuid}`;
+}
