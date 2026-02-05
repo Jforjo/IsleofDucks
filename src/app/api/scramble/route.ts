@@ -1,4 +1,4 @@
-import { getScrambleScores, updateScrambleScore } from "@/discord/utils";
+import { getScrambleScoreFromUUID, getScrambleScores, updateScrambleScore } from "@/discord/utils";
 import { NextRequest } from "next/server";
 
 export async function GET(): Promise<Response> {
@@ -50,15 +50,24 @@ export async function POST(request: NextRequest): Promise<Response> {
         }, { status: 403 });
     }
 
-    const body = await request.json();
-    if (!body || typeof body !== 'object' || !body.uuid || typeof body.uuid !== 'string' || !body.score || typeof body.score !== 'number') {
+    const params = request.nextUrl.searchParams;
+    const uuid = params.get("uuid");
+
+    if (!uuid) {
         return Response.json({
             success: false,
-            message: "Invalid request body"
-        }, { status: 400 });
+            message: "Missing UUID"
+        });
     }
 
-    await updateScrambleScore(body.uuid, body.score);
+    const scoreRes = await getScrambleScoreFromUUID(uuid);
+    if (!scoreRes) {
+        return Response.json({
+            success: false,
+            message: "Failed to fetch scramble score"
+        }, { status: 500 });
+    }
+    await updateScrambleScore(uuid, scoreRes.score + 1);
 
     return Response.json({
         success: true,
