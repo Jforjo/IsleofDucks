@@ -751,3 +751,30 @@ export async function getTotalEmojis(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM emojis`;
     return rows[0].count;
 }
+
+export async function getScrambleScores(): Promise<{
+    uuid: string;
+    discordid: string | null;
+    score: number;
+}[]> {
+    const { rows } = await sql`SELECT uuid, discordid, scramble FROM discordroles WHERE scramble > 0 ORDER BY score DESC`;
+    return rows as { uuid: string; discordid: string | null; score: number; }[];
+}
+export async function getScrambleScoreFromDiscordID(discordid: string): Promise<{
+    uuid: string | null;
+    discordid: string;
+    score: number;
+} | null> {
+    const { rows } = await sql`SELECT uuid, discordid, scramble FROM discordroles WHERE discordid = ${discordid}`;
+    if (rows.length === 0) return null;
+    return rows[0] as { uuid: string | null; discordid: string; score: number; };
+}
+export async function getScrambleScoreFromUUID(uuid: string): Promise<{
+    uuid: string;
+    discordid: string | null;
+    score: number;
+} | null> {
+    const { rows } = await sql`SELECT uuid, discordid, scramble FROM discordroles WHERE uuid = ${uuid}`;
+    if (rows.length === 0) return null;
+    return rows[0] as { uuid: string; discordid: string | null; score: number; };
+}
