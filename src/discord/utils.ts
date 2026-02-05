@@ -757,7 +757,7 @@ export async function getScrambleScores(): Promise<{
     discordid: string | null;
     score: number;
 }[]> {
-    const { rows } = await sql`SELECT uuid, discordid, scramble FROM discordroles WHERE scramble > 0 ORDER BY score DESC`;
+    const { rows } = await sql`SELECT uuid, discordid, scramble as score FROM discordroles WHERE score > 0 ORDER BY score DESC`;
     return rows as { uuid: string; discordid: string | null; score: number; }[];
 }
 export async function getScrambleScoreFromDiscordID(discordid: string): Promise<{
@@ -765,7 +765,7 @@ export async function getScrambleScoreFromDiscordID(discordid: string): Promise<
     discordid: string;
     score: number;
 } | null> {
-    const { rows } = await sql`SELECT uuid, discordid, scramble FROM discordroles WHERE discordid = ${discordid}`;
+    const { rows } = await sql`SELECT uuid, discordid, scramble as score FROM discordroles WHERE discordid = ${discordid}`;
     if (rows.length === 0) return null;
     return rows[0] as { uuid: string | null; discordid: string; score: number; };
 }
@@ -774,7 +774,7 @@ export async function getScrambleScoreFromUUID(uuid: string): Promise<{
     discordid: string | null;
     score: number;
 } | null> {
-    const { rows } = await sql`SELECT uuid, discordid, scramble FROM discordroles WHERE uuid = ${uuid}`;
+    const { rows } = await sql`SELECT uuid, discordid, scramble as score FROM discordroles WHERE uuid = ${uuid}`;
     if (rows.length === 0) return null;
     return rows[0] as { uuid: string; discordid: string | null; score: number; };
 }
