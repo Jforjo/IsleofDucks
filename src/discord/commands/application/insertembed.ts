@@ -343,5 +343,81 @@ const embeds = {
         }),
         components: undefined,
         attachments: undefined
+    },
+    info2: {
+        content: null,
+        data: JSON.stringify({
+            embeds: [
+                {
+                    title: "CARRY SERVICES  ˗ˏˋ 🏹 ˎˊ˗",
+                    description: "Our carry services are here to assist you with completions and XP in dungeons, slayers, and Kuudra! <#1004139630792298606>",
+                    color: 12403455,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=6857ed19&is=68569b99&hm=6625deb1415cd54ea4500a5575fb1656111b64f348c21fd1ab0842ee78b4d3a3&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340814151286657168/7585315_adventure_journey_bow_arrow_icon.png?ex=6857dcbc&is=68568b3c&hm=5b99d8e7a166489245d9d63e0704cd36defccc54c6cc2c91a695a9885d7355ad&=&format=webp&quality=lossless"
+                    },
+                    fields: [
+                        {
+                            name: "Buying Carries",
+                            value: "You can purchase carries by creating a ticket here:\n<#1429428088751521832>"
+                        },
+                        {
+                            name: "Apply for Carrier",
+                            value: "To apply to become a carrier, you must fulfil the requirements listed in <#1424099154472472739> and gather screenshots prior to opening a ticket."
+                        }
+                    ]
+                },
+                {
+                    title: "PARTNERSHIPS  ˗ˏˋ 🤝 ˎˊ˗",
+                    description: "We provide valuable resources to support your SkyBlock journey and believe every server has something unique to offer! We partner with other Discord servers to connect you with communities we endorse and collaborate to host exciting events. If you'd like to partner with us, here are the criteria you must meet:",
+                    color: 16741120,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469058264629389/title-_ISLE_OF_DUCKS_-871x37_3.png?ex=6857ecd8&is=68569b58&hm=e16f0749b9b10b4a0966e97cad45a52d0452c065440058ba878adae6c03e85ae&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340817569745076245/9151145_handshake_congratulations_congrats_collaboration_partnership_icon.png?ex=6857dfeb&is=68568e6b&hm=df1521c2b87dd886c63e722eeb93a2713a79a4a22a48549a8ab2adf6412e7c8d&=&format=webp&quality=lossless"
+                    },
+                    fields: [
+                        {
+                            name: '\u200b',
+                            value: "▫️Must be related to Hypixel SkyBlock\n▫️The server members/staff must be friendly\n▫️Must have at least 1000 members\n▫️The rules must follow Discord/Hypixel TOS\n▫️Must be an active and established server, and it cannot be a rebrand or revive situation\n▫️A representative must remain in the server for the partnership to continue\n\n> Upon applying for a partnership, please explain why you think your community is different than others, what we will both gain from this, and what event ideas you have in mind for us to collaborate in the future.\n\n*Please note, meeting all requirements does not guarantee a partnership. We review your server, and then decide whether or not you qualify.*"
+                        }
+                    ]
+                },
+                {
+                    title: "MODS  ˗ˏˋ 📁 ˎˊ˗",
+                    description: "This lists the different mods available for SkyBlock and their Discord/website where you can download them safely.\n        ⚠️ Pay attention to the files you use on your computer and be aware of [account stealing](https://hypixel.net/threads/all-about-skyblock-account-stealing-part-ii.5231557/).",
+                    color: 12403455,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=6857ed19&is=68569b99&hm=6625deb1415cd54ea4500a5575fb1656111b64f348c21fd1ab0842ee78b4d3a3&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340823450222333952/5355689_archive_data_document_file_file_format_icon.png?ex=6857e565&is=685693e5&hm=e7431e08c34959888c935f4cf5f18b02feb380a25f1a495f7a76900c007e3241&=&format=webp&quality=lossless"
+                    },
+                    fields: [
+                        {
+                            name: "Clients",
+                            value: "Built-in SkyBlock mods:\n> [Badlion Client](https://client.badlion.net/)\n> [Lunar Client](https://www.lunarclient.com/)\nAdd your own mods:\n> [Essential](https://essential.gg/)"
+                        },
+                        {
+                            name: "1.21.10 SkyBlock/QOL Mods:",
+                            value: "> [SkyBlocker](https://modrinth.com/mod/skyblocker-liap)\n> [SkyBlock Overhaul (SBO)](https://modrinth.com/mod/skyblock-overhaul)\n> [SkyBlock Profile Viewer](https://modrinth.com/mod/skyblock-profile-viewer)\n> [SkyHanni](https://modrinth.com/mod/skyhanni) ([Discord](https://discord.com/invite/skyhanni-997079228510117908))\n> [SkyOcean](https://modrinth.com/mod/skyocean)\n> [Odin](https://modrinth.com/mod/odin) ([Discord](https://discord.gg/2nCbC9hkxT))\n> [Bazaar Utils](https://modrinth.com/mod/bazaar-utils/versions?g=1.21.10)\n> [Aaron's Mod](https://modrinth.com/mod/aaron-mod)\n> [DulkirMod](https://modrinth.com/mod/dulkirmod-fabric) ([Discord](https://discord.gg/SesTMWhBsW))\n> [More Chat History](https://modrinth.com/mod/morechathistory)\n> [Gamme Utils](https://modrinth.com/mod/gamma-utils)\n> [Mod Menu](https://modrinth.com/mod/modmenu)\n> [Zoomify](https://modrinth.com/mod/zoomify)\n> [Scrollable Tooltips](https://modrinth.com/mod/sk1er-scrollable-tooltips)\n> [Chat Patches](https://modrinth.com/mod/chatpatches)"
+                        },
+                        {
+                            name: "Dependencies (Things that other mods require):",
+                            value: "> [Fabric API](https://modrinth.com/mod/fabric-api)\n> [Fabric Language Koitlin](https://modrinth.com/mod/fabric-language-kotlin)\n> [Collective](https://modrinth.com/mod/collective)\n> [Cloth Config](https://modrinth.com/mod/cloth-config)\n> [YetAnotherConfigLib (YACL)](https://modrinth.com/mod/yacl)\n> [Text Placeholder API](https://modrinth.com/mod/placeholder-api)\n> [Architectury API](https://modrinth.com/mod/architectury-api)"
+                        },
+                        {
+                            name: "Performance Mods:",
+                            value: "> [Sodium](https://modrinth.com/mod/sodium)\n> [Sodium Extra](https://modrinth.com/mod/sodium-extra)\n> [FerriteCore](https://modrinth.com/mod/ferrite-core)\n> [Lithium](https://modrinth.com/mod/lithium)\n> [ImmediatelyFast](https://modrinth.com/mod/immediatelyfast)\n> [Entity Culling](https://modrinth.com/mod/entityculling)\n> [More Culling](https://modrinth.com/mod/moreculling)\n> [BadOptimisations](https://modrinth.com/mod/badoptimizations)\n> [Concurrent Chunk Management Engine (C2ME)](https://modrinth.com/mod/c2me-fabric)\n> [Particle Core](https://modrinth.com/mod/particle-core)\n> [ModernFix-mVUS](https://modrinth.com/mod/modernfix-mvus)\n> [Better Block Entities](https://modrinth.com/mod/better-block-entities)\n> [Ixeris](https://modrinth.com/mod/ixeris)\n> [Nvidium](https://modrinth.com/mod/nvidium) (**NVIDIA GPUs Only**)"
+                        }
+                    ]
+                }
+            ],
+        }),
+        components: undefined,
+        attachments: undefined
     }
 }
