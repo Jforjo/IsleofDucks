@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "info";
+    const name = "info2";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {
