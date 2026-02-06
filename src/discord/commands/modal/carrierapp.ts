@@ -1,8 +1,8 @@
 import { BanGuildMember, bitfieldToJson, CarrierAppChoices, CarrierAppChoicesType, CarrierRequirements, CheckChannelExists, ConvertSnowflakeToDate, CreateChannel, CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
 import { getProfiles, getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
-import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
-import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, MessageFlags, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
+import { arrayChunks, getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
+import { APIInteractionResponse, APIMediaGalleryComponent, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, MessageFlags, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -90,6 +90,37 @@ export default async function(
     }
     const username = interaction.data.components[0].component.value;
 
+    if (!interaction.data.resolved) {
+        await FollowupMessage(interaction.token, {
+            content: "Didn't recieve any resolved data!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Didn't recieve any resolved data" },
+            { status: 400 }
+        );
+    }
+    if (!interaction.data.resolved.attachments) {
+        await FollowupMessage(interaction.token, {
+            content: "Didn't recieve the resolved attachment data!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Didn't recieve the resolved attachment data" },
+            { status: 400 }
+        );
+    }
+
+    const carrierChoices = bitfieldToJson(parseInt(interaction.data.custom_id.split("-")[1]), CarrierAppChoices);
+    if (Object.values(interaction.data.resolved.attachments).length !== Object.values(carrierChoices).filter(choice => choice).length) {
+        await FollowupMessage(interaction.token, {
+            content: "You must upload proof for all the roles you selected!",
+        });
+        return NextResponse.json(
+            { success: false, error: "You must upload proof for all the roles you selected" },
+            { status: 400 }
+        );
+    }
+    const attachmentURLs = Object.values(interaction.data.resolved.attachments).map(attachment => attachment.url);
+
     const scammerDiscordResponse = await getScammerFromDiscord(member.user.id);
     if (scammerDiscordResponse.success && scammerDiscordResponse.scammer) {
         if (scammerDiscordResponse.details?.discordIds) {
@@ -144,7 +175,6 @@ export default async function(
         );
     }
 
-    const carrierChoices = bitfieldToJson(parseInt(interaction.data.custom_id.split("-")[1]), CarrierAppChoices);
     const uuidRes = await getUsernameOrUUID(username);
     if (!uuidRes.success) {
         await FollowupMessage(interaction.token, {
@@ -368,27 +398,47 @@ export default async function(
     }
 
     await SendMessage(channel.id, {
-        content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.service_management) ? `Service Management` : `<@&${IsleofDucks.roles.service_management}>`}`,
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: `${TICKET.name}`,
-                description: `${TICKET.name} for ${member.nick?.replaceAll('_', '\\_') ?? member.user.username.replaceAll('_', '\\_')} - ${member.user.id}`,
-                fields: [
+                type: ComponentType.TextDisplay,
+                content: `<@${member.user.id}> is requesting help from ${member.roles.includes(IsleofDucks.roles.service_management) ? `Service Management` : `<@&${IsleofDucks.roles.service_management}>`}`,
+            },
+            {
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
                     {
-                        name: "Carrier roles they're applying for",
-                        value: [
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `### ${TICKET.name}`,
+                            `${TICKET.name} for ${member.nick?.replaceAll('_', '\\_') ?? member.user.username.replaceAll('_', '\\_')} - ${member.user.id}`
+                        ].join("\n"),
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `**Carrier roles they're applying for**`,
                             ...Object.entries(carrierRequirementsMet).filter(([ , met ]) => met).map(([ choice ]) => `* ${choice}`),
                         ].join('\n')
+                    },
+                    { type: ComponentType.Separator },
+                    ...arrayChunks(attachmentURLs, 10).map((chunk) => ({
+                        type: ComponentType.MediaGallery,
+                        items: chunk.map(url => ({
+                            media: {
+                                url: url
+                            }
+                        }))
+                    }) as APIMediaGalleryComponent),
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `Response time: <t:${Math.floor(Date.now() / 1000)}:R> • <t:${Math.floor(Date.now() / 1000)}:F>`,
                     }
-                ],
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                ]
             },
-        ],
-        components: [
             {
                 type: ComponentType.ActionRow,
                 components: [
@@ -403,7 +453,7 @@ export default async function(
                     },
                 ]
             }
-        ],
+        ]
     });
 
     await FollowupMessage(interaction.token, {
