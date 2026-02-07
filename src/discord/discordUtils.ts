@@ -455,13 +455,13 @@ export async function CreateInteractionResponse(
     });
 
     let data;
-    // try {
-    //     data = await res.json() as RESTPostAPIInteractionCallbackWithResponseResult;
-    // } catch (err) {
-    //     console.error(err);
-    //     console.error(JSON.stringify(err));
-    //     console.error("res", res);
-    // }
+    try {
+        data = await res.json() as RESTPostAPIInteractionCallbackWithResponseResult;
+    } catch (err) {
+        console.error(err);
+        console.error(JSON.stringify(err));
+        console.error(res);
+    }
     
     if (!res.ok) {
         if (res.status === 429) {
@@ -471,8 +471,9 @@ export async function CreateInteractionResponse(
                 return await CreateInteractionResponse(id, token, messageData);
             }
         }
+        console.error(data);
+        console.error(JSON.stringify(data));
         console.error(res);
-        console.error(JSON.stringify(res));
     }
 
     return data;
