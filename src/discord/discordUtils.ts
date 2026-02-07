@@ -471,8 +471,8 @@ export async function CreateInteractionResponse(
                 return await CreateInteractionResponse(id, token, messageData);
             }
         }
-        console.error(data);
-        console.error(JSON.stringify(data));
+        console.error(res);
+        console.error(JSON.stringify(res));
     }
 
     return data;
