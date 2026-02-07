@@ -435,7 +435,7 @@ export default async function(
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: `Response time: <t:${Math.floor(Date.now() / 1000)}:R> • <t:${Math.floor(Date.now() / 1000)}:F>`,
+                        content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`,
                     }
                 ]
             },
