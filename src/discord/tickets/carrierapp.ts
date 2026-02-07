@@ -59,18 +59,21 @@ export default async function(
                         required: true,
                     },
                 },
-                ...arrayChunks(interaction.data.values, 10).map((chunk, index) => ({
-                    type: ComponentType.Label,
-                    label: "Proof",
-                    description: "Make sure your proof are fullscreen screenshots showing clearly that you meet the carry requirements.",
-                    component: {
-                        type: ComponentType.FileUpload,
-                        custom_id: `proof${index + 1}`,
-                        min_values: chunk.length,
-                        max_values: chunk.length,
-                        required: true
-                    }
-                }) as APILabelComponent)
+                ...arrayChunks(interaction.data.values, 10).map((chunk, index) => {
+                    console.log(chunk);
+                    return {
+                        type: ComponentType.Label,
+                        label: "Proof",
+                        description: "Make sure your proof are fullscreen screenshots showing clearly that you meet the carry requirements.",
+                        component: {
+                            type: ComponentType.FileUpload,
+                            custom_id: `proof${index + 1}`,
+                            min_values: chunk.length,
+                            max_values: chunk.length,
+                            required: true
+                        }
+                    } as APILabelComponent;
+                })
             ],
         }
     });
