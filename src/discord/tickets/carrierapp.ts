@@ -62,7 +62,7 @@ export default async function(
                 ...arrayChunks(interaction.data.values, 10).map((chunk, index) => ({
                     type: ComponentType.Label,
                     label: "Proof",
-                    description: "Make sure your proof are fullscreen screenshots showing clearly that you meet the carry requirements.",
+                    description: "Make sure your proof are fullscreen screenshots that clearly show you meet the carry requirements.",
                     component: {
                         type: ComponentType.FileUpload,
                         custom_id: `proof${index + 1}`,
