@@ -72,7 +72,6 @@ export async function GET(request: NextRequest): Promise<Response> {
     await DeleteChannel(channel.id);
 
     return Response.json({
-        success: true,
-        banned: false
+        success: true
     });
 }
