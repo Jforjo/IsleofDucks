@@ -41,7 +41,9 @@ export async function GET(request: NextRequest): Promise<Response> {
         if (c.type !== ChannelType.GuildText) return false;
         const channel = c as APITextChannel;
         if (!channel.topic) return false;
-        return channel.topic.split(' | ')[1].toLowerCase() === name.toLowerCase();
+        const topicParts = channel.topic.split(' | ');
+        if (topicParts[0] !== "duckapp" && topicParts[0] !== "ducklingapp") return false;
+        return topicParts[1].toLowerCase() === name.toLowerCase();
     }) as APITextChannel | undefined;
     if (!channel || !channel.topic) {
         return Response.json({
