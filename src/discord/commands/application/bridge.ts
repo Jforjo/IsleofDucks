@@ -1,7 +1,7 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { addBridgeFilter, checkBridgeFilter, checkEmoji, addEmoji, getBridgeFilters, getTotalBridgeFilters, removeBridgeFilter, removeEmoji, getEmojis, getTotalEmojis } from "@/discord/utils";
+import { addBridgeFilter, checkBridgeFilter, checkEmoji, addEmoji, getBridgeFilters, getTotalBridgeFilters, removeBridgeFilter, removeEmoji, getEmojis, getTotalEmojis, checkScrambleBlacklist, addScrambleBlacklist, removeScrambleBlacklist, getScrambleBlacklists, getTotalScrambleBlacklists } from "@/discord/utils";
 
 async function addFilter(
     interaction: APIChatInputApplicationCommandInteraction,
@@ -701,6 +701,300 @@ async function viewChatEmojis(
     );
 }
 
+async function addScrambleBlacklistItem(
+    interaction: APIChatInputApplicationCommandInteraction,
+    item: string
+) {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    if (!interaction.member) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Could not find who ran the command",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "You don't have permission to use this command",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        })
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        );
+    }
+
+    item = item.toLowerCase();
+
+    const itemExists = await checkScrambleBlacklist(item);
+    if (itemExists) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Item already exists within the scramble blacklist",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "Item already exists within the scramble blacklist" },
+            { status: 400 }
+        );
+    }
+
+    await addScrambleBlacklist(item);
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Item added to scramble blacklist",
+                description: `Item added: "${item}"`,
+                color: IsleofDucks.colours.main,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+async function removeScrambleBlacklistItem(
+    interaction: APIChatInputApplicationCommandInteraction,
+    item: string
+) {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    if (!interaction.member) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Could not find who ran the command",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "You don't have permission to use this command",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        })
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        );
+    }
+
+    item = item.toLowerCase();
+
+    const itemExists = await checkScrambleBlacklist(item);
+    if (!itemExists) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Item doesn't exist within the scramble blacklist",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: "Item doesn't exist within the scramble blacklist" },
+            { status: 400 }
+        );
+    }
+
+    await removeScrambleBlacklist(item);
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Item removed from scramble blacklist",
+                description: `Item removed: "${item}"`,
+                color: IsleofDucks.colours.main,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+async function viewScrambleBlacklistItems(
+    interaction: APIChatInputApplicationCommandInteraction
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    // if (!interaction.member) {
+    //     await FollowupMessage(interaction.token, {
+    //         embeds: [
+    //             {
+    //                 title: "Something went wrong!",
+    //                 description: "Could not find who ran the command",
+    //                 color: IsleofDucks.colours.error,
+    //                 footer: {
+    //                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+    //                 },
+    //                 timestamp: new Date().toISOString()
+    //             }
+    //         ],
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Could not find who ran the command" },
+    //         { status: 400 }
+    //     );
+    // }
+
+    const items = await getScrambleBlacklists(0, 25);
+    const itemsCount = await getTotalScrambleBlacklists();
+    if (!items.length || !itemsCount) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "Could not get items within the scramble blacklist",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not get items within the scramble blacklist" },
+            { status: 400 }
+        );
+    }
+    if (items.length === 0 || itemsCount === 0) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: "No items found within the scramble blacklist",
+                    color: IsleofDucks.colours.error,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        });
+        return NextResponse.json(
+            { success: false, error: "No items found within the scramble blacklist" },
+            { status: 400 }
+        );
+    }
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Scramble Blacklist",
+                color: IsleofDucks.colours.main,
+                description: items.map(item => `"${item}"`).join("\n"),
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: 'scrambleblacklist-page_0',
+                        type: ComponentType.Button,
+                        label: '◀️',
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    },
+                    {
+                        custom_id: 'scrambleblacklist-page_2',
+                        type: ComponentType.Button,
+                        label: '▶️',
+                        style: ButtonStyle.Primary,
+                        disabled: Math.ceil(itemsCount / 25) < 2
+                    }
+                ]
+            }
+        ]
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
@@ -785,6 +1079,10 @@ export default async function(
         if (options.emoji.add) return await addChatEmoji(interaction, options.emoji.add.replace, options.emoji.add.with);
         if (options.emoji.remove) return await removeChatEmoji(interaction, options.emoji.remove.replace);
         if (options.emoji.view) return await viewChatEmojis(interaction);
+    } else if (options.scramble) {
+        if (options.scramble.add) return await addScrambleBlacklistItem(interaction, options.scramble.add.item);
+        if (options.scramble.remove) return await removeScrambleBlacklistItem(interaction, options.scramble.remove.item);
+        if (options.scramble.view) return await viewScrambleBlacklistItems(interaction);
     }
     
     await FollowupMessage(interaction.token, {
@@ -893,6 +1191,44 @@ export const CommandData = {
                 {
                     name: "view",
                     description: "View all emojis on the bridge.",
+                    type: ApplicationCommandOptionType.Subcommand
+                }
+            ]
+        },
+        {
+            name: "scramble",
+            description: "Item blacklist for the scramble game.",
+            type: ApplicationCommandOptionType.SubcommandGroup,
+            options: [
+                {
+                    name: "add",
+                    description: "Add an item to the scramble blacklist.",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "item",
+                            description: "The item to add.",
+                            type: ApplicationCommandOptionType.String,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    name: "remove",
+                    description: "Remove an item from the scramble blacklist.",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "item",
+                            description: "The item to remove.",
+                            type: ApplicationCommandOptionType.String,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    name: "view",
+                    description: "View all items on the scramble blacklist.",
                     type: ApplicationCommandOptionType.Subcommand
                 }
             ]
