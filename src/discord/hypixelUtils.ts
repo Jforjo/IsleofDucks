@@ -1,7 +1,7 @@
 import { Guild } from "@zikeji/hypixel/dist/types/Augmented/Guild";
 import { Player } from "@zikeji/hypixel/dist/types/Augmented/Player";
 import { SkyBlockProfile } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/Profile";
-import { GuildResponse, PlayerResponse, ResourcesSkyblockCollectionsResponse, SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
+import { GuildResponse, PlayerResponse, ResourcesSkyblockCollectionsResponse, ResourcesSkyblockItemsResponse, SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
 
 
 export async function getUsernameOrUUID(
@@ -615,4 +615,59 @@ export async function getHypixelCollections(): Promise<
         status: res.status,
         collections: data.collections
     };
+}
+
+export async function getHypixelItems(): Promise<
+    {
+        success: false;
+        status?: number;
+        message: string;
+        ping?: boolean;
+        retry?: number | null;
+    } | {
+        success: true;
+        status: number;
+        items: ResourcesSkyblockItemsResponse['items'];
+    }
+> {
+    const res = await fetch('https://api.hypixel.net/v2/resources/skyblock/items', {
+        method: 'GET',
+    });
+    const retryAfter = res.headers.get('RateLimit-Reset');
+
+    let data;
+    try {
+        data = await res.json() as ResourcesSkyblockItemsResponse;
+    } catch (e) {
+        console.error(e);
+        console.error("res", res);
+        return {
+            success: false,
+            status: res.status,
+            message: 'Bad response from Hypixel'
+        };
+    }
+
+    if (!res.ok) {
+        if (data && data.cause) {
+            return {
+                success: false,
+                status: res.status,
+                message: typeof data.cause === "string" ? data.cause : "Unknown error",
+                ping: data.cause === "Invalid API key",
+                retry: retryAfter ? parseInt(retryAfter) * 1000 : null
+            };
+        }
+        return {
+            success: false,
+            status: res.status,
+            message: 'Bad response from Hypixel'
+        };
+    }
+
+    return {
+        success: true,
+        status: res.status,
+        items: data.items
+    }
 }
