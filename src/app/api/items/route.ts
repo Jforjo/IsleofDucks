@@ -36,9 +36,9 @@ export async function GET(request: NextRequest): Promise<Response> {
     }
 
     const items = itemsRes.items
-        .map(i => i.name?.toLowerCase() || "")
+        .map(i => i.name || "")
         .filter(i => i !== "")
-        .filter(i => !scrambleBlacklist.some(b => b.item.toLowerCase() === i));
+        .filter(i => !scrambleBlacklist.some(b => b.item.toLowerCase() === i.toLowerCase()));
 
     return Response.json({
         success: true,
