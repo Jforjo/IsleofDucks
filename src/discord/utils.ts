@@ -791,6 +791,10 @@ export async function updateScrambleScore(uuid: string, score: number): Promise<
     await sql`UPDATE discordroles SET scramble = ${score} WHERE uuid = ${uuid}`;
 }
 
+export async function checkScrambleBlacklist(item: string): Promise<boolean> {
+    const { rows } = await sql`SELECT COUNT(*) FROM scrambleblacklist WHERE item ILIKE ${item}`;
+    return rows[0].count > 0;
+}
 export async function addScrambleBlacklist(item: string): Promise<void> {
     await sql`INSERT INTO scrambleblacklist (item) VALUES (${item})`;
 }
