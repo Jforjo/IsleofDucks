@@ -705,15 +705,15 @@ export async function getBridgeFilters(
     offset = 0,
     limit = 100
 ): Promise<{
-    replacetext: number;
+    replacetext: string;
     withtext: string;
 }[]> {
     const { rows } = await sql`SELECT replacetext, withtext FROM bridgefilters ORDER BY replacetext ASC LIMIT ${limit} OFFSET ${offset}`;
-    return rows as { replacetext: number; withtext: string; }[];
+    return rows as { replacetext: string; withtext: string; }[];
 }
-export async function getAllBridgeFilters(): Promise<{ replacetext: number; withtext: string }[]> {
+export async function getAllBridgeFilters(): Promise<{ replacetext: string; withtext: string }[]> {
     const { rows } = await sql`SELECT replacetext, withtext FROM bridgefilters ORDER BY replacetext ASC`;
-    return rows as { replacetext: number; withtext: string; }[];
+    return rows as { replacetext: string; withtext: string; }[];
 }
 export async function getTotalBridgeFilters(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM bridgefilters`;
@@ -789,4 +789,28 @@ export async function getScrambleScoreFromUUID(uuid: string): Promise<{
 }
 export async function updateScrambleScore(uuid: string, score: number): Promise<void> {
     await sql`UPDATE discordroles SET scramble = ${score} WHERE uuid = ${uuid}`;
+}
+
+export async function addScrambleBlacklist(item: string): Promise<void> {
+    await sql`INSERT INTO scrambleblacklist (item) VALUES (${item})`;
+}
+export async function removeScrambleBlacklist(item: string): Promise<void> {
+    await sql`DELETE FROM scrambleblacklist WHERE item = ${item}`;
+}
+export async function getScrambleBlacklists(
+    offset = 0,
+    limit = 100
+): Promise<{
+    item: string;
+}[]> {
+    const { rows } = await sql`SELECT item FROM scrambleblacklist ORDER BY item ASC LIMIT ${limit} OFFSET ${offset}`;
+    return rows as { item: string; }[];
+}
+export async function getAllScrambleBlacklists(): Promise<{ item: string; }[]> {
+    const { rows } = await sql`SELECT item FROM scrambleblacklist ORDER BY item ASC`;
+    return rows as { item: string; }[];
+}
+export async function getTotalScrambleBlacklists(): Promise<number> {
+    const { rows } = await sql`SELECT COUNT(*) FROM scrambleblacklist`;
+    return rows[0].count;
 }
