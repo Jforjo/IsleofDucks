@@ -36,6 +36,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     }
 
     const items = itemsRes.items
+        .filter(i => !(i.tier && i.tier === "UNOBTAINABLE"))
         .map(i => i.name || "")
         .filter(i => i !== "")
         .filter(i => !scrambleBlacklist.some(b => b.item.toLowerCase() === i.toLowerCase()));
