@@ -14,7 +14,7 @@
     "@eslint/js": "^9.26.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@vercel/postgres": "^0.10.0",
-    "@zikeji/hypixel": "^4.1.7",
+    "@zikeji/hypixel": "^4.1.8",
     "canvas": "^3.2.1",
     "discord-api-types": "^0.38.38",
     "discord-interactions": "^4.4.0",
