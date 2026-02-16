@@ -1334,6 +1334,7 @@ const Channels = {
     nitroboosts: "982019701918035978",
     verification: "1287099048796356608",
     donationTotal: "1106671914509946942",
+    banlist: "903871143662993408",
 };
 const ChannelGroups = {
     tickets: "988883238292451378",
