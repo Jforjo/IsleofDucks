@@ -959,7 +959,7 @@ async function viewScrambleBlacklistItems(
             {
                 title: "Scramble Blacklist",
                 color: IsleofDucks.colours.main,
-                description: items.map(item => `"${item}"`).join("\n"),
+                description: items.map(item => `"${item.item}"`).join("\n"),
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`
                 },
