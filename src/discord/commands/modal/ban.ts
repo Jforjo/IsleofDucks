@@ -169,7 +169,7 @@ export default async function(
     }
     containerComponents.push({ type: ComponentType.Separator }, {
         type: ComponentType.TextDisplay,
-        content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`,
+        content: `Banned by: ${member.nick?.replaceAll('_', '\\_') ?? member.user.username.replaceAll('_', '\\_')} - ${member.user.id} • <t:${Math.floor(Date.now() / 1000)}:F>`,
     });
 
     await SendMessage(IsleofDucks.channels.banlist, {
