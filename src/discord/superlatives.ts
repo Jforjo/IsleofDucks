@@ -18,6 +18,10 @@ export default {
         title: "Catacombs Experience",
         value: (profile: SkyBlockProfileMember) => profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0
     },
+    petScore: {
+        title: "Pet Score",
+        value: (profile: SkyBlockProfileMember) => profile?.leveling?.highest_pet_score ?? 0
+    },
     /**
      *  SKILLS
      */ 
