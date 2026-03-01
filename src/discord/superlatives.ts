@@ -193,4 +193,9 @@ export default {
             ( profile?.bestiary?.kills?.zombuddy_1 ?? 0 ) +
             ( profile?.bestiary?.kills?.timestalk_clone_100 ?? 0 )
     },
+} as {
+    [key: string]: {
+        title: string;
+        value: (profile: SkyBlockProfileMember) => number | Promise<number>;
+    };
 }
