@@ -308,20 +308,36 @@ export default async function(
         ]
     };
     if (buttons) {
-        if (profileAPIResponse.experience >= profileAPIResponse.duckReq) buttons.duck.push({
-            type: ComponentType.Button,
-            custom_id: `recruit-invite-duck-${mojang.name}`,
-            label: "Duck Invite",
-            style: ButtonStyle.Primary,
-            disabled: true
-        });
-        if (profileAPIResponse.experience >= profileAPIResponse.ducklingReq) buttons.duckling.push({
-            type: ComponentType.Button,
-            custom_id: `recruit-invite-duckling-${mojang.name}`,
-            label: "Duckling Invite",
-            style: ButtonStyle.Primary,
-            disabled: true
-        });
+        if (profileAPIResponse.experience >= profileAPIResponse.duckReq) {
+            buttons.duck.push({
+                type: ComponentType.Button,
+                custom_id: `recruit-invite-duck-${mojang.name}`,
+                label: "Duck Invite",
+                style: ButtonStyle.Primary,
+                disabled: true
+            }, {
+                type: ComponentType.Button,
+                custom_id: `recruit-gexp-duckling`,
+                label: "Duck GEXP",
+                style: ButtonStyle.Primary,
+                disabled: true
+            });
+        }
+        if (profileAPIResponse.experience >= profileAPIResponse.ducklingReq) {
+            buttons.duckling.push({
+                type: ComponentType.Button,
+                custom_id: `recruit-invite-duckling-${mojang.name}`,
+                label: "Duckling Invite",
+                style: ButtonStyle.Primary,
+                disabled: true
+            }, {
+                type: ComponentType.Button,
+                custom_id: `recruit-gexp-duckling`,
+                label: "Duckling GEXP",
+                style: ButtonStyle.Primary,
+                disabled: true
+            });
+        }
     }
 
     await FollowupMessage(interaction.token, {

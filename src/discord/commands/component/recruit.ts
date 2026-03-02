@@ -1,6 +1,8 @@
 import { APIButtonComponentWithCustomId, APIInteractionResponse, APIMessage, APIMessageComponentButtonInteraction, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { getGuildData, getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { getImmunePlayers } from "@/discord/utils";
 
 export default async function Command(
     interaction: APIMessageComponentButtonInteraction
@@ -270,6 +272,11 @@ export default async function Command(
                             ...component,
                             disabled: false
                         };
+                        if (component.custom_id.split('-')[1] === "gexp" &&
+                            component.custom_id.split('-')[2] === type) return {
+                            ...component,
+                            disabled: false
+                        };
                         return component;
                     })
                 };
@@ -483,6 +490,141 @@ export default async function Command(
                     })
                 };
             }),
+            attachments: interaction.message.attachments.map(attachment => ({
+                id: attachment.id,
+            }))
+        });
+    } else if (buttonID === "gexp") {
+        const gexpEmbed = interaction.message.embeds.find(embed => embed.title === `Lowest GEXP - ${formattedType}`);
+    
+        await FollowupMessage(interaction.token, {
+            content: interaction.message.content,
+            embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
+                title: `Lowest GEXP - ${formattedType}`,
+                description: "Fetching users with the lowest GEXP...",
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }],
+            components: interaction.message.components,
+            attachments: interaction.message.attachments.map(attachment => ({
+                id: attachment.id,
+            }))
+        });
+
+        const guildResponse = await getGuildData(`Isle of ${formattedType}s`);
+        if (!guildResponse.success) {
+            await FollowupMessage(interaction.token, {
+                content: interaction.message.content,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
+                    title: `Lowest GEXP - ${formattedType}`,
+                    description: guildResponse.message === "Key throttle" && typeof guildResponse.retry === "number" ? [
+                        guildResponse.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + guildResponse.retry ) / 1000)}:R>`
+                    ].join("\n") : guildResponse.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }],
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
+            });
+            return NextResponse.json(
+                { success: false, error: "Failed to fetch guild data." },
+                { status: 400 }
+            );
+        }
+        
+        const immunePlayers = await getImmunePlayers();
+        const immunePlayerIDs = immunePlayers?.players.map(player => player.uuid);
+        if (immunePlayers?.success === false) {
+            await FollowupMessage(interaction.token, {
+                content: interaction.message.content,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
+                    title: `Lowest GEXP - ${formattedType}`,
+                    description: "Failed to fetch the immune players",
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }],
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
+            });
+            return NextResponse.json(
+                { success: false, error: "Failed to fetch the immune players" },
+                { status: 400 }
+            );
+        }
+
+        const weekAgo = Date.now() - 1000 * 60 * 60 * 24 * 7;
+
+        const result = await Promise.all(guildResponse.guild.members.map(async (member) => {
+            const mojang = await getUsernameOrUUID(member.uuid);
+            if (!mojang.success) throw new Error(mojang.message);
+            const gexp = Object.values(member.expHistory).reduce((a, b) => ( a ?? 0 ) + ( b ?? 0 ), 0) ?? 0;
+            const isNew = member.joined > weekAgo;
+            return {
+                uuid: member.uuid,
+                name: mojang.name,
+                gexp: gexp,
+                isNew: isNew
+            };
+        })).catch((err) => {
+            console.log(err.message);
+            return {
+                success: false,
+                message: err.message
+            };
+        });
+
+        if ("success" in result) {
+            await FollowupMessage(interaction.token, {
+                content: interaction.message.content,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
+                    title: `Lowest GEXP - ${formattedType}`,
+                    description: result.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }],
+                components: interaction.message.components,
+                attachments: interaction.message.attachments.map(attachment => ({
+                    id: attachment.id,
+                }))
+            });
+            return NextResponse.json(
+                { success: false, error: result.message },
+                { status: 400 }
+            );
+        }
+
+        const lowestGEXP = result.sort((a, b) => a.gexp - b.gexp).filter(member => !immunePlayerIDs?.includes(member.uuid) && !member.isNew).slice(0, 5);
+        const sortedDesc = result.sort((a, b) => b.gexp - a.gexp);
+
+        await FollowupMessage(interaction.token, {
+            content: interaction.message.content,
+            embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
+                title: `Lowest GEXP - ${formattedType}`,
+                description: lowestGEXP.map(member => `**#${sortedDesc.indexOf(member) + 1}** ${member.name} - ${member.gexp}`).join("\n"),
+                color: 0xB00020,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }],
+            components: interaction.message.components,
             attachments: interaction.message.attachments.map(attachment => ({
                 id: attachment.id,
             }))
