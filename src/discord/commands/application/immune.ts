@@ -1,5 +1,5 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole } from "@/discord/discordUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole, GetGuildMember } from "@/discord/discordUtils";
 import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getDiscordRole } from "@/discord/utils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
@@ -381,6 +381,20 @@ async function checkImmune(
                 removedCount.names.push(`<@${discordRes.discordid}> - ${player.name ?? player.uuid}`);
             } else {
                 removedCount.names.push(player.name ?? player.uuid);
+            }
+        }
+
+        // Remove staff immunity from anyone who does not have the staff role in discord
+        if (player.reason === "Staff" && player.discord) {
+            const discordRes = await GetGuildMember(IsleofDucks.serverID, player.discord);
+            if (!discordRes || !discordRes.roles.includes(IsleofDucks.roles.staff)) {
+                await removeImmunePlayer(player.uuid, "Staff");
+                if (discordRes && player.discord) {
+                    await RemoveGuildMemberRole(IsleofDucks.serverID, player.discord, IsleofDucks.roles.immune);
+                    removedCount.names.push(`<@${player.discord}> - ${player.name ?? player.uuid} (Staff)`);
+                } else {
+                    removedCount.names.push(`${player.name ?? player.uuid} (Staff)`);
+                }
             }
         }
     }

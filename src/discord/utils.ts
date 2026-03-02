@@ -40,15 +40,16 @@ export async function getImmunePlayers(): Promise<{
         reason: string;
     }[];
 }> {
-    const { rows } = await sql`SELECT uuid, discord, reason FROM immune`;
+    const { rows } = await sql`SELECT uuid, discord, reason FROM immune` as { rows: { uuid: string; discord: string | null; reason: string }[] };
 
     const players = await Promise.all(rows.map(async (row) => {
         const nameRes = await getUsernameOrUUID(row.uuid);
         let name = undefined;
         if (nameRes.success === true) name = nameRes.name;
         const level = await sql`SELECT exp FROM discordroles WHERE uuid = ${row.uuid}`;
+        if (row.discord) name = `**${name}**`;
         if (level.rows.length > 0 && level.rows[0].exp) {
-            name = `**${name}** (${Math.floor(level.rows[0].exp / 100)})`;
+            name = `${name} (${Math.floor(level.rows[0].exp / 100)})`;
         }
         return {
             uuid: row.uuid,
