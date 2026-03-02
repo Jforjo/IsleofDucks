@@ -179,8 +179,8 @@ export default async function Command(
                 logMessage = content;
                 return;
             }
-            if (!content.split("\n")[1].includes('Guild Log')) return;
-            if (!content.includes(username)) return;
+            if (!content.split("\n")[1].includes('Guild Log')) return console.log("no guild log");
+            if (!content.includes(username)) return console.log("username not in log");
             logMessage = content;
             return;
         });
