@@ -616,7 +616,7 @@ export default async function Command(
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
-                title: `Lowest GEXP - ${formattedType}`,
+                title: `Lowest GEXP - ${formattedType} (${result.length})`,
                 description: lowestGEXP.map(member => `**#${sortedDesc.indexOf(member) + 1}** ${member.name.replaceAll('_', '\\_')} - ${member.gexp}`).join("\n"),
                 color: IsleofDucks.colours.main,
                 footer: {
