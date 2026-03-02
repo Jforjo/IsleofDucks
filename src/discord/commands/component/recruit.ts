@@ -49,11 +49,15 @@ export default async function Command(
     const type = interaction.data.custom_id.split("-")[2];
     const username = interaction.data.custom_id.split("-")[3];
     
+    const formattedType = type.slice(0, 1).toUpperCase() + type.slice(1);
+    
     if (buttonID === "log") {
+        const logEmbed = interaction.message.embeds.find(embed => embed.title === `Guild Log - ${formattedType}`);
+
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: [...interaction.message.embeds, {
-                title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+            embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
+                title: `Guild Log - ${formattedType}`,
                 description: "Sending log command...",
                 color: 0xFB9B00,
                 footer: {
@@ -81,8 +85,8 @@ export default async function Command(
         if (!message) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
-                embeds: [...interaction.message.embeds, {
-                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
+                    title: `Guild Log - ${formattedType}`,
                     description: "Failed to send the log command.",
                     color: 0xB00020,
                     footer: {
@@ -103,8 +107,8 @@ export default async function Command(
         
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: [...interaction.message.embeds, {
-                title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+            embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
+                title: `Guild Log - ${formattedType}`,
                 description: "Fetching logs...",
                 color: 0xFB9B00,
                 footer: {
@@ -135,8 +139,8 @@ export default async function Command(
         if (!messages) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
-                embeds: [...interaction.message.embeds, {
-                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
+                    title: `Guild Log - ${formattedType}`,
                     description: "Failed to fetch logs.",
                     color: 0xB00020,
                     footer: {
@@ -181,8 +185,21 @@ export default async function Command(
         if (!logMessage) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
-                embeds: [...interaction.message.embeds, {
-                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                // embeds: interaction.message.embeds.find(embed => embed.title === `Guild Log - ${formattedType}`) ? interaction.message.embeds.map(embed => {
+                //     if (embed.title === `Guild Log - ${formattedType}`) {
+                //         return {
+                //             ...embed,
+                //             description: "Failed to fetch log message.",
+                //             color: 0xB00020,
+                //             footer: {
+                //                 text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                //             }
+                //         };
+                //     }
+                //     return embed;
+                // }) : [...interaction.message.embeds, {
+                embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
+                    title: `Guild Log - ${formattedType}`,
                     description: "Failed to fetch log message.",
                     color: 0xB00020,
                     footer: {
@@ -203,18 +220,32 @@ export default async function Command(
 
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: [...interaction.message.embeds.map(embed => {
-                return {
-                    ...embed,
-                    thumbnaill: embed.thumbnail && {
-                        url: `attachment://${embed.thumbnail.url.split('/').pop()?.split('?')[0]}`
-                    },
-                    image: embed.image && {
-                        url: `attachment://${embed.image.url.split('/').pop()?.split('?')[0]}`
-                    }
-                }
-            }), {
-                title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+            // embeds: interaction.message.embeds.find(embed => embed.title === `Guild Log - ${formattedType}`) ? interaction.message.embeds.map(embed => {
+            //     if (embed.title === `Guild Log - ${formattedType}`) {
+            //         return {
+            //             ...embed,
+            //             description: logMessage,
+            //             color: 0xFB9B00,
+            //             footer: {
+            //                 text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+            //             }
+            //         };
+            //     }
+            //     return embed;
+            // // }) : [...interaction.message.embeds.map(embed => {
+            // //     return {
+            // //         ...embed,
+            // //         thumbnaill: embed.thumbnail && {
+            // //             url: `attachment://${embed.thumbnail.url.split('/').pop()?.split('?')[0]}`
+            // //         },
+            // //         image: embed.image && {
+            // //             url: `attachment://${embed.image.url.split('/').pop()?.split('?')[0]}`
+            // //         }
+            // //     }
+            // // }), {
+            // }) : [...interaction.message.embeds, {
+            embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
+                title: `Guild Log - ${formattedType}`,
                 description: logMessage,
                 color: 0xFB9B00,
                 footer: {
@@ -248,10 +279,12 @@ export default async function Command(
             }))
         });
     } else if (buttonID === "invite") {
+        const inviteEmbed = interaction.message.embeds.find(embed => embed.title === `Guild Invite - ${formattedType}`);
+
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: [...interaction.message.embeds, {
-                title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+            embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
+                title: `Guild Invite - ${formattedType}`,
                 description: "Sending invite command...",
                 color: 0xFB9B00,
                 footer: {
@@ -279,8 +312,8 @@ export default async function Command(
         if (!message) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
-                embeds: [...interaction.message.embeds, {
-                    title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
+                    title: `Guild Invite - ${formattedType}`,
                     description: "Failed to send the invite command.",
                     color: 0xB00020,
                     footer: {
@@ -301,8 +334,8 @@ export default async function Command(
         
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: [...interaction.message.embeds, {
-                title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+            embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
+                title: `Guild Invite - ${formattedType}`,
                 description: "Fetching invite confirmation...",
                 color: 0xFB9B00,
                 footer: {
@@ -333,8 +366,8 @@ export default async function Command(
         if (!messages) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
-                embeds: [...interaction.message.embeds, {
-                    title: `Guild Log - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
+                    title: `Guild Invite - ${formattedType}`,
                     description: "Failed to fetch invite confirmation.",
                     color: 0xB00020,
                     footer: {
@@ -392,8 +425,8 @@ export default async function Command(
         if (!logMessage) {
             await FollowupMessage(interaction.token, {
                 content: interaction.message.content,
-                embeds: [...interaction.message.embeds, {
-                    title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+                embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
+                    title: `Guild Invite - ${formattedType}`,
                     description: "Failed to fetch invite confirmation message.",
                     color: 0xB00020,
                     footer: {
@@ -414,18 +447,19 @@ export default async function Command(
 
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
-            embeds: [...interaction.message.embeds.map(embed => {
-                return {
-                    ...embed,
-                    thumbnaill: embed.thumbnail && {
-                        url: `attachment://${embed.thumbnail.url.split('/').pop()?.split('?')[0]}`
-                    },
-                    image: embed.image && {
-                        url: `attachment://${embed.image.url.split('/').pop()?.split('?')[0]}`
-                    }
-                }
-            }), {
-                title: `Guild Invite - ${type.slice(0, 1).toUpperCase() + type.slice(1)}`,
+            // embeds: [...interaction.message.embeds.map(embed => {
+            //     return {
+            //         ...embed,
+            //         thumbnaill: embed.thumbnail && {
+            //             url: `attachment://${embed.thumbnail.url.split('/').pop()?.split('?')[0]}`
+            //         },
+            //         image: embed.image && {
+            //             url: `attachment://${embed.image.url.split('/').pop()?.split('?')[0]}`
+            //         }
+            //     }
+            // }), {
+            embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
+                title: `Guild Invite - ${formattedType}`,
                 description: logMessage,
                 color: 0xFB9B00,
                 footer: {
