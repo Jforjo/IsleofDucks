@@ -2,7 +2,7 @@ import { APIButtonComponentWithCustomId, APIInteractionResponse, APIMessage, API
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, SendMessage, GetChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { getGuildData, getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { getImmunePlayers } from "@/discord/utils";
+import { formatNumberWithCommas, getImmunePlayers } from "@/discord/utils";
 
 export default async function Command(
     interaction: APIMessageComponentButtonInteraction
@@ -617,7 +617,7 @@ export default async function Command(
             content: interaction.message.content,
             embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
                 title: `Lowest GEXP - ${formattedType} (${result.length})`,
-                description: lowestGEXP.map(member => `**#${sortedDesc.indexOf(member) + 1}** ${member.name.replaceAll('_', '\\_')}: ${member.gexp}`).join("\n"),
+                description: lowestGEXP.map(member => `**#${sortedDesc.indexOf(member) + 1}** ${member.name.replaceAll('_', '\\_')}: ${formatNumberWithCommas(member.gexp)}`).join("\n"),
                 color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,

@@ -13,6 +13,17 @@ export function capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+/**
+ * Returns a new string with commas separating the thousands place.
+ * @param {number} num The number to format.
+ * @returns {string} The formatted string.
+ * @example
+ * formatNumberWithCommas(1000) // "1,000"
+ */
+export function formatNumberWithCommas(num: number): string {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
     return Array(Math.ceil(array.length / chunk_size))
         .fill(null)

@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
-import { getImmunePlayers } from "@/discord/utils";
+import { formatNumberWithCommas, getImmunePlayers } from "@/discord/utils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
@@ -148,7 +148,7 @@ export default async function(
         fieldArray.push(
             {
                 name: '\u200b',
-                value: finalResult.slice(i, i + chunkSize).map((field) => `**#${field.rank}**${field.isNew ? ' 🆕' : ''}${field.immune ? ' 🛡️' : ''} ${field.name.replaceAll('_', '\\_')}: ${field.gexp}`).join('\n'),
+                value: finalResult.slice(i, i + chunkSize).map((field) => `**#${field.rank}**${field.isNew ? ' 🆕' : ''}${field.immune ? ' 🛡️' : ''} ${field.name.replaceAll('_', '\\_')}: ${formatNumberWithCommas(field.gexp)}`).join('\n'),
                 inline: true
             }
         );
