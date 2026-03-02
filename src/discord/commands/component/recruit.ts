@@ -180,7 +180,7 @@ export default async function Command(
                 return;
             }
             if (!content.split("\n")[1].includes('Guild Log')) return;
-            if (!content.includes(username)) return console.log(`Username: ${username}, Content: ${content}`);
+            if (!content.includes(username.replaceAll('_', '\\_'))) return;
             logMessage = content;
             return;
         });
