@@ -71,7 +71,7 @@ export default async function(
                         type: ComponentType.TextDisplay,
                         content: (users as { name: string; score: number; }[])
                             .sort((a, b) => b.score - a.score)
-                            .map((user, index) => `**${index + 1})** ${user.name} - ${user.score}`).join("\n"),
+                            .map((user, index) => `\`#${index + 1}\` ${user.name} - ${user.score}`).join("\n"),
                     },
                     { type: ComponentType.Separator },
                     {

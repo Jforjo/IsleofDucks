@@ -188,7 +188,7 @@ export default async function(
         fieldArray.push(
             {
                 name: '\u200b',
-                value: finalResult.slice(i, i + chunkSize).map((field) => `**#${field.rank}**${field.isNew ? ' 🆕' : ''}${field.immune ? ' 🛡️' : ''} ${field.name.replaceAll('_', '\\_')}: ${formatNumberWithCommas(field.gexp)}`).join('\n'),
+                value: finalResult.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\`${field.isNew ? ' 🆕' : ''}${field.immune ? ' 🛡️' : ''} ${field.name.replaceAll('_', '\\_')}: ${formatNumberWithCommas(field.gexp)}`).join('\n'),
                 inline: true
             }
         );
