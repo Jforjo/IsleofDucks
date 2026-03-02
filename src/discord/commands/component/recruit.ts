@@ -624,7 +624,22 @@ export default async function Command(
                 },
                 timestamp: new Date().toISOString()
             }],
-            components: interaction.message.components,
+            components: interaction.message.components?.map(row => {
+                if (row.type !== ComponentType.ActionRow) return row;
+                return {
+                    ...row,
+                    components: row.components.map(comp => {
+                        const component = comp as APIButtonComponentWithCustomId;
+                        if (component.type !== ComponentType.Button) return component;
+                        if (component.custom_id.split('-')[1] === "gexp" &&
+                            component.custom_id.split('-')[2] === type) return {
+                            ...component,
+                            disabled: true
+                        };
+                        return component;
+                    })
+                };
+            }),
             attachments: interaction.message.attachments.map(attachment => ({
                 id: attachment.id,
             }))
