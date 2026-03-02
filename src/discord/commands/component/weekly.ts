@@ -44,14 +44,14 @@ export default async function(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `superlative-ducks`,
+                        custom_id: `weekly-ducks`,
                         type: ComponentType.Button,
                         label: "Ducks",
                         style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
                         disabled: true
                     },
                     {
-                        custom_id: `superlative-ducklings`,
+                        custom_id: `weekly-ducklings`,
                         type: ComponentType.Button,
                         label: "Ducklings",
                         style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
