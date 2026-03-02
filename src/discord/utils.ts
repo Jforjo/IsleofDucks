@@ -41,7 +41,7 @@ export async function getImmunePlayers(): Promise<{
     }[];
 }> {
     const { rows } = await sql`
-        SELECT i.uuid, i.reason, d.discordid
+        SELECT i.uuid, i.reason, d.discordid AS discord
         FROM immune i
         LEFT JOIN discordroles d ON i.uuid = d.uuid
     ` as { rows: { uuid: string; discord: string | null; reason: string }[] };
