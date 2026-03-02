@@ -40,7 +40,11 @@ export async function getImmunePlayers(): Promise<{
         reason: string;
     }[];
 }> {
-    const { rows } = await sql`SELECT uuid, discord, reason FROM immune` as { rows: { uuid: string; discord: string | null; reason: string }[] };
+    const { rows } = await sql`
+        SELECT i.uuid, i.reason, d.discordid
+        FROM immune i
+        LEFT JOIN discordroles d ON i.uuid = d.uuid
+    ` as { rows: { uuid: string; discord: string | null; reason: string }[] };
 
     const players = await Promise.all(rows.map(async (row) => {
         const nameRes = await getUsernameOrUUID(row.uuid);
