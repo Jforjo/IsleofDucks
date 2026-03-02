@@ -526,14 +526,12 @@ export default async function(
                         disabled: true
                     },
                     {
-                        custom_id: `close-${TICKET.id}-${member.user.id}-auto`,
                         type: ComponentType.Button,
-                        label: "Close",
-                        style: ButtonStyle.Danger,
-                        emoji: {
-                            name: "🔒"
-                        }
-                    },
+                        custom_id: `recruit-gexp-duck`,
+                        label: "Duck GEXP",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    }
                 ]
             },
             {
@@ -551,6 +549,27 @@ export default async function(
                         label: "Duckling Invite",
                         style: ButtonStyle.Primary,
                         disabled: true
+                    },
+                    {
+                        type: ComponentType.Button,
+                        custom_id: `recruit-gexp-duckling`,
+                        label: "Duck GEXP",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    }
+                ]
+            },
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: `close-${TICKET.id}-${member.user.id}-auto`,
+                        type: ComponentType.Button,
+                        label: "Close",
+                        style: ButtonStyle.Danger,
+                        emoji: {
+                            name: "🔒"
+                        }
                     }
                 ]
             }
