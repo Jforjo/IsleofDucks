@@ -553,7 +553,7 @@ export default async function(
                     {
                         type: ComponentType.Button,
                         custom_id: `recruit-gexp-duckling`,
-                        label: "Duck GEXP",
+                        label: "Duckling GEXP",
                         style: ButtonStyle.Primary,
                         disabled: true
                     }
