@@ -61,7 +61,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
                 title: `Guild Log - ${formattedType}`,
                 description: "Sending log command...",
-                color: 0xFB9B00,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -90,7 +90,7 @@ export default async function Command(
                 embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
                     title: `Guild Log - ${formattedType}`,
                     description: "Failed to send the log command.",
-                    color: 0xB00020,
+                    color: IsleofDucks.colours.error,
                     footer: {
                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                     },
@@ -112,7 +112,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
                 title: `Guild Log - ${formattedType}`,
                 description: "Fetching logs...",
-                color: 0xFB9B00,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -227,7 +227,7 @@ export default async function Command(
             //         return {
             //             ...embed,
             //             description: logMessage,
-            //             color: 0xFB9B00,
+            //             color: IsleofDucks.colours.main,
             //             footer: {
             //                 text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
             //             }
@@ -249,7 +249,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== logEmbed), {
                 title: `Guild Log - ${formattedType}`,
                 description: logMessage,
-                color: 0xFB9B00,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -293,7 +293,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
                 title: `Guild Invite - ${formattedType}`,
                 description: "Sending invite command...",
-                color: 0xFB9B00,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -344,7 +344,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
                 title: `Guild Invite - ${formattedType}`,
                 description: "Fetching invite confirmation...",
-                color: 0xFB9B00,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -468,7 +468,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== inviteEmbed), {
                 title: `Guild Invite - ${formattedType}`,
                 description: logMessage,
-                color: 0xFB9B00,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -502,7 +502,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
                 title: `Lowest GEXP - ${formattedType}`,
                 description: "Fetching users with the lowest GEXP...",
-                color: 0xFB9B00,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
@@ -618,7 +618,7 @@ export default async function Command(
             embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
                 title: `Lowest GEXP - ${formattedType}`,
                 description: lowestGEXP.map(member => `**#${sortedDesc.indexOf(member) + 1}** ${member.name} - ${member.gexp}`).join("\n"),
-                color: 0xB00020,
+                color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
