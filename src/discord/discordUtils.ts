@@ -2247,7 +2247,15 @@ export async function GetEmbedData(embedID: string): Promise<{
     components?: string;
     attachments?: string;
 }> {
-    const { rows } = await sql`SELECT * FROM embeds WHERE name = ${embedID}`;
+    const { rows } = await sql`
+        SELECT
+            content,
+            resolve_template_json(data) AS data,
+            resolve_template_json(components) AS components,
+            resolve_template_json(attachments) AS attachments
+        FROM embeds
+        WHERE name = ${embedID}
+    `;
     if (rows.length === 0) {
         return {
             success: false,
@@ -2257,9 +2265,9 @@ export async function GetEmbedData(embedID: string): Promise<{
     return {
         success: true,
         content: rows[0].content === null ? undefined : rows[0].content,
-        embeds: rows[0].data,
-        components: rows[0].components,
-        attachments: rows[0].attachments
+        embeds: JSON.stringify(rows[0].data),
+        components: JSON.stringify(rows[0].components),
+        attachments: JSON.stringify(rows[0].attachments)
     }
 }
 export async function EditEmbedData(embedID: string, content: string | null, embeds: string | null, components?: string, attachments?: string): Promise<void> {
