@@ -88,13 +88,13 @@ export default async function(
     if (options.message) {
         await EditMessage(interaction.channel.id, options.message, Object.assign({
             content: embedData.content,
-            components: embedData.components ? JSON.parse(embedData.components) : undefined,
-        }, JSON.parse(embedData.embeds)), embedData.attachments ? JSON.parse(embedData.attachments) : undefined);
+            components: embedData.components ? embedData.components : undefined,
+        }, embedData.embeds), embedData.attachments ? embedData.attachments : undefined);
     } else {
         await SendMessage(interaction.channel.id, Object.assign({
             content: embedData.content,
-            components: embedData.components ? JSON.parse(embedData.components) : undefined,
-        }, JSON.parse(embedData.embeds)), embedData.attachments ? JSON.parse(embedData.attachments) : undefined);
+            components: embedData.components ? embedData.components : undefined,
+        }, embedData.embeds), embedData.attachments ? embedData.attachments : undefined);
     }
 
     await FollowupMessage(interaction.token, {

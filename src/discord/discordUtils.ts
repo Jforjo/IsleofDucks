@@ -2243,9 +2243,9 @@ export async function GetEmbedData(embedID: string): Promise<{
 } | {
     success: true;
     content: string | undefined;
-    embeds: string;
-    components?: string;
-    attachments?: string;
+    embeds: any;
+    components?: any;
+    attachments?: any;
 }> {
     const { rows } = await sql`
         SELECT
@@ -2265,9 +2265,9 @@ export async function GetEmbedData(embedID: string): Promise<{
     return {
         success: true,
         content: rows[0].content === null ? undefined : rows[0].content,
-        embeds: JSON.stringify(rows[0].data),
-        components: JSON.stringify(rows[0].components),
-        attachments: JSON.stringify(rows[0].attachments)
+        embeds: rows[0].data,
+        components: rows[0].components,
+        attachments: rows[0].attachments
     }
 }
 export async function EditEmbedData(embedID: string, content: string | null, embeds: string | null, components?: string, attachments?: string): Promise<void> {
