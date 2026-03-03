@@ -213,6 +213,13 @@ export async function getSettingValue(key: string): Promise<string | null> {
     if (rows.length == 0) return null;
     return rows[0]?.value;
 }
+export async function getSettings(): Promise<{
+    key: string;
+    value: string;
+}[]> {
+    const { rows } = await sql`SELECT key, value FROM settings`;
+    return rows as { key: string; value: string }[];
+}
 export async function setSettingValue(key: string, value: string): Promise<void> {
     await sql`UPDATE settings SET value = ${value} WHERE key = ${key}`;
 }
