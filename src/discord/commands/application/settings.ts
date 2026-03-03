@@ -88,7 +88,13 @@ async function viewSettings(
     );
 
     await FollowupMessage(interaction.token, {
-            components: components
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: components
+                }
+            ]
     });
 
     return NextResponse.json(
