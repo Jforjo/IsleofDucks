@@ -1,7 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIComponentInContainer, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole, GetGuildMember } from "@/discord/discordUtils";
-import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getDiscordRole, getSettings } from "@/discord/utils";
-import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { getSettings } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
 async function viewSettings(
@@ -19,6 +18,7 @@ async function viewSettings(
     const settings = await getSettings();
     if (!settings) {
         await FollowupMessage(interaction.token, {
+            flags: MessageFlags.IsComponentsV2,
             components: [
                 {
                     type: ComponentType.Container,
@@ -88,13 +88,14 @@ async function viewSettings(
     );
 
     await FollowupMessage(interaction.token, {
-            components: [
-                {
-                    type: ComponentType.Container,
-                    accent_color: IsleofDucks.colours.main,
-                    components: components
-                }
-            ]
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: components
+            }
+        ]
     });
 
     return NextResponse.json(
@@ -131,13 +132,13 @@ export default async function(
     // User sees the "[bot] is thinking..." message
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
-        data: { flags: MessageFlags.IsComponentsV2 },
     });
 
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     if (!interaction.data) {
         await FollowupMessage(interaction.token, {
+            flags: MessageFlags.IsComponentsV2,
             components: [
                 {
                     type: ComponentType.Container,
@@ -169,6 +170,7 @@ export default async function(
     const interactionData = interaction.data as APIChatInputApplicationCommandInteractionData;
     if (!interactionData.options) {
         await FollowupMessage(interaction.token, {
+            flags: MessageFlags.IsComponentsV2,
             components: [
                 {
                     type: ComponentType.Container,
@@ -226,6 +228,7 @@ export default async function(
     // }
 
     await FollowupMessage(interaction.token, {
+        flags: MessageFlags.IsComponentsV2,
         components: [
             {
                 type: ComponentType.Container,
