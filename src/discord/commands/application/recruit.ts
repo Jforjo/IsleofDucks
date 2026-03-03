@@ -114,8 +114,8 @@ export async function checkPlayer(
         banking: isBankingAPI(profile),
         vault: isPersonalVaultAPI(profiledata),
         skills: isSkillsAPI(profiledata),
-        duckReq: Number(await getSettingValue("duck_req") ?? "0"),
-        ducklingReq: Number(await getSettingValue("duckling_req") ?? "0"),
+        duckReq: Number(await getSettingValue("duck_req") ?? "0") * 100,
+        ducklingReq: Number(await getSettingValue("duckling_req") ?? "0") * 100,
         experience: totalExp,
     };
 }

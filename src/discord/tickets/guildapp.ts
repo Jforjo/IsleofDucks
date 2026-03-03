@@ -32,12 +32,12 @@ export default async function(
                         options: [
                             {
                                 label: "Isle of Ducks",
-                                description: duckReq ? `The current level requirement for Isle of Ducks is ${parseInt(duckReq) / 100}.` : undefined,
+                                description: duckReq ? `The current level requirement for Isle of Ducks is ${parseInt(duckReq)}.` : undefined,
                                 value: "duck",
                             },
                             {
                                 label: "Isle of Ducklings",
-                                description: ducklingReq ? `The current level requirement for Isle of Ducklings is ${parseInt(ducklingReq) / 100}.` : undefined,
+                                description: ducklingReq ? `The current level requirement for Isle of Ducklings is ${parseInt(ducklingReq)}.` : undefined,
                                 value: "duckling",
                             },
                         ]
