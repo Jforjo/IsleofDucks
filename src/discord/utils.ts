@@ -836,3 +836,90 @@ export async function getTotalScrambleBlacklists(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM scrambleblacklist`;
     return rows[0].count;
 }
+
+export interface GuessToWin {
+    winner: string | null;
+    hints: {
+        hint: string;
+        at: number;
+    }[];
+    prize: string | null;
+    answer: string;
+    guesses: number;
+    started: number;
+    ended: number | null;
+};
+export async function getGuessToWin(id: string): Promise<GuessToWin | undefined> {
+    const { rows } = await sql`
+        SELECT
+            winner,
+            hints,
+            prize,
+            answer,
+            guesses,
+            started,
+            ended
+        FROM guesstowin
+        WHERE id = ${id}
+    `;
+    if (rows.length === 0) return undefined;
+    return rows[0] as GuessToWin;
+}
+export async function getAllGuessToWin(): Promise<GuessToWin[]> {
+    const { rows } = await sql`
+        SELECT
+            winner,
+            hints,
+            prize,
+            answer,
+            guesses,
+            started,
+            ended
+        FROM guesstowin
+        ORDER BY started DESC
+    `;
+    return rows as GuessToWin[];
+}
+export async function createGuessToWin(answer: string, prize?: string | null): Promise<string> {
+    const { rows } = await sql`
+        INSERT INTO guesstowin (answer, prize)
+        VALUES (${answer}, ${prize || null})
+        RETURNING id
+    `;
+    return rows[0].id;
+}
+export async function endGuessToWin(id: string, winner?: string | null): Promise<void> {
+    await sql`
+        UPDATE guesstowin
+        SET ended = now(), winner = ${winner || null}
+        WHERE id = ${id}
+    `;
+}
+export async function addGuess(id: string): Promise<{
+    guesses: number;
+    hints: {
+        hint: string;
+        at: number;
+    }[];
+}> {
+    const { rows } = await sql`
+        UPDATE guesstowin
+        SET guesses = guesses + 1
+        WHERE id = ${id}
+        RETURNING guesses, hints
+    `;
+    return rows[0] as {
+        guesses: number;
+        hints: {
+            hint: string;
+            at: number;
+        }[];
+    };
+}
+export async function addHint(id: string, hint: string, at: number): Promise<void> {
+    await sql`
+        UPDATE guesstowin
+        SET hints = array_append(hints, json_build_object('hint', ${hint}, 'at', ${at}))
+        WHERE id = ${id}
+    `;
+}
