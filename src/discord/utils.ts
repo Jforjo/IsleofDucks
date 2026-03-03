@@ -205,6 +205,9 @@ export async function getBannedPlayer(uuid: string): Promise<
 //     return rows as { uuid: string; discord: string | null; reason: string }[];
 // }
 
+export async function createSetting(key: string, value: string): Promise<void> {
+    await sql`INSERT INTO settings (key, value) VALUES (${key}, ${value})`;
+}
 export async function getSettingValue(key: string): Promise<string | null> {
     const { rows } = await sql`SELECT value FROM settings WHERE key = ${key}`;
     if (rows.length == 0) return null;
