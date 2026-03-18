@@ -17,16 +17,6 @@ export async function GET(request: NextRequest): Promise<Response> {
             message: "Invalid API key"
         });
     }
-
-    const params = request.nextUrl.searchParams;
-    const uuid = params.get("uuid");
-
-    if (!uuid) {
-        return Response.json({
-            success: false,
-            message: "Missing UUID"
-        });
-    }
     
     const collectionData = await getHypixelCollections();
     if (!collectionData.success) {
@@ -45,6 +35,17 @@ export async function GET(request: NextRequest): Promise<Response> {
         acc[key] = name;
         return acc;
     }, {} as Record<string, string>);
+    
+    const params = request.nextUrl.searchParams;
+    const uuid = params.get("uuid");
+
+    if (!uuid) {
+        return Response.json({
+            success: true,
+            uuid: false,
+            collections: Object.values(collectionMap)
+        });
+    }
 
     const profiles = await getProfiles(uuid);
     if (!profiles.success || !profiles.profiles || profiles.profiles.length === 0) {
