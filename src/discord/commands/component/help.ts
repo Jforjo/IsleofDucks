@@ -526,7 +526,7 @@ export default async function(
                                 components: [
                                     {
                                         type: ComponentType.TextDisplay,
-                                        content: `# Help - Staff Command: ${command.data.name ?? option}`
+                                        content: `# Help - Staff Bridge Command: ${command.data.name ?? option}`
                                     }
                                 ],
                                 accessory: {
@@ -771,7 +771,7 @@ export default async function(
                                 components: [
                                     {
                                         type: ComponentType.TextDisplay,
-                                        content: `# Help - Admin Command: ${command.data.name ?? option}`
+                                        content: `# Help - Admin Bridge Command: ${command.data.name ?? option}`
                                     }
                                 ],
                                 accessory: {
