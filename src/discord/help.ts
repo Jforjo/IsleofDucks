@@ -15,16 +15,16 @@ export const HelpData = {
 }
 
 type Input = {
-  [key: string]: {
-    roles: typeof HelpData["commands"][keyof typeof HelpData["commands"]]["roles"];
-  };
+    [key: string]: {
+        roles: typeof HelpData["commands"][keyof typeof HelpData["commands"]]["roles"];
+    };
 };
 
 type Output = {
-  [role: string]: {
-    label: string;
-    value: string;
-}[];
+    [role: string]: {
+        label: string;
+        value: string;
+    }[];
 };
 
 export function invertRoles(input: Input): Output {
