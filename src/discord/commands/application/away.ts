@@ -407,14 +407,12 @@ export const CommandData = {
 } as const;
 export const RequiredRoles: Record<typeof CommandData["options"][number]["name"], string[]> = {
     apply: [
-        IsleofDucks.roles.staff,
-        IsleofDucks.roles.helper
+        IsleofDucks.roles.staff
     ],
     remove: [
         IsleofDucks.roles.admin
     ],
     view: [
-        IsleofDucks.roles.staff,
-        IsleofDucks.roles.helper
+        IsleofDucks.roles.staff
     ]
 }
