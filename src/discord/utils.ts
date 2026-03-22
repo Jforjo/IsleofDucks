@@ -28,6 +28,10 @@ export function arrayContainsAll(a: string[], b: string[]) {
     const setA = new Set(a);
     return b.every(item => setA.has(item));
 }
+export function arrayContainsAny(a: string[], b: string[]) {
+    const setA = new Set(a);
+    return b.some(item => setA.has(item));
+}
 
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
     return Array(Math.ceil(array.length / chunk_size))
