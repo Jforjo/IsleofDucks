@@ -73,7 +73,6 @@ export default async function(
 
     const isStaff = interaction.member.roles.includes(IsleofDucks.roles.staff);
     const isTrainee = interaction.member.roles.includes(IsleofDucks.roles.trainee);
-    const isHelper = interaction.member.roles.includes(IsleofDucks.roles.helper);
     const options = invertRoles(HelpData.commands);
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -93,13 +92,7 @@ export default async function(
                                     content: "# Help - General"
                                 }
                             ],
-                            accessory: isHelper ? {
-                                type: ComponentType.Button,
-                                style: isHelper ? ButtonStyle.Primary : ButtonStyle.Secondary,
-                                custom_id: `help-helper`,
-                                label: "Helper",
-                                disabled: !isHelper
-                            } : isTrainee ? {
+                            accessory: isTrainee ? {
                                 type: ComponentType.Button,
                                 style: isTrainee ? ButtonStyle.Primary : ButtonStyle.Secondary,
                                 custom_id: `help-trainee`,

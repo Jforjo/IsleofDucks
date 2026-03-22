@@ -1352,7 +1352,6 @@ const Roles = {
     service_management: "1021284854626779136",
     staff: "1004180925606805614",
     trainee: "992638050377142392",
-    helper: "1281079969258147870",
     verified: "1287098228067664004",
     duck_guild_member: "933258162931400764",
     duckling_guild_member: "998380474407846000",
@@ -1933,62 +1932,6 @@ const Surveys = [
         ]
     }
 ]
-// WIP. Currently not used anywhere.
-const Help = {
-    pages: [
-        {
-            id: "general",
-            name: "General",
-            description: "General information about the bot.",
-            data: {
-                description: [
-                    `Use \`/help [command]\` to get more information about a command.`,
-                    `You can also select the command using the box between the arrows below.`
-                ].join("\n"),
-            }
-        },
-        {
-            id: "away",
-            name: "Away",
-            description: "Information about the away command.",
-            data: {
-                description: [
-                    `This command is used to let admins know that you will be taking a leave of absence.`,
-                ].join("\n"),
-                fields: [
-                    {
-                        name: "`/away apply [reason] [leave] [return]`",
-                        value: [
-                            `Reason: The reason why you will be away.`,
-                            `Leave: The time you will leave as a timestamp taken from [here](<https://r.3v.fi/discord-timestamps/>).`,
-                            `Return: The time you will return as a timestamp taken from [here](<https://r.3v.fi/discord-timestamps/>).`,
-                            `(When getting the timestamp, use '123456' instead of '<t:123456:r>')`
-                        ].join("\n"),
-                    }
-                ]
-            }
-        }
-    ],
-    commands: [
-        'away',
-        'banlist',
-        'checkapi',
-        'embed',
-        'help',
-        // 'hyguessr',
-        'immune',
-        'ping',
-        'readmessage',
-        'recruit',
-        'superlatives',
-        'superlativedetailed',
-        'updatecommands',
-        'updatedatabase',
-        'updateroles',
-        'updatesuperlative',
-        'weekly'
-    ]
-}
 
 const RoleGroups = [
     {
@@ -2046,8 +1989,6 @@ export const IsleofDucks = {
     roles: Roles,
     roleGroups: RoleGroups,
     surveys: Surveys,
-    // WIP. Currently not used anywhere.
-    help: Help
 }
 
 export const CarrierRequirements = {
