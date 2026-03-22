@@ -46,32 +46,32 @@ export default async function(
         );
     }
 
-    if (!interaction.data) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                flags: MessageFlags.Ephemeral,
-                content: "Missing interaction data!"
-            }
-        });
-        return NextResponse.json(
-            { success: false, error: 'Missing interaction data' },
-            { status: 400 }
-        );
-    }
-    if (!interaction.data.options) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                flags: MessageFlags.Ephemeral,
-                content: "Missing interaction data options!"
-            }
-        });
-        return NextResponse.json(
-            { success: false, error: 'Missing interaction data options' },
-            { status: 400 }
-        );
-    }
+    // if (!interaction.data) {
+    //     await CreateInteractionResponse(interaction.id, interaction.token, {
+    //         type: InteractionResponseType.ChannelMessageWithSource,
+    //         data: {
+    //             flags: MessageFlags.Ephemeral,
+    //             content: "Missing interaction data!"
+    //         }
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: 'Missing interaction data' },
+    //         { status: 400 }
+    //     );
+    // }
+    // if (!interaction.data.options) {
+    //     await CreateInteractionResponse(interaction.id, interaction.token, {
+    //         type: InteractionResponseType.ChannelMessageWithSource,
+    //         data: {
+    //             flags: MessageFlags.Ephemeral,
+    //             content: "Missing interaction data options!"
+    //         }
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: 'Missing interaction data options' },
+    //         { status: 400 }
+    //     );
+    // }
 
     const isStaff = interaction.member.roles.includes(IsleofDucks.roles.staff);
     const isTrainee = interaction.member.roles.includes(IsleofDucks.roles.trainee);
