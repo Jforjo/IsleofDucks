@@ -37,7 +37,7 @@ export default async function(
 
     if (interaction.data.custom_id === "help" && interaction.data.component_type === ComponentType.Button) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
+            type: InteractionResponseType.UpdateMessage,
             data: {
                 flags: MessageFlags.IsComponentsV2,
                 components: [
@@ -117,7 +117,7 @@ export default async function(
             );
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
+            type: InteractionResponseType.UpdateMessage,
             data: {
                 flags: MessageFlags.IsComponentsV2,
                 components: [
@@ -187,7 +187,7 @@ export default async function(
             );
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
+            type: InteractionResponseType.UpdateMessage,
             data: {
                 flags: MessageFlags.IsComponentsV2,
                 components: [
@@ -258,7 +258,7 @@ export default async function(
             );
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
+            type: InteractionResponseType.UpdateMessage,
             data: {
                 flags: MessageFlags.IsComponentsV2,
                 components: [
@@ -347,7 +347,14 @@ export default async function(
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
             content.push("## Options");
             for (const option of command.data.options) {
-                if (option.type === ApplicationCommandOptionType.Subcommand || option.type === ApplicationCommandOptionType.SubcommandGroup) {
+                if (option.type === ApplicationCommandOptionType.Subcommand) {
+                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+                    if ("options" in option && option.options && option.options.length > 0) {
+                        for (const subOption of option.options) {
+                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+                        }
+                    }
+                } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
                     content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
                     if ("options" in option && option.options && option.options.length > 0) {
                         for (const subOption of option.options) {
@@ -364,7 +371,7 @@ export default async function(
             }
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
+            type: InteractionResponseType.UpdateMessage,
             data: {
                 flags: MessageFlags.IsComponentsV2,
                 components: [
@@ -398,7 +405,7 @@ export default async function(
                                     `${command.roles ? (
                                         Array.isArray(command.roles) ?
                                             command.roles.map(role => `* <@&${role}>`) :
-                                            Object.entries(command.roles).map(([ key, value ]) => `${key}:\n${value.map(role => `* <@&${role}>`)}`)
+                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`)}\n`)
                                     ): "None"}`,
                                 ].join('\n')
                             },
