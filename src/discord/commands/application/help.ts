@@ -1,7 +1,8 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { ConvertSnowflakeToDate, CreateInteractionResponse, IsleofDucks } from "../../discordUtils";
 import { NextResponse } from "next/server";
-import { HelpData, invertRoles } from "@/discord/help";
+import { invertRoles } from "@/discord/help";
+import { HelpData } from "@/discord/helpData";
 import { arrayContainsAny } from "@/discord/utils";
 
 export default async function(

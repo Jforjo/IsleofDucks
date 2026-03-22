@@ -1,5 +1,6 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
-import { HelpData, invertRoles } from "@/discord/help";
+import { invertRoles } from "@/discord/help";
+import { HelpData } from "@/discord/helpData";
 import { APIInteractionResponse, InteractionResponseType, MessageFlags, ButtonStyle, ComponentType, APIMessageComponentInteraction, ApplicationCommandOptionType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
