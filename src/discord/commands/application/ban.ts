@@ -109,3 +109,6 @@ export const CommandData = {
     description: "Ban someone.",
     type: ApplicationCommandType.ChatInput,
 }
+export const RequiredRoles: string[] = [
+    IsleofDucks.roles.staff
+];
