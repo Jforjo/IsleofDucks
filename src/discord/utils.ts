@@ -24,6 +24,11 @@ export function formatNumberWithCommas(num: number): string {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+export function arrayContainsAll(a: string[], b: string[]) {
+    const setA = new Set(a);
+    return b.every(item => setA.has(item));
+}
+
 export function arrayChunks<T>(array: T[], chunk_size: number): T[][] {
     return Array(Math.ceil(array.length / chunk_size))
         .fill(null)
