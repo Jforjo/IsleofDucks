@@ -427,15 +427,12 @@ export default async function(
                     content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
                     if ("options" in option && option.options && option.options.length > 0) {
                         for (const subOption of option.options) {
-                            if (subOption.type === ApplicationCommandOptionType.Subcommand) {
-                                content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
-                                if ("options" in option && option.options && option.options.length > 0) {
-                                    for (const subSubOption of option.options) {
-                                        content.push(`    * ${subSubOption.name}${subSubOption.description ? ` - ${subSubOption.description}` : ""}`);
-                                    }
+                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+                            if ("options" in option && option.options && option.options.length > 0) {
+                                for (const subSubOption of option.options) {
+                                    content.push(`    * ${subSubOption.name}${subSubOption.description ? ` - ${subSubOption.description}` : ""}`);
                                 }
-                            } else
-                                content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+                            }
                         }
                     }
                 } else

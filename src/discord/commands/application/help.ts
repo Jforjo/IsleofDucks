@@ -153,7 +153,7 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "help",
     description: "Displays the help menu.",
     type: ApplicationCommandType.ChatInput
