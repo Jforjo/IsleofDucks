@@ -1,7 +1,8 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { ConvertSnowflakeToDate, CreateInteractionResponse, IsleofDucks } from "../../discordUtils";
 import { NextResponse } from "next/server";
-import { HelpData, invertRoles } from "../../help";
+import { HelpData, invertRoles } from "@/discord/help";
+import { arrayContainsAny } from "@/discord/utils";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -29,19 +30,19 @@ export default async function(
         );
     }
     
-    // if (!arrayContainsAll(interaction.member.roles, RequiredRoles)) {
-    //     await CreateInteractionResponse(interaction.id, interaction.token, {
-    //         type: InteractionResponseType.ChannelMessageWithSource,
-    //         data: {
-    //             flags: MessageFlags.Ephemeral,
-    //             content: "You do not have permission to run this command!"
-    //         }
-    //     });
-    //     return NextResponse.json(
-    //         { success: false, error: "You do not have permission to run this command" },
-    //         { status: 403 }
-    //     );
-    // }
+    if (!arrayContainsAny(interaction.member.roles, RequiredRoles)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "You do not have permission to run this command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "You do not have permission to run this command" },
+            { status: 403 }
+        );
+    }
 
     if (!interaction.data) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
