@@ -489,7 +489,7 @@ export default async function(
                 { status: 403 }
             );
         }
-        if (!Object.keys(HelpData.commands).includes(option)) {
+        if (!Object.keys(HelpData.bridgeCommands).includes(option)) {
             await CreateInteractionResponse(interaction.id, interaction.token, {
                 type: InteractionResponseType.ChannelMessageWithSource,
                 data: {
@@ -734,7 +734,7 @@ export default async function(
                 { status: 403 }
             );
         }
-        if (!Object.keys(HelpData.commands).includes(option)) {
+        if (!Object.keys(HelpData.bridgeCommands).includes(option)) {
             await CreateInteractionResponse(interaction.id, interaction.token, {
                 type: InteractionResponseType.ChannelMessageWithSource,
                 data: {
