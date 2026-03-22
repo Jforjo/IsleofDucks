@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
-import { addAwayPlayer, removeAwayPlayer, getAwayPlayers, arrayContainsAll } from "@/discord/utils";
+import { addAwayPlayer, removeAwayPlayer, getAwayPlayers, arrayContainsAny } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
 async function applyAway(
@@ -27,7 +27,7 @@ async function applyAway(
             { status: 400 }
         );
     }
-    if (!arrayContainsAll(interaction.member.roles, RequiredRoles.apply)) {
+    if (!arrayContainsAny(interaction.member.roles, RequiredRoles.apply)) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
@@ -121,7 +121,7 @@ async function removeAway(
             { status: 400 }
         );
     }
-    if (!arrayContainsAll(interaction.member.roles, RequiredRoles.remove)) {
+    if (!arrayContainsAny(interaction.member.roles, RequiredRoles.remove)) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
@@ -174,7 +174,7 @@ async function viewAway(
             { status: 400 }
         );
     }
-    if (!arrayContainsAll(interaction.member.roles, RequiredRoles.view)) {
+    if (!arrayContainsAny(interaction.member.roles, RequiredRoles.view)) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
