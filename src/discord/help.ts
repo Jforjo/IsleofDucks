@@ -36,7 +36,7 @@ export function invertRoles(input: Input): Output {
         // Normalize roles into a flat array of strings
         const flatRoles = Array.isArray(roles)
             ? roles
-            : [...roles.apply, ...roles.remove, ...roles.view];
+            : Object.values(roles).flat();
 
         for (const role of flatRoles) {
             if (!result[role]) {
