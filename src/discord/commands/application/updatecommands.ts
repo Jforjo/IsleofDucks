@@ -26,7 +26,7 @@ import { CommandData as Bridge } from "./bridge";
 import { CommandData as Leaderboard } from "./leaderboard";
 import { CommandData as Ban } from "./ban";
 import { CommandData as Settings } from "./settings";
-import { CommandData as Help } from "./help";
+import { CommandData as Help } from "@/discord/commandDatas/help";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { invertRoles } from "@/discord/help";
 import { HelpData } from "@/discord/helpData";
 import { arrayContainsAny } from "@/discord/utils";
+import { RequiredRoles } from "@/discord/commandDatas/help";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -148,11 +149,3 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData = {
-    name: "help",
-    description: "Displays the help menu.",
-    type: ApplicationCommandType.ChatInput
-}
-export const RequiredRoles: string[] = [
-    IsleofDucks.roles.verified
-];

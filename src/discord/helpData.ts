@@ -1,4 +1,4 @@
-import { CommandData as HelpCommandData, RequiredRoles as HelpRequiredRoles } from "./commands/application/help";
+import { CommandData as HelpCommandData, RequiredRoles as HelpRequiredRoles } from "./commandDatas/help";
 import { CommandData as AwayCommandData, RequiredRoles as AwayRequiredRoles } from "./commands/application/away";
 
 export const HelpData = {
