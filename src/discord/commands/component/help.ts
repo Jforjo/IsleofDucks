@@ -404,8 +404,8 @@ export default async function(
                                     `### Required Roles:`,
                                     `${command.roles ? (
                                         Array.isArray(command.roles) ?
-                                            command.roles.map(role => `* <@&${role}>`) :
-                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}\n`)
+                                            command.roles.map(role => `* <@&${role}>`).join('\n') :
+                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}`).join('\n')
                                     ): "None"}`,
                                 ].join('\n')
                             },
