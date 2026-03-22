@@ -288,7 +288,7 @@ export default async function(
         duck: { type: ComponentType.Button; custom_id: string; label: string; style: ButtonStyle.Primary; disabled?: boolean; }[],
         duckling: { type: ComponentType.Button; custom_id: string; label: string; style: ButtonStyle.Primary; disabled?: boolean; }[]
     } | undefined = !(
-        interaction.member.roles.includes(IsleofDucks.roles.staff) || interaction.member.roles.includes(IsleofDucks.roles.helper)
+        interaction.member.roles.includes(IsleofDucks.roles.staff)
     ) ? undefined : {
         duck: [
             {
