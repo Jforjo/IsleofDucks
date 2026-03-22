@@ -27,7 +27,7 @@ export default async function Command(
             { status: 400 }
         );
     }
-    if (!( interaction.member.roles.includes(IsleofDucks.roles.staff) || interaction.member.roles.includes(IsleofDucks.roles.helper) )) {
+    if (!interaction.member.roles.includes(IsleofDucks.roles.staff)) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
