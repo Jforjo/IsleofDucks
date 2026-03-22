@@ -26,6 +26,7 @@ import { CommandData as Bridge } from "./bridge";
 import { CommandData as Leaderboard } from "./leaderboard";
 import { CommandData as Ban } from "./ban";
 import { CommandData as Settings } from "./settings";
+import { CommandData as Help } from "./help";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -88,7 +89,8 @@ export default async function(
         Bridge,
         Leaderboard,
         Ban,
-        Settings
+        Settings,
+        Help
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
