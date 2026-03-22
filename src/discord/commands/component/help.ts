@@ -343,9 +343,9 @@ export default async function(
         }
         const command = HelpData.commands[option as keyof typeof HelpData.commands];
         const content: string[] = [];
-        if ("description" in command.data && command.data.description) content.push(`## Description\n${command.data.description}`);
+        if ("description" in command.data && command.data.description) content.push(`### Description\n${command.data.description}`);
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
-            content.push("## Options");
+            content.push("### Options");
             for (const option of command.data.options) {
                 if (option.type === ApplicationCommandOptionType.Subcommand) {
                     content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
@@ -401,11 +401,11 @@ export default async function(
                             {
                                 type: ComponentType.TextDisplay,
                                 content: [
-                                    `## Required Roles:`,
+                                    `### Required Roles:`,
                                     `${command.roles ? (
                                         Array.isArray(command.roles) ?
                                             command.roles.map(role => `* <@&${role}>`) :
-                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`)}\n`)
+                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}\n`)
                                     ): "None"}`,
                                 ].join('\n')
                             },
