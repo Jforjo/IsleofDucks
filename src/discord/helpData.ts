@@ -1,6 +1,7 @@
 import { CommandData as HelpCommandData, RequiredRoles as HelpRequiredRoles } from "./commandDatas/help";
 import { CommandData as AwayCommandData, RequiredRoles as AwayRequiredRoles } from "./commands/application/away";
 import { CommandData as BanCommandData, RequiredRoles as BanRequiredRoles } from "./commands/application/ban";
+import { CommandData as BanListCommandData, RequiredRoles as BanListRequiredRoles } from "./commands/application/banlist";
 import { IsleofDucks } from "./discordUtils";
 
 export const HelpData = {
@@ -16,6 +17,10 @@ export const HelpData = {
         ban: {
             data: BanCommandData,
             roles: BanRequiredRoles
+        },
+        banlist: {
+            data: BanListCommandData,
+            roles: BanListRequiredRoles
         }
     },
     bridgeCommands: {

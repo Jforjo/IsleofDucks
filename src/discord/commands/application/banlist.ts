@@ -1,122 +1,122 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, BanGuildMember, SendMessage, RemoveBanGuildMember } from "@/discord/discordUtils";
-import { getBannedPlayers, isBannedPlayer, addBannedPlayer, removeBannedPlayer, getBannedPlayersCount, getBannedPlayer, searchBannedPlayers, updateBannedPlayerDiscord } from "@/discord/utils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, BanGuildMember, RemoveBanGuildMember } from "@/discord/discordUtils";
+import { getBannedPlayers, removeBannedPlayer, getBannedPlayersCount, getBannedPlayer, searchBannedPlayers, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
-async function addBanned(
-    interaction: APIChatInputApplicationCommandInteraction,
-    name: string,
-    discord: string | null,
-    reason: string
-): Promise<
-    NextResponse<
-        {
-            success: boolean;
-            error?: string;
-        } | APIInteractionResponse
-    >
-> {
-    const timestamp = ConvertSnowflakeToDate(interaction.id);
+// async function addBanned(
+//     interaction: APIChatInputApplicationCommandInteraction,
+//     name: string,
+//     discord: string | null,
+//     reason: string
+// ): Promise<
+//     NextResponse<
+//         {
+//             success: boolean;
+//             error?: string;
+//         } | APIInteractionResponse
+//     >
+// > {
+//     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    if (!interaction.member) {
-        await FollowupMessage(interaction.token, {
-            content: "Could not find who ran the command!"
-        });
-        return NextResponse.json(
-            { success: false, error: "Could not find who ran the command" },
-            { status: 400 }
-        );
-    }
-    if (!(
-        interaction.member.roles.includes(IsleofDucks.roles.admin) ||
-        interaction.member.roles.includes(IsleofDucks.roles.mod_duck) ||
-        interaction.member.roles.includes(IsleofDucks.roles.mod_duckling)
-    )) {
-        await FollowupMessage(interaction.token, {
-            content: "You don't have permission to use this command!"
-        });
-        return NextResponse.json(
-            { success: false, error: "You don't have permission to use this command" },
-            { status: 403 }
-        );
-    }
+//     if (!interaction.member) {
+//         await FollowupMessage(interaction.token, {
+//             content: "Could not find who ran the command!"
+//         });
+//         return NextResponse.json(
+//             { success: false, error: "Could not find who ran the command" },
+//             { status: 400 }
+//         );
+//     }
+//     if (!(
+//         interaction.member.roles.includes(IsleofDucks.roles.admin) ||
+//         interaction.member.roles.includes(IsleofDucks.roles.mod_duck) ||
+//         interaction.member.roles.includes(IsleofDucks.roles.mod_duckling)
+//     )) {
+//         await FollowupMessage(interaction.token, {
+//             content: "You don't have permission to use this command!"
+//         });
+//         return NextResponse.json(
+//             { success: false, error: "You don't have permission to use this command" },
+//             { status: 403 }
+//         );
+//     }
 
-    const uuidResponse = await getUsernameOrUUID(name);
-    if (!uuidResponse.success) {
-        await FollowupMessage(interaction.token, {
-            content: undefined,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: uuidResponse.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ]
-        });
-        return NextResponse.json(
-            { success: false, error: uuidResponse.message },
-            { status: 404 }
-        );
-    }
-    const uuid = uuidResponse.uuid;
+//     const uuidResponse = await getUsernameOrUUID(name);
+//     if (!uuidResponse.success) {
+//         await FollowupMessage(interaction.token, {
+//             content: undefined,
+//             embeds: [
+//                 {
+//                     title: "Something went wrong!",
+//                     description: uuidResponse.message,
+//                     color: 0xB00020,
+//                     footer: {
+//                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+//                     },
+//                     timestamp: new Date().toISOString()
+//                 }
+//             ]
+//         });
+//         return NextResponse.json(
+//             { success: false, error: uuidResponse.message },
+//             { status: 404 }
+//         );
+//     }
+//     const uuid = uuidResponse.uuid;
 
-    const banned = await isBannedPlayer(uuid);
-    if (banned) {
-        await FollowupMessage(interaction.token, {
-            content: undefined,
-            embeds: [
-                {
-                    title: `\`${uuidResponse.name}\` is already on my ban list!`,
-                    color: 0xFB9B00,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ]
-        });
-        return NextResponse.json(
-            { success: false, error: "This player is already on my ban list" },
-            { status: 400 }
-        );
-    }
+//     const banned = await isBannedPlayer(uuid);
+//     if (banned) {
+//         await FollowupMessage(interaction.token, {
+//             content: undefined,
+//             embeds: [
+//                 {
+//                     title: `\`${uuidResponse.name}\` is already on my ban list!`,
+//                     color: 0xFB9B00,
+//                     footer: {
+//                         text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+//                     },
+//                     timestamp: new Date().toISOString()
+//                 }
+//             ]
+//         });
+//         return NextResponse.json(
+//             { success: false, error: "This player is already on my ban list" },
+//             { status: 400 }
+//         );
+//     }
 
-    await addBannedPlayer(uuid, discord ?? null, reason);
+//     await addBannedPlayer(uuid, discord ?? null, reason);
 
-    if (discord) await BanGuildMember(IsleofDucks.serverID, discord, reason);
+//     if (discord) await BanGuildMember(IsleofDucks.serverID, discord, reason);
 
-    await SendMessage(IsleofDucks.channels.duckoc, {
-        content: `kick ${uuidResponse.name} ${reason}`
-    });
-    await SendMessage(IsleofDucks.channels.ducklingoc, {
-        content: `kick ${uuidResponse.name} ${reason}`
-    });
+//     await SendMessage(IsleofDucks.channels.duckoc, {
+//         content: `kick ${uuidResponse.name} ${reason}`
+//     });
+//     await SendMessage(IsleofDucks.channels.ducklingoc, {
+//         content: `kick ${uuidResponse.name} ${reason}`
+//     });
 
-    await FollowupMessage(interaction.token, {
-        content: null,
-        embeds: [
-            {
-                title: `\`${uuidResponse.name}\` was added to my ban list!`,
-                description: `Reason: ${reason}`,
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ]
-    });
+//     await FollowupMessage(interaction.token, {
+//         content: null,
+//         embeds: [
+//             {
+//                 title: `\`${uuidResponse.name}\` was added to my ban list!`,
+//                 description: `Reason: ${reason}`,
+//                 color: 0xFB9B00,
+//                 footer: {
+//                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+//                 },
+//                 timestamp: new Date().toISOString()
+//             }
+//         ]
+//     });
 
-    return NextResponse.json(
-        { success: true },
-        { status: 200 }
-    );
-}
+//     return NextResponse.json(
+//         { success: true },
+//         { status: 200 }
+//     );
+// }
 
 async function removeBanned(
     interaction: APIChatInputApplicationCommandInteraction,
@@ -722,7 +722,14 @@ export default async function(
     }));
 
     if (options.add) {
-        return await addBanned(interaction, options.add.name, options.add.discord, options.add.reason);
+        // return await addBanned(interaction, options.add.name, options.add.discord, options.add.reason);
+        await FollowupMessage(interaction.token, {
+            content: "Please use the `/ban` command."
+        });
+        return NextResponse.json(
+            { success: true, error: "Please use the `/ban` command." },
+            { status: 200 }
+        );
     } else if (options.remove) {
         return await removeBanned(interaction, options.remove.name);
     } else if (options.view) {
@@ -846,5 +853,31 @@ export const CommandData = {
                 }
             ]
         }
+    ]
+} as const;
+export const RequiredRoles: Record<typeof CommandData["options"][number]["name"], string[]> = {
+    view: [
+        IsleofDucks.roles.verified
+    ],
+    add: [
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.admin
+    ],
+    remove: [
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.admin
+    ],
+    check: [
+        IsleofDucks.roles.verified
+    ],
+    search: [
+        IsleofDucks.roles.verified
+    ],
+    adddiscord: [
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.admin
     ]
 }
