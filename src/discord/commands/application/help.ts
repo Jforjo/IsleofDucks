@@ -115,7 +115,7 @@ export default async function(
                                 `https://discord.com/channels/823061629812867113/1320463957273739274 | Learn about our SkyBlock guilds.`,
                                 ``,
                                 `Use the select menu below to view information about the many commands this bot has to offer. Alternatively, you can use \`/help command:[command name]\`.`
-                            ].join('/n')
+                            ].join('\n')
                         },
                         {
                             type: ComponentType.Separator

@@ -74,7 +74,7 @@ export default async function(
                                     `https://discord.com/channels/823061629812867113/1320463957273739274 | Learn about our SkyBlock guilds.`,
                                     ``,
                                     `Use the select menu below to view information about the many commands this bot has to offer. Alternatively, you can use \`/help command:[command name]\`.`
-                                ].join('/n')
+                                ].join('\n')
                             },
                             {
                                 type: ComponentType.Separator
@@ -144,7 +144,7 @@ export default async function(
                                 type: ComponentType.TextDisplay,
                                 content: [
                                     `Trainee stuff goes here.`,
-                                ].join('/n')
+                                ].join('\n')
                             },
                             {
                                 type: ComponentType.Separator
@@ -215,7 +215,7 @@ export default async function(
                                 type: ComponentType.TextDisplay,
                                 content: [
                                     `Staffy stuff goes here.`,
-                                ].join('/n')
+                                ].join('\n')
                             },
                             {
                                 type: ComponentType.Separator
@@ -285,7 +285,7 @@ export default async function(
                                 type: ComponentType.TextDisplay,
                                 content: [
                                     `Admin stuff goes here.`,
-                                ].join('/n')
+                                ].join('\n')
                             },
                             {
                                 type: ComponentType.Separator
@@ -389,7 +389,7 @@ export default async function(
                             },
                             {
                                 type: ComponentType.TextDisplay,
-                                content: content.join('/n')
+                                content: content.join('\n')
                             },
                             {
                                 type: ComponentType.TextDisplay,
@@ -400,7 +400,7 @@ export default async function(
                                             command.roles.map(role => `* <@&${role}>`) :
                                             Object.entries(command.roles).map(([ key, value ]) => `${key}:\n${value.map(role => `* <@&${role}>`)}`)
                                     ): "None"}`,
-                                ].join('/n')
+                                ].join('\n')
                             },
                             {
                                 type: ComponentType.Separator
