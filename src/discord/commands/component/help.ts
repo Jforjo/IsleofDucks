@@ -457,6 +457,7 @@ export default async function(
                                     {
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-menu`,
+                                        placeholder: "Select an application command",
                                         options: options[IsleofDucks.roles.staff],
                                         disabled: options[IsleofDucks.roles.staff].length === 0
                                     }
@@ -568,6 +569,7 @@ export default async function(
                                     {
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-menu`,
+                                        placeholder: "Select an application command",
                                         options: options[IsleofDucks.roles.staff],
                                         disabled: options[IsleofDucks.roles.staff].length === 0
                                     }
@@ -702,6 +704,7 @@ export default async function(
                                     {
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
+                                        placeholder: "Select an application command",
                                         options: options[IsleofDucks.roles.admin],
                                         disabled: options[IsleofDucks.roles.admin].length === 0
                                     }
@@ -813,6 +816,7 @@ export default async function(
                                     {
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
+                                        placeholder: "Select an application command",
                                         options: options[IsleofDucks.roles.admin],
                                         disabled: options[IsleofDucks.roles.admin].length === 0
                                     }
