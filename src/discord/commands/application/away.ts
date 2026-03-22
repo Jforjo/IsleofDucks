@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
-import { addAwayPlayer, removeAwayPlayer, getAwayPlayers } from "@/discord/utils";
+import { addAwayPlayer, removeAwayPlayer, getAwayPlayers, arrayContainsAll } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
 async function applyAway(
@@ -27,10 +27,7 @@ async function applyAway(
             { status: 400 }
         );
     }
-    if (!(
-        interaction.member.roles.includes(IsleofDucks.roles.staff) ||
-        interaction.member.roles.includes(IsleofDucks.roles.helper)
-    )) {
+    if (!arrayContainsAll(interaction.member.roles, RequiredRoles.apply)) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
@@ -124,7 +121,7 @@ async function removeAway(
             { status: 400 }
         );
     }
-    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+    if (!arrayContainsAll(interaction.member.roles, RequiredRoles.remove)) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
@@ -177,10 +174,7 @@ async function viewAway(
             { status: 400 }
         );
     }
-    if (!(
-        interaction.member.roles.includes(IsleofDucks.roles.staff) ||
-        interaction.member.roles.includes(IsleofDucks.roles.helper)
-    )) {
+    if (!arrayContainsAll(interaction.member.roles, RequiredRoles.view)) {
         await FollowupMessage(interaction.token, {
             content: "You don't have permission to use this command!"
         });
@@ -409,5 +403,18 @@ export const CommandData = {
             description: "View all users who have applied for leave.",
             type: ApplicationCommandOptionType.Subcommand
         },
+    ]
+} as const;
+export const RequiredRoles: Record<typeof CommandData["options"][number]["name"], string[]> = {
+    apply: [
+        IsleofDucks.roles.staff,
+        IsleofDucks.roles.helper
+    ],
+    remove: [
+        IsleofDucks.roles.admin
+    ],
+    view: [
+        IsleofDucks.roles.staff,
+        IsleofDucks.roles.helper
     ]
 }
