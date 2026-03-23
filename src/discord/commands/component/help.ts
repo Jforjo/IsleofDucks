@@ -31,6 +31,7 @@ export default async function(
     }
 
     const isAdmin = interaction.member.roles.includes(IsleofDucks.roles.admin);
+    const isMod = interaction.member.roles.includes(IsleofDucks.roles.mod_duck) || interaction.member.roles.includes(IsleofDucks.roles.mod_duckling);
     const isStaff = interaction.member.roles.includes(IsleofDucks.roles.staff);
     const isTrainee = interaction.member.roles.includes(IsleofDucks.roles.trainee);
     const options = invertRoles(HelpData.commands);
@@ -206,10 +207,10 @@ export default async function(
                                 ],
                                 accessory: {
                                     type: ComponentType.Button,
-                                    style: isAdmin ? ButtonStyle.Primary : ButtonStyle.Secondary,
-                                    custom_id: `help-admin`,
-                                    label: "Admin",
-                                    disabled: !isAdmin
+                                    style: isMod ? ButtonStyle.Primary : ButtonStyle.Secondary,
+                                    custom_id: `help-mod`,
+                                    label: "Mod",
+                                    disabled: !isMod
                                 }
                             },
                             {
@@ -242,6 +243,90 @@ export default async function(
                                         placeholder: "Select an application command",
                                         options: options[IsleofDucks.roles.staff],
                                         disabled: options[IsleofDucks.roles.staff].length === 0
+                                    }
+                                ]
+                            },
+                            {
+                                type: ComponentType.Separator
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                            }
+                        ]
+                    }
+                ]
+            }
+        });
+    } else if (interaction.data.custom_id === "help-mod" && interaction.data.component_type === ComponentType.Button) {
+        if (!isStaff) {
+            await CreateInteractionResponse(interaction.id, interaction.token, {
+                type: InteractionResponseType.ChannelMessageWithSource,
+                data: {
+                    flags: MessageFlags.Ephemeral,
+                    content: "You do not have permission to run this command!"
+                }
+            });
+            return NextResponse.json(
+                { success: false, error: "You do not have permission to run this command" },
+                { status: 403 }
+            );
+        }
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.UpdateMessage,
+            data: {
+                flags: MessageFlags.IsComponentsV2,
+                components: [
+                    {
+                        type: ComponentType.Container,
+                        accent_color: IsleofDucks.colours.main,
+                        components: [
+                            {
+                                type: ComponentType.Section,
+                                components: [
+                                    {
+                                        type: ComponentType.TextDisplay,
+                                        content: "# Help - Mod General"
+                                    }
+                                ],
+                                accessory: {
+                                    type: ComponentType.Button,
+                                    style: isAdmin ? ButtonStyle.Primary : ButtonStyle.Secondary,
+                                    custom_id: `help-admin`,
+                                    label: "Admin",
+                                    disabled: !isAdmin
+                                }
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: [
+                                    `Mod stuff goes here.`,
+                                ].join('\n')
+                            },
+                            {
+                                type: ComponentType.Separator
+                            },
+                            {
+                                type: ComponentType.ActionRow,
+                                components: [
+                                    {
+                                        type: ComponentType.StringSelect,
+                                        custom_id: `help-mod-bridge-menu`,
+                                        placeholder: "Select a bridge command",
+                                        options: bridgeCommandOptions[IsleofDucks.roles.mod_duck],
+                                        disabled: bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0
+                                    }
+                                ]
+                            },
+                            {
+                                type: ComponentType.ActionRow,
+                                components: [
+                                    {
+                                        type: ComponentType.StringSelect,
+                                        custom_id: `help-mod-menu`,
+                                        placeholder: "Select an application command",
+                                        options: options[IsleofDucks.roles.mod_duck],
+                                        disabled: options[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
@@ -572,6 +657,253 @@ export default async function(
                                         placeholder: "Select an application command",
                                         options: options[IsleofDucks.roles.staff],
                                         disabled: options[IsleofDucks.roles.staff].length === 0
+                                    }
+                                ]
+                            },
+                            {
+                                type: ComponentType.Separator
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                            }
+                        ]
+                    }
+                ]
+            }
+        });
+    } else if (interaction.data.custom_id === "help-mod-menu" && interaction.data.component_type === ComponentType.StringSelect) {
+        const option = interaction.data.values[0];
+        if (!option) {
+            await CreateInteractionResponse(interaction.id, interaction.token, {
+                type: InteractionResponseType.ChannelMessageWithSource,
+                data: {
+                    flags: MessageFlags.Ephemeral,
+                    content: "You did not select an option!"
+                }
+            });
+            return NextResponse.json(
+                { success: false, error: "You did not select an option" },
+                { status: 403 }
+            );
+        }
+        if (!Object.keys(HelpData.commands).includes(option)) {
+            await CreateInteractionResponse(interaction.id, interaction.token, {
+                type: InteractionResponseType.ChannelMessageWithSource,
+                data: {
+                    flags: MessageFlags.Ephemeral,
+                    content: "Invalid option!"
+                }
+            });
+            return NextResponse.json(
+                { success: false, error: "Invalid option" },
+                { status: 403 }
+            );
+        }
+        const command = HelpData.commands[option as keyof typeof HelpData.commands];
+        const content: string[] = [];
+        if ("description" in command.data && command.data.description) content.push(`### Description\n${command.data.description}`);
+        if ("options" in command.data && command.data.options && command.data.options.length > 0) {
+            content.push("### Options");
+            for (const option of command.data.options) {
+                if (option.type === ApplicationCommandOptionType.Subcommand) {
+                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+                    if ("options" in option && option.options && option.options.length > 0) {
+                        for (const subOption of option.options) {
+                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+                        }
+                    }
+                } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
+                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+                    if ("options" in option && option.options && option.options.length > 0) {
+                        for (const subOption of option.options) {
+                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+                            if ("options" in option && option.options && option.options.length > 0) {
+                                for (const subSubOption of option.options) {
+                                    content.push(`    * ${subSubOption.name}${subSubOption.description ? ` - ${subSubOption.description}` : ""}`);
+                                }
+                            }
+                        }
+                    }
+                } else
+                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+            }
+        }
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.UpdateMessage,
+            data: {
+                flags: MessageFlags.IsComponentsV2,
+                components: [
+                    {
+                        type: ComponentType.Container,
+                        accent_color: IsleofDucks.colours.main,
+                        components: [
+                            {
+                                type: ComponentType.Section,
+                                components: [
+                                    {
+                                        type: ComponentType.TextDisplay,
+                                        content: `# Help - Mod Command: ${command.data.name ?? option}`
+                                    }
+                                ],
+                                accessory: {
+                                    type: ComponentType.Button,
+                                    style: ButtonStyle.Primary,
+                                    custom_id: `help`,
+                                    label: "Back",
+                                }
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: content.join('\n')
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: [
+                                    `### Required Roles:`,
+                                    `${command.roles ? (
+                                        Array.isArray(command.roles) ?
+                                            command.roles.map(role => `* <@&${role}>`).join('\n') :
+                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}`).join('\n')
+                                    ): "None"}`,
+                                ].join('\n')
+                            },
+                            {
+                                type: ComponentType.Separator
+                            },
+                            {
+                                type: ComponentType.ActionRow,
+                                components: [
+                                    {
+                                        type: ComponentType.StringSelect,
+                                        custom_id: `help-mod-bridge-menu`,
+                                        placeholder: "Select a bridge command",
+                                        options: bridgeCommandOptions[IsleofDucks.roles.mod_duck],
+                                        disabled: bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0
+                                    }
+                                ]
+                            },
+                            {
+                                type: ComponentType.ActionRow,
+                                components: [
+                                    {
+                                        type: ComponentType.StringSelect,
+                                        custom_id: `help-mod-menu`,
+                                        placeholder: "Select an application command",
+                                        options: options[IsleofDucks.roles.mod_duck],
+                                        disabled: options[IsleofDucks.roles.mod_duck].length === 0
+                                    }
+                                ]
+                            },
+                            {
+                                type: ComponentType.Separator
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                            }
+                        ]
+                    }
+                ]
+            }
+        });
+    } else if (interaction.data.custom_id === "help-mod-bridge-menu" && interaction.data.component_type === ComponentType.StringSelect) {
+        const option = interaction.data.values[0];
+        if (!option) {
+            await CreateInteractionResponse(interaction.id, interaction.token, {
+                type: InteractionResponseType.ChannelMessageWithSource,
+                data: {
+                    flags: MessageFlags.Ephemeral,
+                    content: "You did not select an option!"
+                }
+            });
+            return NextResponse.json(
+                { success: false, error: "You did not select an option" },
+                { status: 403 }
+            );
+        }
+        if (!Object.keys(HelpData.bridgeCommands).includes(option)) {
+            await CreateInteractionResponse(interaction.id, interaction.token, {
+                type: InteractionResponseType.ChannelMessageWithSource,
+                data: {
+                    flags: MessageFlags.Ephemeral,
+                    content: "Invalid option!"
+                }
+            });
+            return NextResponse.json(
+                { success: false, error: "Invalid option" },
+                { status: 403 }
+            );
+        }
+        const command = HelpData.bridgeCommands[option as keyof typeof HelpData.bridgeCommands];
+        const content: string[] = [];
+        if ("description" in command.data && command.data.description) content.push(`### Description\n${command.data.description}`);
+        if ("usage" in command.data && command.data.usage) content.push(`### Usage\n${command.data.name} ${command.data.usage}`);
+        if ("options" in command.data && command.data.options && command.data.options.length > 0) {
+            content.push("### Options");
+            for (const option of command.data.options) {
+                content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+            }
+        }
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.UpdateMessage,
+            data: {
+                flags: MessageFlags.IsComponentsV2,
+                components: [
+                    {
+                        type: ComponentType.Container,
+                        accent_color: IsleofDucks.colours.main,
+                        components: [
+                            {
+                                type: ComponentType.Section,
+                                components: [
+                                    {
+                                        type: ComponentType.TextDisplay,
+                                        content: `# Help - Mod Bridge Command: ${command.data.name ?? option}`
+                                    }
+                                ],
+                                accessory: {
+                                    type: ComponentType.Button,
+                                    style: ButtonStyle.Primary,
+                                    custom_id: `help`,
+                                    label: "Back",
+                                }
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: content.join('\n')
+                            },
+                            {
+                                type: ComponentType.TextDisplay,
+                                content: [
+                                    `### Required Roles:`,
+                                    `${command.roles ? command.roles.map(role => `* <@&${role}>`).join('\n') : "None"}`,
+                                ].join('\n')
+                            },
+                            {
+                                type: ComponentType.Separator
+                            },
+                            {
+                                type: ComponentType.ActionRow,
+                                components: [
+                                    {
+                                        type: ComponentType.StringSelect,
+                                        custom_id: `help-mod-bridge-menu`,
+                                        placeholder: "Select a bridge command",
+                                        options: bridgeCommandOptions[IsleofDucks.roles.mod_duck],
+                                        disabled: bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0
+                                    }
+                                ]
+                            },
+                            {
+                                type: ComponentType.ActionRow,
+                                components: [
+                                    {
+                                        type: ComponentType.StringSelect,
+                                        custom_id: `help-mod-menu`,
+                                        placeholder: "Select an application command",
+                                        options: options[IsleofDucks.roles.mod_duck],
+                                        disabled: options[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
