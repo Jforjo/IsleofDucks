@@ -6,6 +6,6 @@ export const CommandData = {
     description: "Displays the help menu.",
     type: ApplicationCommandType.ChatInput
 }
-export const RequiredRoles: string[] = [
+export const RequiredRoles = [
     IsleofDucks.roles.verified
 ];
