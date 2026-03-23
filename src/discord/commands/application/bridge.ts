@@ -1234,4 +1234,43 @@ export const CommandData = {
             ]
         }
     ]
+} as const;
+export const RequiredRoles: Record<typeof CommandData["options"][number]["name"], Record<typeof CommandData["options"][number]["options"][number]["name"], string[]>> = {
+    filter: {
+        add: [
+            IsleofDucks.roles.admin
+        ],
+        remove: [
+            IsleofDucks.roles.admin
+        ],
+        view: [
+            IsleofDucks.roles.admin,
+            IsleofDucks.roles.mod_duck,
+            IsleofDucks.roles.mod_duckling
+        ]
+    },
+    emoji: {
+        add: [
+            IsleofDucks.roles.admin
+        ],
+        remove: [
+            IsleofDucks.roles.admin
+        ],
+        view: [
+            IsleofDucks.roles.admin,
+            IsleofDucks.roles.mod_duck,
+            IsleofDucks.roles.mod_duckling
+        ]
+    },
+    scramble: {
+        add: [
+            IsleofDucks.roles.admin
+        ],
+        remove: [
+            IsleofDucks.roles.admin
+        ],
+        view: [
+            IsleofDucks.roles.verified
+        ]
+    }
 }
