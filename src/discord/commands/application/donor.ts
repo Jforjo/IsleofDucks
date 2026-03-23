@@ -756,4 +756,24 @@ export const CommandData = {
             type: ApplicationCommandOptionType.Subcommand
         }
     ]
+} as const;
+export const RequiredRoles: Record<typeof CommandData["options"][number]["name"], string[]> = {
+    add: [
+        IsleofDucks.roles.trainee,
+        IsleofDucks.roles.mod_duck,
+        IsleofDucks.roles.mod_duckling,
+        IsleofDucks.roles.admin
+    ],
+    remove: [
+        IsleofDucks.roles.admin
+    ],
+    view: [
+        IsleofDucks.roles.verified
+    ],
+    check: [
+        IsleofDucks.roles.verified
+    ],
+    update: [
+        IsleofDucks.roles.admin
+    ]
 }
