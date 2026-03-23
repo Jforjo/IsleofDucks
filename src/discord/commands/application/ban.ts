@@ -1,6 +1,7 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
 import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
+import { arrayContainsAny } from "@/discord/utils";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -25,11 +26,7 @@ export default async function(
             { status: 400 }
         );
     }
-    if (!(
-        interaction.member.roles.includes(IsleofDucks.roles.admin) ||
-        interaction.member.roles.includes(IsleofDucks.roles.mod_duck) ||
-        interaction.member.roles.includes(IsleofDucks.roles.mod_duckling)
-    )) {
+    if (!arrayContainsAny(interaction.member.roles, RequiredRoles)) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
@@ -110,5 +107,7 @@ export const CommandData = {
     type: ApplicationCommandType.ChatInput,
 }
 export const RequiredRoles: string[] = [
-    IsleofDucks.roles.staff
+    IsleofDucks.roles.admin,
+    IsleofDucks.roles.mod_duck,
+    IsleofDucks.roles.mod_duckling
 ];
