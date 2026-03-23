@@ -321,7 +321,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] ? uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 : true
                                     }
                                 ]
@@ -333,7 +333,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.mod_duck] ? uniqueOptions[IsleofDucks.roles.mod_duck].length === 0 : true
                                     }
                                 ]
@@ -404,7 +404,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] ? uniqueBridgeCommandOptions[IsleofDucks.roles.admin].length === 0 : true
                                     }
                                 ]
@@ -416,7 +416,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.admin] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.admin] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.admin] ? uniqueOptions[IsleofDucks.roles.admin].length === 0 : true
                                     }
                                 ]
@@ -545,7 +545,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] ? uniqueBridgeCommandOptions[IsleofDucks.roles.staff].length === 0 : true
                                     }
                                 ]
@@ -557,7 +557,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.staff] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.staff] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.staff] ? uniqueOptions[IsleofDucks.roles.staff].length === 0 : true
                                     }
                                 ]
@@ -657,7 +657,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] ? uniqueBridgeCommandOptions[IsleofDucks.roles.staff].length === 0 : true
                                     }
                                 ]
@@ -669,7 +669,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.staff] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.staff] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.staff] ? uniqueOptions[IsleofDucks.roles.staff].length === 0 : true
                                     }
                                 ]
@@ -798,7 +798,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] ? uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 : true
                                     }
                                 ]
@@ -810,7 +810,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.mod_duck] ? uniqueOptions[IsleofDucks.roles.mod_duck].length === 0 : true
                                     }
                                 ]
@@ -910,7 +910,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] ? uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 : true
                                     }
                                 ]
@@ -922,7 +922,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.mod_duck] ? uniqueOptions[IsleofDucks.roles.mod_duck].length === 0 : true
                                     }
                                 ]
@@ -1051,7 +1051,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] ? uniqueBridgeCommandOptions[IsleofDucks.roles.admin].length === 0 : true
                                     }
                                 ]
@@ -1063,7 +1063,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.admin] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.admin] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.admin] ? uniqueOptions[IsleofDucks.roles.admin].length === 0 : true
                                     }
                                 ]
@@ -1163,7 +1163,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || [],
+                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || undefined,
                                         disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] ? uniqueBridgeCommandOptions[IsleofDucks.roles.admin].length === 0 : true
                                     }
                                 ]
@@ -1175,7 +1175,7 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.admin] || [],
+                                        options: uniqueOptions[IsleofDucks.roles.admin] || undefined,
                                         disabled: uniqueOptions[IsleofDucks.roles.admin] ? uniqueOptions[IsleofDucks.roles.admin].length === 0 : true
                                     }
                                 ]
