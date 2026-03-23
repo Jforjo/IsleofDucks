@@ -73,3 +73,6 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
     description: "Shows the cheapest bazaar shards.",
     type: ApplicationCommandType.ChatInput,
 }
+export const RequiredRoles: string[] = [
+    IsleofDucks.roles.verified
+];
