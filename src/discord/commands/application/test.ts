@@ -1,5 +1,5 @@
 import { CreateInteractionResponse, CreateThread, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -126,7 +126,7 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "test",
     description: "Test command",
     type: ApplicationCommandType.ChatInput,

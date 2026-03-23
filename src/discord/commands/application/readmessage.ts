@@ -1,4 +1,4 @@
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetChannelMessage } from "../../discordUtils";
 import { NextResponse } from "next/server";
 
@@ -77,7 +77,7 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "readmessage",
     description: "Outputs the Stringified JSON value of a message!",
     type: ApplicationCommandType.ChatInput,

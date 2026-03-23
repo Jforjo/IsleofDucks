@@ -1,4 +1,4 @@
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody, RESTPutAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, RESTPutAPIApplicationCommandsJSONBody } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, InstallGlobalCommands } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
@@ -107,7 +107,7 @@ export default async function(
         { status: 200 }
     )
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "updatecommands",
     description: "Updates the bot's global commands.",
     type: ApplicationCommandType.ChatInput,

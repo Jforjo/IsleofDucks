@@ -1,7 +1,7 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { getScrambleScoresWithLimit } from "@/discord/utils";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -88,7 +88,7 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "leaderboard",
     description: "Shows the top 10 players in verious catagories.",
     options: [

@@ -1,7 +1,7 @@
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { arrayChunks } from "@/discord/utils";
 import { SkyblockBazaarResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 async function getShards() {
@@ -68,11 +68,11 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "cheapestshards",
     description: "Shows the cheapest bazaar shards.",
     type: ApplicationCommandType.ChatInput,
 }
-export const RequiredRoles: string[] = [
+export const RequiredRoles = [
     IsleofDucks.roles.verified
 ];

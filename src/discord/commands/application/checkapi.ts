@@ -1,4 +1,4 @@
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
 import { getUsernameOrUUID } from "../../hypixelUtils";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, Emojis } from "../../discordUtils";
 import { NextResponse } from "next/server";
@@ -279,7 +279,7 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "checkapi",
     description: "Checks if a user has their APIs enabled on Hypixel Skyblock",
     type: ApplicationCommandType.ChatInput,
@@ -298,6 +298,6 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
         }
     ],
 }
-export const RequiredRoles: string[] = [
+export const RequiredRoles = [
     IsleofDucks.roles.verified
 ];

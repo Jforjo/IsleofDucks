@@ -1,7 +1,7 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
 import { getBannedPlayer, getSettingValue } from "@/discord/utils";
@@ -435,7 +435,7 @@ export default async function(
         { status: 200 }
     );
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "recruit",
     description: "Checks if a user passes all guild requirements.",
     type: ApplicationCommandType.ChatInput,
