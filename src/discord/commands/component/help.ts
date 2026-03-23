@@ -259,7 +259,7 @@ export default async function(
             }
         });
     } else if (interaction.data.custom_id === "help-mod" && interaction.data.component_type === ComponentType.Button) {
-        if (!isStaff) {
+        if (!isMod) {
             await CreateInteractionResponse(interaction.id, interaction.token, {
                 type: InteractionResponseType.ChannelMessageWithSource,
                 data: {
