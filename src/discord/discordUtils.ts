@@ -463,6 +463,7 @@ export async function CreateInteractionResponse(
         console.error(err);
         console.error(JSON.stringify(err));
         console.error(res);
+        console.error("messageData", JSON.stringify(messageData));
     }
     
     if (!res.ok) {
@@ -476,6 +477,7 @@ export async function CreateInteractionResponse(
         console.error(data);
         console.error(JSON.stringify(data));
         console.error(res);
+        console.error("messageData", JSON.stringify(messageData));
     }
 
     return data;
