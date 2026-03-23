@@ -5,6 +5,7 @@ import { CommandData as BanListCommandData, RequiredRoles as BanListRequiredRole
 import { CommandData as CheapestShardsCommandData, RequiredRoles as CheapestShardsRequiredRoles } from "./commands/application/cheapestshards";
 import { CommandData as checkAPICommandData, RequiredRoles as checkAPIRequiredRoles } from "./commands/application/checkapi";
 import { CommandData as DonorCommandData, RequiredRoles as DonorRequiredRoles } from "./commands/application/donor";
+import { CommandData as EmbedCommandData, RequiredRoles as EmbedRequiredRoles } from "./commands/application/embed";
 import { IsleofDucks } from "./discordUtils";
 
 export const HelpData = {
@@ -36,6 +37,10 @@ export const HelpData = {
         donor: {
             data: DonorCommandData,
             roles: DonorRequiredRoles
+        },
+        embed: {
+            data: EmbedCommandData,
+            roles: EmbedRequiredRoles
         }
     },
     bridgeCommands: {

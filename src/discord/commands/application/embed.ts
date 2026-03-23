@@ -105,7 +105,7 @@ export default async function(
         { status: 200 }
     )
 }
-export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
+export const CommandData = {
     name: "embed",
     description: "Sends an embed to the current channel.",
     type: ApplicationCommandType.ChatInput,
@@ -124,3 +124,6 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
         }
     ],
 }
+export const RequiredRoles = [
+    IsleofDucks.roles.admin
+];
