@@ -517,7 +517,13 @@ export default async function(
                                     `${command.roles ? (
                                         Array.isArray(command.roles) ?
                                             command.roles.map(role => `* <@&${role}>`).join('\n') :
-                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}`).join('\n')
+                                            Object.entries(command.roles).map(([ key, value ]) => {
+                                                return Array.isArray(value) ?
+                                                    `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}` :
+                                                    `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
+                                                        `  * ${subKey}: ${(subValue as string[]).map(role => `<@&${role}>`).join(', ')}`
+                                                    ).join('\n')}`;
+                            }               ).join('\n')
                                     ): "None"}`,
                                 ].join('\n')
                             },
@@ -764,7 +770,13 @@ export default async function(
                                     `${command.roles ? (
                                         Array.isArray(command.roles) ?
                                             command.roles.map(role => `* <@&${role}>`).join('\n') :
-                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}`).join('\n')
+                                            Object.entries(command.roles).map(([ key, value ]) => {
+                                                return Array.isArray(value) ?
+                                                    `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}` :
+                                                    `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
+                                                        `  * ${subKey}: ${(subValue as string[]).map(role => `<@&${role}>`).join(', ')}`
+                                                    ).join('\n')}`;
+                            }               ).join('\n')
                                     ): "None"}`,
                                 ].join('\n')
                             },
@@ -1011,7 +1023,13 @@ export default async function(
                                     `${command.roles ? (
                                         Array.isArray(command.roles) ?
                                             command.roles.map(role => `* <@&${role}>`).join('\n') :
-                                            Object.entries(command.roles).map(([ key, value ]) => `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}`).join('\n')
+                                            Object.entries(command.roles).map(([ key, value ]) => {
+                                                return Array.isArray(value) ?
+                                                    `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}` :
+                                                    `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
+                                                        `  * ${subKey}: ${(subValue as string[]).map(role => `<@&${role}>`).join(', ')}`
+                                                    ).join('\n')}`;
+                            }               ).join('\n')
                                     ): "None"}`,
                                 ].join('\n')
                             },

@@ -19,10 +19,17 @@ export function invertRoles(input: Input): Output {
     for (const entity in input) {
         const roles = input[entity].roles;
 
-        // Normalize roles into a flat array of strings
-        const flatRoles = Array.isArray(roles)
-            ? [...new Set(roles)]
-            : [...new Set(Object.values(roles).flat())];
+        let flatRoles: string[];
+
+        if (Array.isArray(roles)) {
+            // Case 1: string[]
+            flatRoles = [...new Set(roles)];
+        } else {
+            // Case 2 & 3: Record<string, string[]> OR Record<Record<string,string[]>, string[]>
+            // At runtime both are just objects with string keys
+            const values = Object.values(roles) as string[][];
+            flatRoles = [...new Set(values.flat())];
+        }
 
         for (const role of flatRoles) {
             if (!result[role]) {
@@ -37,3 +44,4 @@ export function invertRoles(input: Input): Output {
 
     return result;
 }
+
