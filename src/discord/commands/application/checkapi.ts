@@ -298,3 +298,6 @@ export const CommandData: RESTPatchAPIApplicationCommandJSONBody = {
         }
     ],
 }
+export const RequiredRoles: string[] = [
+    IsleofDucks.roles.verified
+];
