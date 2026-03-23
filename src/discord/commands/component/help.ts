@@ -35,15 +35,7 @@ export default async function(
     const isStaff = interaction.member.roles.includes(IsleofDucks.roles.staff);
     const isTrainee = interaction.member.roles.includes(IsleofDucks.roles.trainee);
     const options = invertRoles(HelpData.commands);
-    const uniqueOptions: Record<string, { label: string; value: string; }[]> = {};
-    for (const option in options) {
-        uniqueOptions[option] = Array.from(new Map(options[option].map(opt => [opt.value, opt])).values());
-    }
     const bridgeCommandOptions = invertRoles(HelpData.bridgeCommands);
-    const uniqueBridgeCommandOptions: Record<string, { label: string; value: string; }[]> = {};
-    for (const option in bridgeCommandOptions) {
-        uniqueBridgeCommandOptions[option] = Array.from(new Map(bridgeCommandOptions[option].map(opt => [opt.value, opt])).values());
-    }
 
     if (interaction.data.custom_id === "help" && interaction.data.component_type === ComponentType.Button) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -95,8 +87,12 @@ export default async function(
                                     {
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-menu`,
-                                        options: uniqueOptions[IsleofDucks.roles.verified],
-                                        disabled: uniqueOptions[IsleofDucks.roles.verified].length === 0
+                                        options: !options[IsleofDucks.roles.verified] || options[IsleofDucks.roles.verified].length === 0 ? [{
+                                            label: "No verified commands available",
+                                            value: "none",
+                                            description: "There are no verified commands available for your role."
+                                        }] : options[IsleofDucks.roles.verified],
+                                        disabled: !options[IsleofDucks.roles.verified] || options[IsleofDucks.roles.verified].length === 0
                                     }
                                 ]
                             },
@@ -165,8 +161,12 @@ export default async function(
                                     {
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-trainee-menu`,
-                                        options: uniqueOptions[IsleofDucks.roles.trainee],
-                                        disabled: uniqueOptions[IsleofDucks.roles.trainee].length === 0
+                                        options: !options[IsleofDucks.roles.trainee] || options[IsleofDucks.roles.trainee].length === 0 ? [{
+                                            label: "No trainee commands available",
+                                            value: "none",
+                                            description: "There are no trainee commands available for your role."
+                                        }] : options[IsleofDucks.roles.trainee],
+                                        disabled: !options[IsleofDucks.roles.trainee] || options[IsleofDucks.roles.trainee].length === 0
                                     }
                                 ]
                             },
@@ -237,8 +237,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.staff],
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.staff].length === 0
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.staff] || bridgeCommandOptions[IsleofDucks.roles.staff].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.staff],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.staff] || bridgeCommandOptions[IsleofDucks.roles.staff].length === 0
                                     }
                                 ]
                             },
@@ -249,8 +253,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.staff],
-                                        disabled: uniqueOptions[IsleofDucks.roles.staff].length === 0
+                                        options: !options[IsleofDucks.roles.staff] || options[IsleofDucks.roles.staff].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.staff],
+                                        disabled: !options[IsleofDucks.roles.staff] || options[IsleofDucks.roles.staff].length === 0
                                     }
                                 ]
                             },
@@ -321,8 +329,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] ? uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.mod_duck] || bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.mod_duck],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.mod_duck] || bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
@@ -333,8 +345,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.mod_duck] ? uniqueOptions[IsleofDucks.roles.mod_duck].length === 0 : true
+                                        options: !options[IsleofDucks.roles.mod_duck] || options[IsleofDucks.roles.mod_duck].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.mod_duck],
+                                        disabled: !options[IsleofDucks.roles.mod_duck] || options[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
@@ -404,8 +420,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] ? uniqueBridgeCommandOptions[IsleofDucks.roles.admin].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.admin] || bridgeCommandOptions[IsleofDucks.roles.admin].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.admin],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.admin] || bridgeCommandOptions[IsleofDucks.roles.admin].length === 0
                                     }
                                 ]
                             },
@@ -416,8 +436,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.admin] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.admin] ? uniqueOptions[IsleofDucks.roles.admin].length === 0 : true
+                                        options: !options[IsleofDucks.roles.admin] || options[IsleofDucks.roles.admin].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.admin],
+                                        disabled: !options[IsleofDucks.roles.admin] || options[IsleofDucks.roles.admin].length === 0
                                     }
                                 ]
                             },
@@ -545,8 +569,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] ? uniqueBridgeCommandOptions[IsleofDucks.roles.staff].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.staff] || bridgeCommandOptions[IsleofDucks.roles.staff].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.staff],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.staff] || bridgeCommandOptions[IsleofDucks.roles.staff].length === 0
                                     }
                                 ]
                             },
@@ -557,8 +585,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.staff] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.staff] ? uniqueOptions[IsleofDucks.roles.staff].length === 0 : true
+                                        options: !options[IsleofDucks.roles.staff] || options[IsleofDucks.roles.staff].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.staff],
+                                        disabled: !options[IsleofDucks.roles.staff] || options[IsleofDucks.roles.staff].length === 0
                                     }
                                 ]
                             },
@@ -657,8 +689,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.staff] ? uniqueBridgeCommandOptions[IsleofDucks.roles.staff].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.staff] || bridgeCommandOptions[IsleofDucks.roles.staff].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.staff],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.staff] || bridgeCommandOptions[IsleofDucks.roles.staff].length === 0
                                     }
                                 ]
                             },
@@ -669,8 +705,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-staff-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.staff] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.staff] ? uniqueOptions[IsleofDucks.roles.staff].length === 0 : true
+                                        options: !options[IsleofDucks.roles.staff] || options[IsleofDucks.roles.staff].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.staff],
+                                        disabled: !options[IsleofDucks.roles.staff] || options[IsleofDucks.roles.staff].length === 0
                                     }
                                 ]
                             },
@@ -798,8 +838,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] ? uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.mod_duck] || bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.mod_duck],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.mod_duck] || bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
@@ -810,8 +854,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.mod_duck] ? uniqueOptions[IsleofDucks.roles.mod_duck].length === 0 : true
+                                        options: !options[IsleofDucks.roles.mod_duck] || options[IsleofDucks.roles.mod_duck].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.mod_duck],
+                                        disabled: !options[IsleofDucks.roles.mod_duck] || options[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
@@ -910,8 +958,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck] ? uniqueBridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.mod_duck] || bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                             value: "none",
+                                             description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.mod_duck],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.mod_duck] || bridgeCommandOptions[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
@@ -922,8 +974,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-mod-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.mod_duck] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.mod_duck] ? uniqueOptions[IsleofDucks.roles.mod_duck].length === 0 : true
+                                        options: !options[IsleofDucks.roles.mod_duck] || options[IsleofDucks.roles.mod_duck].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.mod_duck],
+                                        disabled: !options[IsleofDucks.roles.mod_duck] || options[IsleofDucks.roles.mod_duck].length === 0
                                     }
                                 ]
                             },
@@ -1051,8 +1107,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] ? uniqueBridgeCommandOptions[IsleofDucks.roles.admin].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.admin] || bridgeCommandOptions[IsleofDucks.roles.admin].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.admin],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.admin] || bridgeCommandOptions[IsleofDucks.roles.admin].length === 0
                                     }
                                 ]
                             },
@@ -1063,8 +1123,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.admin] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.admin] ? uniqueOptions[IsleofDucks.roles.admin].length === 0 : true
+                                        options: !options[IsleofDucks.roles.admin] || options[IsleofDucks.roles.admin].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.admin],
+                                        disabled: !options[IsleofDucks.roles.admin] || options[IsleofDucks.roles.admin].length === 0
                                     }
                                 ]
                             },
@@ -1163,8 +1227,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-bridge-menu`,
                                         placeholder: "Select a bridge command",
-                                        options: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] || undefined,
-                                        disabled: uniqueBridgeCommandOptions[IsleofDucks.roles.admin] ? uniqueBridgeCommandOptions[IsleofDucks.roles.admin].length === 0 : true
+                                        options: !bridgeCommandOptions[IsleofDucks.roles.admin] || bridgeCommandOptions[IsleofDucks.roles.admin].length === 0 ? [{
+                                            label: "No bridge commands available",
+                                            value: "none",
+                                            description: "There are no bridge commands available for your role."
+                                        }] : bridgeCommandOptions[IsleofDucks.roles.admin],
+                                        disabled: !bridgeCommandOptions[IsleofDucks.roles.admin] || bridgeCommandOptions[IsleofDucks.roles.admin].length === 0
                                     }
                                 ]
                             },
@@ -1175,8 +1243,12 @@ export default async function(
                                         type: ComponentType.StringSelect,
                                         custom_id: `help-admin-menu`,
                                         placeholder: "Select an application command",
-                                        options: uniqueOptions[IsleofDucks.roles.admin] || undefined,
-                                        disabled: uniqueOptions[IsleofDucks.roles.admin] ? uniqueOptions[IsleofDucks.roles.admin].length === 0 : true
+                                        options: !options[IsleofDucks.roles.admin] || options[IsleofDucks.roles.admin].length === 0 ? [{
+                                            label: "No application commands available",
+                                            value: "none",
+                                            description: "There are no application commands available for your role."
+                                        }] : options[IsleofDucks.roles.admin],
+                                        disabled: !options[IsleofDucks.roles.admin] || options[IsleofDucks.roles.admin].length === 0
                                     }
                                 ]
                             },
