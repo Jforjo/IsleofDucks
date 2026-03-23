@@ -468,7 +468,7 @@ export default async function(
                     }
                 } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
                     content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && option.options.length > 0) {
+                    if ("options" in option && option.options && Array.isArray(option.options) && option.options.length > 0) {
                         for (const subOption of option.options) {
                             content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
                             if ("options" in option && option.options && option.options.length > 0) {
@@ -715,7 +715,7 @@ export default async function(
                     }
                 } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
                     content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && option.options.length > 0) {
+                    if ("options" in option && option.options && Array.isArray(option.options) && option.options.length > 0) {
                         for (const subOption of option.options) {
                             content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
                             if ("options" in option && option.options && option.options.length > 0) {
@@ -962,7 +962,7 @@ export default async function(
                     }
                 } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
                     content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && option.options.length > 0) {
+                    if ("options" in option && option.options && Array.isArray(option.options) && option.options.length > 0) {
                         for (const subOption of option.options) {
                             content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
                             if ("options" in option && option.options && option.options.length > 0) {
