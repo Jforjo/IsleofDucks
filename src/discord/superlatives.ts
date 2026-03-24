@@ -1,5 +1,5 @@
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember"
-import { getHypixelCollections } from "./hypixelUtils";
+import { calcCataLevel, getHypixelCollections } from "./hypixelUtils";
 
 export default {
     skyblockLevel: {
@@ -17,6 +17,10 @@ export default {
     catacombsExperience: {
         title: "Catacombs Experience",
         value: (profile: SkyBlockProfileMember) => profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0
+    },
+    catacombsLevel: {
+        title: "Catacombs Level",
+        value: (profile: SkyBlockProfileMember) => calcCataLevel(profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0)
     },
     petScore: {
         title: "Pet Score",
