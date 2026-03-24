@@ -22,13 +22,13 @@ export function invertRoles(input: Input): Output {
         let flatRoles: string[];
 
         if (Array.isArray(roles)) {
-            // Case 1: string[]
             flatRoles = [...new Set(roles)];
         } else {
-            // Case 2 & 3: Record<string, string[]> OR Record<Record<string,string[]>, string[]>
-            // At runtime both are just objects with string keys
-            const values = Object.values(roles) as string[][];
-            flatRoles = [...new Set(values.flat())];
+            const values = Object.values(roles) as (string[] | Record<string, string[]>)[];
+            const flattened = values.flatMap(v => 
+                Array.isArray(v) ? v : Object.values(v).flat()
+            );
+            flatRoles = [...new Set(flattened)];
         }
 
         for (const role of flatRoles) {
