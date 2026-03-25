@@ -1,6 +1,7 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
 import { invertRoles } from "@/discord/help";
 import { HelpData } from "@/discord/helpData";
+import { arrayContainsAny } from "@/discord/utils";
 import { APIInteractionResponse, InteractionResponseType, MessageFlags, ButtonStyle, ComponentType, APIMessageComponentInteraction, ApplicationCommandOptionType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -490,28 +491,39 @@ export default async function(
         if ("description" in command.data && command.data.description) content.push(`### Description\n${command.data.description}`);
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
             content.push("### Options");
-            for (const option of command.data.options) {
-                if (option.type === ApplicationCommandOptionType.Subcommand) {
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && option.options.length > 0) {
-                        for (const subOption of option.options) {
-                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+            for (const cmdOption of command.data.options) {
+                if (cmdOption.type === ApplicationCommandOptionType.Subcommand) {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                    if ("options" in cmdOption && cmdOption.options && cmdOption.options.length > 0) {
+                        for (const cmdSubOption of cmdOption.options) {
+                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                         }
                     }
-                } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && Array.isArray(option.options) && option.options.length > 0) {
-                        for (const subOption of option.options) {
-                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
-                            if ("options" in option && option.options && option.options.length > 0) {
-                                for (const subSubOption of option.options) {
-                                    content.push(`    * ${subSubOption.name}${subSubOption.description ? ` - ${subSubOption.description}` : ""}`);
+                } else if (cmdOption.type === ApplicationCommandOptionType.SubcommandGroup) {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                    if ("options" in cmdOption && cmdOption.options && Array.isArray(cmdOption.options) && cmdOption.options.length > 0) {
+                        for (const cmdSubOption of cmdOption.options) {
+                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
+                            if ("options" in cmdSubOption && cmdSubOption.options && cmdSubOption.options.length > 0) {
+                                for (const cmdSubSubOption of cmdSubOption.options) {
+                                    if (
+                                        !Array.isArray(command.roles) &&
+                                        typeof command.roles[cmdSubOption.name as keyof typeof command.roles] === "object" &&
+                                        arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles][cmdSubSubOption.name], interaction.member.roles)
+                                    ) continue;
+                                    content.push(`    * ${cmdSubSubOption.name}${cmdSubSubOption.description ? ` - ${cmdSubSubOption.description}` : ""}`);
                                 }
                             }
                         }
                     }
-                } else
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+                } else {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                }
             }
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -548,12 +560,12 @@ export default async function(
                                     `### Required Roles:`,
                                     `${command.roles ? (
                                         Array.isArray(command.roles) ?
-                                            command.roles.map(role => `* <@&${role}>`).join('\n') :
+                                            command.roles.filter(role => interaction.member!.roles.includes(role)).map(role => `* <@&${role}>`).join('\n') :
                                             Object.entries(command.roles).map(([ key, value ]) => {
                                                 return Array.isArray(value) ?
-                                                    `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}` :
+                                                    `* ${key}: ${value.filter(role => interaction.member!.roles.includes(role)).map(role => `<@&${role}>`).join(', ')}` :
                                                     `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
-                                                        `  * ${subKey}: ${(subValue as string[]).map(role => `<@&${role}>`).join(', ')}`
+                                                        `  * ${subKey}: ${(subValue as string[]).filter(role => interaction.member!.roles.includes(role)).map(role => `<@&${role}>`).join(', ')}`
                                                     ).join('\n')}`;
                                             }).join('\n')
                                     ): "None"}`,
@@ -640,8 +652,8 @@ export default async function(
         if ("usage" in command.data && command.data.usage) content.push(`### Usage\n${command.data.name} ${command.data.usage}`);
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
             content.push("### Options");
-            for (const option of command.data.options) {
-                content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+            for (const cmdOption of command.data.options) {
+                content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
             }
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -759,28 +771,39 @@ export default async function(
         if ("description" in command.data && command.data.description) content.push(`### Description\n${command.data.description}`);
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
             content.push("### Options");
-            for (const option of command.data.options) {
-                if (option.type === ApplicationCommandOptionType.Subcommand) {
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && option.options.length > 0) {
-                        for (const subOption of option.options) {
-                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+            for (const cmdOption of command.data.options) {
+                if (cmdOption.type === ApplicationCommandOptionType.Subcommand) {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                    if ("options" in cmdOption && cmdOption.options && cmdOption.options.length > 0) {
+                        for (const cmdSubOption of cmdOption.options) {
+                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                         }
                     }
-                } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && Array.isArray(option.options) && option.options.length > 0) {
-                        for (const subOption of option.options) {
-                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
-                            if ("options" in option && option.options && option.options.length > 0) {
-                                for (const subSubOption of option.options) {
-                                    content.push(`    * ${subSubOption.name}${subSubOption.description ? ` - ${subSubOption.description}` : ""}`);
+                } else if (cmdOption.type === ApplicationCommandOptionType.SubcommandGroup) {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                    if ("options" in cmdOption && cmdOption.options && Array.isArray(cmdOption.options) && cmdOption.options.length > 0) {
+                        for (const cmdSubOption of cmdOption.options) {
+                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
+                            if ("options" in cmdSubOption && cmdSubOption.options && cmdSubOption.options.length > 0) {
+                                for (const cmdSubSubOption of cmdSubOption.options) {
+                                    if (
+                                        !Array.isArray(command.roles) &&
+                                        typeof command.roles[cmdSubOption.name as keyof typeof command.roles] === "object" &&
+                                        arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles][cmdSubSubOption.name], interaction.member.roles)
+                                    ) continue;
+                                    content.push(`    * ${cmdSubSubOption.name}${cmdSubSubOption.description ? ` - ${cmdSubSubOption.description}` : ""}`);
                                 }
                             }
                         }
                     }
-                } else
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+                } else {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                }
             }
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -909,8 +932,8 @@ export default async function(
         if ("usage" in command.data && command.data.usage) content.push(`### Usage\n${command.data.name} ${command.data.usage}`);
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
             content.push("### Options");
-            for (const option of command.data.options) {
-                content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+            for (const cmdOption of command.data.options) {
+                content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
             }
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -1028,28 +1051,39 @@ export default async function(
         if ("description" in command.data && command.data.description) content.push(`### Description\n${command.data.description}`);
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
             content.push("### Options");
-            for (const option of command.data.options) {
-                if (option.type === ApplicationCommandOptionType.Subcommand) {
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && option.options.length > 0) {
-                        for (const subOption of option.options) {
-                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
+            for (const cmdOption of command.data.options) {
+                if (cmdOption.type === ApplicationCommandOptionType.Subcommand) {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                    if ("options" in cmdOption && cmdOption.options && cmdOption.options.length > 0) {
+                        for (const cmdSubOption of cmdOption.options) {
+                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                         }
                     }
-                } else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
-                    if ("options" in option && option.options && Array.isArray(option.options) && option.options.length > 0) {
-                        for (const subOption of option.options) {
-                            content.push(`  * ${subOption.name}${subOption.description ? ` - ${subOption.description}` : ""}`);
-                            if ("options" in option && option.options && option.options.length > 0) {
-                                for (const subSubOption of option.options) {
-                                    content.push(`    * ${subSubOption.name}${subSubOption.description ? ` - ${subSubOption.description}` : ""}`);
+                } else if (cmdOption.type === ApplicationCommandOptionType.SubcommandGroup) {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                    if ("options" in cmdOption && cmdOption.options && Array.isArray(cmdOption.options) && cmdOption.options.length > 0) {
+                        for (const cmdSubOption of cmdOption.options) {
+                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
+                            if ("options" in cmdSubOption && cmdSubOption.options && cmdSubOption.options.length > 0) {
+                                for (const cmdSubSubOption of cmdSubOption.options) {
+                                    if (
+                                        !Array.isArray(command.roles) &&
+                                        typeof command.roles[cmdSubOption.name as keyof typeof command.roles] === "object" &&
+                                        arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles][cmdSubSubOption.name], interaction.member.roles)
+                                    ) continue;
+                                    content.push(`    * ${cmdSubSubOption.name}${cmdSubSubOption.description ? ` - ${cmdSubSubOption.description}` : ""}`);
                                 }
                             }
                         }
                     }
-                } else
-                    content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+                } else {
+                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
+                }
             }
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -1178,8 +1212,8 @@ export default async function(
         if ("usage" in command.data && command.data.usage) content.push(`### Usage\n${command.data.name} ${command.data.usage}`);
         if ("options" in command.data && command.data.options && command.data.options.length > 0) {
             content.push("### Options");
-            for (const option of command.data.options) {
-                content.push(`* ${option.name}${option.description ? ` - ${option.description}` : ""}`);
+            for (const cmdOption of command.data.options) {
+                content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
             }
         }
         await CreateInteractionResponse(interaction.id, interaction.token, {
