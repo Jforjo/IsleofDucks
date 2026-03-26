@@ -16,7 +16,7 @@ export default async function(
 > {
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
-        data: { flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2 }
+        data: { flags: MessageFlags.Ephemeral }
     });
     let userId: Snowflake;
     if (interaction.member) userId = interaction.member.user.id;
@@ -67,6 +67,7 @@ export default async function(
     const discordExists = await checkDiscordInDB(userId);
     if (!discordExists) {
         await FollowupMessage(interaction.token, {
+            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
             components: [
                 {
                     type: ComponentType.Section,
