@@ -819,6 +819,7 @@ export default async function(
                 }
             }
         }
+        console.log("command", JSON.stringify(command));
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.UpdateMessage,
             data: {
@@ -868,6 +869,8 @@ export default async function(
                                                     });
                                                     if (value.length === 0) return "";
                                                 }
+                                                console.log("key", key);
+                                                console.log("value", value);
                                                 return Array.isArray(value) ?
                                                     `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}` :
                                                     `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
