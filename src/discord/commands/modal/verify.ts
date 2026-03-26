@@ -31,7 +31,18 @@ export default async function(
         );
     }
 
-    const username = interaction.data.components.map(c => c.type === 1 ? c.components : []).flat().find(c => c.custom_id === "username")?.value;
+    if (interaction.data.components[0].type !== ComponentType.Label ||
+        interaction.data.components[0].component.type !== ComponentType.TextInput
+    ) {
+        await FollowupMessage(interaction.token, {
+            content: "Invalid modal response!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Invalid modal response" },
+            { status: 400 }
+        );
+    }
+    const username = interaction.data.components[0].component.value;
     if (!username) {
         await FollowupMessage(interaction.token, {
             components: [{ type: ComponentType.TextDisplay, content: "Missing username input in modal!" }],
