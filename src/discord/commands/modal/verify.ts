@@ -65,7 +65,7 @@ export default async function(
     }
 
     const discordExists = await checkDiscordInDB(userId);
-    if (discordExists) {
+    if (!discordExists) {
         await FollowupMessage(interaction.token, {
             components: [
                 {
