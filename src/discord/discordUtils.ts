@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, APIMessage, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
@@ -2288,3 +2288,33 @@ export async function GetCurrentTranscript(): Promise<{
 //         channel_id: channel.id
 //     });
 // }
+
+export async function getUserDetails(accessToken: string): Promise<{
+    success: false;
+    message: string;
+    status: number;
+} | {
+    success: true;
+    user: APIUser
+}> {
+    const res = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
+    if (!res.ok) return {
+        success: false,
+        message: "Failed to fetch user details",
+        status: res.status
+    };
+    const data = await res.json();
+    if (!("id" in data) === false) return {
+        success: false,
+        message: "User not found",
+        status: 404
+    };
+    return {
+        success: true,
+        user: data as APIUser
+    };
+}

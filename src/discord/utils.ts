@@ -942,3 +942,125 @@ export async function addHint(id: string, hint: string, at: number): Promise<voi
         WHERE id = ${id}
     `;
 }
+
+export async function createDiscordUser(userid: Snowflake, accessToken: string, refreshToken: string): Promise<{
+    userid: Snowflake;
+    accesstoken: string;
+    refreshtoken: string;
+}> {
+    // check if they exist and return that instead
+    const { rows } = await sql`SELECT discordid, accesstoken, refreshtoken FROM discorduserdata WHERE discordid = ${userid}`;
+    if (rows.length > 0) return rows[0] as { userid: Snowflake; accesstoken: string; refreshtoken: string };
+    const { rows: insertedRows } = await sql`INSERT INTO discorduserdata (discordid, accesstoken, refreshtoken) VALUES (${userid}, ${accessToken}, ${refreshToken}) RETURNING discordid as userid, accesstoken, refreshtoken`;
+    return insertedRows[0] as { userid: Snowflake; accesstoken: string; refreshtoken: string };
+}
+export async function createMinecraftUser(uuid: string): Promise<void> {
+    await sql`INSERT INTO minecraftuserdata (uuid) VALUES (${uuid})`;
+}
+export async function linkDiscordToMinecraft(discordid: Snowflake, uuid: string): Promise<void> {
+    const { rows: discordRows } = await sql`SELECT id FROM discorduserdata WHERE discordid = ${discordid}`;
+    if (discordRows.length === 0) {
+        throw new Error("Discord user not found");
+    }
+    const { rows: minecraftRows } = await sql`SELECT id FROM minecraftuserdata WHERE uuid = ${uuid}`;
+    if (minecraftRows.length === 0) {
+        throw new Error("Minecraft user not found");
+    }
+    const discordUserId = discordRows[0].id;
+    const minecraftUserId = minecraftRows[0].id;
+    await sql`INSERT INTO userlink (discord, minecraft) VALUES (${discordUserId}, ${minecraftUserId})`;
+}
+export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
+    success: true;
+    data: {
+        discord: {
+            id: Snowflake;
+            accesstoken: string;
+            refreshtoken: string;
+        },
+        minecraft?: {
+            uuid: string;
+            superlativestatingvalue: number | null;
+            superlativecurrentvalue: number | null;
+            superlativelastupdated: number;
+            exp: number;
+        }
+    };
+} | {
+    success: false;
+    message: string;
+}> {
+    const { rows } = await sql`
+        SELECT
+            d.id as "discord.id",
+            d.accesstoken as "discord.accesstoken",
+            d.refreshtoken as "discord.refreshtoken",
+            m.uuid as "minecraft.uuid",
+            m.superlativestatingvalue as "minecraft.superlativestatingvalue",
+            m.superlativecurrentvalue as "minecraft.superlativecurrentvalue",
+            m.superlativelastupdated as "minecraft.superlativelastupdated",
+            m.exp as "minecraft.exp"
+        FROM discorduserdata d
+        LEFT JOIN userlink u ON d.id = u.discord
+        LEFT JOIN minecraftuserdata m ON u.minecraft = m.id
+        WHERE d.discordid = ${discordid}
+    `;
+    if (rows.length === 0) return { success: false, message: "User not found" };
+    return { success: true, data: rows[0] as any };
+}
+export async function getUserDataFromUUID(uuid: string): Promise<{
+    success: true;
+    data: {
+        discord?: {
+            id: Snowflake;
+            accesstoken: string;
+            refreshtoken: string;
+        },
+        minecraft: {
+            uuid: string;
+            superlativestatingvalue: number | null;
+            superlativecurrentvalue: number | null;
+            superlativelastupdated: number;
+            exp: number;
+        }
+    };
+} | {
+    success: false;
+    message: string;
+}> {
+    const { rows } = await sql`
+        SELECT
+            d.id as "discord.id",
+            d.accesstoken as "discord.accesstoken",
+            d.refreshtoken as "discord.refreshtoken",
+            m.uuid as "minecraft.uuid",
+            m.superlativestatingvalue as "minecraft.superlativestatingvalue",
+            m.superlativecurrentvalue as "minecraft.superlativecurrentvalue",
+            m.superlativelastupdated as "minecraft.superlativelastupdated",
+            m.exp as "minecraft.exp"
+        FROM minecraftuserdata m
+        LEFT JOIN userlink u ON m.id = u.minecraft
+        LEFT JOIN discorduserdata d ON u.discord = d.id
+        WHERE m.uuid = ${uuid}
+    `;
+    if (rows.length === 0) return { success: false, message: "User not found" };
+    return { success: true, data: rows[0] as any };
+}
+export async function checkDiscordInDB(discordid: Snowflake): Promise<boolean> {
+    const { rows } = await sql`SELECT COUNT(*) FROM discorduserdata WHERE discordid = ${discordid}`;
+    return rows[0].count > 0;
+}
+export async function checkMinecraftInDB(uuid: string): Promise<boolean> {
+    const { rows } = await sql`SELECT COUNT(*) FROM minecraftuserdata WHERE uuid = ${uuid}`;
+    return rows[0].count > 0;
+}
+export async function checkLinked(discordid: Snowflake, uuid: string): Promise<boolean> {
+    const { rows } = await sql`
+        SELECT COUNT(*)
+        FROM userlink ul
+        JOIN discorduserdata d ON ul.discord = d.id
+        JOIN minecraftuserdata m ON ul.minecraft = m.id
+        WHERE d.discordid = ${discordid} AND m.uuid = ${uuid}
+    `;
+    return rows[0].count > 0;
+}
