@@ -80,7 +80,7 @@ export default async function(
                         type: ComponentType.Button,
                         style: ButtonStyle.Link,
                         label: "Authorise Me",
-                        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/discord/redirect`
+                        url: `https://isle-of-ducks.vercel.app/api/auth/discord/redirect`
                     }
                 }
             ]

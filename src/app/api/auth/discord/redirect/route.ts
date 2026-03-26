@@ -13,7 +13,7 @@ const scope = [
 
 const OAUTH_QS = new URLSearchParams({
     client_id: process.env.DISCORD_CLIENT_ID!,
-    redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/discord/redirect`,
+    redirect_uri: `https://isle-of-ducks.vercel.app/api/auth/discord/redirect`,
     response_type: "code",
     scope
 }).toString();
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest): Promise<Response> {
         client_secret: process.env.DISCORD_CLIENT_SECRET!,
         grant_type: "authorization_code",
         code,
-        redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/discord/redirect`,
+        redirect_uri: `https://isle-of-ducks.vercel.app/api/auth/discord/redirect`,
         scope
     }).toString();
 
@@ -89,7 +89,7 @@ export async function GET(req: NextRequest): Promise<Response> {
             path: "/"
         }));
 
-        return NextResponse.redirect(process.env.NEXT_PUBLIC_BASE_URL!);
+        return NextResponse.redirect("/");
 
     } catch (e) {
         console.log(`Error exchanging code for token: ${e}`);
