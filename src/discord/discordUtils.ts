@@ -2311,7 +2311,7 @@ export async function getUserDetails(accessToken: string): Promise<{
         status: res.status
     };
     const data = await res.json();
-    if (!("id" in data) === false) return {
+    if (!("id" in data)) return {
         success: false,
         message: "User not found",
         status: 404
