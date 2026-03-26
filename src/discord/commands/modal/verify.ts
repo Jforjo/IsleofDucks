@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, FollowupMessage } from "@/discord/discordUtils";
+import { AddGuildMemberRole, CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { checkDiscordInDB, checkLinked, checkMinecraftInDB, createMinecraftUser, linkDiscordToMinecraft } from "@/discord/utils";
 import { APIModalSubmitInteraction, APIInteractionResponse, Snowflake, InteractionResponseType, MessageFlags, ComponentType, ButtonStyle } from "discord-api-types/v10";
@@ -116,6 +116,19 @@ export default async function(
             { status: 400 }
         );
     }
+
+    try {
+        await AddGuildMemberRole(IsleofDucks.serverID, userId, "1486811494695043182");
+    } catch (e) {
+        await FollowupMessage(interaction.token, {
+            content: "Successfully linked your Discord account to your Minecraft account, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+        });
+        throw e;
+    }
+
+    await FollowupMessage(interaction.token, {
+        content: "Successfully linked your Discord account to your Minecraft account!"
+    });
 
     return NextResponse.json(
         { success: true },
