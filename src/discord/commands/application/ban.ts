@@ -97,8 +97,8 @@ export default async function(
         }
     });
     return NextResponse.json(
-        { success: false, error: "Unknown command" },
-        { status: 404 }
+        { success: false },
+        { status: 200 }
     );
 }
 export const CommandData = {
