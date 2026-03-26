@@ -860,14 +860,14 @@ export default async function(
                                                     value = value.filter(role => interaction.member!.roles.includes(role));
                                                     if (value.length === 0) return "";
                                                 } else {
-                                                    value = Object.entries(value).filter(([ , subValue ]) => {
+                                                    value = Object.fromEntries(Object.entries(value).filter(([ , subValue ]) => {
                                                         if (Array.isArray(subValue)) {
                                                             subValue = subValue.filter(role => interaction.member!.roles.includes(role));
                                                             if ((subValue as string[]).length === 0) return false;
                                                         }
                                                         return true;
-                                                    });
-                                                    if (value.length === 0) return "";
+                                                    }));
+                                                    if (Object.keys(value).length === 0) return "";
                                                 }
                                                 console.log("key", key);
                                                 console.log("value", value);
