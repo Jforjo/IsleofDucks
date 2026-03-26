@@ -562,6 +562,19 @@ export default async function(
                                         Array.isArray(command.roles) ?
                                             command.roles.filter(role => interaction.member!.roles.includes(role)).map(role => `* <@&${role}>`).join('\n') :
                                             Object.entries(command.roles).map(([ key, value ]) => {
+                                                if (Array.isArray(value)) {
+                                                    value = value.filter(role => interaction.member!.roles.includes(role));
+                                                    if (value.length === 0) return "";
+                                                } else {
+                                                    value = Object.entries(value).filter(([ , subValue ]) => {
+                                                        if (Array.isArray(subValue)) {
+                                                            subValue = subValue.filter(role => interaction.member!.roles.includes(role));
+                                                            if ((subValue as string[]).length === 0) return false;
+                                                        }
+                                                        return true;
+                                                    });
+                                                    if (value.length === 0) return "";
+                                                }
                                                 return Array.isArray(value) ?
                                                     `* ${key}: ${value.filter(role => interaction.member!.roles.includes(role)).map(role => `<@&${role}>`).join(', ')}` :
                                                     `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
@@ -842,12 +855,25 @@ export default async function(
                                         Array.isArray(command.roles) ?
                                             command.roles.map(role => `* <@&${role}>`).join('\n') :
                                             Object.entries(command.roles).map(([ key, value ]) => {
+                                                if (Array.isArray(value)) {
+                                                    value = value.filter(role => interaction.member!.roles.includes(role));
+                                                    if (value.length === 0) return "";
+                                                } else {
+                                                    value = Object.entries(value).filter(([ , subValue ]) => {
+                                                        if (Array.isArray(subValue)) {
+                                                            subValue = subValue.filter(role => interaction.member!.roles.includes(role));
+                                                            if ((subValue as string[]).length === 0) return false;
+                                                        }
+                                                        return true;
+                                                    });
+                                                    if (value.length === 0) return "";
+                                                }
                                                 return Array.isArray(value) ?
                                                     `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}` :
                                                     `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
                                                         `  * ${subKey}: ${(subValue as string[]).map(role => `<@&${role}>`).join(', ')}`
                                                     ).join('\n')}`;
-                            }               ).join('\n')
+                            }               ).filter(role => role.length > 0).join('\n')
                                     ): "None"}`,
                                 ].join('\n')
                             },
@@ -1122,6 +1148,19 @@ export default async function(
                                         Array.isArray(command.roles) ?
                                             command.roles.map(role => `* <@&${role}>`).join('\n') :
                                             Object.entries(command.roles).map(([ key, value ]) => {
+                                                if (Array.isArray(value)) {
+                                                    value = value.filter(role => interaction.member!.roles.includes(role));
+                                                    if (value.length === 0) return "";
+                                                } else {
+                                                    value = Object.entries(value).filter(([ , subValue ]) => {
+                                                        if (Array.isArray(subValue)) {
+                                                            subValue = subValue.filter(role => interaction.member!.roles.includes(role));
+                                                            if ((subValue as string[]).length === 0) return false;
+                                                        }
+                                                        return true;
+                                                    });
+                                                    if (value.length === 0) return "";
+                                                }
                                                 return Array.isArray(value) ?
                                                     `* ${key}: ${value.map(role => `<@&${role}>`).join(', ')}` :
                                                     `* ${key}:\n${Object.entries(value).map(([ subKey, subValue ]) =>
