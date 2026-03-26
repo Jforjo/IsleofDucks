@@ -521,6 +521,7 @@ export async function FollowupMessage(
         console.error(err);
         console.error(JSON.stringify(err));
         console.error("res", res);
+        console.error("messageData", JSON.stringify(messageData));
     }
     
     if (!res.ok) {
@@ -536,6 +537,7 @@ export async function FollowupMessage(
         console.error(JSON.stringify(data));
         console.error("res", res);
         console.error("res", JSON.stringify(res));
+        console.error("messageData", JSON.stringify(messageData));
     }
 
     return data;
