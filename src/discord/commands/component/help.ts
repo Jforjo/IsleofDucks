@@ -493,25 +493,25 @@ export default async function(
             content.push("### Options");
             for (const cmdOption of command.data.options) {
                 if (cmdOption.type === ApplicationCommandOptionType.Subcommand) {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                     if ("options" in cmdOption && cmdOption.options && cmdOption.options.length > 0) {
                         for (const cmdSubOption of cmdOption.options) {
-                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            if (!Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                             content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                         }
                     }
                 } else if (cmdOption.type === ApplicationCommandOptionType.SubcommandGroup) {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                     if ("options" in cmdOption && cmdOption.options && Array.isArray(cmdOption.options) && cmdOption.options.length > 0) {
                         for (const cmdSubOption of cmdOption.options) {
-                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            if (!Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                             content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                             if ("options" in cmdSubOption && cmdSubOption.options && cmdSubOption.options.length > 0) {
                                 for (const cmdSubSubOption of cmdSubOption.options) {
                                     if (
-                                        !Array.isArray(command.roles) &&
+                                        !Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) &&
                                         typeof command.roles[cmdSubOption.name as keyof typeof command.roles] === "object" &&
                                         arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles][cmdSubSubOption.name], interaction.member.roles)
                                     ) continue;
@@ -521,7 +521,7 @@ export default async function(
                         }
                     }
                 } else {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                 }
             }
@@ -773,25 +773,25 @@ export default async function(
             content.push("### Options");
             for (const cmdOption of command.data.options) {
                 if (cmdOption.type === ApplicationCommandOptionType.Subcommand) {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                     if ("options" in cmdOption && cmdOption.options && cmdOption.options.length > 0) {
                         for (const cmdSubOption of cmdOption.options) {
-                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            if (!Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                             content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                         }
                     }
                 } else if (cmdOption.type === ApplicationCommandOptionType.SubcommandGroup) {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                     if ("options" in cmdOption && cmdOption.options && Array.isArray(cmdOption.options) && cmdOption.options.length > 0) {
                         for (const cmdSubOption of cmdOption.options) {
-                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            if (!Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                             content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                             if ("options" in cmdSubOption && cmdSubOption.options && cmdSubOption.options.length > 0) {
                                 for (const cmdSubSubOption of cmdSubOption.options) {
                                     if (
-                                        !Array.isArray(command.roles) &&
+                                        !Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) &&
                                         typeof command.roles[cmdSubOption.name as keyof typeof command.roles] === "object" &&
                                         arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles][cmdSubSubOption.name], interaction.member.roles)
                                     ) continue;
@@ -801,7 +801,7 @@ export default async function(
                         }
                     }
                 } else {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                 }
             }
@@ -1053,25 +1053,25 @@ export default async function(
             content.push("### Options");
             for (const cmdOption of command.data.options) {
                 if (cmdOption.type === ApplicationCommandOptionType.Subcommand) {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                     if ("options" in cmdOption && cmdOption.options && cmdOption.options.length > 0) {
                         for (const cmdSubOption of cmdOption.options) {
-                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            if (!Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                             content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                         }
                     }
                 } else if (cmdOption.type === ApplicationCommandOptionType.SubcommandGroup) {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                     if ("options" in cmdOption && cmdOption.options && Array.isArray(cmdOption.options) && cmdOption.options.length > 0) {
                         for (const cmdSubOption of cmdOption.options) {
-                            if (!Array.isArray(command.roles) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
+                            if (!Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) && typeof command.roles[cmdSubOption.name as keyof typeof command.roles] !== "object" && arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                             content.push(`  * ${cmdSubOption.name}${cmdSubOption.description ? ` - ${cmdSubOption.description}` : ""}`);
                             if ("options" in cmdSubOption && cmdSubOption.options && cmdSubOption.options.length > 0) {
                                 for (const cmdSubSubOption of cmdSubOption.options) {
                                     if (
-                                        !Array.isArray(command.roles) &&
+                                        !Array.isArray(command.roles[cmdSubOption.name as keyof typeof command.roles]) &&
                                         typeof command.roles[cmdSubOption.name as keyof typeof command.roles] === "object" &&
                                         arrayContainsAny(command.roles[cmdSubOption.name as keyof typeof command.roles][cmdSubSubOption.name], interaction.member.roles)
                                     ) continue;
@@ -1081,7 +1081,7 @@ export default async function(
                         }
                     }
                 } else {
-                    if (Array.isArray(command.roles) && !arrayContainsAny(command.roles, interaction.member.roles)) continue;
+                    if (Array.isArray(command.roles[cmdOption.name as keyof typeof command.roles]) && !arrayContainsAny(command.roles[cmdOption.name as keyof typeof command.roles], interaction.member.roles)) continue;
                     content.push(`* ${cmdOption.name}${cmdOption.description ? ` - ${cmdOption.description}` : ""}`);
                 }
             }
