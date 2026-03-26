@@ -496,7 +496,7 @@ export async function FollowupMessage(
     if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
 
     const endpoint = Routes.webhookMessage(process.env.DISCORD_CLIENT_ID, token, "@original");
-    const url = RouteBases.api + endpoint + (isComponentV2 ? '?with_component=true' : '');
+    const url = RouteBases.api + endpoint + (isComponentV2 ? '?with_components=true' : '');
 
     const formData = new FormData();
     formData.append('payload_json', JSON.stringify(messageData));
