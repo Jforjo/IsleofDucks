@@ -489,13 +489,14 @@ export async function FollowupMessage(
         id: number,
         url: string,
         filename: string
-    }[]
+    }[] | null,
+    isComponentV2: boolean = false
 ): Promise<RESTPatchAPIWebhookWithTokenMessageResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
     if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
 
     const endpoint = Routes.webhookMessage(process.env.DISCORD_CLIENT_ID, token, "@original");
-    const url = RouteBases.api + endpoint;
+    const url = RouteBases.api + endpoint + (isComponentV2 ? '?with_component=true' : '');
 
     const formData = new FormData();
     formData.append('payload_json', JSON.stringify(messageData));
@@ -530,7 +531,7 @@ export async function FollowupMessage(
             console.log('FollowupMessage Retrying', retryAfter);
             if (retryAfter && !isNaN(Number(retryAfter))) {
                 await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
-                return await FollowupMessage(token, messageData, attachmentURLs);
+                return await FollowupMessage(token, messageData, attachmentURLs, isComponentV2);
             }
         }
         console.error(data);
