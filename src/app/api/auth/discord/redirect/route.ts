@@ -89,7 +89,7 @@ export async function GET(req: NextRequest): Promise<Response> {
             path: "/"
         }));
 
-        return NextResponse.redirect("/");
+        return NextResponse.redirect("https://isle-of-ducks.vercel.app");
 
     } catch (e) {
         console.log(`Error exchanging code for token: ${e}`);
