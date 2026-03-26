@@ -16,7 +16,7 @@ export default async function(
 > {
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
-        data: { flags: MessageFlags.Ephemeral }
+        data: { flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2 }
     });
     let userId: Snowflake;
     if (interaction.member) userId = interaction.member.user.id;
