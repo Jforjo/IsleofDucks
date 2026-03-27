@@ -2,9 +2,9 @@ import { getUserDetails } from "@/discord/discordUtils";
 import { NextRequest, NextResponse } from "next/server";
 import { AES } from 'crypto-ts';
 import { createDiscordUser } from "@/discord/utils";
-import { sign } from 'jsonwebtoken';
-import { cookies } from "next/headers";
-import { serialize } from 'cookie';
+// import { sign } from 'jsonwebtoken';
+// import { cookies } from "next/headers";
+// import { serialize } from 'cookie';
 
 const scope = [
     "identify",
@@ -83,14 +83,14 @@ export async function GET(req: NextRequest): Promise<Response> {
             console.log(`Error creating user: ${e}`);
         }
 
-        const token = sign(user.user, process.env.JWT_SECRET!, { expiresIn: "24h" });
+        // const token = sign(user.user, process.env.JWT_SECRET!, { expiresIn: "24h" });
 
-        (await cookies()).set(`discord-session`, serialize("discord-session", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/"
-        }));
+        // (await cookies()).set(`discord-session`, serialize("discord-session", token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        //     sameSite: "lax",
+        //     path: "/"
+        // }));
 
         return NextResponse.redirect("https://isle-of-ducks.vercel.app");
 
