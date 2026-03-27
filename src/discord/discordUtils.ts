@@ -2371,7 +2371,7 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
             status: 500
         };
     }
-    const res = await fetch('https://discord.com/api/oauth2/token', {
+    const res = await fetch('https://discord.com/api/v10/oauth2/token', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -2384,8 +2384,6 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
         }).toString()
     });
     const data = await res.json();
-    console.log(JSON.stringify(data));
-    console.log(res);
     if (!res.ok) return {
         success: false,
         message: "error" in data ? data.error : "Failed to refresh access token",
