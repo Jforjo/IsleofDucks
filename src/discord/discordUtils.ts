@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { APIGuild, APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
@@ -2319,5 +2319,115 @@ export async function getUserDetails(accessToken: string): Promise<{
     return {
         success: true,
         user: data as APIUser
+    };
+}
+
+export async function getUsersGuilds(discordId: string): Promise<{
+    success: false;
+    message: string;
+    status: number;
+} | {
+    success: true;
+    guilds: APIGuild[];
+}> {
+    const accessTokenRes = await getUserAccessToken(discordId);
+    if (!accessTokenRes.success) return {
+        success: false,
+        message: "Failed to get access token",
+        status: 500
+    };
+    const { accessToken } = accessTokenRes;
+    const res = await fetch('https://discord.com/api/users/@me/guilds', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
+    if (!res.ok) return {
+        success: false,
+        message: "Failed to fetch guilds",
+        status: res.status
+    };
+    const data = await res.json();
+    return {
+        success: true,
+        guilds: data as APIGuild[]
+    };
+}
+
+export async function getNewAccessToken(refreshToken: string): Promise<{
+    success: false;
+    message: string;
+    status: number;
+} | {
+    success: true;
+    accessToken: string;
+    expiresIn: number;
+}> {
+    if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
+        return {
+            success: false,
+            message: "Discord client ID or secret not set",
+            status: 500
+        };
+    }
+    const res = await fetch('https://discord.com/api/oauth2/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            grant_type: 'refresh_token',
+            client_id: process.env.DISCORD_CLIENT_ID,
+            client_secret: process.env.DISCORD_CLIENT_SECRET,
+            refresh_token: refreshToken
+        }).toString()
+    });
+    if (!res.ok) return {
+        success: false,
+        message: "Failed to fetch new access token",
+        status: res.status
+    };
+    const data = await res.json();
+    return {
+        success: true,
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+    };
+}
+export async function getUserAccessToken(discordId: string): Promise<{
+    success: false;
+    message: string;
+} | {
+    success: true;
+    accessToken: string;
+}> {
+    const { rows } = await sql`SELECT accesstoken, tokenexpire FROM discorduserdata WHERE discordid = ${discordId}`;
+    if (rows.length === 0) {
+        return {
+            success: false,
+            message: "User not found"
+        };
+    }
+    const { accesstoken, tokenexpire } = rows[0];
+    if (Date.now() > tokenexpire) {
+        const res = await getNewAccessToken(rows[0].refreshtoken);
+        if (!res.success) return {
+            success: false,
+            message: "Failed to refresh access token"
+        };
+        const { success, accessToken, expiresIn } = res;
+        if (!success) return {
+            success: false,
+            message: "Failed to get new access token"
+        };
+        await sql`UPDATE discorduserdata SET accesstoken = ${accessToken}, tokenexpire = ${Date.now() + expiresIn * 1000} WHERE discordid = ${discordId}`;
+        return {
+            success: true,
+            accessToken
+        };
+    }
+    return {
+        success: true,
+        accessToken: accesstoken
     };
 }

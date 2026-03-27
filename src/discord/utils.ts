@@ -24,6 +24,33 @@ export function formatNumberWithCommas(num: number): string {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+export function chunkByMaxChars(items: string[], maxChars: number, separator = "\n"): string[][] {
+    const chunks: string[][] = [];
+    let current: string[] = [];
+    let currentLength = 0;
+
+    for (const item of items) {
+        const itemLength = item.length;
+
+        // If adding this item would exceed the limit, start a new chunk
+        if (currentLength + itemLength + (current.length > 0 ? separator.length : 0) > maxChars) {
+            chunks.push(current);
+            current = [item];
+            currentLength = itemLength;
+        } else {
+            current.push(item);
+            currentLength += itemLength + (current.length > 0 ? separator.length : 0);
+        }
+    }
+
+    // Push the final chunk if it has content
+    if (current.length > 0) {
+        chunks.push(current);
+    }
+
+    return chunks;
+}
+
 export function arrayContainsAll(a: string[], b: string[]) {
     const setA = new Set(a);
     return b.every(item => setA.has(item));

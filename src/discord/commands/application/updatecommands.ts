@@ -27,6 +27,7 @@ import { CommandData as Leaderboard } from "./leaderboard";
 import { CommandData as Ban } from "./ban";
 import { CommandData as Settings } from "./settings";
 import { CommandData as Verify } from "./verify";
+import { CommandData as Sus } from "./sus";
 import { CommandData as Help } from "@/discord/commandDatas/help";
 
 export default async function(
@@ -92,7 +93,8 @@ export default async function(
         Ban,
         Settings,
         Help,
-        Verify
+        Verify,
+        Sus,
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
