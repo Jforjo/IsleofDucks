@@ -2346,8 +2346,6 @@ export async function getUsersGuilds(discordId: string): Promise<{
         }
     });
     const data = await res.json() as RESTGetAPIGuildResult[];
-    console.log(JSON.stringify(data));
-    console.log(res);
     if (!res.ok) return {
         success: false,
         message: "Failed to fetch guilds",
@@ -2390,8 +2388,6 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
         })
     });
     const data = await res.json();
-    console.log(JSON.stringify(data));
-    console.log(res);
     if (!res.ok) return {
         success: false,
         message: "error" in data ? data.error : "Failed to refresh access token",
