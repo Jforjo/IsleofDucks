@@ -2382,14 +2382,15 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
     const res = await fetch(url, {
         method: 'POST',
         headers: {
+            Authorization: `Basic ${btoa(`${process.env.DISCORD_CLIENT_ID}:${process.env.DISCORD_CLIENT_SECRET}`)}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
             grant_type: 'refresh_token',
-            client_id: process.env.DISCORD_CLIENT_ID,
-            client_secret: process.env.DISCORD_CLIENT_SECRET,
+            // client_id: process.env.DISCORD_CLIENT_ID,
+            // client_secret: process.env.DISCORD_CLIENT_SECRET,
             refresh_token: refreshToken
-        })
+        }).toString()
     });
     const data = await res.json();
     if (!res.ok) return {
