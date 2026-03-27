@@ -2384,7 +2384,9 @@ export async function getNewAccessToken(refreshToken: string): Promise<{
         }).toString()
     });
     const data = await res.json();
-
+    console.log(JSON.stringify(data));
+    console.log(JSON.stringify(res));
+    console.log(res);
     if (!res.ok) return {
         success: false,
         message: "message" in data ? data.message : "Failed to refresh access token",
