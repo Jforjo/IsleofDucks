@@ -1022,7 +1022,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
             d.id,
             d.accesstoken,
             d.refreshtoken,
-            m.uuid as "minecraft.uuid",
+            m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
             m.superlativelastupdated,
@@ -1033,7 +1033,6 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
         WHERE d.discordid = ${discordid}
     `;
     if (rows.length === 0) return { success: false, message: "User not found" };
-    console.log(JSON.stringify(rows[0], null, 2));
     return {
         success: true,
         data: {
@@ -1077,7 +1076,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
             d.id,
             d.accesstoken,
             d.refreshtoken,
-            m.uuid as "minecraft.uuid",
+            m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
             m.superlativelastupdated,
