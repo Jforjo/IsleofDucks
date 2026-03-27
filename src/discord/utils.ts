@@ -1091,3 +1091,9 @@ export async function checkLinked(discordid: Snowflake, uuid: string): Promise<b
     `;
     return rows[0].count > 0;
 }
+export async function getAllDiscordUsers(): Promise<{
+    discordid: Snowflake;
+}[]> {
+    const { rows } = await sql`SELECT discordid FROM discorduserdata`;
+    return rows as { discordid: Snowflake; }[];
+}

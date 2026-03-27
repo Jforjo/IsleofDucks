@@ -1,5 +1,5 @@
-import { CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, getUsersGuilds, IsleofDucks, SendMessage } from "@/discord/discordUtils";
-import { chunkByMaxChars } from "@/discord/utils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, getUsersGuilds, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { chunkByMaxChars, getAllDiscordUsers } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIGuildMember, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -67,6 +67,8 @@ export default async function(
         );
     }
 
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.DeferredChannelMessageWithSource,
     });
@@ -81,15 +83,13 @@ export default async function(
             { status: 400 }
         );
     }
+    
+    const discordUsers = await getAllDiscordUsers();
+    const guildMembersWithDiscordData = guildMembers.filter(m => discordUsers.some(d => d.discordid === m.user.id));
 
-    const users: {
-        id: string;
-        guilds: Record<string, string>;
-    }[] = [];
-
-    const membersToTestFirst = guildMembers.filter(m => m.roles.includes(IsleofDucks.roles.duck_guild_member) || m.roles.includes(IsleofDucks.roles.duckling_guild_member));
-    const membersToTestSecond = guildMembers.filter(m => m.roles.includes(IsleofDucks.roles.verified) && !membersToTestFirst.some(mem => mem.user.id === m.user.id));
-    const membersToTestThird = guildMembers.filter(m => !membersToTestFirst.some(mem => mem.user.id === m.user.id) && !membersToTestSecond.some(mem => mem.user.id === m.user.id));
+    const membersToTestFirst = guildMembersWithDiscordData.filter(m => m.roles.includes(IsleofDucks.roles.duck_guild_member) || m.roles.includes(IsleofDucks.roles.duckling_guild_member));
+    const membersToTestSecond = guildMembersWithDiscordData.filter(m => m.roles.includes(IsleofDucks.roles.verified) && !membersToTestFirst.some(mem => mem.user.id === m.user.id));
+    const membersToTestThird = guildMembersWithDiscordData.filter(m => !membersToTestFirst.some(mem => mem.user.id === m.user.id) && !membersToTestSecond.some(mem => mem.user.id === m.user.id));
     const memberstoTestFirstPromise = Promise.all(membersToTestFirst.map(checkUserGuildsForBadGuilds));
     const membersToTestSecondPromise = Promise.all(membersToTestSecond.map(checkUserGuildsForBadGuilds));
     const membersToTestThirdPromise = Promise.all(membersToTestThird.map(checkUserGuildsForBadGuilds));
@@ -97,7 +97,8 @@ export default async function(
     await FollowupMessage(interaction.token, {
         content: [
             "Checking user guilds...",
-            "This may take a while. When it's done, the bot will send messages below this one."
+            "This may take a while. When it's done, the bot will send messages below this one.",
+            `If this does work <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`
         ].join("\n"),
     });
 
