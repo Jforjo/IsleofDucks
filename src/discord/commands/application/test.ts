@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, CreateThread, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, CreateThread, FollowupMessage, getUserDetails, IsleofDucks } from "@/discord/discordUtils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -50,75 +50,19 @@ export default async function(
         }
     });
 
-    // await SendMessage(interaction.channel.id, {
-    //     flags: MessageFlags.IsComponentsV2,
-    //     components: [
-    //         {
-    //             type: ComponentType.Container,
-    //             accent_color: 0xFB9B00,
-    //             components: arrayChunks([...Array(32).keys()].map(num => ({
-    //                 type: ComponentType.Button,
-    //                 custom_id: `test-${num}`,
-    //                 label: `${num}`,
-    //                 style: ButtonStyle.Primary
-    //             }) as APIButtonComponent), 5).map(row => ({
-    //                 type: ComponentType.ActionRow,
-    //                 components: row
-    //             }))
-    //         }
-    //     ]
-    // });
-    
-    // const { rows } = await sql`SELECT * FROM users`;
-
-    // const users = await Promise.all(rows.map(async (user) => {
-    //     const res = await getUsernameOrUUID(user.uuid);
-    //     const disc = await getDiscordRole(user.uuid);
-    //     return {
-    //         uuid: user.uuid,
-    //         name: res.success ? res.name : user.uuid,
-    //         disc: disc?.discordid
-    //     }
-    // }));
-
-    // const chunkSize = 20;
-    // for (let i = 0; i < users.length; i += chunkSize) {
-    //     await SendMessage(interaction.channel.id, {
-    //         content: users.slice(i, i + chunkSize).map((user) => `\`${user.name}\` (${user.uuid}) ${user.disc ? `<@${user.disc}>` : ""}`).join("\n"),
-    //         flags: MessageFlags.SuppressNotifications
-    //     });
-    // }
-
-    // await CreateInteractionResponse(interaction.id, interaction.token, {
-    //     type: InteractionResponseType.ChannelMessageWithSource,
-    //     data: {
-    //         content: `Done!`,
-    //         flags: MessageFlags.Ephemeral
-    //     }
-    // });
-
-    await CreateThread("1459947888003125384", {
-        name: "Survey Responses",
-        message: {
-            content: "**Total Survey Responses**\n0 Guild App",
-            embeds: [
-                {
-                    title: "Guild App",
-                    description: "Survey presented after players open a guild application ticket",
-                    color: 16489216,
-                    fields: [
-                        {
-                            name: "Where did you find our guild?",
-                            value: "0 SBZ/SBS Discord\n0 Forums\n0 On Hypixel\n0 A Friend\n0 I'm a Returning Member\n0 Other",
-                        },
-                    ],
-                },
-            ],
-        }
-    });
+    const user = getUserDetails(member.user.id);
+    if (!user) {
+        await FollowupMessage(interaction.token, {
+            content: "Could not find user!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find user" },
+            { status: 400 }
+        );
+    }
 
     await FollowupMessage(interaction.token, {
-        content: `Done!`,
+        content: `\`\`\`${JSON.stringify(user, null, 2)}\`\`\``,
     });
 
     return NextResponse.json(
