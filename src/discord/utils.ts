@@ -970,16 +970,16 @@ export async function addHint(id: string, hint: string, at: number): Promise<voi
     `;
 }
 
-export async function createDiscordUser(userid: Snowflake, accessToken: string, refreshToken: string): Promise<{
+export async function createDiscordUser(userid: Snowflake, accessToken: string, refreshToken: string, expiresIn: number): Promise<{
     userid: Snowflake;
     accesstoken: string;
     refreshtoken: string;
 }> {
     // check if they exist and return that instead
-    const { rows } = await sql`SELECT discordid, accesstoken, refreshtoken FROM discorduserdata WHERE discordid = ${userid}`;
-    if (rows.length > 0) return rows[0] as { userid: Snowflake; accesstoken: string; refreshtoken: string };
-    const { rows: insertedRows } = await sql`INSERT INTO discorduserdata (discordid, accesstoken, refreshtoken) VALUES (${userid}, ${accessToken}, ${refreshToken}) RETURNING discordid as userid, accesstoken, refreshtoken`;
-    return insertedRows[0] as { userid: Snowflake; accesstoken: string; refreshtoken: string };
+    const { rows } = await sql`SELECT discordid, accesstoken, refreshtoken, tokenexpire FROM discorduserdata WHERE discordid = ${userid}`;
+    if (rows.length > 0) return rows[0] as { userid: Snowflake; accesstoken: string; refreshtoken: string; tokenexpire: number };
+    const { rows: insertedRows } = await sql`INSERT INTO discorduserdata (discordid, accesstoken, refreshtoken, tokenexpire) VALUES (${userid}, ${accessToken}, ${refreshToken}, ${Date.now() + expiresIn * 1000}) RETURNING discordid as userid, accesstoken, refreshtoken, tokenexpire`;
+    return insertedRows[0] as { userid: Snowflake; accesstoken: string; refreshtoken: string; tokenexpire: number };
 }
 export async function createMinecraftUser(uuid: string): Promise<void> {
     await sql`INSERT INTO minecraftplayerdata (uuid) VALUES (${uuid})`;

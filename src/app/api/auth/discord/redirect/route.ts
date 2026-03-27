@@ -65,7 +65,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 
         const data = await res.json();
 
-        const { access_token, refresh_token } = data;
+        const { access_token, refresh_token, expires_in } = data;
 
         const user = await getUserDetails(access_token);
         if (!user.success) {
@@ -77,7 +77,8 @@ export async function GET(req: NextRequest): Promise<Response> {
             await createDiscordUser(
                 user.user.id,
                 AES.encrypt(access_token, process.env.ENCRYPTION_KEY!).toString(),
-                AES.encrypt(refresh_token, process.env.ENCRYPTION_KEY!).toString()
+                AES.encrypt(refresh_token, process.env.ENCRYPTION_KEY!).toString(),
+                expires_in
             );
         } catch (e) {
             console.log(`Error creating user: ${e}`);
