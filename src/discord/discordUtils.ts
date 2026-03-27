@@ -2427,11 +2427,11 @@ export async function getUserAccessToken(discordId: string): Promise<{
             success: false,
             message: res.message || "Failed to refresh access token"
         };
-        const { accessToken, expiresIn } = res;
-        await sql`UPDATE discorduserdata SET accesstoken = ${accessToken}, tokenexpire = ${Date.now() + expiresIn * 1000} WHERE discordid = ${discordId}`;
+        const { accessToken: newAccessToken, expiresIn: newExpiresIn } = res;
+        await sql`UPDATE discorduserdata SET accesstoken = ${newAccessToken}, tokenexpire = ${Date.now() + newExpiresIn * 1000} WHERE discordid = ${discordId}`;
         return {
             success: true,
-            accessToken
+            accessToken: newAccessToken
         };
     }
     return {
