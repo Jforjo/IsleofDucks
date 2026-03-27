@@ -2300,7 +2300,8 @@ export async function getUserDetails(accessToken: string): Promise<{
     success: true;
     user: APIUser
 }> {
-    const res = await fetch('https://discord.com/api/users/@me', {
+    const url = RouteBases.api + Routes.user();
+    const res = await fetch(url, {
         headers: {
             Authorization: `Bearer ${accessToken}`
         }
@@ -2337,8 +2338,9 @@ export async function getUsersGuilds(discordId: string): Promise<{
         status: 500
     };
     const { accessToken } = accessTokenRes;
-    const res = await fetch('https://discord.com/api/v10/users/@me/guilds', {
-        method: 'GET',
+
+    const url = RouteBases.api + Routes.userGuilds();
+    const res = await fetch(url, {
         headers: {
             Authorization: `Bearer ${accessToken}`
         }
@@ -2373,7 +2375,9 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
             status: 500
         };
     }
-    const res = await fetch('https://discord.com/api/v10/oauth2/token', {
+
+    const url = RouteBases.api + Routes.oauth2TokenExchange();
+    const res = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
