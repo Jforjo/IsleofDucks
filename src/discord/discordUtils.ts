@@ -2371,13 +2371,10 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
             status: 500
         };
     }
-    console.log("Access token", accessToken);
-    console.log("Refresh token", refreshToken);
     const res = await fetch('https://discord.com/api/oauth2/token', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': `Bearer ${accessToken}`
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
             grant_type: 'refresh_token',
