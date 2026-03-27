@@ -17,8 +17,10 @@ async function checkUserGuildsForBadGuilds(member: APIGuildMember): Promise<null
     guilds: Record<string, string>;
 }> {
     const res = await getUsersGuilds(member.user.id);
+    console.log("res", res);
     if (!res.success) return null;
     const badGuildsTheyAreIn = Object.fromEntries(Object.entries(badGuilds).filter(([, guildId]) => res.guilds.some(g => g.id === guildId)));
+    console.log("badGuildsTheyAreIn", badGuildsTheyAreIn);
     if (Object.keys(badGuildsTheyAreIn).length > 0) return {
         id: member.user.id,
         guilds: badGuildsTheyAreIn
@@ -86,7 +88,6 @@ export default async function(
     
     const discordUsers = await getAllDiscordUsers();
     const guildMembersWithDiscordData = guildMembers.filter(m => discordUsers.some(d => d.discordid === m.user.id));
-    console.log(guildMembersWithDiscordData);
 
     const membersToTestFirst = guildMembersWithDiscordData.filter(m => m.roles.includes(IsleofDucks.roles.duck_guild_member) || m.roles.includes(IsleofDucks.roles.duckling_guild_member));
     const membersToTestSecond = guildMembersWithDiscordData.filter(m => m.roles.includes(IsleofDucks.roles.verified) && !membersToTestFirst.some(mem => mem.user.id === m.user.id));
@@ -94,8 +95,6 @@ export default async function(
     const memberstoTestFirstPromise = Promise.all(membersToTestFirst.map(checkUserGuildsForBadGuilds));
     const membersToTestSecondPromise = Promise.all(membersToTestSecond.map(checkUserGuildsForBadGuilds));
     const membersToTestThirdPromise = Promise.all(membersToTestThird.map(checkUserGuildsForBadGuilds));
-
-    console.log(membersToTestFirst);
 
     await FollowupMessage(interaction.token, {
         content: [
