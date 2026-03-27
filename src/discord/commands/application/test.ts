@@ -61,6 +61,7 @@ export default async function(
             { status: 400 }
         );
     }
+    console.log("userDataRes", JSON.stringify(userDataRes, null, 2));
     const user = await getUserDetails(userDataRes.data.discord.accesstoken);
     if (!user) {
         await FollowupMessage(interaction.token, {
