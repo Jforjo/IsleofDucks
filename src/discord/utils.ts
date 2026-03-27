@@ -1033,6 +1033,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
         WHERE d.discordid = ${discordid}
     `;
     if (rows.length === 0) return { success: false, message: "User not found" };
+    console.log(JSON.stringify(rows[0], null, 2));
     return { success: true, data: rows[0] as any };
 }
 export async function getUserDataFromUUID(uuid: string): Promise<{
