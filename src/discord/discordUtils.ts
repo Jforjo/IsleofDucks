@@ -2333,7 +2333,7 @@ export async function getUsersGuilds(discordId: string): Promise<{
     const accessTokenRes = await getUserAccessToken(discordId);
     if (!accessTokenRes.success) return {
         success: false,
-        message: "Failed to get access token",
+        message: accessTokenRes.message,
         status: 500
     };
     const { accessToken } = accessTokenRes;
@@ -2383,12 +2383,13 @@ export async function getNewAccessToken(refreshToken: string): Promise<{
             refresh_token: refreshToken
         }).toString()
     });
+    const data = await res.json();
+
     if (!res.ok) return {
         success: false,
-        message: "Failed to fetch new access token",
+        message: "message" in data ? data.message : "Failed to refresh access token",
         status: res.status
     };
-    const data = await res.json();
     return {
         success: true,
         accessToken: data.access_token,
