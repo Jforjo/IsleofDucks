@@ -2384,6 +2384,8 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
         }).toString()
     });
     const data = await res.json();
+    console.log(JSON.stringify(data));
+    console.log(res);
     if (!res.ok) return {
         success: false,
         message: "error" in data ? data.error : "Failed to refresh access token",
