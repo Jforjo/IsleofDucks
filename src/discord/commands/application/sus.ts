@@ -86,6 +86,7 @@ export default async function(
     
     const discordUsers = await getAllDiscordUsers();
     const guildMembersWithDiscordData = guildMembers.filter(m => discordUsers.some(d => d.discordid === m.user.id));
+    console.log(guildMembersWithDiscordData);
 
     const membersToTestFirst = guildMembersWithDiscordData.filter(m => m.roles.includes(IsleofDucks.roles.duck_guild_member) || m.roles.includes(IsleofDucks.roles.duckling_guild_member));
     const membersToTestSecond = guildMembersWithDiscordData.filter(m => m.roles.includes(IsleofDucks.roles.verified) && !membersToTestFirst.some(mem => mem.user.id === m.user.id));
@@ -93,6 +94,8 @@ export default async function(
     const memberstoTestFirstPromise = Promise.all(membersToTestFirst.map(checkUserGuildsForBadGuilds));
     const membersToTestSecondPromise = Promise.all(membersToTestSecond.map(checkUserGuildsForBadGuilds));
     const membersToTestThirdPromise = Promise.all(membersToTestThird.map(checkUserGuildsForBadGuilds));
+
+    console.log(membersToTestFirst);
 
     await FollowupMessage(interaction.token, {
         content: [
@@ -103,7 +106,6 @@ export default async function(
     });
 
     const membersToCheckFirstresults = (await memberstoTestFirstPromise).filter(r => r !== null);
-    console.log("first", JSON.stringify(membersToCheckFirstresults));
     if (membersToCheckFirstresults.length > 0) {
         const content = membersToCheckFirstresults.filter(u => membersToTestFirst.some(m => m.user.id === u.id)).map(u => `<@${u.id}> (${Object.keys(u.guilds).join(", ")})`);
         const separatedContent = chunkByMaxChars(content, 1900, "\n"); // Discord has a 2000 character limit, leaving some room for the rest of the message
