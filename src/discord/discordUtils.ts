@@ -2308,7 +2308,7 @@ export async function getUserDetails(accessToken: string): Promise<{
     });
     if (!res.ok) return {
         success: false,
-        message: "Failed to fetch user details",
+        message: `Failed to fetch user details: ${res.statusText}`,
         status: res.status
     };
     const data = await res.json();
@@ -2352,7 +2352,7 @@ export async function getUsersGuilds(discordId: string): Promise<{
     console.log(res);
     if (!res.ok) return {
         success: false,
-        message: "Failed to fetch guilds",
+        message: `Failed to fetch guilds: ${res.statusText}`,
         status: res.status
     };
     return {
@@ -2394,7 +2394,7 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
     const data = await res.json();
     if (!res.ok) return {
         success: false,
-        message: "error" in data ? data.error : "Failed to refresh access token",
+        message: "error" in data ? data.error : `Failed to refresh access token: ${res.statusText}`,
         status: res.status
     };
     return {
