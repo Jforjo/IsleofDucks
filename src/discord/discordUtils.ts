@@ -2379,6 +2379,8 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
         },
         body: new URLSearchParams({
             grant_type: 'refresh_token',
+            client_id: process.env.DISCORD_CLIENT_ID,
+            client_secret: process.env.DISCORD_CLIENT_SECRET,
             refresh_token: refreshToken
         }).toString()
     });
