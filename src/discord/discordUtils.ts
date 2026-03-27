@@ -2312,6 +2312,8 @@ export async function getUserDetails(accessToken: string): Promise<{
         status: res.status
     };
     const data = await res.json();
+    console.log(JSON.stringify(data));
+    console.log(res);
     if (!("id" in data)) return {
         success: false,
         message: "User not found",
@@ -2346,6 +2348,8 @@ export async function getUsersGuilds(discordId: string): Promise<{
         }
     });
     const data = await res.json() as RESTGetAPIGuildResult[];
+    console.log(JSON.stringify(data));
+    console.log(res);
     if (!res.ok) return {
         success: false,
         message: "Failed to fetch guilds",
