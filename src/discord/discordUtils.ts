@@ -2375,7 +2375,6 @@ export async function getNewAccessToken(refreshToken: string): Promise<{
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic ' + Buffer.from(`${process.env.DISCORD_CLIENT_ID}:${process.env.DISCORD_CLIENT_SECRET}`).toString('base64')
         },
         body: new URLSearchParams({
             grant_type: 'refresh_token',
@@ -2383,9 +2382,6 @@ export async function getNewAccessToken(refreshToken: string): Promise<{
         }).toString()
     });
     const data = await res.json();
-    console.log(JSON.stringify(data));
-    console.log(JSON.stringify(res));
-    console.log(res);
     if (!res.ok) return {
         success: false,
         message: "error" in data ? data.error : "Failed to refresh access token",
@@ -2404,7 +2400,7 @@ export async function getUserAccessToken(discordId: string): Promise<{
     success: true;
     accessToken: string;
 }> {
-    const { rows } = await sql`SELECT accesstoken, tokenexpire FROM discorduserdata WHERE discordid = ${discordId}`;
+    const { rows } = await sql`SELECT accesstoken, refreshtoken, tokenexpire FROM discorduserdata WHERE discordid = ${discordId}`;
     if (rows.length === 0) {
         return {
             success: false,
