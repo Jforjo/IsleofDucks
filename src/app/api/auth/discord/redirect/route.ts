@@ -68,7 +68,10 @@ export async function GET(req: NextRequest): Promise<Response> {
         const { access_token, refresh_token } = data;
 
         const user = await getUserDetails(access_token);
-        if (!user.success) return NextResponse.json(user.message, { status: user.status });
+        if (!user.success) {
+            if (user.message === "User not found") return NextResponse.redirect(OAUTH_URL);
+            return NextResponse.json(user.message, { status: user.status });
+        }
 
         try {
             await createDiscordUser(
