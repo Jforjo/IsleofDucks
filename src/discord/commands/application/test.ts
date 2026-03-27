@@ -1,4 +1,5 @@
 import { CreateInteractionResponse, CreateThread, FollowupMessage, getUserDetails, IsleofDucks } from "@/discord/discordUtils";
+import { getUserDataFromDiscordID } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -50,7 +51,17 @@ export default async function(
         }
     });
 
-    const user = getUserDetails(member.user.id);
+    const userDataRes = await getUserDataFromDiscordID(member.user.id);
+    if (!userDataRes.success) {
+        await FollowupMessage(interaction.token, {
+            content: "Could not find user in DB!",
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find user in DB" },
+            { status: 400 }
+        );
+    }
+    const user = getUserDetails(userDataRes.data.discord.accesstoken);
     if (!user) {
         await FollowupMessage(interaction.token, {
             content: "Could not find user!",
