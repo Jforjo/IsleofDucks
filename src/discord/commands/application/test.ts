@@ -72,6 +72,7 @@ export default async function(
         );
     }
 
+    console.log("user", JSON.stringify(user, null, 2));
     await FollowupMessage(interaction.token, {
         content: `\`\`\`${JSON.stringify(user, null, 2)}\`\`\``,
     });
