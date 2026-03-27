@@ -2338,6 +2338,7 @@ export async function getUsersGuilds(discordId: string): Promise<{
     };
     const { accessToken } = accessTokenRes;
     const res = await fetch('https://discord.com/api/users/@me/guilds', {
+        method: 'GET',
         headers: {
             Authorization: `Bearer ${accessToken}`
         }
