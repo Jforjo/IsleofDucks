@@ -2379,18 +2379,20 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
     }
 
     const url = RouteBases.api + Routes.oauth2TokenExchange();
+
+    const formData = new FormData();
+    formData.append("grant_type", "refresh_token");
+    formData.append("refresh_token", refreshToken);
+    // formData.append("client_id", process.env.DISCORD_CLIENT_ID);
+    // formData.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
+
     const res = await fetch(url, {
         method: 'POST',
         headers: {
             Authorization: `Basic ${btoa(`${process.env.DISCORD_CLIENT_ID}:${process.env.DISCORD_CLIENT_SECRET}`)}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'multipart/form-data'
         },
-        body: new URLSearchParams({
-            grant_type: 'refresh_token',
-            // client_id: process.env.DISCORD_CLIENT_ID,
-            // client_secret: process.env.DISCORD_CLIENT_SECRET,
-            refresh_token: refreshToken
-        }).toString()
+        body: formData
     });
     const data = await res.json();
     if (!res.ok) return {
