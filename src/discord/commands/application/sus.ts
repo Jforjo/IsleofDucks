@@ -103,6 +103,7 @@ export default async function(
     });
 
     const membersToCheckFirstresults = (await memberstoTestFirstPromise).filter(r => r !== null);
+    console.log("first", JSON.stringify(membersToCheckFirstresults));
     if (membersToCheckFirstresults.length > 0) {
         const content = membersToCheckFirstresults.filter(u => membersToTestFirst.some(m => m.user.id === u.id)).map(u => `<@${u.id}> (${Object.keys(u.guilds).join(", ")})`);
         const separatedContent = chunkByMaxChars(content, 1900, "\n"); // Discord has a 2000 character limit, leaving some room for the rest of the message
