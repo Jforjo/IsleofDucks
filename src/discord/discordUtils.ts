@@ -2371,6 +2371,8 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
             status: 500
         };
     }
+    console.log("Access token", accessToken);
+    console.log("Refresh token", refreshToken);
     const res = await fetch('https://discord.com/api/oauth2/token', {
         method: 'POST',
         headers: {
