@@ -17,10 +17,8 @@ async function checkUserGuildsForBadGuilds(member: APIGuildMember): Promise<null
     guilds: Record<string, string>;
 }> {
     const res = await getUsersGuilds(member.user.id);
-    console.log("res", res);
     if (!res.success) return null;
     const badGuildsTheyAreIn = Object.fromEntries(Object.entries(badGuilds).filter(([, guildId]) => res.guilds.some(g => g.id === guildId)));
-    console.log("badGuildsTheyAreIn", badGuildsTheyAreIn);
     if (Object.keys(badGuildsTheyAreIn).length > 0) return {
         id: member.user.id,
         guilds: badGuildsTheyAreIn

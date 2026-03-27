@@ -2374,22 +2374,18 @@ export async function getNewAccessToken(refreshToken: string): Promise<{
     const res = await fetch('https://discord.com/api/oauth2/token', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic ' + Buffer.from(`${process.env.DISCORD_CLIENT_ID}:${process.env.DISCORD_CLIENT_SECRET}`).toString('base64')
         },
         body: new URLSearchParams({
             grant_type: 'refresh_token',
-            client_id: process.env.DISCORD_CLIENT_ID,
-            client_secret: process.env.DISCORD_CLIENT_SECRET,
             refresh_token: refreshToken
         }).toString()
     });
     const data = await res.json();
-    console.log(JSON.stringify(data));
-    console.log(JSON.stringify(res));
-    console.log(res);
     if (!res.ok) return {
         success: false,
-        message: "message" in data ? data.message : "Failed to refresh access token",
+        message: "error" in data ? data.error : "Failed to refresh access token",
         status: res.status
     };
     return {
