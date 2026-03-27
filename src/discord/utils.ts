@@ -1007,7 +1007,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
         },
         minecraft?: {
             uuid: string;
-            superlativestatingvalue: number | null;
+            superlativestartingvalue: number | null;
             superlativecurrentvalue: number | null;
             superlativelastupdated: number;
             exp: number;
@@ -1023,7 +1023,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
             d.accesstoken as "discord.accesstoken",
             d.refreshtoken as "discord.refreshtoken",
             m.uuid as "minecraft.uuid",
-            m.superlativestatingvalue as "minecraft.superlativestatingvalue",
+            m.superlativestartingvalue as "minecraft.superlativestartingvalue",
             m.superlativecurrentvalue as "minecraft.superlativecurrentvalue",
             m.superlativelastupdated as "minecraft.superlativelastupdated",
             m.exp as "minecraft.exp"
@@ -1045,7 +1045,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
         },
         minecraft: {
             uuid: string;
-            superlativestatingvalue: number | null;
+            superlativestartingvalue: number | null;
             superlativecurrentvalue: number | null;
             superlativelastupdated: number;
             exp: number;
@@ -1061,7 +1061,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
             d.accesstoken as "discord.accesstoken",
             d.refreshtoken as "discord.refreshtoken",
             m.uuid as "minecraft.uuid",
-            m.superlativestatingvalue as "minecraft.superlativestatingvalue",
+            m.superlativestartingvalue as "minecraft.superlativestartingvalue",
             m.superlativecurrentvalue as "minecraft.superlativecurrentvalue",
             m.superlativelastupdated as "minecraft.superlativelastupdated",
             m.exp as "minecraft.exp"
