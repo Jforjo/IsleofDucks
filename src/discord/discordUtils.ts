@@ -2355,7 +2355,7 @@ export async function getUsersGuilds(discordId: string): Promise<{
     };
 }
 
-export async function getNewAccessToken(refreshToken: string): Promise<{
+export async function getNewAccessToken(accessToken: string, refreshToken: string): Promise<{
     success: false;
     message: string;
     status: number;
@@ -2375,6 +2375,7 @@ export async function getNewAccessToken(refreshToken: string): Promise<{
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${accessToken}`
         },
         body: new URLSearchParams({
             grant_type: 'refresh_token',
@@ -2407,9 +2408,9 @@ export async function getUserAccessToken(discordId: string): Promise<{
             message: "User not found"
         };
     }
-    const { accesstoken, tokenexpire } = rows[0];
+    const { accesstoken, refreshtoken, tokenexpire } = rows[0];
     if (Date.now() > tokenexpire) {
-        const res = await getNewAccessToken(rows[0].refreshtoken);
+        const res = await getNewAccessToken(accesstoken, refreshtoken);
         if (!res.success) return {
             success: false,
             message: res.message || "Failed to refresh access token"
