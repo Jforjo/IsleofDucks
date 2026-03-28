@@ -93,11 +93,15 @@ export default async function(
 
     const res = await fetch("https://discord.com/api/v10/users/@me/guilds", {
         headers: {
-            Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`
         }
     });
     const guilds = await res.json() as APIGuild[];
     console.log("guilds", JSON.stringify(guilds, null, 2));
+
+    await FollowupMessage(interaction.token, {
+        content: `\`\`\`${JSON.stringify(guilds, null, 2)}\`\`\``,
+    });
 
     return NextResponse.json(
         { success: true },
