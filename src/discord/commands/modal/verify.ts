@@ -130,9 +130,9 @@ export default async function(
 
     try {
         await linkDiscordToMinecraft(user.id, userRes.uuid);
-    } catch (e) {
+    } catch (e: any) {
         await FollowupMessage(interaction.token, {
-            content: "An error occurred while linking your Discord account to your Minecraft account!"
+            content: "message" in e ? e.message : "An error occurred while linking your Discord account to your Minecraft account!"
         });
         throw e;
     }
