@@ -4,6 +4,7 @@ import { APIGuild, APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResu
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
+import { request } from "undici";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -2301,19 +2302,20 @@ export async function getUserDetails(accessToken: string): Promise<{
     user: APIUser
 }> {
     const url = RouteBases.api + Routes.user();
-    const res = await fetch(url, {
+    const { statusCode, statusText, body } = await request(url, {
+        method: 'GET',
         headers: {
             Authorization: `Bearer ${accessToken}`
         }
     });
-    if (!res.ok) return {
+    if (statusCode !== 200) return {
         success: false,
-        message: `Failed to fetch user details: ${res.statusText}`,
-        status: res.status
+        message: `Failed to fetch user details: ${statusText}`,
+        status: statusCode
     };
-    const data = await res.json();
+    const data = await body.json() as APIUser;
     console.log(JSON.stringify(data));
-    console.log(res);
+    console.log(body);
     if (!("id" in data)) return {
         success: false,
         message: "User not found",
