@@ -1,8 +1,8 @@
 import { APIChatInputApplicationCommandInteraction, APIGuildMember, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageType, Snowflake } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, ConvertSnowflakeToDate, RemoveGuildMemberRole, AddGuildMemberRole, GetAllChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { DiscordRole, getDiscordRole, getDiscordRoleFromDiscordID, getDiscordRoleFromDiscordName, updateDiscordRoleName } from "@/discord/utils";
+import { getGuildData, getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { DiscordRole, getDiscordRole, getDiscordRoleFromDiscordID, getDiscordRoleFromDiscordName, getUserDataFromUUID, updateDiscordRoleName } from "@/discord/utils";
 
 export async function UpdateLevelRoles(
     guildID: Snowflake,
@@ -212,6 +212,48 @@ export async function UpdateRoles(
 
         if (userHadRoleAdded) usersHadRolesAdded++;
         if (userHadRoleRemoved) usersHadRolesRemoved++;
+    }
+    const duckMembers = await getGuildData("Isle of Ducks");
+    const ducklingMembers = await getGuildData("Isle of Ducklings");
+    const guildMembers: string[] = [];
+    if (duckMembers.success && ducklingMembers.success) {
+        for (const member of duckMembers.guild.members) {
+            const res = await getUserDataFromUUID(member.uuid);
+            if (!res.success) continue;
+            if (!res.data.discord) continue;
+            const discordID = res.data.discord.id;
+            if (!discordID) continue;
+            const discordMember = members.find(m => m.user.id === discordID);
+            if (!discordMember) continue;
+            guildMembers.push(discordID);
+            if (discordMember.roles.includes(IsleofDucks.roles.duck_guild_member)) continue;
+            await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duck_guild_member);
+            rolesAdded++;
+        }
+        for (const member of ducklingMembers.guild.members) {
+            const res = await getUserDataFromUUID(member.uuid);
+            if (!res.success) continue;
+            if (!res.data.discord) continue;
+            const discordID = res.data.discord.id;
+            if (!discordID) continue;
+            const discordMember = members.find(m => m.user.id === discordID);
+            if (!discordMember) continue;
+            guildMembers.push(discordID);
+            if (discordMember.roles.includes(IsleofDucks.roles.duckling_guild_member)) continue;
+            await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duckling_guild_member);
+            rolesAdded++;
+        }
+        const nonGuildMembers = members.filter(m => !guildMembers.includes(m.user.id));
+        for (const member of nonGuildMembers) {
+            if (member.roles.includes(IsleofDucks.roles.duck_guild_member)) {
+                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.duck_guild_member);
+                rolesRemoved++;
+            }
+            if (member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
+                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.duckling_guild_member);
+                rolesRemoved++;
+            }
+        }
     }
 
     // const result = await Promise.all(promises);
