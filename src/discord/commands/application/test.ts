@@ -91,7 +91,7 @@ export default async function(
     //     ]
     // });
 
-    const res = await fetch("https://discord.com/api/v10/users/@me/guilds", {
+    const res = await fetch("https://discord.com/api/v10/users/@me/guilds?with_counts=true", {
         headers: {
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`
         }
