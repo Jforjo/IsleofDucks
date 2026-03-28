@@ -93,7 +93,8 @@ export async function GET(req: NextRequest): Promise<Response> {
         //     path: "/"
         // }));
 
-        return NextResponse.redirect("https://isle-of-ducks.vercel.app/discord");
+        // return NextResponse.redirect("https://isle-of-ducks.vercel.app/discord");
+        return NextResponse.redirect("discord://discord.com/channels/823061629812867113/1287099048796356608");
 
     } catch (e) {
         console.log(`Error exchanging code for token: ${e}`);
