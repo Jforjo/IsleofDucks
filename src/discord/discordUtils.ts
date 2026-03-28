@@ -4,7 +4,7 @@ import { APIGuild, APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResu
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
-import CryptoTS from "crypto-ts";
+import { AES, enc } from "crypto-ts";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -2445,8 +2445,8 @@ export async function getUserAccessToken(discordId: string): Promise<{
         };
     }
     const { tokenexpire } = rows[0];
-    const accesstoken = CryptoTS.AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY).toString(CryptoTS.enc.Utf8);
-    const refreshtoken = CryptoTS.AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY).toString(CryptoTS.enc.Utf8);
+    const accesstoken = AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8);
+    const refreshtoken = AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8);
     console.log("before", rows[0].accesstoken);
     console.log("after", accesstoken);
     if (Date.now() > tokenexpire) {
@@ -2456,7 +2456,7 @@ export async function getUserAccessToken(discordId: string): Promise<{
             message: res.message || "Failed to refresh access token"
         };
         const { accessToken: newAccessToken, expiresIn: newExpiresIn } = res;
-        await sql`UPDATE discorduserdata SET accesstoken = ${CryptoTS.AES.encrypt(newAccessToken, process.env.ENCRYPTION_KEY).toString()}, refreshtoken = ${CryptoTS.AES.encrypt(refreshtoken, process.env.ENCRYPTION_KEY).toString()}, tokenexpire = ${Date.now() + newExpiresIn * 1000} WHERE discordid = ${discordId}`;
+        await sql`UPDATE discorduserdata SET accesstoken = ${AES.encrypt(newAccessToken, process.env.ENCRYPTION_KEY!).toString()}, refreshtoken = ${AES.encrypt(refreshtoken, process.env.ENCRYPTION_KEY!).toString()}, tokenexpire = ${Date.now() + newExpiresIn * 1000} WHERE discordid = ${discordId}`;
         return {
             success: true,
             accessToken: newAccessToken

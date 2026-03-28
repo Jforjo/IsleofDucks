@@ -3,7 +3,7 @@ import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { Snowflake } from 'discord-api-types/globals';
 import { formatNumber, getSuperlativeValue, updateSuperlativeValue } from './discordUtils';
 import superlativeTypes from './superlatives';
-import CryptoTS from 'crypto-ts';
+import { AES, enc } from 'crypto-ts';
 
 /**
  * Returns a new string with the first letter capitalized.
@@ -980,14 +980,14 @@ export async function createDiscordUser(userid: Snowflake, accessToken: string, 
     const { rows } = await sql`SELECT discordid, accesstoken, refreshtoken, tokenexpire FROM discorduserdata WHERE discordid = ${userid}`;
     if (rows.length > 0) return {
         userid: rows[0].discordid,
-        accesstoken: CryptoTS.AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8),
-        refreshtoken: CryptoTS.AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8)
+        accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+        refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
     }
     const { rows: insertedRows } = await sql`INSERT INTO discorduserdata (discordid, accesstoken, refreshtoken, tokenexpire) VALUES (${userid}, ${accessToken}, ${refreshToken}, ${Date.now() + expiresIn * 1000}) RETURNING discordid as userid, accesstoken, refreshtoken, tokenexpire`;
     return {
         userid: insertedRows[0].userid,
-        accesstoken: CryptoTS.AES.decrypt(insertedRows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8),
-        refreshtoken: CryptoTS.AES.decrypt(insertedRows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8)
+        accesstoken: AES.decrypt(insertedRows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+        refreshtoken: AES.decrypt(insertedRows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
     }
 }
 export async function createMinecraftUser(uuid: string): Promise<void> {
@@ -1047,8 +1047,8 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
         data: {
             discord: {
                 id: rows[0].id,
-                accesstoken: CryptoTS.AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8),
-                refreshtoken: CryptoTS.AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8)
+                accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+                refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
             },
             minecraft: rows[0].uuid ? {
                 uuid: rows[0].uuid,
@@ -1101,8 +1101,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
         data: {
             discord: rows[0].id ? {
                 id: rows[0].id,
-                accesstoken: CryptoTS.AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8),
-                refreshtoken: CryptoTS.AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(CryptoTS.enc.Utf8)
+                accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+                refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
             } : undefined,
             minecraft: {
                 uuid: rows[0].uuid,
