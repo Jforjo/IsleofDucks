@@ -4,6 +4,7 @@ import { APIGuild, APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResu
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
+import { AES } from "crypto-ts";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -2314,7 +2315,7 @@ export async function getUserDetails(accessToken: string, refreshToken: string, 
     });
     if (!res.ok) {
         if (res.status === 401) {
-            const newAccessTokenRes = await getNewAccessToken(accessToken, refreshToken);
+            const newAccessTokenRes = await getNewAccessToken(refreshToken);
             if (newAccessTokenRes.success) {
                 const newRes = await getUserDetails(newAccessTokenRes.accessToken, refreshToken, tries + 1);
                 if (!newRes.success && newRes.message === "return") return {
@@ -2338,8 +2339,6 @@ export async function getUserDetails(accessToken: string, refreshToken: string, 
         };
     }
     const data = await res.json() as APIUser;
-    console.log(JSON.stringify(data));
-    console.log(res);
     if (!("id" in data)) return {
         success: false,
         message: "User not found",
@@ -2374,8 +2373,6 @@ export async function getUsersGuilds(discordId: string): Promise<{
         }
     });
     const data = await res.json() as RESTGetAPIGuildResult[];
-    console.log(JSON.stringify(data));
-    console.log(res);
     if (!res.ok) return {
         success: false,
         message: `Failed to fetch guilds: ${res.statusText}`,
@@ -2387,7 +2384,7 @@ export async function getUsersGuilds(discordId: string): Promise<{
     };
 }
 
-export async function getNewAccessToken(accessToken: string, refreshToken: string): Promise<{
+export async function getNewAccessToken(refreshToken: string): Promise<{
     success: false;
     message: string;
     status: number;
@@ -2405,39 +2402,22 @@ export async function getNewAccessToken(accessToken: string, refreshToken: strin
     }
 
     const url = RouteBases.api + Routes.oauth2TokenExchange();
-
-    // const formData = new FormData();
-    // formData.append("grant_type", "refresh_token");
-    // formData.append("refresh_token", refreshToken);
-    // // formData.append("client_id", process.env.DISCORD_CLIENT_ID);
-    // // formData.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
-
-    // const res = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //         Authorization: `Basic ${btoa(`${process.env.DISCORD_CLIENT_ID}:${process.env.DISCORD_CLIENT_SECRET}`)}`,
-    //         'Content-Type': 'multipart/form-data'
-    //     },
-    //     body: formData
-    // });
-
-    const params = new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID!,
-        client_secret: process.env.DISCORD_CLIENT_SECRET!,
-        grant_type: "refresh_token",
-        refresh_token: refreshToken,
-    }).toString();
     const res = await fetch(url, {
         method: "POST",
-        body: params,
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-        }
+        },
+        body: new URLSearchParams({
+            client_id: process.env.DISCORD_CLIENT_ID!,
+            client_secret: process.env.DISCORD_CLIENT_SECRET!,
+            grant_type: "refresh_token",
+            refresh_token: refreshToken,
+        }).toString(),
     })
     const data = await res.json();
     if (!res.ok) return {
         success: false,
-        message: "error" in data ? data.error : `Failed to refresh access token: ${res.statusText}`,
+        message: "error" in data ? data.error : ( "message" in data ? data.message : `Failed to refresh access token: ${res.statusText}` ),
         status: res.status
     };
     return {
@@ -2453,6 +2433,10 @@ export async function getUserAccessToken(discordId: string): Promise<{
     success: true;
     accessToken: string;
 }> {
+    if (!process.env.ENCRYPTION_KEY) return {
+        success: false,
+        message: "Encryption key not set"
+    }
     const { rows } = await sql`SELECT accesstoken, refreshtoken, tokenexpire FROM discorduserdata WHERE discordid = ${discordId}`;
     if (rows.length === 0) {
         return {
@@ -2460,9 +2444,11 @@ export async function getUserAccessToken(discordId: string): Promise<{
             message: "User not found"
         };
     }
-    const { accesstoken, refreshtoken, tokenexpire } = rows[0];
+    const { tokenexpire } = rows[0];
+    const accesstoken = AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY).toString();
+    const refreshtoken = AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY).toString();
     if (Date.now() > tokenexpire) {
-        const res = await getNewAccessToken(accesstoken, refreshtoken);
+        const res = await getNewAccessToken(refreshtoken);
         if (!res.success) return {
             success: false,
             message: res.message || "Failed to refresh access token"
