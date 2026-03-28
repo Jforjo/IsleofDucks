@@ -1,6 +1,6 @@
 import { CreateInteractionResponse, CreateThread, FollowupMessage, getUserDetails, IsleofDucks } from "@/discord/discordUtils";
 import { getUserDataFromDiscordID } from "@/discord/utils";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -76,6 +76,19 @@ export default async function(
     console.log("user", JSON.stringify(user, null, 2));
     await FollowupMessage(interaction.token, {
         content: `\`\`\`${JSON.stringify(user, null, 2)}\`\`\``,
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        type: ComponentType.Button,
+                        style: ButtonStyle.Link,
+                        label: "Try reauthenticating",
+                        url: "https://isle-of-ducks.vercel.app/api/auth/discord/redirect"
+                    }
+                ]
+            }
+        ]
     });
 
     return NextResponse.json(
