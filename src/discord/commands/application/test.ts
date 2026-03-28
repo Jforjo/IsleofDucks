@@ -62,7 +62,7 @@ export default async function(
         );
     }
     console.log("userDataRes", JSON.stringify(userDataRes, null, 2));
-    const user = await getUserDetails(userDataRes.data.discord.accesstoken);
+    const user = await getUserDetails(userDataRes.data.discord.accesstoken, userDataRes.data.discord.refreshtoken);
     if (!user) {
         await FollowupMessage(interaction.token, {
             content: "Could not find user!",

@@ -67,7 +67,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 
         const { access_token, refresh_token, expires_in } = data;
 
-        const user = await getUserDetails(access_token);
+        const user = await getUserDetails(access_token, refresh_token, 0);
         if (!user.success) {
             if (user.message === "User not found") return NextResponse.redirect(OAUTH_URL);
             return NextResponse.json(user.message, { status: user.status });

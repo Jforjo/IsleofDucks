@@ -4,7 +4,6 @@ import { APIGuild, APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResu
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
-import { request } from "undici";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -2293,7 +2292,7 @@ export async function GetCurrentTranscript(): Promise<{
 //     });
 // }
 
-export async function getUserDetails(accessToken: string): Promise<{
+export async function getUserDetails(accessToken: string, refreshToken: string, tries: number = 0): Promise<{
     success: false;
     message: string;
     status: number;
@@ -2301,21 +2300,46 @@ export async function getUserDetails(accessToken: string): Promise<{
     success: true;
     user: APIUser
 }> {
+    if (tries >= 1) return {
+        success: false,
+        message: "return",
+        status: 400
+    }
     const url = RouteBases.api + Routes.user();
-    const { statusCode, statusText, body } = await request(url, {
-        method: 'GET',
+    const res = await fetch(url, {
+        method: "GET",
         headers: {
             Authorization: `Bearer ${accessToken}`
         }
     });
-    if (statusCode !== 200) return {
-        success: false,
-        message: `Failed to fetch user details: ${statusText}`,
-        status: statusCode
-    };
-    const data = await body.json() as APIUser;
+    if (!res.ok) {
+        if (res.status === 401) {
+            const newAccessTokenRes = await getNewAccessToken(accessToken, refreshToken);
+            if (newAccessTokenRes.success) {
+                const newRes = await getUserDetails(newAccessTokenRes.accessToken, refreshToken, tries + 1);
+                if (!newRes.success && newRes.message === "return") return {
+                    success: false,
+                    message: `Failed to fetch user details: ${res.statusText}`,
+                    status: res.status
+                }
+                return newRes;
+            } else {
+                return {
+                    success: false,
+                    message: newAccessTokenRes.message || "Failed to refresh access token",
+                    status: res.status
+                };
+            }
+        }
+        return {
+            success: false,
+            message: `Failed to fetch user details: ${res.statusText}`,
+            status: res.status
+        };
+    }
+    const data = await res.json() as APIUser;
     console.log(JSON.stringify(data));
-    console.log(body);
+    console.log(res);
     if (!("id" in data)) return {
         success: false,
         message: "User not found",
