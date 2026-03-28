@@ -93,7 +93,7 @@ export default async function(
 
     const res = await fetch("https://discord.com/api/v10/users/@me/guilds", {
         headers: {
-            Authorization: `Bearer ${process.env.DISCORD_BOT_TOKEN}`
+            Authorization: `Bearer ${process.env.DISCORD_TOKEN}`
         }
     });
     const guilds = await res.json() as APIGuild[];
