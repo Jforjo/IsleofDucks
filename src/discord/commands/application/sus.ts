@@ -113,6 +113,11 @@ export default async function(
                     {
                         title: "Users with guild roles in bad guilds",
                         description: chunk.join("\n"),
+                        color: IsleofDucks.colours.main,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
                     }
                 ]
             });
@@ -129,6 +134,11 @@ export default async function(
                     {
                         title: "Users with verified role in bad guilds",
                         description: chunk.join("\n"),
+                        color: IsleofDucks.colours.main,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
                     }
                 ]
             });
@@ -145,6 +155,11 @@ export default async function(
                     {
                         title: "Users with no roles in bad guilds",
                         description: chunk.join("\n"),
+                        color: IsleofDucks.colours.main,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
                     }
                 ]
             });
