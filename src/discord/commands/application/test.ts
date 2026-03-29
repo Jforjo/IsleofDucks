@@ -1,5 +1,6 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
 import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getAllDiscordUsers, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
+import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -56,7 +57,7 @@ export default async function(
     const alreadyExists = await getAllDiscordUsers();
     const userss = await getAllDiscordRoles();
     const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid));
-    await Promise.all(users.map(async (user) => {
+    for (const user of users) {
         if (!user.discordid) await deleteDiscordRole(user.uuid);
         else await createDiscordUser(user.discordid);
         if (user.uuid) {
@@ -65,7 +66,7 @@ export default async function(
                 exp: user.exp === null ? undefined : user.exp
             });
         }
-    }));
+    }
 
     // const donations = await getDonations();
     // await Promise.all(donations.map(async (donation) => {
@@ -77,6 +78,16 @@ export default async function(
     // await Promise.all(scrambles.map(async (scramble) => {
     //     if (!scramble.discordid) return;
     //     await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
+    // }));
+
+    // const superlativeData = await sql`SELECT * FROM users`;
+    // await Promise.all(superlativeData.rows.map(async (data) => {
+    //     if (!data.uuid) return;
+    //     await updateMinecraftUser(data.uuid, {
+    //         superlativestartingvalue: data.oldxp,
+    //         superlativecurrentvalue: data.cataxp,
+    //         superlativelastupdated: data.lastupdated
+    //     });
     // }));
 
     // const userDataRes = await getUserDataFromDiscordID(member.user.id);
