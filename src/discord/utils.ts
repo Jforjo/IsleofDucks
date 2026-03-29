@@ -1003,19 +1003,12 @@ export async function updateDiscordUser(userid: Snowflake, data: {
     donation?: number;
 }): Promise<void> {
     const { hyguessr, donation } = data;
-    const existingData = await sql`SELECT * FROM discorduserdata WHERE discordid = ${userid}`;
-    if (existingData.rows.length === 0) {
-        await createDiscordUser(userid);
-    }
     const updates: string[] = [];
     if (hyguessr !== undefined) {
-        updates.push(`hyguessr = ${hyguessr}`);
+        await sql`UPDATE discorduserdata SET hyguessr = ${hyguessr} WHERE discordid = ${userid}`;
     }
     if (donation !== undefined) {
-        updates.push(`donation = ${donation}`);
-    }
-    if (updates.length > 0) {
-        await sql`UPDATE discorduserdata SET ${updates.join(', ')} WHERE discordid = ${userid} RETURNING discordid`;
+        await sql`UPDATE discorduserdata SET donation = ${donation} WHERE discordid = ${userid}`;
     }
 }
 export async function createMinecraftUser(uuid: string): Promise<void> {
@@ -1029,28 +1022,21 @@ export async function updateMinecraftUser(uuid: string, data: {
     scramble?: number;
 }): Promise<void> {
     const { superlativestartingvalue, superlativecurrentvalue, superlativelastupdated, exp, scramble } = data;
-    const existingData = await sql`SELECT * FROM minecraftplayerdata WHERE uuid = ${uuid}`;
-    if (existingData.rows.length === 0) {
-        await createMinecraftUser(uuid);
-    }
     const updates = [];
     if (superlativestartingvalue !== undefined) {
-        updates.push(`superlativestartingvalue = ${superlativestartingvalue}`);
+        await sql`UPDATE minecraftplayerdata SET superlativestartingvalue = ${superlativestartingvalue} WHERE uuid = ${uuid}`;
     }
     if (superlativecurrentvalue !== undefined) {
-        updates.push(`superlativecurrentvalue = ${superlativecurrentvalue}`);
+        await sql`UPDATE minecraftplayerdata SET superlativecurrentvalue = ${superlativecurrentvalue} WHERE uuid = ${uuid}`;
     }
     if (superlativelastupdated !== undefined) {
-        updates.push(`superlativelastupdated = ${superlativelastupdated}`);
+        await sql`UPDATE minecraftplayerdata SET superlativelastupdated = ${superlativelastupdated} WHERE uuid = ${uuid}`;
     }
     if (exp !== undefined) {
-        updates.push(`exp = ${exp}`);
+        await sql`UPDATE minecraftplayerdata SET exp = ${exp} WHERE uuid = ${uuid}`;
     }
     if (scramble !== undefined) {
-        updates.push(`scramble = ${scramble}`);
-    }
-    if (updates.length > 0) {
-        await sql`UPDATE minecraftplayerdata SET ${updates.join(', ')} WHERE uuid = ${uuid}`;
+        await sql`UPDATE minecraftplayerdata SET scramble = ${scramble} WHERE uuid = ${uuid}`;
     }
 }
 export async function linkDiscordToMinecraft(discordid: Snowflake, uuid: string): Promise<void> {
