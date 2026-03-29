@@ -56,7 +56,7 @@ export default async function(
 
     const alreadyExists = await getAllDiscordUsers();
     const userss = await getAllDiscordRoles(5000);
-    const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid)).slice(0, 100);
+    const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid));
     await Promise.all(users.map(async (user) => {
         if (!user.discordid) await deleteDiscordRole(user.uuid);
         else await createDiscordUser(user.discordid);
