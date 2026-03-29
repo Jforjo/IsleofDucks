@@ -1,4 +1,5 @@
 import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -49,6 +50,28 @@ export default async function(
             flags: MessageFlags.Ephemeral
         }
     });
+
+    const users = await getAllDiscordRoles();
+    for (const user of users) {
+        if (!user.discordid) await deleteDiscordRole(user.uuid);
+        else await createDiscordUser(user.discordid);
+        if (user.uuid) {
+            await createMinecraftUser(user.uuid);
+            await updateMinecraftUser(user.uuid, {
+                exp: user.exp === null ? undefined : user.exp
+            });
+        }
+    }
+    const donations = await getDonations();
+    for (const donation of donations) {
+        if (!donation.discordid) continue;
+        await updateDiscordUser(donation.discordid, { donation: donation.donation });
+    }
+    const scrambles = await getScrambleScores();
+    for (const scramble of scrambles) {
+        if (!scramble.discordid) continue;
+        await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
+    }
 
     // const userDataRes = await getUserDataFromDiscordID(member.user.id);
     // if (!userDataRes.success) {

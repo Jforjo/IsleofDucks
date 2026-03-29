@@ -474,6 +474,10 @@ export async function getAllDiscordRolesWhereNameIsNull(limit = 100): Promise<Di
     const { rows } = await sql`SELECT * FROM discordroles WHERE discordname IS NULL LIMIT ${limit}`;
     return rows as DiscordRole[];
 }
+export async function getAllDiscordRoles(limit = 100): Promise<DiscordRole[]> {
+    const { rows } = await sql`SELECT * FROM discordroles LIMIT ${limit}`;
+    return rows as DiscordRole[];
+}
 
 export interface HyGuessrData {
     answer: {
@@ -991,8 +995,63 @@ export async function createDiscordUser(userid: Snowflake): Promise<{
         // refreshtoken: AES.decrypt(insertedRows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
     }
 }
+export async function updateDiscordUser(userid: Snowflake, data: {
+    // accessToken?: string;
+    // refreshToken?: string;
+    // expiresIn?: number;
+    hyguessr?: number;
+    donation?: number;
+}): Promise<void> {
+    const { hyguessr, donation } = data;
+    const existingData = await sql`SELECT * FROM discorduserdata WHERE discordid = ${userid}`;
+    if (existingData.rows.length === 0) {
+        await createDiscordUser(userid);
+    }
+    const updates: string[] = [];
+    if (hyguessr !== undefined) {
+        updates.push(`hyguessr = ${hyguessr}`);
+    }
+    if (donation !== undefined) {
+        updates.push(`donation = ${donation}`);
+    }
+    if (updates.length > 0) {
+        await sql`UPDATE discorduserdata SET ${updates.join(', ')} WHERE discordid = ${userid} RETURNING discordid`;
+    }
+}
 export async function createMinecraftUser(uuid: string): Promise<void> {
-    await sql`INSERT INTO minecraftplayerdata (uuid) VALUES (${uuid})`;
+    await sql`INSERT INTO minecraftplayerdata (uuid) VALUES (${uuid}) ON CONFLICT (uuid) DO NOTHING RETURNING uuid`;
+}
+export async function updateMinecraftUser(uuid: string, data: {
+    superlativestartingvalue?: number | null;
+    superlativecurrentvalue?: number | null;
+    superlativelastupdated?: number;
+    exp?: number;
+    scramble?: number;
+}): Promise<void> {
+    const { superlativestartingvalue, superlativecurrentvalue, superlativelastupdated, exp, scramble } = data;
+    const existingData = await sql`SELECT * FROM minecraftplayerdata WHERE uuid = ${uuid}`;
+    if (existingData.rows.length === 0) {
+        await createMinecraftUser(uuid);
+    }
+    const updates = [];
+    if (superlativestartingvalue !== undefined) {
+        updates.push(`superlativestartingvalue = ${superlativestartingvalue}`);
+    }
+    if (superlativecurrentvalue !== undefined) {
+        updates.push(`superlativecurrentvalue = ${superlativecurrentvalue}`);
+    }
+    if (superlativelastupdated !== undefined) {
+        updates.push(`superlativelastupdated = ${superlativelastupdated}`);
+    }
+    if (exp !== undefined) {
+        updates.push(`exp = ${exp}`);
+    }
+    if (scramble !== undefined) {
+        updates.push(`scramble = ${scramble}`);
+    }
+    if (updates.length > 0) {
+        await sql`UPDATE minecraftplayerdata SET ${updates.join(', ')} WHERE uuid = ${uuid}`;
+    }
 }
 export async function linkDiscordToMinecraft(discordid: Snowflake, uuid: string): Promise<void> {
     const linked = await checkLinked(discordid, uuid);
@@ -1019,6 +1078,8 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
             id: Snowflake;
             // accesstoken: string;
             // refreshtoken: string;
+            hyguessr: number;
+            donation: number;
         },
         minecraft?: {
             uuid: string;
@@ -1026,6 +1087,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
             superlativecurrentvalue: number | null;
             superlativelastupdated: number;
             exp: number;
+            scramble: number;
         }
     };
 } | {
@@ -1035,11 +1097,14 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
     const { rows } = await sql`
         SELECT
             d.id,
+            d.hyguessr,
+            d.donation,
             m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
             m.superlativelastupdated,
-            m.exp
+            m.exp,
+            m.scramble
         FROM discorduserdata d
         LEFT JOIN userlink u ON d.id = u.discord
         LEFT JOIN minecraftplayerdata m ON u.minecraft = m.id
@@ -1051,15 +1116,18 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
         data: {
             discord: {
                 id: rows[0].id,
+                hyguessr: rows[0].hyguessr,
+                donation: rows[0].donation
                 // accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
-                // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
+                // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
             },
             minecraft: rows[0].uuid ? {
                 uuid: rows[0].uuid,
                 superlativestartingvalue: rows[0].superlativestartingvalue,
                 superlativecurrentvalue: rows[0].superlativecurrentvalue,
                 superlativelastupdated: rows[0].superlativelastupdated,
-                exp: rows[0].exp
+                exp: rows[0].exp,
+                scramble: rows[0].scramble
             } : undefined
         }
     };
@@ -1069,6 +1137,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
     data: {
         discord?: {
             id: Snowflake;
+            hyguessr: number;
+            donation: number;
             // accesstoken: string;
             // refreshtoken: string;
         },
@@ -1078,6 +1148,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
             superlativecurrentvalue: number | null;
             superlativelastupdated: number;
             exp: number;
+            scramble: number;
         }
     };
 } | {
@@ -1087,11 +1158,14 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
     const { rows } = await sql`
         SELECT
             d.id,
+            d.hyguessr,
+            d.donation,
             m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
             m.superlativelastupdated,
-            m.exp
+            m.exp,
+            m.scramble
         FROM minecraftplayerdata m
         LEFT JOIN userlink u ON m.id = u.minecraft
         LEFT JOIN discorduserdata d ON u.discord = d.id
@@ -1103,6 +1177,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
         data: {
             discord: rows[0].id ? {
                 id: rows[0].id,
+                hyguessr: rows[0].hyguessr,
+                donation: rows[0].donation
                 // accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
                 // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
             } : undefined,
@@ -1111,7 +1187,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
                 superlativestartingvalue: rows[0].superlativestartingvalue,
                 superlativecurrentvalue: rows[0].superlativecurrentvalue,
                 superlativelastupdated: rows[0].superlativelastupdated,
-                exp: rows[0].exp
+                exp: rows[0].exp,
+                scramble: rows[0].scramble
             }
         }
     };
