@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
 import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getAllDiscordUsers, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
@@ -54,7 +54,13 @@ export default async function(
         }
     });
 
-    // const alreadyExists = await getAllDiscordUsers();
+
+    const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
+    const alreadyExists = await getAllDiscordUsers();
+    const users = discUsers.filter(u => !alreadyExists.some(a => a.discordid === u.user.id));
+    await Promise.all(users.map(async (user) => {
+        await RemoveGuildMemberRole(IsleofDucks.serverID, user.user.id, IsleofDucks.roles.verified);
+    }));
     // const userss = await getAllDiscordRoles(5000);
     // const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid)).slice(0, 100);
     // await Promise.all(users.map(async (user) => {
@@ -68,17 +74,17 @@ export default async function(
     //     }
     // }));
 
-    const donations = await getDonations(0, 5000);
-    await Promise.all(donations.map(async (donation) => {
-        if (!donation.discordid) return;
-        await updateDiscordUser(donation.discordid, { donation: donation.donation });
-    }));
+    // const donations = await getDonations(0, 5000);
+    // await Promise.all(donations.map(async (donation) => {
+    //     if (!donation.discordid) return;
+    //     await updateDiscordUser(donation.discordid, { donation: donation.donation });
+    // }));
 
-    const scrambles = await getScrambleScores();
-    await Promise.all(scrambles.map(async (scramble) => {
-        if (!scramble.discordid) return;
-        await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
-    }));
+    // const scrambles = await getScrambleScores();
+    // await Promise.all(scrambles.map(async (scramble) => {
+    //     if (!scramble.discordid) return;
+    //     await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
+    // }));
 
     // const superlativeData = await sql`SELECT * FROM users`;
     // await Promise.all(superlativeData.rows.map(async (data) => {
