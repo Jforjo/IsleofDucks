@@ -231,46 +231,65 @@ const embeds = {
     verify: {
         content: null,
         data: JSON.stringify({
-            embeds: [
+            flags: 32768,
+            components: [
                 {
-                    image: {
-                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=69c91119&is=69c7bf99&hm=e086ce5415436ed1fa3879283d2fbc70a2d94b542b3d0b888ab99b5866a4cf07&=&format=webp&quality=lossless"
-                    },
-                    title: "Welcome to Isle of Ducks ⋆˚꩜｡",
-                    color: 12403455,
-                    description: "Please authorise your Discord account by clicking on the \"Authorise\" button below.\nThen click the \"verify\" button to verify by entering your Minecraft username to access the rest of the server. \n\nBe sure to review our rules [here](https://discord.com/channels/823061629812867113/823061630300192790).\n\nIf you have any issues, create a ticket here <#1330207810872676403> \nEnjoy your stay!"
-                }
-            ],
-            attachments: [
+                    type: 12,
+                    items: [
+                        {
+                            media: {
+                                url: "https://media.discordapp.net/attachments/1300979867881312347/1487511647198384270/66ef1102a7269.png?ex=69ca116d&is=69c8bfed&hm=7856823854205cfaf93fe1c032cfccc3b2569baa19588bfd30469ee9a7813a08&=&format=webp&quality=lossless"
+                            }
+                        }
+                    ]
+                },
                 {
-                    id: 0
+                    type: 17,
+                    components: [
+                        {
+                            type: 10,
+                            content: "## Welcome to Isle of Ducks ⋆˚꩜｡"
+                        },
+                        {
+                            type: 10,
+                            content: "Please verify by entering your Minecraft username to access the rest of the server."
+                        },
+                        {
+                            type: 10,
+                            content: "Be sure to review our rules [here](https://discord.com/channels/823061629812867113/823061630300192790)."
+                        },
+                        {
+                            type: 10,
+                            content: "If you have any issues, create a ticket here <#1330207810872676403> \nEnjoy your stay!"
+                        },
+                        {
+                            type: 12,
+                            items: [
+                                {
+                                    media: {
+                                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=69c91119&is=69c7bf99&hm=e086ce5415436ed1fa3879283d2fbc70a2d94b542b3d0b888ab99b5866a4cf07&=&format=webp&quality=lossless"
+                                    },
+                                    description: null
+                                }
+                            ]
+                        }
+                    ],
+                    accent_color: 12403455
+                },
+                {
+                    type: 1,
+                    components: [
+                        {
+                            style: 1,
+                            type: 2,
+                            custom_id: "verify",
+                            label: "Verify"
+                        }
+                    ]
                 }
             ]
         }),
-        components: JSON.stringify([
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 2,
-                        style: 5,
-                        url: "https://discohook.app",
-                        label: "Authorise"
-                    },
-                    {
-                        style: 2,
-                        type: 2,
-                        label: "Verify"
-                    }
-                ]
-            }
-        ]),
-        attachments: JSON.stringify([
-            {
-                id: 0,
-                filename: 'title.png',
-                url: "https://media.discordapp.net/attachments/1300979867881312347/1487511647198384270/66ef1102a7269.png?ex=69c968ad&is=69c8172d&hm=33e690380028949490a5e6e001f28c703da8f599974faab89ea65a98364a2732&=&format=webp&quality=lossless"
-            }
-        ])
+        components: undefined,
+        attachments: undefined
     }
 }
