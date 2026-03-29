@@ -997,7 +997,8 @@ export async function createMinecraftUser(uuid: string): Promise<void> {
 export async function linkDiscordToMinecraft(discordid: Snowflake, uuid: string): Promise<void> {
     const linked = await checkLinked(discordid, uuid);
     if (linked) {
-        throw new Error("Discord user and Minecraft user are already linked");
+        // throw new Error("Discord user and Minecraft user are already linked");
+        throw new Error("Already verified");
     }
     const { rows: discordRows } = await sql`SELECT id FROM discorduserdata WHERE discordid = ${discordid}`;
     if (discordRows.length === 0) {

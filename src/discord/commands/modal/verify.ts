@@ -136,7 +136,8 @@ export default async function(
         await linkDiscordToMinecraft(user.id, userRes.uuid);
     } catch (e: any) {
         await FollowupMessage(interaction.token, {
-            content: "message" in e ? e.message : "An error occurred while linking your Discord account to your Minecraft account!"
+            // content: "message" in e ? e.message : "An error occurred while linking your Discord account to your Minecraft account!"
+            content: "message" in e ? e.message : "An error occurred while verifying!"
         });
         throw e;
     }
@@ -144,10 +145,12 @@ export default async function(
     const didLink = await checkLinked(user.id, userRes.uuid);
     if (!didLink) {
         await FollowupMessage(interaction.token, {
-            content: "An error occurred while linking your Discord account to your Minecraft account!"
+            // content: "An error occurred while linking your Discord account to your Minecraft account!"
+            content: "An error occurred while verifying!"
         });
         return NextResponse.json(
-            { success: false, error: "An error occurred while linking your Discord account to your Minecraft account" },
+            // { success: false, error: "An error occurred while linking your Discord account to your Minecraft account" },
+            { success: false, error: "An error occurred while verifying" },
             { status: 400 }
         );
     }
@@ -156,13 +159,15 @@ export default async function(
         await AddGuildMemberRole(IsleofDucks.serverID, user.id, IsleofDucks.roles.verified);
     } catch (e) {
         await FollowupMessage(interaction.token, {
-            content: "Successfully linked your Discord account to your Minecraft account, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+            // content: "Successfully linked your Discord account to your Minecraft account, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+            content: "Successfully verified, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
         });
         throw e;
     }
 
     await FollowupMessage(interaction.token, {
-        content: "Successfully linked your Discord account to your Minecraft account!"
+        // content: "Successfully linked your Discord account to your Minecraft account!"
+        content: "Successfully verified!"
     });
 
     return NextResponse.json(
