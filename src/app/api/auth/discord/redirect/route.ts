@@ -1,6 +1,6 @@
 import { getUserDetails } from "@/discord/discordUtils";
 import { NextRequest, NextResponse } from "next/server";
-import { AES } from 'crypto-ts';
+// import { AES } from 'crypto-ts';
 import { createDiscordUser } from "@/discord/utils";
 // import { sign } from 'jsonwebtoken';
 // import { cookies } from "next/headers";
@@ -76,9 +76,9 @@ export async function GET(req: NextRequest): Promise<Response> {
         try {
             await createDiscordUser(
                 user.user.id,
-                AES.encrypt(access_token, process.env.ENCRYPTION_KEY!).toString(),
-                AES.encrypt(refresh_token, process.env.ENCRYPTION_KEY!).toString(),
-                expires_in
+                // AES.encrypt(access_token, process.env.ENCRYPTION_KEY!).toString(),
+                // AES.encrypt(refresh_token, process.env.ENCRYPTION_KEY!).toString(),
+                // expires_in
             );
         } catch (e) {
             console.log(`Error creating user: ${e}`);
