@@ -1,5 +1,5 @@
 import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
-import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
+import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getAllDiscordUsers, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -51,7 +51,9 @@ export default async function(
         }
     });
 
-    const users = await getAllDiscordRoles();
+    const alreadyExists = await getAllDiscordUsers();
+    const userss = await getAllDiscordRoles();
+    const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid));
     for (const user of users) {
         if (!user.discordid) await deleteDiscordRole(user.uuid);
         else await createDiscordUser(user.discordid);
