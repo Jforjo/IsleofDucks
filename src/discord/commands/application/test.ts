@@ -1,6 +1,5 @@
-import { CreateInteractionResponse, CreateThread, FollowupMessage, getUserDetails, IsleofDucks } from "@/discord/discordUtils";
-import { getUserDataFromDiscordID } from "@/discord/utils";
-import { APIChatInputApplicationCommandInteraction, APIGuild, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -51,32 +50,32 @@ export default async function(
         }
     });
 
-    const userDataRes = await getUserDataFromDiscordID(member.user.id);
-    if (!userDataRes.success) {
-        await FollowupMessage(interaction.token, {
-            content: "Could not find user in DB!",
-        });
-        return NextResponse.json(
-            { success: false, error: "Could not find user in DB" },
-            { status: 400 }
-        );
-    }
-    console.log("userDataRes", JSON.stringify(userDataRes, null, 2));
-    const user = await getUserDetails(userDataRes.data.discord.accesstoken, userDataRes.data.discord.refreshtoken);
-    if (!user) {
-        await FollowupMessage(interaction.token, {
-            content: "Could not find user!",
-        });
-        return NextResponse.json(
-            { success: false, error: "Could not find user" },
-            { status: 400 }
-        );
-    }
+    // const userDataRes = await getUserDataFromDiscordID(member.user.id);
+    // if (!userDataRes.success) {
+    //     await FollowupMessage(interaction.token, {
+    //         content: "Could not find user in DB!",
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Could not find user in DB" },
+    //         { status: 400 }
+    //     );
+    // }
+    // console.log("userDataRes", JSON.stringify(userDataRes, null, 2));
+    // const user = await getUserDetails(userDataRes.data.discord.accesstoken, userDataRes.data.discord.refreshtoken);
+    // if (!user) {
+    //     await FollowupMessage(interaction.token, {
+    //         content: "Could not find user!",
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Could not find user" },
+    //         { status: 400 }
+    //     );
+    // }
 
-    console.log("user", JSON.stringify(user, null, 2));
-    await FollowupMessage(interaction.token, {
-        content: `\`\`\`${JSON.stringify(user, null, 2)}\`\`\``
-    });
+    // console.log("user", JSON.stringify(user, null, 2));
+    // await FollowupMessage(interaction.token, {
+    //     content: `\`\`\`${JSON.stringify(user, null, 2)}\`\`\``
+    // });
 
     // const res = await fetch("https://discord.com/api/v10/users/@me/guilds?with_counts=true", {
     //     headers: {

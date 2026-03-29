@@ -971,23 +971,24 @@ export async function addHint(id: string, hint: string, at: number): Promise<voi
     `;
 }
 
-export async function createDiscordUser(userid: Snowflake, accessToken: string, refreshToken: string, expiresIn: number): Promise<{
+// export async function createDiscordUser(userid: Snowflake, accessToken: string, refreshToken: string, expiresIn: number): Promise<{
+export async function createDiscordUser(userid: Snowflake): Promise<{
     userid: Snowflake;
-    accesstoken: string;
-    refreshtoken: string;
+    // accesstoken: string;
+    // refreshtoken: string;
 }> {
     // check if they exist and return that instead
-    const { rows } = await sql`SELECT discordid, accesstoken, refreshtoken, tokenexpire FROM discorduserdata WHERE discordid = ${userid}`;
+    const { rows } = await sql`SELECT discordid FROM discorduserdata WHERE discordid = ${userid}`;
     if (rows.length > 0) return {
         userid: rows[0].discordid,
-        accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
-        refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
+        // accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+        // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
     }
-    const { rows: insertedRows } = await sql`INSERT INTO discorduserdata (discordid, accesstoken, refreshtoken, tokenexpire) VALUES (${userid}, ${accessToken}, ${refreshToken}, ${Date.now() + expiresIn * 1000}) RETURNING discordid as userid, accesstoken, refreshtoken, tokenexpire`;
+    const { rows: insertedRows } = await sql`INSERT INTO discorduserdata (discordid) VALUES (${userid}) RETURNING discordid as userid`;
     return {
         userid: insertedRows[0].userid,
-        accesstoken: AES.decrypt(insertedRows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
-        refreshtoken: AES.decrypt(insertedRows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
+        // accesstoken: AES.decrypt(insertedRows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+        // refreshtoken: AES.decrypt(insertedRows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
     }
 }
 export async function createMinecraftUser(uuid: string): Promise<void> {
@@ -1015,8 +1016,8 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
     data: {
         discord: {
             id: Snowflake;
-            accesstoken: string;
-            refreshtoken: string;
+            // accesstoken: string;
+            // refreshtoken: string;
         },
         minecraft?: {
             uuid: string;
@@ -1033,8 +1034,6 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
     const { rows } = await sql`
         SELECT
             d.id,
-            d.accesstoken,
-            d.refreshtoken,
             m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
@@ -1051,8 +1050,8 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
         data: {
             discord: {
                 id: rows[0].id,
-                accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
-                refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
+                // accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+                // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
             },
             minecraft: rows[0].uuid ? {
                 uuid: rows[0].uuid,
@@ -1069,8 +1068,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
     data: {
         discord?: {
             id: Snowflake;
-            accesstoken: string;
-            refreshtoken: string;
+            // accesstoken: string;
+            // refreshtoken: string;
         },
         minecraft: {
             uuid: string;
@@ -1087,8 +1086,6 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
     const { rows } = await sql`
         SELECT
             d.id,
-            d.accesstoken,
-            d.refreshtoken,
             m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
@@ -1105,8 +1102,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
         data: {
             discord: rows[0].id ? {
                 id: rows[0].id,
-                accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
-                refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
+                // accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
+                // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
             } : undefined,
             minecraft: {
                 uuid: rows[0].uuid,

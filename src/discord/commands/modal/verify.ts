@@ -1,7 +1,7 @@
 import { AddGuildMemberRole, CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getHypixelPlayer, getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { checkDiscordInDB, checkLinked, checkMinecraftInDB, createMinecraftUser, linkDiscordToMinecraft } from "@/discord/utils";
-import { APIModalSubmitInteraction, APIInteractionResponse, Snowflake, InteractionResponseType, MessageFlags, ComponentType, ButtonStyle, APIUser } from "discord-api-types/v10";
+import { checkDiscordInDB, checkLinked, checkMinecraftInDB, createDiscordUser, createMinecraftUser, linkDiscordToMinecraft } from "@/discord/utils";
+import { APIModalSubmitInteraction, APIInteractionResponse, InteractionResponseType, MessageFlags, ComponentType, APIUser } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -95,34 +95,38 @@ export default async function(
         );
     }
 
+    // const discordExists = await checkDiscordInDB(user.id);
+    // if (!discordExists) {
+    //     await FollowupMessage(interaction.token, {
+    //         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+    //         components: [
+    //             {
+    //                 type: ComponentType.Section,
+    //                 components: [
+    //                     {
+    //                         type: ComponentType.TextDisplay,
+    //                         content: "You must authorise first!",
+    //                     }
+    //                 ],
+    //                 accessory: {
+    //                     type: ComponentType.Button,
+    //                     style: ButtonStyle.Link,
+    //                     label: "Authorise Me",
+    //                     url: `https://isle-of-ducks.vercel.app/api/auth/discord/redirect`
+    //                 }
+    //             }
+    //         ]
+    //     }, null, true);
+    //     return NextResponse.json(
+    //         { success: false, error: "You must authorise first" },
+    //         { status: 400 }
+    //     );
+    // }
+
     const discordExists = await checkDiscordInDB(user.id);
     if (!discordExists) {
-        await FollowupMessage(interaction.token, {
-            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
-            components: [
-                {
-                    type: ComponentType.Section,
-                    components: [
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: "You must authorise first!",
-                        }
-                    ],
-                    accessory: {
-                        type: ComponentType.Button,
-                        style: ButtonStyle.Link,
-                        label: "Authorise Me",
-                        url: `https://isle-of-ducks.vercel.app/api/auth/discord/redirect`
-                    }
-                }
-            ]
-        }, null, true);
-        return NextResponse.json(
-            { success: false, error: "You must authorise first" },
-            { status: 400 }
-        );
+        await createDiscordUser(user.id);
     }
-
     const minecraftExists = await checkMinecraftInDB(userRes.uuid);
     if (!minecraftExists) {
         await createMinecraftUser(userRes.uuid);
@@ -149,7 +153,7 @@ export default async function(
     }
 
     try {
-        await AddGuildMemberRole(IsleofDucks.serverID, user.id, "1486811494695043182");
+        await AddGuildMemberRole(IsleofDucks.serverID, user.id, IsleofDucks.roles.verified);
     } catch (e) {
         await FollowupMessage(interaction.token, {
             content: "Successfully linked your Discord account to your Minecraft account, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
