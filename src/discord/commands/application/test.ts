@@ -54,7 +54,7 @@ export default async function(
     const alreadyExists = await getAllDiscordUsers();
     const userss = await getAllDiscordRoles();
     const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid));
-    for (const user of users) {
+    await Promise.all(users.map(async (user) => {
         if (!user.discordid) await deleteDiscordRole(user.uuid);
         else await createDiscordUser(user.discordid);
         if (user.uuid) {
@@ -63,17 +63,19 @@ export default async function(
                 exp: user.exp === null ? undefined : user.exp
             });
         }
-    }
+    }));
+
     const donations = await getDonations();
-    for (const donation of donations) {
-        if (!donation.discordid) continue;
+    await Promise.all(donations.map(async (donation) => {
+        if (!donation.discordid) return;
         await updateDiscordUser(donation.discordid, { donation: donation.donation });
-    }
+    }));
+
     const scrambles = await getScrambleScores();
-    for (const scramble of scrambles) {
-        if (!scramble.discordid) continue;
+    await Promise.all(scrambles.map(async (scramble) => {
+        if (!scramble.discordid) return;
         await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
-    }
+    }));
 
     // const userDataRes = await getUserDataFromDiscordID(member.user.id);
     // if (!userDataRes.success) {
