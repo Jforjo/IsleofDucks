@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
 import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getAllDiscordUsers, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -44,10 +44,12 @@ export default async function(
         );
     }
 
+    const timestamp = ConvertSnowflakeToDate(interaction.id)
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
+        type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-            flags: MessageFlags.Ephemeral
+            flags: MessageFlags.Ephemeral,
+            content: `<t:${Math.floor(timestamp.getTime() / 1000) + 60}:R>`
         }
     });
 
@@ -65,17 +67,17 @@ export default async function(
         }
     }));
 
-    const donations = await getDonations();
-    await Promise.all(donations.map(async (donation) => {
-        if (!donation.discordid) return;
-        await updateDiscordUser(donation.discordid, { donation: donation.donation });
-    }));
+    // const donations = await getDonations();
+    // await Promise.all(donations.map(async (donation) => {
+    //     if (!donation.discordid) return;
+    //     await updateDiscordUser(donation.discordid, { donation: donation.donation });
+    // }));
 
-    const scrambles = await getScrambleScores();
-    await Promise.all(scrambles.map(async (scramble) => {
-        if (!scramble.discordid) return;
-        await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
-    }));
+    // const scrambles = await getScrambleScores();
+    // await Promise.all(scrambles.map(async (scramble) => {
+    //     if (!scramble.discordid) return;
+    //     await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
+    // }));
 
     // const userDataRes = await getUserDataFromDiscordID(member.user.id);
     // if (!userDataRes.success) {
