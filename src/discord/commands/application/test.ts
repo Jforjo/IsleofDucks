@@ -59,7 +59,9 @@ export default async function(
     const alreadyExists = await getAllDiscordUsers();
     const users = discUsers.filter(u => !alreadyExists.some(a => a.discordid === u.user.id));
     await Promise.all(users.map(async (user) => {
-        await RemoveGuildMemberRole(IsleofDucks.serverID, user.user.id, IsleofDucks.roles.verified);
+        if (user.roles.includes(IsleofDucks.roles.verified)) {
+            await RemoveGuildMemberRole(IsleofDucks.serverID, user.user.id, IsleofDucks.roles.verified);
+        }
     }));
     // const userss = await getAllDiscordRoles(5000);
     // const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid)).slice(0, 100);
