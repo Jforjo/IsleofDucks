@@ -55,8 +55,14 @@ export default async function(
     });
 
     const alreadyExists = await getAllDiscordUsers();
+    console.log("alreadyExists", JSON.stringify(alreadyExists));
+    console.log("alreadyExists length", alreadyExists.length);
     const userss = await getAllDiscordRoles();
+    console.log("userss", JSON.stringify(userss));
+    console.log("userss length", userss.length);
     const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid));
+    console.log("users", JSON.stringify(users));
+    console.log("users length", users.length);
     for (const user of users) {
         if (!user.discordid) await deleteDiscordRole(user.uuid);
         else await createDiscordUser(user.discordid);
