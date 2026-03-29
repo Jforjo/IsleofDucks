@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getAllDiscordUsers, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
@@ -128,6 +128,10 @@ export default async function(
     // await FollowupMessage(interaction.token, {
     //     content: `\`\`\`${JSON.stringify(guilds, null, 2)}\`\`\``,
     // });
+
+    await FollowupMessage(interaction.token, {
+        content: `Done!`,
+    });
 
     return NextResponse.json(
         { success: true },
