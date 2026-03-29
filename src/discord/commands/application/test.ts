@@ -55,15 +55,9 @@ export default async function(
     });
 
     const alreadyExists = await getAllDiscordUsers();
-    console.log("alreadyExists", JSON.stringify(alreadyExists));
-    console.log("alreadyExists length", alreadyExists.length);
-    const userss = await getAllDiscordRoles();
-    console.log("userss", JSON.stringify(userss));
-    console.log("userss length", userss.length);
+    const userss = await getAllDiscordRoles(5000);
     const users = userss.filter(u => !alreadyExists.some(a => a.discordid === u.discordid));
-    console.log("users", JSON.stringify(users));
-    console.log("users length", users.length);
-    for (const user of users) {
+    await Promise.all(users.map(async (user) => {
         if (!user.discordid) await deleteDiscordRole(user.uuid);
         else await createDiscordUser(user.discordid);
         if (user.uuid) {
@@ -72,7 +66,7 @@ export default async function(
                 exp: user.exp === null ? undefined : user.exp
             });
         }
-    }
+    }));
 
     // const donations = await getDonations();
     // await Promise.all(donations.map(async (donation) => {
