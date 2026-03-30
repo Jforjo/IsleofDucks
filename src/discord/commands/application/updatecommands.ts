@@ -14,7 +14,6 @@ import { CommandData as UpdateRoles } from "./updateroles";
 import { CommandData as Recruit } from "./recruit";
 import { CommandData as BanList } from "./banlist";
 import { CommandData as InsertEmbed } from "./insertembed";
-import { CommandData as UpdateDatabase } from "./updatedatabase";
 import { CommandData as ReadMessage } from "./readmessage";
 import { CommandData as Test } from "./test";
 import { CommandData as Util } from "./util";
@@ -80,7 +79,6 @@ export default async function(
         Recruit,
         BanList,
         InsertEmbed,
-        UpdateDatabase,
         ReadMessage,
         Test,
         Util,
