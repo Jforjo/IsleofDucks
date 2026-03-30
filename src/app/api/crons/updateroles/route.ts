@@ -45,8 +45,8 @@ export async function GET(request: NextRequest): Promise<Response> {
             {
                 title: "Cron Job result for updateroles!",
                 description: [
-                    `Added ${result.rolesAdded} roles to ${result.usersHadRolesAdded} users.`,
-                    `Removed ${result.rolesRemoved} roles from ${result.usersHadRolesRemoved} users.`,
+                    `Added ${result.rolesAdded} roles to ${result.usersHadRolesAdded.filter((value, index) => result.usersHadRolesAdded.indexOf(value) === index).length} users.`,
+                    `Removed ${result.rolesRemoved} roles from ${result.usersHadRolesRemoved.filter((value, index) => result.usersHadRolesRemoved.indexOf(value) === index).length} users.`,
                 ].join("\n"),
                 color: 0xFB9B00,
                 footer: {

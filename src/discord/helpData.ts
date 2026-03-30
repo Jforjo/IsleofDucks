@@ -7,6 +7,7 @@ import { CommandData as CheapestShardsCommandData, RequiredRoles as CheapestShar
 import { CommandData as checkAPICommandData, RequiredRoles as checkAPIRequiredRoles } from "./commands/application/checkapi";
 import { CommandData as DonorCommandData, RequiredRoles as DonorRequiredRoles } from "./commands/application/donor";
 import { CommandData as EmbedCommandData, RequiredRoles as EmbedRequiredRoles } from "./commands/application/embed";
+import { CommandData as UpdateRolesCommandData, RequiredRoles as UpdateRolesRequiredRoles } from "./commands/application/updateroles";
 import { IsleofDucks } from "./discordUtils";
 
 export const HelpData = {
@@ -46,6 +47,10 @@ export const HelpData = {
         embed: {
             data: EmbedCommandData,
             roles: EmbedRequiredRoles
+        },
+        updateRoles: {
+            data: UpdateRolesCommandData,
+            roles: UpdateRolesRequiredRoles
         }
     },
     bridgeCommands: {
