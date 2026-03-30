@@ -59,19 +59,19 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     if (guild === "duck") {
         if (status === "joined") {
-            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.duck_guild_member);
-            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.guild_member);
+            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.duck_guild_member);
+            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.guild_member);
         } else if (status === "left") {
-            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.duck_guild_member);
-            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.guild_member);
+            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.duck_guild_member);
+            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.guild_member);
         }
     } else if (guild === "duckling") {
         if (status === "joined") {
-            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.duckling_guild_member);
-            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.guild_member);
+            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.duckling_guild_member);
+            await AddGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.guild_member);
         } else if (status === "left") {
-            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.duckling_guild_member);
-            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.id, IsleofDucks.roles.guild_member);
+            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.duckling_guild_member);
+            await RemoveGuildMemberRole(IsleofDucks.serverID, data.data.discord.discordid, IsleofDucks.roles.guild_member);
         }
     } else {
         return Response.json({
