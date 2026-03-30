@@ -450,7 +450,7 @@ export async function updateGuildSuperlative(
 
 
 export async function updateMinecraftPlayerDataExp(uuid: string | null, experience: number): Promise<void> {
-    await sql`UPDATE minecraftplayerdata SET (exp) = (${experience}) WHERE uuid = ${uuid}`;
+    await sql`UPDATE minecraftplayerdata SET exp = ${experience} WHERE uuid = ${uuid}`;
 }
 export async function deleteDiscordUserData(discordid: string): Promise<void> {
     await sql`DELETE FROM discorduserdata WHERE discordid = ${discordid}`;
