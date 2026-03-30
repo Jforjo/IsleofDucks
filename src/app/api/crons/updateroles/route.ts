@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import { EditMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { UpdateRoles } from "@/discord/commands/application/updateroles";
-import { UpdateAllDiscordRolesInDb } from "@/discord/commands/application/updatedatabase";
 
 export async function GET(request: NextRequest): Promise<Response> {
     const authHeader = request.headers.get("authorization");
@@ -56,8 +55,6 @@ export async function GET(request: NextRequest): Promise<Response> {
             },
         ],
     });
-
-    await UpdateAllDiscordRolesInDb();
 
     return Response.json({ success: true });
 }

@@ -1,4 +1,4 @@
-import { getDiscordRole } from "@/discord/utils";
+import { getUserDataFromUUID } from "@/discord/utils";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest): Promise<Response> {
@@ -27,8 +27,8 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
 
-    const data = await getDiscordRole(uuid);
-    if (!data) {
+    const data = await getUserDataFromUUID(uuid);
+    if (!data || !data.success || !data.data.discord || !data.data.discord.discordid) {
         return Response.json({
             success: false,
             message: "No Discord data found in DB"
@@ -37,6 +37,6 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     return Response.json({
         success: true,
-        data: data
+        data: data.data.discord
     });
 }
