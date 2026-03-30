@@ -1,4 +1,4 @@
-import { AddGuildMemberRole, CreateInteractionResponse, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { AddGuildMemberRole, CreateInteractionResponse, EditGuildMember, FollowupMessage, GetGuildMember, IsleofDucks } from "@/discord/discordUtils";
 import { getHypixelPlayer, getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { checkDiscordInDB, checkLinked, checkMinecraftInDB, createDiscordUser, createMinecraftUser, linkDiscordToMinecraft } from "@/discord/utils";
 import { APIModalSubmitInteraction, APIInteractionResponse, InteractionResponseType, MessageFlags, ComponentType, APIUser } from "discord-api-types/v10";
@@ -161,6 +161,17 @@ export default async function(
         await FollowupMessage(interaction.token, {
             // content: "Successfully linked your Discord account to your Minecraft account, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
             content: "Successfully verified, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+        });
+        throw e;
+    }
+
+    try {
+        await EditGuildMember(IsleofDucks.serverID, user.id, {
+            nick: userRes.name
+        });
+    } catch (e) {
+        await FollowupMessage(interaction.token, {
+            content: "Successfully verified, but failed to update your nickname!\nPlease contact our staff to resolve this issue.",
         });
         throw e;
     }
