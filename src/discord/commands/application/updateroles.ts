@@ -136,7 +136,7 @@ export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
             const res = await getUserDataFromUUID(member.uuid);
             if (!res.success) continue;
             if (!res.data.discord) continue;
-            const discordID = res.data.discord.id;
+            const discordID = res.data.discord.discordid;
             if (!discordID) continue;
             const discordMember = members.find(m => m.user.id === discordID);
             if (!discordMember) continue;
@@ -152,7 +152,7 @@ export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
             const res = await getUserDataFromUUID(member.uuid);
             if (!res.success) continue;
             if (!res.data.discord) continue;
-            const discordID = res.data.discord.id;
+            const discordID = res.data.discord.discordid;
             if (!discordID) continue;
             const discordMember = members.find(m => m.user.id === discordID);
             if (!discordMember) continue;

@@ -1,5 +1,5 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
-import { createDiscordUser, createMinecraftUser, deleteDiscordRole, getAllDiscordRoles, getAllDiscordUsers, getDonations, getScrambleScores, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
+import { getAllDiscordUsers, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -88,15 +88,15 @@ export default async function(
     //     await updateMinecraftUser(scramble.uuid, { scramble: scramble.score });
     // }));
 
-    // const superlativeData = await sql`SELECT * FROM users`;
-    // await Promise.all(superlativeData.rows.map(async (data) => {
-    //     if (!data.uuid) return;
-    //     await updateMinecraftUser(data.uuid, {
-    //         superlativestartingvalue: data.oldxp,
-    //         superlativecurrentvalue: data.cataxp,
-    //         superlativelastupdated: data.lastupdated
-    //     });
-    // }));
+    const superlativeData = await sql`SELECT * FROM users`;
+    await Promise.all(superlativeData.rows.map(async (data) => {
+        if (!data.uuid) return;
+        await updateMinecraftUser(data.uuid, {
+            superlativestartingvalue: data.oldxp,
+            superlativecurrentvalue: data.cataxp,
+            superlativelastupdated: data.lastupdated
+        });
+    }));
 
     // const userDataRes = await getUserDataFromDiscordID(member.user.id);
     // if (!userDataRes.success) {

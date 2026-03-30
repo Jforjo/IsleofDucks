@@ -3,7 +3,7 @@ import { Permissions, Snowflake } from "discord-api-types/globals"
 import { APIGuild, APIGuildMember, APIMessage, APIUser, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIGuildResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
 import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
-import { addDiscordRole, getDiscordRole, updateDiscordRoleExp } from "./utils";
+import { checkMinecraftInDB, updateMinecraftPlayerDataExp, updateMinecraftUser } from "./utils";
 import { AES, enc } from "crypto-ts";
 
 export interface DiscordPermissions {
@@ -1266,19 +1266,19 @@ export async function getSuperlativeValue(
     formatValue: (value: number) => string
 ): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
     let user = null;
-    const { rows } = await sql`SELECT * FROM users WHERE uuid=${uuid}`;
+    const { rows } = await sql`SELECT superlativestartingvalue, superlativecurrentvalue FROM minecraftplayerdata WHERE uuid=${uuid}`;
     if (rows.length > 0) user = rows[0];
     if (user === null) return {
         success: false,
         message: `User not found: ${uuid}`
     };
     let value = 0;
-    if (user.cataxp != null) value = user.cataxp - user.oldxp;
+    if (user.superlativecurrentvalue != null) value = user.superlativecurrentvalue - user.superlativestartingvalue;
     return {
         success: true,
         value: value,
         formattedValue: formatValue(value),
-        current: user.cataxp != null ? user.cataxp : user.oldxp
+        current: user.superlativecurrentvalue != null ? user.superlativecurrentvalue : user.superlativestartingvalue
     }
 }
 export async function updateSuperlativeValue(
@@ -1308,15 +1308,20 @@ export async function updateSuperlativeValue(
         }
     }
 
-    const PlayerInDB = await getDiscordRole(uuid);
+    const PlayerInDB = await checkMinecraftInDB(uuid);
     if (PlayerInDB) {
         // Superlative already has a limit on updates, so no need to check here
         // if (PlayerInDB.expupdated <= Date.now() - 1000 * 60 * 60) {
             // Update if it's been over an hour since last update
-            await updateDiscordRoleExp(uuid, totalExp);
+            await updateMinecraftPlayerDataExp(uuid, totalExp);
         // }
     } else {
-        await addDiscordRole(uuid, null, null, totalExp);
+        await updateMinecraftUser(uuid, {
+            exp: totalExp,
+            superlativelastupdated: 0,
+            superlativecurrentvalue: null,
+            superlativestartingvalue: null
+        });
     }
     
     return value;

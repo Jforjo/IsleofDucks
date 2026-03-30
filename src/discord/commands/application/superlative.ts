@@ -646,3 +646,6 @@ export const CommandData = {
     description: "Displays the superlative data for Isle of Ducks",
     type: ApplicationCommandType.ChatInput
 }
+export const RequiredRoles: string[] = [
+    IsleofDucks.roles.verified
+];

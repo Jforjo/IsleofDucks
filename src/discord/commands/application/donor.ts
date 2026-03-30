@@ -1,6 +1,6 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIEmbedField, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, Snowflake } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIEmbedField, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, Snowflake } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, formatNumber, GetChannel, EditChannel, AddGuildMemberRole, GetGuildMember, RemoveGuildMemberRole } from "@/discord/discordUtils";
-import { getDonation, setDonation, getDonations, getDonationsCount, getTotalDonation } from "@/discord/utils";
+import { getDonation, setDonation, getDonations, getDonationsCount, getTotalDonation, formatNumberWithCommas } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
 function parseNumber(number: string): number | null {
@@ -550,27 +550,38 @@ export async function checkDonation(
 
     const description = [
         `Donated: ${formatNumber(donation.donation)}`,
-        `Raw: ${donation.donation}`,
+        `Raw: ${formatNumberWithCommas(donation.donation)}`,
         `Rank: ${currentRole ? `<@&${currentRole.id}>` : 'None'}`
     ];
 
     if (nextRole) {
-        description.push(`Until Next Rank: ${nextRole.requirement - donation.donation}`);
+        description.push(`Until Next Rank: ${formatNumberWithCommas(nextRole.requirement - donation.donation)}`);
     }
 
     await FollowupMessage(interaction.token, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: `Donations for ${donation.discordname}`,
-                color: 0xFB9B00,
-                description: description.join('\n'),
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `## Donations for <@${donation.discordid}>`,
+                    },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: description.join('\n'),
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    }
+                ]
             }
-        ],
-    });
+        ]
+    }, null, true);
 
     const totalDonation = await getTotalDonation();
     await updateDonationTotal(totalDonation);
