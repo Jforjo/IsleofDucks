@@ -1,8 +1,40 @@
 import { CreateInteractionResponse } from "@/discord/discordUtils";
-import { getSuperlativesList } from "@/discord/utils";
+import { getSuperlativesList, PartialActiveSuperlative } from "@/discord/utils";
 import { APIApplicationCommandAutocompleteInteraction, APIInteractionResponse, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import SuperlativeTypes from "@/discord/superlatives";
+
+function getPossibleDates(value: string, disallowedDates: PartialActiveSuperlative[]): {
+    name: string;
+    value: string;
+}[] {
+    const months = [
+        "january", "february", "march", "april", "may", "june",
+        "july", "august", "september", "october", "november", "december"
+    ];
+    const years = Array.from({ length: 10 }, (_, i) => new Date().getUTCFullYear() + i);
+    const possibleDates = months.flatMap(month => years.map(year => `${month} ${year}`));
+    const filteredDates = possibleDates.filter(date => {
+        const tempDate = new Date(date);
+        for (const d of disallowedDates) {
+            const dDate = new Date(d.start);
+            if (dDate.getFullYear() === tempDate.getFullYear() && dDate.getMonth() === tempDate.getMonth()) {
+                return false;
+            }
+        }
+        return date.includes(value.toLowerCase());
+    }).slice(0, 25).map(date => {
+        const tempDate = new Date(date);
+        return {
+            name: `${tempDate.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric"
+            })}`,
+            value: date
+        };
+    });
+    return filteredDates;
+}
 
 async function viewDate(
     interaction: APIApplicationCommandAutocompleteInteraction,
@@ -27,43 +59,32 @@ async function viewDate(
         );
     }
 
-    const date = new Date(value);
-    if (date.toString() === "Invalid Date") {
+    const filteredDates = getPossibleDates(value, dates);
+    if (filteredDates.length === 0) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ApplicationCommandAutocompleteResult,
             data: { choices: [] }
         });
         return NextResponse.json(
-            { success: false, error: "Invalid date." },
-            { status: 400 }
-        );
-    }
-    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
-    const startDateObj = new Date(startDate);
-
-    if (!dates.map(d => new Date(d.start).getTime()).includes(startDateObj.getTime())) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ApplicationCommandAutocompleteResult,
-            data: { choices: [] }
-        });
-        return NextResponse.json(
-            { success: false, error: "No superlative for that date." },
+            { success: false, error: "No superlatives available for that month." },
             { status: 404 }
         );
     }
+    const choices = filteredDates.map(date => {
+        const dDate = new Date(date.value);
+        return {
+            name: `${dDate.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric"
+            })} - ${dates.find(d => new Date(d.start).getTime() === dDate.getTime())?.data.title}`,
+            value: date.value
+        };
+    });
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ApplicationCommandAutocompleteResult,
         data: {
-            choices: [
-                {
-                    name: `${startDateObj.toLocaleDateString("en-US", {
-                        month: "long",
-                        year: "numeric"
-                    })} - ${dates.find(d => new Date(d.start).getTime() === startDateObj.getTime())?.data.title}`,
-                    value: startDate
-                }
-            ]
+            choices: choices
         }
     });
 
@@ -96,43 +117,56 @@ async function createDate(
         );
     }
 
-    const date = new Date(value);
-    if (date.toString() === "Invalid Date") {
+    const filteredDates = getPossibleDates(value, dates);
+    if (filteredDates.length === 0) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ApplicationCommandAutocompleteResult,
             data: { choices: [] }
         });
         return NextResponse.json(
-            { success: false, error: "Invalid date." },
-            { status: 400 }
-        );
-    }
-    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
-    const startDateObj = new Date(startDate);
-
-    if (dates.map(d => new Date(d.start).getTime()).includes(startDateObj.getTime())) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ApplicationCommandAutocompleteResult,
-            data: { choices: [] }
-        });
-        return NextResponse.json(
-            { success: false, error: "A superlative with that date already exists." },
+            { success: false, error: "No superlatives available for that month." },
             { status: 404 }
         );
     }
 
+    // const date = new Date(value);
+    // if (date.toString() === "Invalid Date") {
+    //     await CreateInteractionResponse(interaction.id, interaction.token, {
+    //         type: InteractionResponseType.ApplicationCommandAutocompleteResult,
+    //         data: { choices: [] }
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Invalid date." },
+    //         { status: 400 }
+    //     );
+    // }
+    // const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
+    // const startDateObj = new Date(startDate);
+
+    // if (dates.map(d => new Date(d.start).getTime()).includes(startDateObj.getTime())) {
+    //     await CreateInteractionResponse(interaction.id, interaction.token, {
+    //         type: InteractionResponseType.ApplicationCommandAutocompleteResult,
+    //         data: { choices: [] }
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "A superlative with that date already exists." },
+    //         { status: 404 }
+    //     );
+    // }
+
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ApplicationCommandAutocompleteResult,
         data: {
-            choices: [
-                {
-                    name: startDateObj.toLocaleDateString("en-US", {
-                        month: "long",
-                        year: "numeric"
-                    }),
-                    value: startDate
-                }
-            ]
+            // choices: [
+            //     {
+            //         name: startDateObj.toLocaleDateString("en-US", {
+            //             month: "long",
+            //             year: "numeric"
+            //         }),
+            //         value: startDate
+            //     }
+            // ]
+            choices: filteredDates
         }
     });
 
@@ -165,54 +199,33 @@ async function deleteDate(
         );
     }
 
-    const date = new Date(value);
-    if (date.toString() === "Invalid Date") {
+    const filteredDates = getPossibleDates(value, dates);
+    if (filteredDates.length === 0) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ApplicationCommandAutocompleteResult,
             data: { choices: [] }
         });
         return NextResponse.json(
-            { success: false, error: "Invalid date." },
-            { status: 400 }
-        );
-    }
-    const startDate = `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1).toString().padStart(2, '0')}-01`;
-    const startDateObj = new Date(startDate);
-
-    if (!dates.map(d => new Date(d.start).getTime()).includes(startDateObj.getTime())) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ApplicationCommandAutocompleteResult,
-            data: { choices: [] }
-        });
-        return NextResponse.json(
-            { success: false, error: "No superlative for that date." },
+            { success: false, error: "No superlatives available for that month." },
             { status: 404 }
         );
     }
 
-    if (startDateObj <= new Date()) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ApplicationCommandAutocompleteResult,
-            data: { choices: [] }
-        });
-        return NextResponse.json(
-            { success: false, error: "Cannot delete the current or a previous superlative." },
-            { status: 403 }
-        );
-    }
+    const choices = filteredDates.map(date => {
+        const dDate = new Date(date.value);
+        return dDate <= new Date() ? null : {
+            name: `${dDate.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric"
+            })} - ${dates.find(d => new Date(d.start).getTime() === dDate.getTime())?.data.title}`,
+            value: date.value
+        };
+    }).filter(d => d !== null);
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ApplicationCommandAutocompleteResult,
         data: {
-            choices: [
-                {
-                    name: `${startDateObj.toLocaleDateString("en-US", {
-                        month: "long",
-                        year: "numeric"
-                    })} - ${dates.find(d => new Date(d.start).getTime() === startDateObj.getTime())?.data.title}`,
-                    value: startDate
-                }
-            ]
+            choices: choices
         }
     });
 
