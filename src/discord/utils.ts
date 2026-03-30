@@ -417,7 +417,7 @@ export async function updateGuildSuperlative(
         // Shouldn't happen
         if (typeof updated !== "number") continue;
 
-        if (rows[0].superlativestartingvalue === null) {
+        if (rows[0] && rows[0].superlativestartingvalue === null) {
             await sql`
                 UPDATE minecraftplayerdata
                 SET
