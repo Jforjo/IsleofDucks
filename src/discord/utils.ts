@@ -410,9 +410,7 @@ export async function updateGuildSuperlative(
         // console.log(`(${index}/${guild.guild.members.length}) SQL statement returned. Hour: ${Date.now() - 1000 * 60 * 60}. Continue?: ${rows.length !== 0 && rows[0].lastUpdated > Date.now() - 1000 * 60 * 60}. Rows: ${JSON.stringify(rows)}`);
         if (!rows || rows.length === 0) {
             await createMinecraftUser(member.uuid);
-        }
-        
-        if (rows[0].superlativelastupdated > Date.now() - 1000 * 60 * 30) continue;
+        } else if (rows[0].superlativelastupdated > Date.now() - 1000 * 60 * 30) continue;
         
         const updated = await updateSuperlativeValue(member.uuid, superlative.data.value);
         if (typeof updated === "object" && "success" in updated && !updated.success) return updated;
