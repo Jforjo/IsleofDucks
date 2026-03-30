@@ -416,11 +416,21 @@ export async function updateGuildSuperlative(
         if (typeof updated !== "number") continue;
 
         if (rows[0].superlativestartingvalue === null) {
-            await sql`UPDATE minecraftplayerdata SET (superlativestartingvalue, superlativelastupdated) = (${updated}, ${Date.now()}) WHERE uuid = ${member.uuid}`
+            await sql`
+                UPDATE minecraftplayerdata
+                SET
+                    superlativestartingvalue = ${updated},
+                    superlativelastupdated = ${Date.now()}
+                WHERE uuid = ${member.uuid}`
             continue;
         }
 
-        await sql`UPDATE minecraftplayerdata SET (superlativecurrentvalue, superlativelastupdated) = (${updated}, ${Date.now()}) WHERE uuid = ${member.uuid}`;
+        await sql`
+            UPDATE minecraftplayerdata
+            SET
+                superlativecurrentvalue = ${updated},
+                superlativelastupdated = ${Date.now()}
+            WHERE uuid = ${member.uuid}`;
     }
 
     // if ("success" in result && !result.success) {
