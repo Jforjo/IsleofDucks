@@ -43,6 +43,11 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     const filteredAuctions = auctions.filter((auction) => auction.name.toLowerCase().includes(item.toLowerCase()));
 
+    if (filteredAuctions.length === 0) return Response.json({
+        success: false,
+        message: "No auctions found for the specified item"
+    });
+
     return Response.json({
         success: true,
         auctions: filteredAuctions.sort((a, b) => a.amount - b.amount)[0]
