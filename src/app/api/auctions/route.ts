@@ -17,6 +17,9 @@ export async function GET(request: NextRequest): Promise<Response> {
             message: "Invalid API key"
         });
     }
+
+    const params = request.nextUrl.searchParams;
+    const item = params.get("item");
     
     const auctionsRes = await getHypixelAuctions();
     if (!auctionsRes.success || !auctionsRes.auctions) {
@@ -33,8 +36,15 @@ export async function GET(request: NextRequest): Promise<Response> {
         }
     }) as { name: string, amount: number }[];
 
-    return Response.json({
+    if (!item) return Response.json({
         success: true,
         auctions: auctions
+    });
+
+    const filteredAuctions = auctions.filter((auction) => auction.name.toLowerCase().includes(item.toLowerCase()));
+
+    return Response.json({
+        success: true,
+        auctions: filteredAuctions.sort((a, b) => a.amount - b.amount)[0]
     });
 }
