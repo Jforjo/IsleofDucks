@@ -56,6 +56,10 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     return Response.json({
         success: true,
-        bazaar: Object.entries(filteredBazaar).map(([name, data]) => ({ name, data }))[0]
+        bazaar: Object.entries(filteredBazaar).map(([name, data]) => ({
+            name,
+            sell: data.quick_status.sellPrice,
+            buy: data.quick_status.buyPrice
+        }))[0]
     });
 }
