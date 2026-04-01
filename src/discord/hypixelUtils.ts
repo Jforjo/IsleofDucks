@@ -685,7 +685,7 @@ export async function getHypixelAuctions(): Promise<
         auctions: SkyblockAuctionsResponse['auctions'];
     }
 > {
-    const res = await fetch('https://api.hypixel.net/v2/resources/skyblock/auctions', {
+    const res = await fetch('https://api.hypixel.net/v2/skyblock/auctions', {
         method: 'GET',
     });
     const retryAfter = res.headers.get('RateLimit-Reset');
