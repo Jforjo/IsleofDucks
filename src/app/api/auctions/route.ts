@@ -31,7 +31,7 @@ export async function GET(request: NextRequest): Promise<Response> {
             name: auction.item_name,
             amount: auction.starting_bid
         }
-    });
+    }) as { name: string, amount: number }[];
 
     return Response.json({
         success: true,
