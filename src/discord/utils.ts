@@ -94,19 +94,25 @@ export async function getImmunePlayers(): Promise<{
     }[];
 }> {
     const { rows } = await sql`
-        SELECT i.uuid, i.reason, d.discordid AS discord
+        SELECT
+            i.uuid,
+            i.reason,
+            d.discordid as discord,
+            m.exp
         FROM immune i
-        LEFT JOIN discordroles d ON i.uuid = d.uuid
-    ` as { rows: { uuid: string; discord: string | null; reason: string }[] };
+        LEFT JOIN minecraftplayerdata m ON i.uuid = m.uuid
+        LEFT JOIN userlink u ON m.id = u.minecraft
+        LEFT JOIN discorduserdata d ON u.discord = d.id
+    ` as { rows: { uuid: string; discord: string | null; reason: string; exp: number | null }[] };
 
     const players = await Promise.all(rows.map(async (row) => {
         const nameRes = await getUsernameOrUUID(row.uuid);
         let name = undefined;
         if (nameRes.success === true) name = nameRes.name;
-        const level = await sql`SELECT exp FROM discordroles WHERE uuid = ${row.uuid}`;
+        const level = row.exp
         if (row.discord) name = `**${name}**`;
-        if (level.rows.length > 0 && level.rows[0].exp) {
-            name = `${name} (${Math.floor(level.rows[0].exp / 100)})`;
+        if (level !== null) {
+            name = `${name} (${Math.floor(level / 100)})`;
         }
         return {
             uuid: row.uuid,
