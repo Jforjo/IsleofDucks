@@ -50,6 +50,6 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     return Response.json({
         success: true,
-        auctions: filteredAuctions.sort((a, b) => a.amount - b.amount)[0]
+        auction: filteredAuctions.sort((a, b) => a.amount - b.amount)[0]
     });
 }
