@@ -610,14 +610,14 @@ export default async function Command(
             );
         }
 
-        const lowestGEXP = result.sort((a, b) => a.gexp - b.gexp).filter(member => !immunePlayerIDs?.includes(member.uuid) && !member.isNew).slice(0, 5);
         const sortedDesc = result.sort((a, b) => b.gexp - a.gexp);
+        const lowestGEXP = sortedDesc.map(member => ({ ...member, rank: sortedDesc.indexOf(member) + 1 })).sort((a, b) => b.rank - a.rank).filter(member => !immunePlayerIDs?.includes(member.uuid) && !member.isNew).slice(0, 5);
 
         await FollowupMessage(interaction.token, {
             content: interaction.message.content,
             embeds: [...interaction.message.embeds.filter(embed => embed !== gexpEmbed), {
                 title: `Lowest GEXP - ${formattedType} (${result.length})`,
-                description: lowestGEXP.map(member => `\`#${sortedDesc.indexOf(member) + 1}\` ${member.name.replaceAll('_', '\\_')}: ${formatNumberWithCommas(member.gexp)}`).join("\n"),
+                description: lowestGEXP.map(member => `\`#${member.rank}\` ${member.name.replaceAll('_', '\\_')}: ${formatNumberWithCommas(member.gexp)}`).join("\n"),
                 color: IsleofDucks.colours.main,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
