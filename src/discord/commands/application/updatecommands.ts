@@ -27,6 +27,7 @@ import { CommandData as Ban } from "./ban";
 import { CommandData as Settings } from "./settings";
 import { CommandData as Verify } from "./verify";
 import { CommandData as Sus } from "./sus";
+import { CommandData as GuessToWin } from "./guesstowin";
 import { CommandData as Help } from "@/discord/commandDatas/help";
 
 export default async function(
@@ -93,6 +94,7 @@ export default async function(
         Help,
         Verify,
         Sus,
+        GuessToWin
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
