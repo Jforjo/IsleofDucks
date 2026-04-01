@@ -47,7 +47,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         bazaar: bazaar
     });
 
-    const filteredBazaar = Object.fromEntries(Object.entries(bazaar).filter(([name, ]) => name.toLowerCase().includes(item.toLowerCase())));
+    const filteredBazaar = Object.fromEntries(Object.entries(bazaar).filter(([name, ]) => name.toLowerCase() === item.toLowerCase()));
 
     if (Object.keys(filteredBazaar).length === 0) return Response.json({
         success: false,
