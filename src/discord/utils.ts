@@ -422,6 +422,7 @@ export async function updateGuildSuperlative(
                 UPDATE minecraftplayerdata
                 SET
                     superlativestartingvalue = ${updated},
+                    superlativecurrentvalue = ${updated},
                     superlativelastupdated = ${Date.now()}
                 WHERE uuid = ${member.uuid}`
             continue;
