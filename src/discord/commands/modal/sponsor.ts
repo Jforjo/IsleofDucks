@@ -38,7 +38,7 @@ export default async function(
         interaction.data.components[1].type !== ComponentType.Label ||
         interaction.data.components[1].component.type !== ComponentType.TextInput ||
         interaction.data.components[2].type !== ComponentType.Label ||
-        interaction.data.components[2].component.type !== ComponentType.TextInput ||
+        interaction.data.components[2].component.type !== ComponentType.StringSelect ||
         interaction.data.components[3].type !== ComponentType.Label ||
         interaction.data.components[3].component.type !== ComponentType.TextInput
     ) {
@@ -52,7 +52,7 @@ export default async function(
     }
     const item = interaction.data.components[0].component.value;
     const winners = interaction.data.components[1].component.value;
-    const type = interaction.data.components[2].component.value;
+    const type = interaction.data.components[2].component.values[0];
     const time = interaction.data.components[3].component.value;
 
     const guildID = interaction.guild_id;
