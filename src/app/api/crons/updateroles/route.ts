@@ -10,65 +10,51 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
 
-    const params = request.nextUrl.searchParams;
-    const bridge = params.get("bridge");
-
     const timestamp = Date.now();
-    let messageId = "";
     
-    if (!bridge) {
-        const message = await SendMessage(IsleofDucks.channels.staffgeneral, {
-            embeds: [
-                {
-                    title: "Cron Job started for updateroles!",
-                    description: [
-                        "Updating roles...",
-                        `If this embed doesn't change <t:${Math.floor(timestamp / 1000) + 60}:R> then it might have failed.`,
-                    ].join("\n"),
-                    color: 0xFB9B00,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp}ms`,
-                    },
-                    timestamp: new Date().toISOString(),
+    const messagePromise = SendMessage(IsleofDucks.channels.staffgeneral, {
+        embeds: [
+            {
+                title: "Cron Job started for updateroles!",
+                description: [
+                    "Updating roles...",
+                    `If this embed doesn't change <t:${Math.floor(timestamp / 1000) + 60}:R> then it might have failed.`,
+                ].join("\n"),
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp}ms`,
                 },
-            ],
-        });
-
-        if (!message) {
-            return new Response("Something went wrong", {
-                status: 500,
-            });
-        }
-
-        messageId = message.id;
-    }
+                timestamp: new Date().toISOString(),
+            },
+        ],
+    });
     const resultPromise = UpdateRoles(IsleofDucks.serverID);
 
+    const message = await messagePromise;
     const result = await resultPromise;
 
-    if (!bridge) {
-        await EditMessage(IsleofDucks.channels.staffgeneral, messageId, {
-            embeds: [
-                {
-                    title: "Cron Job result for updateroles!",
-                    description: [
-                        `Added ${result.rolesAdded} roles to ${result.usersHadRolesAdded.filter((value, index) => result.usersHadRolesAdded.indexOf(value) === index).length} users.`,
-                        `Removed ${result.rolesRemoved} roles from ${result.usersHadRolesRemoved.filter((value, index) => result.usersHadRolesRemoved.indexOf(value) === index).length} users.`,
-                    ].join("\n"),
-                    color: 0xFB9B00,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp}ms`,
-                    },
-                    timestamp: new Date().toISOString(),
-                },
-            ],
+    if (!message || !result) {
+        return new Response("Something went wrong", {
+            status: 500,
         });
-
-        return Response.json({ success: true });
     }
 
-    return Response.json({
-        success: true,
-        result
+    await EditMessage(IsleofDucks.channels.staffgeneral, message.id, {
+        embeds: [
+            {
+                title: "Cron Job result for updateroles!",
+                description: [
+                    `Added ${result.rolesAdded} roles to ${result.usersHadRolesAdded.filter((value, index) => result.usersHadRolesAdded.indexOf(value) === index).length} users.`,
+                    `Removed ${result.rolesRemoved} roles from ${result.usersHadRolesRemoved.filter((value, index) => result.usersHadRolesRemoved.indexOf(value) === index).length} users.`,
+                ].join("\n"),
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp}ms`,
+                },
+                timestamp: new Date().toISOString(),
+            },
+        ],
     });
+
+    return Response.json({ success: true });
 }
