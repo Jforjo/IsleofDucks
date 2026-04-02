@@ -4,6 +4,206 @@ import { NextResponse } from "next/server";
 import { getGuildData } from "@/discord/hypixelUtils";
 import { getUserDataFromDiscordID, getUserDataFromUUID } from "@/discord/utils";
 
+export async function UpdateUserLevelRoles(guildID: Snowflake, userID: Snowflake): Promise<{
+    rolesAdded: number;
+    rolesRemoved: number;
+    usersHadRolesAdded: Snowflake[];
+    usersHadRolesRemoved: Snowflake[];
+}> {
+    let rolesAdded = 0;
+    let rolesRemoved = 0;
+    const usersHadRolesAdded: Snowflake[] = [];
+    const usersHadRolesRemoved: Snowflake[] = [];
+
+    const player = await getUserDataFromDiscordID(userID);
+    if (!player || !player.success || !player.data.minecraft) return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    };
+
+    for (const role of IsleofDucks.roles.levels.sort((a, b) => a.requirement - b.requirement)) {
+        if (player.data.minecraft.exp >= role.requirement) {
+            await AddGuildMemberRole(guildID, userID, role.id);
+            rolesAdded++;
+            usersHadRolesAdded.push(role.id);
+        } else {
+            await RemoveGuildMemberRole(guildID, userID, role.id);
+            rolesRemoved++;
+            usersHadRolesRemoved.push(role.id);
+        }
+    }
+        
+    return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+}
+export async function UpdateUserGuildRoles(guildID: Snowflake, userID: Snowflake): Promise<{
+    rolesAdded: number;
+    rolesRemoved: number;
+    usersHadRolesAdded: Snowflake[];
+    usersHadRolesRemoved: Snowflake[];
+}> {
+    let rolesAdded = 0;
+    let rolesRemoved = 0;
+    const usersHadRolesAdded: Snowflake[] = [];    
+    const usersHadRolesRemoved: Snowflake[] = [];
+
+    const player = await getUserDataFromDiscordID(userID);
+    if (!player || !player.success || !player.data.minecraft) return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    };
+
+    const duckMembers = await getGuildData("Isle of Ducks");
+    const ducklingMembers = await getGuildData("Isle of Ducklings");
+    let isInGuild = false;
+
+    if (duckMembers.success) {
+        for (const member of duckMembers.guild.members) {
+            if (member.uuid === player.data.minecraft.uuid) {
+                await AddGuildMemberRole(guildID, userID, IsleofDucks.roles.duck_guild_member);
+                await AddGuildMemberRole(guildID, userID, IsleofDucks.roles.guild_member);
+                rolesAdded+= 2;
+                usersHadRolesAdded.push(IsleofDucks.roles.duck_guild_member);
+                usersHadRolesAdded.push(IsleofDucks.roles.guild_member);
+                isInGuild = true;
+            }
+        }
+    }
+
+    if (ducklingMembers.success) {
+        for (const member of ducklingMembers.guild.members) {
+            if (member.uuid === player.data.minecraft.uuid) {
+                await AddGuildMemberRole(guildID, userID, IsleofDucks.roles.duckling_guild_member);
+                await AddGuildMemberRole(guildID, userID, IsleofDucks.roles.guild_member);
+                rolesAdded+= 2;
+                usersHadRolesAdded.push(IsleofDucks.roles.duckling_guild_member);
+                usersHadRolesAdded.push(IsleofDucks.roles.guild_member);
+                isInGuild = true;
+            }
+        }
+    }
+
+    if (!isInGuild) {
+        const removed1 = await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.duck_guild_member);
+        const removed2 = await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.duckling_guild_member);
+        const removed3 = await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.guild_member);
+        rolesRemoved += (Number(removed1) + Number(removed2)) + Number(removed3);
+        removed1 && usersHadRolesRemoved.push(IsleofDucks.roles.duck_guild_member);
+        removed2 && usersHadRolesRemoved.push(IsleofDucks.roles.duckling_guild_member);
+        removed3 && usersHadRolesRemoved.push(IsleofDucks.roles.guild_member);
+    }
+
+    return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+}
+export async function UpdateUserBoosterRoles(guildID: Snowflake, userID: Snowflake): Promise<{
+    rolesAdded: number;
+    rolesRemoved: number;
+    usersHadRolesAdded: Snowflake[];
+    usersHadRolesRemoved: Snowflake[];
+}> {
+    let rolesAdded = 0;
+    let rolesRemoved = 0;
+    const usersHadRolesAdded: Snowflake[] = [];
+    const usersHadRolesRemoved: Snowflake[] = [];
+
+    const player = await getUserDataFromDiscordID(userID);
+    if (!player || !player.success || !player.data.minecraft) return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    };
+
+    const boosterMessages = (await GetAllChannelMessages(IsleofDucks.channels.nitroboosts)).filter(msg => msg.type === MessageType.GuildBoost && msg.author.id === userID);
+    if (boosterMessages.length >= 4) {
+        await AddGuildMemberRole(guildID, userID, IsleofDucks.roles.booster2x);
+        rolesAdded++;
+        usersHadRolesAdded.push(IsleofDucks.roles.booster2x);
+    } else {
+        await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.booster2x);
+        rolesRemoved++;
+        usersHadRolesRemoved.push(IsleofDucks.roles.booster2x);
+    }
+
+    return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+}
+export async function UpdateUserGroupRoles(guildID: Snowflake, userID: Snowflake): Promise<{
+    rolesAdded: number;
+    rolesRemoved: number;
+    usersHadRolesAdded: Snowflake[];
+    usersHadRolesRemoved: Snowflake[];
+}> {
+    let rolesAdded = 0;
+    let rolesRemoved = 0;
+    const usersHadRolesAdded: Snowflake[] = [];
+    const usersHadRolesRemoved: Snowflake[] = [];
+
+    const player = await getUserDataFromDiscordID(userID);
+    if (!player || !player.success || !player.data.minecraft) return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    };
+
+    const members = await GetAllGuildMembers(guildID);
+    const member = members.find(m => m.user.id === userID);
+    if (!member) return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+    
+    for (const group of IsleofDucks.roleGroups) {
+        let hasRoleInGroup = false;
+        for (const roleID of group.roles) {
+            if (member.roles.includes(roleID)) {
+                hasRoleInGroup = true;
+                break;
+            }
+        }
+        if (!hasRoleInGroup) {
+            if (member.roles.includes(group.id)) {
+                await RemoveGuildMemberRole(guildID, member.user.id, group.id);
+                rolesRemoved++;
+                usersHadRolesRemoved.push(member.user.id);
+            }
+        } else {
+            if (!member.roles.includes(group.id)) {
+                await AddGuildMemberRole(guildID, member.user.id, group.id);
+                rolesAdded++;
+                usersHadRolesAdded.push(member.user.id);
+            }
+        }
+    }
+
+    return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+}
+
 export async function UpdateLevelRoles(guildID: Snowflake): Promise<{
     rolesAdded: number;
     rolesRemoved: number;
@@ -115,7 +315,7 @@ export async function UpdateLevelRoles(guildID: Snowflake): Promise<{
     }
 }
 
-export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
+export async function UpdateCombinedGuildRoles(guildID: Snowflake): Promise<{
     rolesAdded: number;
     rolesRemoved: number;
     usersHadRolesAdded: Snowflake[];
@@ -128,10 +328,44 @@ export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
     const usersHadRolesAdded: Snowflake[] = [];
     const usersHadRolesRemoved: Snowflake[] = [];
 
+    for (const member of members) {
+        if (!member.roles.includes(IsleofDucks.roles.duck_guild_member) && !member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
+            if (member.roles.includes(IsleofDucks.roles.guild_member)) {
+                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.guild_member);
+                rolesRemoved++;
+                usersHadRolesRemoved.push(member.user.id);
+            }
+        } else {
+            if (!member.roles.includes(IsleofDucks.roles.guild_member)) {
+                await AddGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.guild_member);
+                rolesAdded++;
+                usersHadRolesAdded.push(member.user.id);
+            }
+        }
+    }
+
+    return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+}
+export async function UpdateDuckGuildRoles(guildID: Snowflake): Promise<{
+    rolesAdded: number;
+    rolesRemoved: number;
+    usersHadRolesAdded: Snowflake[];
+    usersHadRolesRemoved: Snowflake[];
+}> {
+    const members = await GetAllGuildMembers(guildID);
     const duckMembers = await getGuildData("Isle of Ducks");
-    const ducklingMembers = await getGuildData("Isle of Ducklings");
-    const guildMembers: string[] = [];
-    if (duckMembers.success && ducklingMembers.success) {
+
+    let rolesAdded = 0;
+    let rolesRemoved = 0;
+    const usersHadRolesAdded: Snowflake[] = [];
+    const usersHadRolesRemoved: Snowflake[] = [];
+
+    if (duckMembers.success) {
         for (const member of duckMembers.guild.members) {
             const res = await getUserDataFromUUID(member.uuid);
             if (!res.success) continue;
@@ -140,14 +374,35 @@ export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
             if (!discordID) continue;
             const discordMember = members.find(m => m.user.id === discordID);
             if (!discordMember) continue;
-            guildMembers.push(discordID);
-            await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.guild_member);
-            rolesAdded++;
             if (discordMember.roles.includes(IsleofDucks.roles.duck_guild_member)) continue;
             await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duck_guild_member);
             rolesAdded++;
             usersHadRolesAdded.push(discordID);
         }
+    }
+
+    return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+}
+export async function UpdateDucklingGuildRoles(guildID: Snowflake): Promise<{
+    rolesAdded: number;
+    rolesRemoved: number;
+    usersHadRolesAdded: Snowflake[];
+    usersHadRolesRemoved: Snowflake[];
+}> {
+    const members = await GetAllGuildMembers(guildID);
+    const ducklingMembers = await getGuildData("Isle of Ducklings");
+
+    let rolesAdded = 0;
+    let rolesRemoved = 0;
+    const usersHadRolesAdded: Snowflake[] = [];
+    const usersHadRolesRemoved: Snowflake[] = [];
+
+    if (ducklingMembers.success) {
         for (const member of ducklingMembers.guild.members) {
             const res = await getUserDataFromUUID(member.uuid);
             if (!res.success) continue;
@@ -156,32 +411,39 @@ export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
             if (!discordID) continue;
             const discordMember = members.find(m => m.user.id === discordID);
             if (!discordMember) continue;
-            guildMembers.push(discordID);
-            await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.guild_member);
-            rolesAdded++;
             if (discordMember.roles.includes(IsleofDucks.roles.duckling_guild_member)) continue;
             await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duckling_guild_member);
             rolesAdded++;
             usersHadRolesAdded.push(discordID);
         }
-        const nonGuildMembers = members.filter(m => !guildMembers.includes(m.user.id));
-        for (const member of nonGuildMembers) {
-            if (member.roles.includes(IsleofDucks.roles.duck_guild_member)) {
-                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.duck_guild_member);
-                rolesRemoved++;
-                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.guild_member);
-                rolesRemoved++;
-                usersHadRolesRemoved.push(member.user.id);
-            }
-            if (member.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
-                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.duckling_guild_member);
-                rolesRemoved++;
-                await RemoveGuildMemberRole(guildID, member.user.id, IsleofDucks.roles.guild_member);
-                rolesRemoved++;
-                usersHadRolesRemoved.push(member.user.id);
-            }
-        }
     }
+
+    return {
+        rolesAdded,
+        rolesRemoved,
+        usersHadRolesAdded,
+        usersHadRolesRemoved
+    }
+}
+export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
+    rolesAdded: number;
+    rolesRemoved: number;
+    usersHadRolesAdded: Snowflake[];
+    usersHadRolesRemoved: Snowflake[];
+}> {
+    let rolesAdded = 0;
+    let rolesRemoved = 0;
+    const usersHadRolesAdded: Snowflake[] = [];
+    const usersHadRolesRemoved: Snowflake[] = [];
+
+    const combinedGuildRoles = await UpdateCombinedGuildRoles(guildID);
+    const duckGuildRoles = await UpdateDuckGuildRoles(guildID);
+    const ducklingGuildRoles = await UpdateDucklingGuildRoles(guildID);
+
+    rolesAdded += combinedGuildRoles.rolesAdded + duckGuildRoles.rolesAdded + ducklingGuildRoles.rolesAdded;
+    rolesRemoved += combinedGuildRoles.rolesRemoved + duckGuildRoles.rolesRemoved + ducklingGuildRoles.rolesRemoved;
+    usersHadRolesAdded.push(...combinedGuildRoles.usersHadRolesAdded, ...duckGuildRoles.usersHadRolesAdded, ...ducklingGuildRoles.usersHadRolesAdded);
+    usersHadRolesRemoved.push(...combinedGuildRoles.usersHadRolesRemoved, ...duckGuildRoles.usersHadRolesRemoved, ...ducklingGuildRoles.usersHadRolesRemoved);
 
     return {
         rolesAdded,
@@ -383,10 +645,10 @@ export default async function(
         ],
     });
 
-    let rolesAdded: number,
-        rolesRemoved: number,
-        usersHadRolesAdded: Snowflake[],
-        usersHadRolesRemoved: Snowflake[]
+    let rolesAdded: number = 0,
+        rolesRemoved: number = 0,
+        usersHadRolesAdded: Snowflake[] = [],
+        usersHadRolesRemoved: Snowflake[] = []
     ;
 
     const interactionData = interaction.data as APIChatInputApplicationCommandInteractionData;
@@ -443,7 +705,15 @@ export default async function(
     }));
 
     if (options.guild) {
-        ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateGuildRoles(interaction.guild.id));
+        if (options.guild.combined_guild_role) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateCombinedGuildRoles(interaction.guild.id));
+        } else if (options.guild.duck_guild_role) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateDuckGuildRoles(interaction.guild.id));
+        } else if (options.guild.duckling_guild_role) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateDucklingGuildRoles(interaction.guild.id));
+        } else if (options.guild.all) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateGuildRoles(interaction.guild.id));
+        }
     } else if (options.levels) {
         ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateLevelRoles(interaction.guild.id));
     } else if (options.booster) {
@@ -452,6 +722,16 @@ export default async function(
         ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateGroupRoles(interaction.guild.id));
     } else if (options.all) {
         ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateRoles(interaction.guild.id));
+    } else if (options.user) {
+        if (options.user.level) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateUserLevelRoles(interaction.guild.id, options.user.level.user));
+        } else if (options.user.guild) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateUserGuildRoles(interaction.guild.id, options.user.guild.user));
+        } else if (options.user.booster) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateUserBoosterRoles(interaction.guild.id, options.user.booster.user));
+        } else if (options.user.groups) {
+            ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateUserGroupRoles(interaction.guild.id, options.user.groups.user));
+        }
     } else {
         await FollowupMessage(interaction.token, {
             content: "No valid subcommand provided!"
@@ -492,7 +772,29 @@ export const CommandData = {
         {
             name: "guild",
             description: "Update guild roles.",
-            type: ApplicationCommandOptionType.Subcommand
+            type: ApplicationCommandOptionType.SubcommandGroup,
+            options: [
+                {
+                    name: "combined_guild_role",
+                    description: "Update combined guild roles.",
+                    type: ApplicationCommandOptionType.Subcommand
+                },
+                {
+                    name: "duck_guild_role",
+                    description: "Update duck guild roles.",
+                    type: ApplicationCommandOptionType.Subcommand
+                },
+                {
+                    name: "duckling_guild_role",
+                    description: "Update duckling guild roles.",
+                    type: ApplicationCommandOptionType.Subcommand
+                },
+                {
+                    name: "all",
+                    description: "Update all guild roles.",
+                    type: ApplicationCommandOptionType.Subcommand
+                }
+            ]
         },
         {
             name: "levels",
@@ -513,6 +815,65 @@ export const CommandData = {
             name: "all",
             description: "Update all roles. This may take a while.",
             type: ApplicationCommandOptionType.Subcommand
+        },
+        {
+            name: "user",
+            description: "Update roles for a specific user.",
+            type: ApplicationCommandOptionType.SubcommandGroup,
+            options: [
+                {
+                    name: "level",
+                    description: "Update level roles for the user.",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "user",
+                            description: "The user.",
+                            type: ApplicationCommandOptionType.User,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    name: "guild",
+                    description: "Update guild roles for the user.",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "user",
+                            description: "The user.",
+                            type: ApplicationCommandOptionType.User,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    name: "booster",
+                    description: "Update booster roles for the user.",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "user",
+                            description: "The user.",
+                            type: ApplicationCommandOptionType.User,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    name: "groups",
+                    description: "Update group roles for the user.",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "user",
+                            description: "The user.",
+                            type: ApplicationCommandOptionType.User,
+                            required: true
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
