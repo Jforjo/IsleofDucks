@@ -20,6 +20,6 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     return Response.json({
         success: true,
-        auction: IsleofDucks
+        isleofducks: IsleofDucks
     });
 }
