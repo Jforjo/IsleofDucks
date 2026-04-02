@@ -672,7 +672,7 @@ export async function getHypixelItems(): Promise<
     }
 }
 
-export async function getHypixelAuctions(): Promise<
+export async function getHypixelAuctions(page = 0): Promise<
     {
         success: false;
         status?: number;
@@ -685,7 +685,7 @@ export async function getHypixelAuctions(): Promise<
         auctions: SkyblockAuctionsResponse['auctions'];
     }
 > {
-    const res = await fetch('https://api.hypixel.net/v2/skyblock/auctions', {
+    const res = await fetch(`https://api.hypixel.net/v2/skyblock/auctions?page=${page}`, {
         method: 'GET',
     });
     const retryAfter = res.headers.get('RateLimit-Reset');
@@ -720,10 +720,26 @@ export async function getHypixelAuctions(): Promise<
         };
     }
 
+    const auctions = data.auctions!;
+
+    if (data.page && data.totalPages && data.page < data.totalPages) {
+        const promises = [];
+        for (let page = data.page + 1; page <= data.totalPages; page++) {
+            promises.push(getHypixelAuctions(page));
+        }
+        const results = await Promise.all(promises);
+        for (const result of results) {
+            if (!result.success) {
+                return result;
+            }
+            auctions.push(...result.auctions!);
+        }
+    }
+
     return {
         success: true,
         status: res.status,
-        auctions: data.auctions
+        auctions: auctions
     }
 }
 
