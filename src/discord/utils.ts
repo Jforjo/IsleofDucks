@@ -1049,7 +1049,7 @@ export async function createDiscordUser(userid: Snowflake): Promise<{
         // refreshtoken: AES.decrypt(insertedRows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
     }
 }
-export async function updateDiscordUser(userid: Snowflake, data: Partial<DiscordUserDataReturnType>): Promise<void> {
+export async function updateDiscordUser(userid: Snowflake, data: Partial<DiscordUserDataReturnType> = {}): Promise<void> {
     const { hyguessr, donation } = data;
     const updates: string[] = [];
     if (hyguessr !== undefined) {
@@ -1062,7 +1062,7 @@ export async function updateDiscordUser(userid: Snowflake, data: Partial<Discord
 export async function createMinecraftUser(uuid: string): Promise<void> {
     await sql`INSERT INTO minecraftplayerdata (uuid) VALUES (${uuid}) ON CONFLICT (uuid) DO NOTHING RETURNING uuid`;
 }
-export async function updateMinecraftUser(uuid: string, data: Partial<MinecraftDataReturnType>): Promise<void> {
+export async function updateMinecraftUser(uuid: string, data: Partial<MinecraftDataReturnType> = {}): Promise<void> {
     const { superlativestartingvalue, superlativecurrentvalue, superlativelastupdated, exp, scramble } = data;
     if (superlativestartingvalue !== undefined) {
         await sql`UPDATE minecraftplayerdata SET superlativestartingvalue = ${superlativestartingvalue} WHERE uuid = ${uuid}`;
