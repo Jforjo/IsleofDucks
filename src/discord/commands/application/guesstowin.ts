@@ -204,10 +204,8 @@ export default async function(
         }
     }));
 
-    if (options.add) {
+    if (options.setup) {
         return await setupGuessToWin(interaction);
-    } else if (options.remove) {
-        // return await viewGuessToWin(interaction);
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
