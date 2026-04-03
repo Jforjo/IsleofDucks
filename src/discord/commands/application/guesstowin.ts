@@ -245,6 +245,13 @@ export const CommandData = {
             name: "setup",
             description: "Set up the Guess to Win game.",
             type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "sponsor",
+                    description: "The sponsor of the game.",
+                    type: ApplicationCommandOptionType.User,
+                }
+            ]
         }
     ]
 }
