@@ -139,11 +139,21 @@ export async function isImmunePlayer(uuid: string, reason?: string): Promise<boo
         return rows.length > 0;
     } else return false;
 }
-export async function addImmunePlayer(uuid: string, reason: string): Promise<void> {
+export async function addImmunePlayer(uuid: string, reason: string): Promise<Snowflake | null> {
     const minecraftUser = await getAllMinecraftUsers().then(users => users.find(u => u.uuid === uuid));
     if (minecraftUser) {
-        await sql`INSERT INTO immune (reason, minecraft) VALUES (${reason}, ${minecraftUser.id})`;
+        const { rows: minecraft } = await sql`INSERT INTO immune (reason, minecraft) VALUES (${reason}, ${minecraftUser.id}) RETURNING minecraft`;
+        if (minecraft.length === 0) return null;
+        const { rows: discord } = await sql`
+            SELECT discordid
+            FROM userlink ul
+            LEFT JOIN discorduserdata du ON ul.discord = du.id
+            WHERE ul.minecraft = ${minecraft[0].minecraft}
+        `;
+        if (discord.length === 0) return null;
+        return discord[0].discordid;
     }
+    return null;
 }
 export async function removeImmunePlayer(uuid: string, reason?: string): Promise<void> {
     const minecraftUser = await getAllMinecraftUsers().then(users => users.find(u => u.uuid === uuid));
