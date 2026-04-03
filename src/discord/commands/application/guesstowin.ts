@@ -1,10 +1,11 @@
 import { CreateInteractionResponse, ConvertSnowflakeToDate, ErrorEmbed, IsleofDucks } from "@/discord/discordUtils";
 import { arrayContainsAny } from "@/discord/utils";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, InteractionResponseType, APIChatInputApplicationCommandInteractionData, ApplicationCommandOptionType, MessageFlags, ComponentType, ButtonStyle } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, InteractionResponseType, APIChatInputApplicationCommandInteractionData, ApplicationCommandOptionType, MessageFlags, ComponentType, ButtonStyle, Snowflake } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 async function setupGuessToWin(
-    interaction: APIChatInputApplicationCommandInteraction
+    interaction: APIChatInputApplicationCommandInteraction,
+    sponsor: Snowflake
 ): Promise<
     NextResponse<
         {
@@ -119,7 +120,7 @@ async function setupGuessToWin(
                             type: ComponentType.Button,
                             label: "Create",
                             style: ButtonStyle.Primary,
-                            custom_id: `guesstowin-setup-create`
+                            custom_id: `guesstowin-setup-create-${sponsor}`
                         }
                     ]
                 }
@@ -222,7 +223,7 @@ export default async function(
     }));
 
     if (options.setup) {
-        return await setupGuessToWin(interaction);
+        return await setupGuessToWin(interaction, options.setup.sponsor);
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
