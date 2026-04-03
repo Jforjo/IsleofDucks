@@ -81,11 +81,14 @@ async function addImmune(
         );
     }
 
-    await addImmunePlayer(uuid, reason);
-    const discordRes = await getUserDataFromUUID(uuid);
+    let discId = await addImmunePlayer(uuid, reason);
+    if (!discId) {
+        const discordRes = await getUserDataFromUUID(uuid);
+        if (discordRes.success && discordRes.data.discord && discordRes.data.discord.discordid) discId = discordRes.data.discord.discordid;
+    }
     let roleAdded = false;
-    if (discordRes.success && discordRes.data.discord && discordRes.data.discord.discordid) {
-        const res = await AddGuildMemberRole(IsleofDucks.serverID, discordRes.data.discord.discordid, IsleofDucks.roles.immune);
+    if (discId) {
+        const res = await AddGuildMemberRole(IsleofDucks.serverID, discId, IsleofDucks.roles.immune);
         if (res) roleAdded = true;
     }
 
@@ -95,7 +98,7 @@ async function addImmune(
                 title: `\`${uuidResponse.name}\` was added to the immune list!`,
                 description: [
                     `Reason: ${reason}`,
-                    `${roleAdded ? "Immunity role added" : `Failed to add immunity role to ${discordRes.success && discordRes.data.discord && discordRes.data.discord.discordid ? `<@${discordRes.data.discord.discordid}>` : "the user"}`}`,
+                    `${roleAdded ? "Immunity role added" : `Failed to add immunity role to ${discId ? `<@${discId}>` : "the user"}`}`,
                 ].join('\n'),
                 color: 0xFB9B00,
                 footer: {
