@@ -83,6 +83,7 @@ export default async function(
         if (alreadyLinked.some(l => l.discordid === discordUser.user.id)) continue;
         try {
             await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
+            linked++;
         } catch (e) {
             if (e instanceof Error) {
                 if (e.message === "Discord user not found") {
@@ -92,8 +93,6 @@ export default async function(
                 }
             }
         }
-
-        linked++;
     }
 
     await FollowupMessage(interaction.token, {
