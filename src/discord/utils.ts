@@ -13,6 +13,7 @@ type DiscordUserDataReturnType = {
     // refreshtoken: string;
 };
 type MinecraftDataReturnType = {
+    id: number;
     uuid: string;
     superlativestartingvalue: number | null;
     superlativecurrentvalue: number | null;
@@ -100,7 +101,7 @@ export async function getImmunePlayers(): Promise<{
             d.discordid as discord,
             m.exp
         FROM immune i
-        LEFT JOIN minecraftplayerdata m ON i.uuid = m.uuid
+        LEFT JOIN minecraftplayerdata m ON i.minecraft = m.id
         LEFT JOIN userlink u ON m.id = u.minecraft
         LEFT JOIN discorduserdata d ON u.discord = d.id
     ` as { rows: { uuid: string; discord: string | null; reason: string; exp: number | null }[] };
@@ -135,16 +136,19 @@ export async function isImmunePlayer(uuid: string, reason?: string): Promise<boo
     const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid}`;
     return rows.length > 0;
 }
-export async function addImmunePlayer(uuid: string, discord: string | null, reason: string): Promise<void> {
-    await sql`INSERT INTO immune (uuid, discord, reason) VALUES (${uuid}, ${discord}, ${reason})`;
+export async function addImmunePlayer(uuid: string, reason: string): Promise<void> {
+    const minecraftUser = await getAllMinecraftUsers().then(users => users.find(u => u.uuid === uuid));
+    if (minecraftUser) {
+        await sql`INSERT INTO immune (uuid, reason, minecraft) VALUES (${uuid}, ${reason}, ${minecraftUser.id})`;
+    }
 }
 export async function removeImmunePlayer(uuid: string, reason?: string): Promise<void> {
     if (reason) await sql`DELETE FROM immune WHERE uuid = ${uuid} AND reason = ${reason}`;
     else await sql`DELETE FROM immune WHERE uuid = ${uuid}`;
 }
-export async function getImmunePlayer(uuid: string): Promise<{ uuid: string; discord: string | null; reason: string } | null> {
+export async function getImmunePlayer(uuid: string): Promise<{ uuid: string; reason: string } | null> {
     const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid}`;
-    if (rows.length > 0) return rows[0] as { uuid: string; discord: string | null; reason: string };
+    if (rows.length > 0) return rows[0] as { uuid: string; reason: string };
     return null;
 }
 
@@ -1110,7 +1114,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
 }> {
     const { rows } = await sql`
         SELECT
-            d.id,
+            d.id as discordtableid,
             d.hyguessr,
             d.donation,
             m.uuid,
@@ -1119,6 +1123,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
             m.superlativelastupdated,
             m.exp,
             m.scramble
+            m.id as minecrafttableid
         FROM discorduserdata d
         LEFT JOIN userlink u ON d.id = u.discord
         LEFT JOIN minecraftplayerdata m ON u.minecraft = m.id
@@ -1129,7 +1134,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
         success: true,
         data: {
             discord: {
-                id: rows[0].id,
+                id: rows[0].discordtableid,
                 discordid: rows[0].discordid,
                 hyguessr: rows[0].hyguessr,
                 donation: rows[0].donation
@@ -1137,6 +1142,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
                 // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
             },
             minecraft: rows[0].uuid ? {
+                id: rows[0].minecrafttableid,
                 uuid: rows[0].uuid,
                 superlativestartingvalue: rows[0].superlativestartingvalue,
                 superlativecurrentvalue: rows[0].superlativecurrentvalue,
@@ -1159,7 +1165,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
 }> {
     const { rows } = await sql`
         SELECT
-            d.id,
+            d.id as discordtableid,
             d.hyguessr,
             d.donation,
             m.uuid,
@@ -1167,7 +1173,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
             m.superlativecurrentvalue,
             m.superlativelastupdated,
             m.exp,
-            m.scramble
+            m.scramble,
+            m.id as minecrafttableid
         FROM minecraftplayerdata m
         LEFT JOIN userlink u ON m.id = u.minecraft
         LEFT JOIN discorduserdata d ON u.discord = d.id
@@ -1177,8 +1184,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
     return {
         success: true,
         data: {
-            discord: rows[0].id ? {
-                id: rows[0].id,
+            discord: rows[0].discordtableid ? {
+                id: rows[0].discordtableid,
                 discordid: rows[0].discordid,
                 hyguessr: rows[0].hyguessr,
                 donation: rows[0].donation
@@ -1186,6 +1193,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
                 // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
             } : undefined,
             minecraft: {
+                id: rows[0].minecrafttableid,
                 uuid: rows[0].uuid,
                 superlativestartingvalue: rows[0].superlativestartingvalue,
                 superlativecurrentvalue: rows[0].superlativecurrentvalue,
