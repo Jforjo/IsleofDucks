@@ -21,7 +21,7 @@ export default async function(
     const customIds = interaction.data.custom_id.split("-");
 
     if (customIds[1] === "setup") {
-        if (customIds[2] === "answwer") await CreateInteractionResponse(interaction.id, interaction.token, {
+        if (customIds[2] === "answer") await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.Modal,
             data: {
                 custom_id: `guesstowin-setup-answer`,
