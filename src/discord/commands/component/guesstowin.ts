@@ -28,16 +28,14 @@ export default async function(
                 title: "GtW Setup - Answer",
                 components: [
                     {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                type: ComponentType.TextInput,
-                                custom_id: "answer",
-                                label: "Answer",
-                                style: TextInputStyle.Short,
-                                required: true,
-                            }
-                        ]
+                        type: ComponentType.Label,
+                        label: "Answer",
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: "answer",
+                            style: TextInputStyle.Short,
+                            required: true,
+                        }
                     }
                 ]
             }
@@ -49,28 +47,24 @@ export default async function(
                 title: "GtW Setup - Hint",
                 components: [
                     {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                type: ComponentType.TextInput,
-                                custom_id: "at",
-                                label: "At number of guesses",
-                                style: TextInputStyle.Short,
-                                required: true,
-                            }
-                        ]
+                        type: ComponentType.Label,
+                        label: "At number of guesses",
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: "at",
+                            style: TextInputStyle.Short,
+                            required: true,
+                        }
                     },
                     {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                type: ComponentType.TextInput,
-                                custom_id: "hint",
-                                label: "Hint",
-                                style: TextInputStyle.Short,
-                                required: true,
-                            }
-                        ]
+                        type: ComponentType.Label,
+                        label: "Hint",
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: "hint",
+                            style: TextInputStyle.Short,
+                            required: true,
+                        }
                     }
                 ]
             }
@@ -82,16 +76,14 @@ export default async function(
                 title: "GtW Setup - Prize",
                 components: [
                     {
-                        type: ComponentType.ActionRow,
-                        components: [
-                            {
-                                type: ComponentType.TextInput,
-                                custom_id: "prize",
-                                label: "Prize",
-                                style: TextInputStyle.Short,
-                                required: true,
-                            }
-                        ]
+                        type: ComponentType.Label,
+                        label: "Prize",
+                        component: {
+                            type: ComponentType.TextInput,
+                            custom_id: "prize",
+                            style: TextInputStyle.Short,
+                            required: true,
+                        }
                     }
                 ]
             }
