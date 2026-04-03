@@ -132,10 +132,10 @@ export async function isImmunePlayer(uuid: string, reason?: string): Promise<boo
     const minecraftUser = await getAllMinecraftUsers().then(users => users.find(u => u.uuid === uuid));
     if (minecraftUser) {
         if (reason) {
-            const { rows } = await sql`SELECT id FROM immune WHERE id = ${minecraftUser.id} AND reason = ${reason}`;
+            const { rows } = await sql`SELECT minecraft FROM immune WHERE minecraft = ${minecraftUser.id} AND reason = ${reason}`;
             return rows.length > 0;
         }
-        const { rows } = await sql`SELECT id FROM immune WHERE id = ${minecraftUser.id}`;
+        const { rows } = await sql`SELECT minecraft FROM immune WHERE minecraft = ${minecraftUser.id}`;
         return rows.length > 0;
     } else return false;
 }
@@ -148,8 +148,8 @@ export async function addImmunePlayer(uuid: string, reason: string): Promise<voi
 export async function removeImmunePlayer(uuid: string, reason?: string): Promise<void> {
     const minecraftUser = await getAllMinecraftUsers().then(users => users.find(u => u.uuid === uuid));
     if (minecraftUser) {
-        if (reason) await sql`DELETE FROM immune WHERE id = ${minecraftUser.id} AND reason = ${reason}`;
-        else await sql`DELETE FROM immune WHERE id = ${minecraftUser.id}`;
+        if (reason) await sql`DELETE FROM immune WHERE minecraft = ${minecraftUser.id} AND reason = ${reason}`;
+        else await sql`DELETE FROM immune WHERE minecraft = ${minecraftUser.id}`;
     }
 }
 export async function getImmunePlayer(uuid: string): Promise<{
