@@ -41,10 +41,12 @@ async function setupGuessToWin(
                         return {
                             ...component,
                             components: [
-                                ...component.components,
+                                ...component.components.slice(0, 1),
                                 {
                                     type: ComponentType.TextDisplay,
-                                    content: `${
+                                    content: [
+                                        ...component.components.slice(1, 2).map(c => c.content),
+                                        `${
                                         type === "answer" ?
                                             inputs.answer : (
                                                 type === "hints" ?
@@ -53,6 +55,7 @@ async function setupGuessToWin(
                                             )
 
                                     }`,
+                                    ].join("\n")
                                 },
                             ]
                         }
