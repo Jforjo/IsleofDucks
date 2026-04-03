@@ -1,6 +1,6 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
 import { getHypixelPlayer } from "@/discord/hypixelUtils";
-import { getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, linkDiscordToMinecraft, updateMinecraftUser } from "@/discord/utils";
+import { getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -81,7 +81,17 @@ export default async function(
         if (!discordUser) continue;
         
         if (alreadyLinked.some(l => l.discordid === discordUser.user.id)) continue;
-        await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
+        try {
+            await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
+        } catch (e) {
+            if (e instanceof Error) {
+                if (e.message === "Discord user not found") {
+                    await updateDiscordUser(discordUser.user.id);
+                } else if (e.message === "Minecraft user not found") {
+                    await updateMinecraftUser(user.uuid);
+                }
+            }
+        }
 
         linked++;
     }
