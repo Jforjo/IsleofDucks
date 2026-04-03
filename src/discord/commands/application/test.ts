@@ -55,7 +55,7 @@ export default async function(
         }
     });
 
-
+    let linked = 0;
     const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
     const minecraftUsers = await getAllMinecraftUsers();
     const alreadyLinked = await getAllLinkedUsers();
@@ -64,7 +64,7 @@ export default async function(
         const hypixel = await getHypixelPlayer(user.uuid);
         if (!hypixel.success) {
             await FollowupMessage(interaction.token, {
-                content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}`,
+                content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}\nLinked so far: ${linked}/${users.length}`,
             });
             if (hypixel.message === "Key throttle") return NextResponse.json(
                 { success: false, error: "Hypixel API key is being throttled, try again later" },
@@ -82,6 +82,8 @@ export default async function(
         
         if (alreadyLinked.some(l => l.discordid === discordUser.user.id)) continue;
         await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
+
+        linked++;
     }
 
     await FollowupMessage(interaction.token, {
