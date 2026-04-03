@@ -1226,15 +1226,11 @@ export async function getAllLinkedUsers(): Promise<{
     `;
     return rows as { discordid: Snowflake; uuid: string; }[];
 }
-export async function getAllDiscordUsers(): Promise<{
-    discordid: Snowflake;
-}[]> {
+export async function getAllDiscordUsers(): Promise<DiscordUserDataReturnType[]> {
     const { rows } = await sql`SELECT discordid FROM discorduserdata`;
-    return rows as { discordid: Snowflake; }[];
+    return rows as DiscordUserDataReturnType[];
 }
-export async function getAllMinecraftUsers(): Promise<{
-    uuid: string;
-}[]> {
+export async function getAllMinecraftUsers(): Promise<MinecraftDataReturnType[]> {
     const { rows } = await sql`SELECT uuid FROM minecraftplayerdata`;
-    return rows as { uuid: string; }[];
+    return rows as MinecraftDataReturnType[];
 }
