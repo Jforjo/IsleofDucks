@@ -49,62 +49,68 @@ async function setupGuessToWin(
             flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
             components: [
                 {
-                    type: ComponentType.TextDisplay,
-                    content: "## GtW Setup",
-                },
-                { type: ComponentType.Separator },
-                {
-                    type: ComponentType.Section,
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
                     components: [
                         {
                             type: ComponentType.TextDisplay,
-                            content: "Answer:",
-                        }
-                    ],
-                    accessory: {
-                        type: ComponentType.Button,
-                        label: "Set",
-                        style: ButtonStyle.Secondary,
-                        // No need for userId as it's ephemeral
-                        custom_id: `guesstowin-setup-answer`
-                    }
-                },
-                {
-                    type: ComponentType.Section,
-                    components: [
+                            content: "## GtW Setup",
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Answer:",
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                label: "Set",
+                                style: ButtonStyle.Secondary,
+                                // No need for userId as it's ephemeral
+                                custom_id: `guesstowin-setup-answer`
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Hints:",
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                label: "Set",
+                                style: ButtonStyle.Secondary,
+                                // No need for userId as it's ephemeral
+                                custom_id: `guesstowin-setup-hints`
+                            }
+                        },
+                        {
+                            type: ComponentType.Section,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "Prize:",
+                                }
+                            ],
+                            accessory: {
+                                type: ComponentType.Button,
+                                label: "Set",
+                                style: ButtonStyle.Secondary,
+                                // No need for userId as it's ephemeral
+                                custom_id: `guesstowin-setup-prize`
+                            }
+                        },
+                        { type: ComponentType.Separator },
                         {
                             type: ComponentType.TextDisplay,
-                            content: "Hints:",
+                            content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
                         }
-                    ],
-                    accessory: {
-                        type: ComponentType.Button,
-                        label: "Set",
-                        style: ButtonStyle.Secondary,
-                        // No need for userId as it's ephemeral
-                        custom_id: `guesstowin-setup-hints`
-                    }
-                },
-                {
-                    type: ComponentType.Section,
-                    components: [
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: "Prize:",
-                        }
-                    ],
-                    accessory: {
-                        type: ComponentType.Button,
-                        label: "Set",
-                        style: ButtonStyle.Secondary,
-                        // No need for userId as it's ephemeral
-                        custom_id: `guesstowin-setup-prize`
-                    }
-                },
-                { type: ComponentType.Separator },
-                {
-                    type: ComponentType.TextDisplay,
-                    content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    ]
                 }
             ]
         }
