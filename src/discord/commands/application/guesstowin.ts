@@ -127,12 +127,12 @@ export default async function(
     >
 > {
     // User sees the "[bot] is thinking..." message
-    await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
-        data: {
-            flags: MessageFlags.Ephemeral,
-        },
-    });
+    // await CreateInteractionResponse(interaction.id, interaction.token, {
+    //     type: InteractionResponseType.DeferredChannelMessageWithSource,
+    //     data: {
+    //         flags: MessageFlags.Ephemeral,
+    //     },
+    // });
 
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
