@@ -14,7 +14,7 @@ async function setupGuessToWin(
     >
 > {
     const timestamp = ConvertSnowflakeToDate(interaction.id);
-    if (!interaction.member || !interaction.user) {
+    if (!interaction.member) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
