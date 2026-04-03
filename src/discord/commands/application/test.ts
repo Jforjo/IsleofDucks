@@ -90,8 +90,8 @@ export default async function(
                     await updateDiscordUser(discordUser.user.id);
                 } else if (e.message === "Minecraft user not found") {
                     await updateMinecraftUser(user.uuid);
-                }
-            }
+                } else console.error(e);
+            } else console.error(e);
         }
     }
 
