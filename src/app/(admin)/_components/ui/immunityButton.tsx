@@ -2,28 +2,24 @@ import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { addImmunePlayer } from "@/discord/utils";
 import React from "react";
 
-async function addImmune(username: string, discord: string, reason: string) {
+async function addImmune(username: string, reason: string) {
     const uuidResponse = await getUsernameOrUUID(username);
     if (uuidResponse.success === true) {
-        await addImmunePlayer(uuidResponse.uuid, discord == "" ? null : discord, reason);
+        await addImmunePlayer(uuidResponse.uuid, reason);
     }
 }
 
 export default function ImmunityButton({
     className,
     username,
-    discord,
     reason,
     setUsername,
-    setDiscord,
     setReason
 }: {
     className: string;
     username: string;
-    discord: string;
     reason: string;
     setUsername: React.Dispatch<React.SetStateAction<string>>;
-    setDiscord: React.Dispatch<React.SetStateAction<string>>;
     setReason: React.Dispatch<React.SetStateAction<string>>;
 }): React.JSX.Element {
     return <button
@@ -31,9 +27,8 @@ export default function ImmunityButton({
         onClick={async (e) => {
             e.currentTarget.disabled = true;
             e.currentTarget.textContent = "Adding...";
-            void addImmune(username, discord, reason);
+            void addImmune(username, reason);
             setUsername("");
-            setDiscord("");
             setReason("");
             e.currentTarget.textContent = "Added";
             // Enable the button again after 1 second
