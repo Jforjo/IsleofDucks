@@ -64,7 +64,7 @@ export default async function(
         const hypixel = await getHypixelPlayer(user.uuid);
         if (!hypixel.success) {
             await FollowupMessage(interaction.token, {
-                content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}\nLinked so far: ${linked}/${users.length}`,
+                content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}\nLinked so far: ${linked}/${users.length}\n${hypixel.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + hypixel.retry ) / 1000)}:R> to continue` : ""}`,
             });
             if (hypixel.message === "Key throttle") return NextResponse.json(
                 { success: false, error: "Hypixel API key is being throttled, try again later" },
