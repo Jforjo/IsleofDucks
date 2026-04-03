@@ -1390,6 +1390,7 @@ const Channels = {
     verification: "1287099048796356608",
     donationTotal: "1106671914509946942",
     banlist: "903871143662993408",
+    guesstowin: "1132372503193473055"
 };
 const ChannelGroups = {
     tickets: "988883238292451378",
@@ -1412,6 +1413,7 @@ const Roles = {
     immune: "1276013765405704266",
     booster: "881421446017056799",
     booster2x: "993257342848213126",
+    chat_revive: "988892995329863710",
     groups: {
         guild: "1004178428657930311",
         carrier: "1004178714734633020",
