@@ -1,5 +1,4 @@
 import { CreateInteractionResponse } from "@/discord/discordUtils";
-import { capitalizeFirstLetter } from "@/discord/utils";
 import { APIInteractionResponse, APIMessageTopLevelComponent, APIModalSubmitInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
