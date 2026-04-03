@@ -62,7 +62,16 @@ export default async function(
     const users = minecraftUsers.filter(u => !alreadyLinked.some(a => a.uuid === u.uuid));
     for (const user of users) {
         const hypixel = await getHypixelPlayer(user.uuid);
-        if (!hypixel.success) continue;
+        if (!hypixel.success) {
+            await FollowupMessage(interaction.token, {
+                content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}`,
+            });
+            if (hypixel.message === "Key throttle") return NextResponse.json(
+                { success: false, error: "Hypixel API key is being throttled, try again later" },
+                { status: 500 }
+            );
+            continue;
+        }
 
         const player = hypixel.player;
         if (!player.socialMedia || !player.socialMedia.links || !player.socialMedia.links.DISCORD) continue;
