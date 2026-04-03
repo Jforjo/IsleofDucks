@@ -1214,9 +1214,27 @@ export async function checkLinked(discordid: Snowflake, uuid: string): Promise<b
     `;
     return rows[0].count > 0;
 }
+export async function getAllLinkedUsers(): Promise<{
+    discordid: Snowflake;
+    uuid: string;
+}[]> {
+    const { rows } = await sql`
+        SELECT d.discordid, m.uuid
+        FROM userlink ul
+        JOIN discorduserdata d ON ul.discord = d.id
+        JOIN minecraftplayerdata m ON ul.minecraft = m.id
+    `;
+    return rows as { discordid: Snowflake; uuid: string; }[];
+}
 export async function getAllDiscordUsers(): Promise<{
     discordid: Snowflake;
 }[]> {
     const { rows } = await sql`SELECT discordid FROM discorduserdata`;
     return rows as { discordid: Snowflake; }[];
+}
+export async function getAllMinecraftUsers(): Promise<{
+    uuid: string;
+}[]> {
+    const { rows } = await sql`SELECT uuid FROM minecraftplayerdata`;
+    return rows as { uuid: string; }[];
 }
