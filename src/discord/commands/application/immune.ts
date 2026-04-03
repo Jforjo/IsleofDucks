@@ -81,7 +81,7 @@ async function addImmune(
         );
     }
 
-    await addImmunePlayer(uuid, null, reason);
+    await addImmunePlayer(uuid, reason);
     const discordRes = await getUserDataFromUUID(uuid);
     let roleAdded = false;
     if (discordRes.success && discordRes.data.discord && discordRes.data.discord.discordid) {
