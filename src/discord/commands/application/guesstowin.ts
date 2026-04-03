@@ -111,6 +111,17 @@ async function setupGuessToWin(
                             content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
                         }
                     ]
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            label: "Create",
+                            style: ButtonStyle.Primary,
+                            custom_id: `guesstowin-setup-create`
+                        }
+                    ]
                 }
             ]
         }
