@@ -1031,10 +1031,10 @@ export async function getAllGuessToWin(): Promise<GuessToWin[]> {
     `;
     return rows as GuessToWin[];
 }
-export async function createGuessToWin(answer: string, prize?: string | null): Promise<string> {
+export async function createGuessToWin(answer: string, prize?: string | null, sponsor?: string | null, hints?: { hint: string; at: number }[]): Promise<string> {
     const { rows } = await sql`
-        INSERT INTO guesstowin (answer, prize)
-        VALUES (${answer}, ${prize || null})
+        INSERT INTO guesstowin (answer, prize, sponsor, hints)
+        VALUES (${answer}, ${prize || null}, ${sponsor || null}, ${JSON.stringify(hints || [])})
         RETURNING id
     `;
     return rows[0].id;
