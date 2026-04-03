@@ -104,7 +104,7 @@ export async function getImmunePlayers(): Promise<{
         LEFT JOIN minecraftplayerdata m ON i.minecraft = m.id
         LEFT JOIN userlink u ON m.id = u.minecraft
         LEFT JOIN discorduserdata d ON u.discord = d.id
-    ` as { rows: { uuid: string; discord: string | null; reason: string; exp: number | null }[] };
+    ` as { rows: { uuid: string; discord: string; reason: string; exp: number }[] };
 
     const players = await Promise.all(rows.map(async (row) => {
         const nameRes = await getUsernameOrUUID(row.uuid);
@@ -130,10 +130,10 @@ export async function getImmunePlayers(): Promise<{
 }
 export async function isImmunePlayer(uuid: string, reason?: string): Promise<boolean> {
     if (reason) {
-        const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid} AND reason = ${reason}`;
+        const { rows } = await sql`SELECT id FROM immune WHERE uuid = ${uuid} AND reason = ${reason}`;
         return rows.length > 0;
     }
-    const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid}`;
+    const { rows } = await sql`SELECT id FROM immune WHERE uuid = ${uuid}`;
     return rows.length > 0;
 }
 export async function addImmunePlayer(uuid: string, reason: string): Promise<void> {
@@ -146,9 +146,26 @@ export async function removeImmunePlayer(uuid: string, reason?: string): Promise
     if (reason) await sql`DELETE FROM immune WHERE uuid = ${uuid} AND reason = ${reason}`;
     else await sql`DELETE FROM immune WHERE uuid = ${uuid}`;
 }
-export async function getImmunePlayer(uuid: string): Promise<{ uuid: string; reason: string } | null> {
-    const { rows } = await sql`SELECT * FROM immune WHERE uuid = ${uuid}`;
-    if (rows.length > 0) return rows[0] as { uuid: string; reason: string };
+export async function getImmunePlayer(uuid: string): Promise<{
+    uuid: string;
+    reason: string;
+    discord: string;
+    exp: number
+} | null> {
+    const { rows } = await sql`
+        SELECT
+            i.uuid,
+            i.reason,
+            m.exp,
+            d.discordid as discord 
+        FROM immune i
+        LEFT JOIN minecraftplayerdata m ON i.minecraft = m.id
+        LEFT JOIN userlink u ON m.id = u.minecraft
+        LEFT JOIN discorduserdata d ON u.discord = d.id
+        WHERE i.uuid = ${uuid}
+        LIMIT 1
+    `;
+    if (rows.length > 0) return rows[0] as { uuid: string; reason: string; discord: string; exp: number };
     return null;
 }
 
