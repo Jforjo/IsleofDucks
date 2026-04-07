@@ -76,7 +76,7 @@ const mutations = {
         coins: 40000,
         copper: 20
     },
-    DO_NOT_EACH_SHROOM: {
+    DO_NOT_EAT_SHROOM: {
         coins: 240000,
         copper: 120
     },
