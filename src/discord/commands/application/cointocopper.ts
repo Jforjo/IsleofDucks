@@ -214,7 +214,7 @@ export default async function(
             sell: ( mutationInfo.coins + sellPrice ) / mutationInfo.copper,
             buy: ( mutationInfo.coins + buyPrice ) / mutationInfo.copper
         };
-    });
+    }).sort((a, b) => a.sell - b.sell);
 
     // for (const chunk of arrayChunks(mutationPrices, 39)) {
         await SendMessage(interaction.channel.id, {
