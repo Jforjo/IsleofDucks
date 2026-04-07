@@ -196,7 +196,7 @@ export default async function(
 
     const bzData = await getMutations();
     if (!bzData) {
-        await FollowupMessage(interaction.id, {
+        await FollowupMessage(interaction.token, {
             flags: MessageFlags.Ephemeral,
             components: ErrorEmbed("Failed to fetch mutation data from the bazaar API", timestamp, true)
         }, null, true);
@@ -219,7 +219,7 @@ export default async function(
 
     // for (const chunk of arrayChunks(mutationPrices, 39)) {
         // await SendMessage(interaction.channel.id, {
-        await FollowupMessage(interaction.id, {
+        await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
             components: [
                 {
