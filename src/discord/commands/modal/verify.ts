@@ -1,7 +1,7 @@
-import { AddGuildMemberRole, CreateInteractionResponse, EditGuildMember, FollowupMessage, GetGuildMember, IsleofDucks } from "@/discord/discordUtils";
+import { AddGuildMemberRole, CreateInteractionResponse, EditGuildMember, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getHypixelPlayer, getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { checkDiscordInDB, checkLinked, checkMinecraftInDB, createDiscordUser, createMinecraftUser, linkDiscordToMinecraft } from "@/discord/utils";
-import { APIModalSubmitInteraction, APIInteractionResponse, InteractionResponseType, MessageFlags, ComponentType, APIUser } from "discord-api-types/v10";
+import { APIModalSubmitInteraction, APIInteractionResponse, InteractionResponseType, MessageFlags, ComponentType, APIGuildMember } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -18,9 +18,9 @@ export default async function(
         type: InteractionResponseType.DeferredChannelMessageWithSource,
         data: { flags: MessageFlags.Ephemeral }
     });
-    let user: APIUser;
-    if (interaction.member) user = interaction.member.user;
-    else if (interaction.user) user = interaction.user;
+    let member: APIGuildMember;
+    if (interaction.member) member = interaction.member;
+    // else if (interaction.user) user = interaction.user;
     else {
         await FollowupMessage(interaction.token, {
             content: "Could not find user ID from interaction!" ,
@@ -85,9 +85,9 @@ export default async function(
         );
     }
     const linkedDiscord = discordHypixelRes.player.socialMedia.links.DISCORD;
-    if (linkedDiscord !== user.username) {
+    if (linkedDiscord !== member.user.username) {
         await FollowupMessage(interaction.token, {
-            content: `The Discord account linked on your Hypixel profile (${linkedDiscord}) does not match the Discord account you used to verify (${user.username})!`,
+            content: `The Discord account linked on your Hypixel profile (${linkedDiscord}) does not match the Discord account you used to verify (${member.user.username})!`,
         });
         return NextResponse.json(
             { success: false, error: "The Discord account linked on your Hypixel profile does not match the Discord account you used to verify" },
@@ -123,9 +123,9 @@ export default async function(
     //     );
     // }
 
-    const discordExists = await checkDiscordInDB(user.id);
+    const discordExists = await checkDiscordInDB(member.user.id);
     if (!discordExists) {
-        await createDiscordUser(user.id);
+        await createDiscordUser(member.user.id);
     }
     const minecraftExists = await checkMinecraftInDB(userRes.uuid);
     if (!minecraftExists) {
@@ -133,8 +133,27 @@ export default async function(
     }
 
     try {
-        await linkDiscordToMinecraft(user.id, userRes.uuid);
+        await linkDiscordToMinecraft(member.user.id, userRes.uuid);
     } catch (e: any) {
+        if (e instanceof Error && e.message === "Already Verified" && !member.roles.includes(IsleofDucks.roles.verified)) {
+            try {
+                const didIt = await AddGuildMemberRole(IsleofDucks.serverID, member.user.id, IsleofDucks.roles.verified);
+                if (!didIt) {
+                    await FollowupMessage(interaction.token, {
+                        content: "Already verified, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+                    });
+                    return NextResponse.json(
+                        { success: true },
+                        { status: 200 }
+                    );
+                }
+            } catch (e) {
+                await FollowupMessage(interaction.token, {
+                    content: "Already verified, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+                });
+                throw e;
+            }
+        }
         await FollowupMessage(interaction.token, {
             // content: "message" in e ? e.message : "An error occurred while linking your Discord account to your Minecraft account!"
             content: "message" in e ? e.message : "An error occurred while verifying!"
@@ -142,7 +161,7 @@ export default async function(
         throw e;
     }
 
-    const didLink = await checkLinked(user.id, userRes.uuid);
+    const didLink = await checkLinked(member.user.id, userRes.uuid);
     if (!didLink) {
         await FollowupMessage(interaction.token, {
             // content: "An error occurred while linking your Discord account to your Minecraft account!"
@@ -156,7 +175,17 @@ export default async function(
     }
 
     try {
-        await AddGuildMemberRole(IsleofDucks.serverID, user.id, IsleofDucks.roles.verified);
+        const didIt = await AddGuildMemberRole(IsleofDucks.serverID, member.user.id, IsleofDucks.roles.verified);
+        if (!didIt) {
+            await FollowupMessage(interaction.token, {
+                // content: "Successfully linked your Discord account to your Minecraft account, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+                content: "Successfully verified, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
+            });
+            return NextResponse.json(
+                { success: true },
+                { status: 200 }
+            );
+        }
     } catch (e) {
         await FollowupMessage(interaction.token, {
             // content: "Successfully linked your Discord account to your Minecraft account, but failed to add the verified role!\nPlease contact our staff to resolve this issue.",
@@ -166,9 +195,18 @@ export default async function(
     }
 
     try {
-        await EditGuildMember(IsleofDucks.serverID, user.id, {
+        const didIt = await EditGuildMember(IsleofDucks.serverID, member.user.id, {
             nick: userRes.name
         });
+        if (!didIt) {
+            await FollowupMessage(interaction.token, {
+                content: "Successfully verified, but failed to update your nickname!\nPlease contact our staff to resolve this issue.",
+            });
+            return NextResponse.json(
+                { success: true },
+                { status: 200 }
+            );
+        }
     } catch (e) {
         await FollowupMessage(interaction.token, {
             content: "Successfully verified, but failed to update your nickname!\nPlease contact our staff to resolve this issue.",
