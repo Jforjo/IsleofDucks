@@ -187,18 +187,22 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
-        data: {
-            flags: MessageFlags.Ephemeral
-        }
-    });
+    // await CreateInteractionResponse(interaction.id, interaction.token, {
+    //     type: InteractionResponseType.DeferredChannelMessageWithSource,
+    //     data: {
+    //         flags: MessageFlags.Ephemeral
+    //     }
+    // });
 
     const bzData = await getMutations();
     if (!bzData) {
-        await FollowupMessage(interaction.token, {
-            content: "Failed to fetch mutations"
-        });
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                content: "Failed to fetch mutations from the bazaar!",
+                flags: MessageFlags.Ephemeral
+            }
+        })
         return NextResponse.json(
             { success: false, error: "Failed to fetch mutations" },
             { status: 400 }
@@ -217,24 +221,28 @@ export default async function(
     }).sort((a, b) => a.sell - b.sell);
 
     // for (const chunk of arrayChunks(mutationPrices, 39)) {
-        await SendMessage(interaction.channel.id, {
-            flags: MessageFlags.IsComponentsV2,
-            components: [
-                {
-                    type: ComponentType.Container,
-                    accent_color: IsleofDucks.colours.main,
-                    components: mutationPrices.map(({ mutation, sell, buy }) => ({
-                        type: ComponentType.TextDisplay,
-                        content: `**${mutation}** - ${sell.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })} / ${buy.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}`,
-                    }))
-                }
-            ]
+        // await SendMessage(interaction.channel.id, {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.IsComponentsV2,
+                components: [
+                    {
+                        type: ComponentType.Container,
+                        accent_color: IsleofDucks.colours.main,
+                        components: mutationPrices.map(({ mutation, sell, buy }) => ({
+                            type: ComponentType.TextDisplay,
+                            content: `**${mutation}** - ${sell.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })} / ${buy.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}`,
+                        }))
+                    }
+                ]
+            }
         })
     // }
 
-    await FollowupMessage(interaction.token, {
-        content: `Done!`,
-    });
+    // await FollowupMessage(interaction.token, {
+    //     content: `Done!`,
+    // });
 
     return NextResponse.json(
         { success: true },
