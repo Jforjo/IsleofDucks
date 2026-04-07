@@ -150,7 +150,7 @@ const mutations = {
     },
     GODSEED: {
         coins: 1000000,
-        copper: 5000
+        copper: 500
     },
     JERRYFLOWER: {
         coins: 20000,
