@@ -135,7 +135,7 @@ export default async function(
     try {
         await linkDiscordToMinecraft(member.user.id, userRes.uuid);
     } catch (e: any) {
-        if (e instanceof Error && e.message === "Already Verified" && !member.roles.includes(IsleofDucks.roles.verified)) {
+        if (e instanceof Error && e.message === "Already verified" && !member.roles.includes(IsleofDucks.roles.verified)) {
             try {
                 const didIt = await AddGuildMemberRole(IsleofDucks.serverID, member.user.id, IsleofDucks.roles.verified);
                 if (!didIt) {
