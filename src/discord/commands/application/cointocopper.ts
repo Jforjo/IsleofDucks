@@ -1,4 +1,4 @@
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { SkyblockBazaarResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -187,22 +187,19 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    // await CreateInteractionResponse(interaction.id, interaction.token, {
-    //     type: InteractionResponseType.DeferredChannelMessageWithSource,
-    //     data: {
-    //         flags: MessageFlags.Ephemeral
-    //     }
-    // });
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
+        data: { flags: MessageFlags.IsComponentsV2 }
+    });
+
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     const bzData = await getMutations();
     if (!bzData) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                content: "Failed to fetch mutations from the bazaar!",
-                flags: MessageFlags.Ephemeral
-            }
-        })
+        await FollowupMessage(interaction.id, {
+            flags: MessageFlags.Ephemeral,
+            components: ErrorEmbed("Failed to fetch mutation data from the bazaar API", timestamp, true)
+        }, null, true);
         return NextResponse.json(
             { success: false, error: "Failed to fetch mutations" },
             { status: 400 }
@@ -222,22 +219,19 @@ export default async function(
 
     // for (const chunk of arrayChunks(mutationPrices, 39)) {
         // await SendMessage(interaction.channel.id, {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                flags: MessageFlags.IsComponentsV2,
-                components: [
-                    {
-                        type: ComponentType.Container,
-                        accent_color: IsleofDucks.colours.main,
-                        components: mutationPrices.map(({ mutation, sell, buy }) => ({
-                            type: ComponentType.TextDisplay,
-                            content: `**${mutation}** - ${sell.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })} / ${buy.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}`,
-                        }))
-                    }
-                ]
-            }
-        })
+        await FollowupMessage(interaction.id, {
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: mutationPrices.map(({ mutation, sell, buy }) => ({
+                        type: ComponentType.TextDisplay,
+                        content: `**${mutation}** - ${sell.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })} / ${buy.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}`,
+                    }))
+                }
+            ]
+        }, null, true);
     // }
 
     // await FollowupMessage(interaction.token, {
