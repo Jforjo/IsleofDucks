@@ -55,14 +55,7 @@ async function setupGuessToWin(
         {
             type: ComponentType.TextDisplay,
             content: `Answer: ${answer}`,
-        }
-    );
-    if (sponsor)
-        components.push({
-            type: ComponentType.TextDisplay,            
-            content: `Sponsored by <@${sponsor}>`,
-        });
-    components.push(
+        },
         {
             type: ComponentType.Section,
             components: [
@@ -95,6 +88,13 @@ async function setupGuessToWin(
                 custom_id: `guesstowin-setup-prize`
             }
         },
+    );
+    if (sponsor)
+        components.push({
+            type: ComponentType.TextDisplay,            
+            content: `Sponsored by <@${sponsor}>`,
+        });
+    components.push(
         { type: ComponentType.Separator },
         {
             type: ComponentType.TextDisplay,
