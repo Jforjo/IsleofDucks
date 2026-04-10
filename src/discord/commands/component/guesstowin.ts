@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, ErrorEmbed, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, ErrorEmbed, FollowupMessage, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
 import { getHypixelItems } from "@/discord/hypixelUtils";
 import { createGuessToWin } from "@/discord/utils";
 import { APIComponentInContainer, APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, OverwriteType, TextInputStyle } from "discord-api-types/v10";
@@ -175,7 +175,7 @@ export default async function(
             if (sponsor)
                 components.push({
                     type: ComponentType.TextDisplay,
-                    content: `Sponsored by <@${sponsor}>`,
+                    content: `Sponsored by <@${IsleofDucks.staticIDs.Jforjo}>`,
                 });
             components.push({ type: ComponentType.Separator });
             components.push({
@@ -191,33 +191,44 @@ export default async function(
                     },
                     {
                         type: ComponentType.Container,
+                        accent_color: IsleofDucks.colours.main,
                         components: components
                     },
                 ]
             });
 
             // Allow people to see/type in the channel
-            await EditChannel(IsleofDucks.channels.guesstowin, {
-                permission_overwrites: [
+            // await EditChannel(IsleofDucks.channels.guesstowin, {
+            //     permission_overwrites: [
+            //         {
+            //             id: IsleofDucks.serverID,
+            //             type: OverwriteType.Role,
+            //             allow: ToPermissions({
+            //                 view_channel: true,
+            //             }),
+            //             deny: ToPermissions({
+            //                 send_messages: true,
+            //             })
+            //         },
+            //         {
+            //             id: IsleofDucks.roles.verified,
+            //             type: OverwriteType.Role,
+            //             allow: ToPermissions({
+            //                 send_messages: true,
+            //             }),
+            //         }
+            //     ]
+            // });
+
+            await FollowupMessage(interaction.token, {
+                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                components: [
                     {
-                        id: IsleofDucks.serverID,
-                        type: OverwriteType.Role,
-                        allow: ToPermissions({
-                            view_channel: true,
-                        }),
-                        deny: ToPermissions({
-                            send_messages: true,
-                        })
-                    },
-                    {
-                        id: IsleofDucks.roles.verified,
-                        type: OverwriteType.Role,
-                        allow: ToPermissions({
-                            send_messages: true,
-                        }),
+                        type: ComponentType.TextDisplay,
+                        content: `Game created successfully!`
                     }
                 ]
-            });
+            }, null, true);
         }
     }
 
