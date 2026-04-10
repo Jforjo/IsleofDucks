@@ -1,5 +1,7 @@
-import { CreateInteractionResponse } from "@/discord/discordUtils";
-import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, ErrorEmbed, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
+import { getHypixelItems } from "@/discord/hypixelUtils";
+import { createGuessToWin } from "@/discord/utils";
+import { APIComponentInContainer, APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, OverwriteType, TextInputStyle } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -12,11 +14,7 @@ export default async function(
         } | APIInteractionResponse
     >
 > {
-    // ACK response and update the original message
-    // await CreateInteractionResponse(interaction.id, interaction.token, {
-    //     type: InteractionResponseType.DeferredChannelMessageWithSource,
-    //     data: { flags: MessageFlags.Ephemeral }
-    // });
+    const timestamp = ConvertSnowflakeToDate(interaction.id)
 
     const customIds = interaction.data.custom_id.split("-");
 
@@ -30,6 +28,7 @@ export default async function(
                     {
                         type: ComponentType.Label,
                         label: "Answer",
+                        description: "Must be spelt perfectly. (case-sensitive)",
                         component: {
                             type: ComponentType.TextInput,
                             custom_id: "answer",
@@ -88,6 +87,138 @@ export default async function(
                 ]
             }
         });
+        else if (customIds[2] === "create") {
+            if (
+                !interaction.message.components ||
+                interaction.message.components[0].type !== ComponentType.Container ||
+                interaction.message.components[0].components[2].type !== ComponentType.TextDisplay || 
+                interaction.message.components[0].components[3].type !== ComponentType.Section ||
+                interaction.message.components[0].components[4].type !== ComponentType.Section
+            ) {
+                await CreateInteractionResponse(interaction.id, interaction.token, {
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                        components: ErrorEmbed("Invalid setup message", timestamp, true),
+                    }
+                });
+                return NextResponse.json(
+                    { success: false, error: "Invalid setup message" },
+                    { status: 400 }
+                )
+            }
+
+            const sponsor = customIds[3];
+            const answer = interaction.message.components[0].components[2].content.split(": ").slice(1).join(": ").trim();
+            // Is valid answer
+            const items = await getHypixelItems();
+            if (!items.success) {
+                await CreateInteractionResponse(interaction.id, interaction.token, {
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                        components: ErrorEmbed(`Failed to fetch Hypixel items: ${items.message}`, timestamp, true),
+                    }
+                });
+                return NextResponse.json(
+                    { success: false, error: `Failed to fetch Hypixel items: ${items.message}` },
+                    { status: 400 }
+                )
+            }
+            const item = items.items?.find(i => i?.name?.toLowerCase() === answer.toLowerCase());
+            if (!items.items || !item) {
+                await CreateInteractionResponse(interaction.id, interaction.token, {
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                        components: ErrorEmbed("Invalid answer provided. Must be a valid Hypixel item name.", timestamp, true),
+                    }
+                });
+                return NextResponse.json(
+                    { success: false, error: "Invalid answer provided. Must be a valid Hypixel item name." },
+                    { status: 400 }
+                )
+            }
+
+            const prize = interaction.message.components[0].components[4].components.length === 2 ? interaction.message.components[0].components[4].components[1].content : null;
+            const hints = interaction.message.components[0].components[3].components.length === 3 ? interaction.message.components[0].components[3].components[1].content.split("\n").map(row => {
+                // At ${inputs.at} guesses: ${inputs.hint}
+                const match = row.match(/^At (\d+) guesses: (.+)$/);
+                if (!match) return;
+                return {
+                    at: parseInt(match[1]),
+                    hint: match[2]
+                }
+            }).filter(h => h !== undefined) : undefined;
+
+            const game = await createGuessToWin(answer, prize, sponsor, hints);
+            if (!game) {
+                await CreateInteractionResponse(interaction.id, interaction.token, {
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                        components: ErrorEmbed("Failed to create game", timestamp, true),
+                    }
+                });
+                return NextResponse.json(
+                    { success: false, error: "Failed to create game" },
+                    { status: 500 }
+                )
+            }
+
+            const components: APIComponentInContainer[] = [
+                {
+                    type: ComponentType.TextDisplay,
+                    content: `## New Guess to Win Game!`,
+                },
+            ];
+            if (sponsor)
+                components.push({
+                    type: ComponentType.TextDisplay,
+                    content: `Sponsored by <@${sponsor}>`,
+                });
+            components.push({ type: ComponentType.Separator });
+            components.push({
+                type: ComponentType.TextDisplay,
+                content: `GtW ID: ${game} • Total guesses: 0`,
+            });
+            await SendMessage(IsleofDucks.channels.guesstowin, {
+                flags: MessageFlags.IsComponentsV2,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `<@&${IsleofDucks.roles.chat_revive}>`
+                    },
+                    {
+                        type: ComponentType.Container,
+                        components: components
+                    },
+                ]
+            });
+
+            // Allow people to see/type in the channel
+            await EditChannel(IsleofDucks.channels.guesstowin, {
+                permission_overwrites: [
+                    {
+                        id: IsleofDucks.serverID,
+                        type: OverwriteType.Role,
+                        allow: ToPermissions({
+                            view_channel: true,
+                        }),
+                        deny: ToPermissions({
+                            send_messages: true,
+                        })
+                    },
+                    {
+                        id: IsleofDucks.roles.verified,
+                        type: OverwriteType.Role,
+                        allow: ToPermissions({
+                            send_messages: true,
+                        }),
+                    }
+                ]
+            });
+        }
     }
 
     return NextResponse.json(
