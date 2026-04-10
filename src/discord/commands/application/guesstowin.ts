@@ -1,11 +1,12 @@
 import { CreateInteractionResponse, ConvertSnowflakeToDate, ErrorEmbed, IsleofDucks } from "@/discord/discordUtils";
 import { arrayContainsAny } from "@/discord/utils";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, InteractionResponseType, APIChatInputApplicationCommandInteractionData, ApplicationCommandOptionType, MessageFlags, ComponentType, ButtonStyle, Snowflake } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, InteractionResponseType, APIChatInputApplicationCommandInteractionData, ApplicationCommandOptionType, MessageFlags, ComponentType, ButtonStyle, Snowflake, APIComponentInContainer } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
 async function setupGuessToWin(
     interaction: APIChatInputApplicationCommandInteraction,
-    sponsor: Snowflake
+    answer: string,
+    sponsor?: Snowflake
 ): Promise<
     NextResponse<
         {
@@ -44,6 +45,63 @@ async function setupGuessToWin(
         );
     }
 
+    const components: APIComponentInContainer[] = [];
+    components.push(
+        {
+            type: ComponentType.TextDisplay,
+            content: "## GtW Setup",
+        },
+        { type: ComponentType.Separator },
+        {
+            type: ComponentType.TextDisplay,
+            content: `Answer: ${answer}`,
+        }
+    );
+    if (sponsor)
+        components.push({
+            type: ComponentType.TextDisplay,            
+            content: `Sponsored by <@${sponsor}>`,
+        });
+    components.push(
+        {
+            type: ComponentType.Section,
+            components: [
+                {
+                    type: ComponentType.TextDisplay,
+                    content: "Hints:",
+                }
+            ],
+            accessory: {
+                type: ComponentType.Button,
+                label: "Set",
+                style: ButtonStyle.Secondary,
+                // No need for userId as it's ephemeral
+                custom_id: `guesstowin-setup-hints`
+            }
+        },
+        {
+            type: ComponentType.Section,
+            components: [
+                {
+                    type: ComponentType.TextDisplay,
+                    content: "Prize:",
+                }
+            ],
+            accessory: {
+                type: ComponentType.Button,
+                label: "Set",
+                style: ButtonStyle.Secondary,
+                // No need for userId as it's ephemeral
+                custom_id: `guesstowin-setup-prize`
+            }
+        },
+        { type: ComponentType.Separator },
+        {
+            type: ComponentType.TextDisplay,
+            content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+        }
+    )
+
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
@@ -52,66 +110,7 @@ async function setupGuessToWin(
                 {
                     type: ComponentType.Container,
                     accent_color: IsleofDucks.colours.main,
-                    components: [
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: "## GtW Setup",
-                        },
-                        { type: ComponentType.Separator },
-                        {
-                            type: ComponentType.Section,
-                            components: [
-                                {
-                                    type: ComponentType.TextDisplay,
-                                    content: "Answer:",
-                                }
-                            ],
-                            accessory: {
-                                type: ComponentType.Button,
-                                label: "Set",
-                                style: ButtonStyle.Secondary,
-                                // No need for userId as it's ephemeral
-                                custom_id: `guesstowin-setup-answer`
-                            }
-                        },
-                        {
-                            type: ComponentType.Section,
-                            components: [
-                                {
-                                    type: ComponentType.TextDisplay,
-                                    content: "Hints:",
-                                }
-                            ],
-                            accessory: {
-                                type: ComponentType.Button,
-                                label: "Set",
-                                style: ButtonStyle.Secondary,
-                                // No need for userId as it's ephemeral
-                                custom_id: `guesstowin-setup-hints`
-                            }
-                        },
-                        {
-                            type: ComponentType.Section,
-                            components: [
-                                {
-                                    type: ComponentType.TextDisplay,
-                                    content: "Prize:",
-                                }
-                            ],
-                            accessory: {
-                                type: ComponentType.Button,
-                                label: "Set",
-                                style: ButtonStyle.Secondary,
-                                // No need for userId as it's ephemeral
-                                custom_id: `guesstowin-setup-prize`
-                            }
-                        },
-                        { type: ComponentType.Separator },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
-                        }
-                    ]
+                    components: components
                 },
                 {
                     type: ComponentType.ActionRow,
@@ -223,7 +222,7 @@ export default async function(
     }));
 
     if (options.setup) {
-        return await setupGuessToWin(interaction, options.setup.sponsor);
+        return await setupGuessToWin(interaction, options.setup.answer, options.setup.sponsor);
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
