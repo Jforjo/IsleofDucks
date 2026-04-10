@@ -248,6 +248,13 @@ export const CommandData = {
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
+                    name: "answer",
+                    description: "The correct answer for the Guess to Win game.",
+                    type: ApplicationCommandOptionType.String,
+                    autocomplete: true,
+                    required: true
+                },
+                {
                     name: "sponsor",
                     description: "The sponsor of the game.",
                     type: ApplicationCommandOptionType.User,
