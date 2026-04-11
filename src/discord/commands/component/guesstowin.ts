@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, ErrorEmbed, FollowupMessage, IsleofDucks, SendMessage, ToPermissions } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, EditChannel, ErrorEmbed, FollowupMessage, IsleofDucks, PinMessage, SendMessage, ToPermissions } from "@/discord/discordUtils";
 import { getHypixelItems } from "@/discord/hypixelUtils";
 import { createGuessToWin } from "@/discord/utils";
 import { APIComponentInContainer, APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, OverwriteType, TextInputStyle } from "discord-api-types/v10";
@@ -151,12 +151,6 @@ export default async function(
                 }
             }).filter(h => h !== undefined) : undefined;
 
-            console.log(hints);
-            return NextResponse.json(
-                { success: true },
-                { status: 200 }
-            );
-
             const game = await createGuessToWin(answer, prize, sponsor, hints);
             if (!game) {
                 await CreateInteractionResponse(interaction.id, interaction.token, {
@@ -183,17 +177,22 @@ export default async function(
                     type: ComponentType.TextDisplay,
                     content: `Sponsored by <@${IsleofDucks.staticIDs.Jforjo}>`,
                 });
-            components.push({ type: ComponentType.Separator });
-            components.push({
-                type: ComponentType.TextDisplay,
-                content: `GtW ID: ${game} • Total guesses: 0`,
-            });
-            await SendMessage(IsleofDucks.channels.guesstowin, {
+            if (prize)
+                components.push({
+                    type: ComponentType.TextDisplay,
+                    content: `Prize: **${prize}**`,
+                });
+            // components.push({ type: ComponentType.Separator });
+            // components.push({
+            //     type: ComponentType.TextDisplay,
+            //     content: `GtW ID: ${game} • Total guesses: 0`,
+            // });
+            const message = await SendMessage(IsleofDucks.channels.guesstowin, {
                 flags: MessageFlags.IsComponentsV2,
                 components: [
                     {
                         type: ComponentType.TextDisplay,
-                        content: `<@&${IsleofDucks.roles.chat_revive}>`
+                        content: `<@&${IsleofDucks.roles.chat_revive}>${prize ? ` <@&${IsleofDucks.roles.giveaway}>` : ''}`
                     },
                     {
                         type: ComponentType.Container,
@@ -202,6 +201,23 @@ export default async function(
                     },
                 ]
             });
+
+            if (message) {
+                const pinned = await PinMessage(message.channel_id, message.id, "Pinning new Guess to Win game");
+                if (!pinned) {
+                    await CreateInteractionResponse(interaction.id, interaction.token, {
+                        type: InteractionResponseType.ChannelMessageWithSource,
+                        data: {
+                            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                            components: ErrorEmbed("Failed to pin game message. Please pin it manually.", timestamp, true),
+                        }
+                    });
+                    return NextResponse.json(
+                        { success: false, error: "Failed to pin game message. Please pin it manually." },
+                        { status: 500 }
+                    )
+                }
+            }
 
             // Allow people to see/type in the channel
             // await EditChannel(IsleofDucks.channels.guesstowin, {
@@ -226,15 +242,18 @@ export default async function(
             //     ]
             // });
 
-            await FollowupMessage(interaction.token, {
-                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
-                components: [
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `Game created successfully!`
-                    }
-                ]
-            }, null, true);
+            await CreateInteractionResponse(interaction.id, interaction.token, {
+                type: InteractionResponseType.ChannelMessageWithSource,
+                data: {
+                    flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `Game created successfully!`
+                        }
+                    ]
+                }
+            });
         }
     }
 
