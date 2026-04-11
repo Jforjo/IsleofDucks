@@ -141,7 +141,7 @@ export default async function(
             }
 
             const prize = interaction.message.components[0].components[4].components.length === 2 ? interaction.message.components[0].components[4].components[1].content : null;
-            const hints = interaction.message.components[0].components[3].components.length === 3 ? interaction.message.components[0].components[3].components[1].content.split("\n").map(row => {
+            const hints = interaction.message.components[0].components[3].components.length > 1 ? interaction.message.components[0].components[3].components[1].content.split("\n").map(row => {
                 // At ${inputs.at} guesses: ${inputs.hint}
                 const match = row.match(/^At (\d+) guesses: (.+)$/);
                 if (!match) return;
