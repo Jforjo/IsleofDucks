@@ -151,6 +151,12 @@ export default async function(
                 }
             }).filter(h => h !== undefined) : undefined;
 
+            console.log(hints);
+            return NextResponse.json(
+                { success: true },
+                { status: 200 }
+            );
+
             const game = await createGuessToWin(answer, prize, sponsor, hints);
             if (!game) {
                 await CreateInteractionResponse(interaction.id, interaction.token, {
