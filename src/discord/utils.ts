@@ -1021,6 +1021,7 @@ export async function getGuessToWin(id: string): Promise<GuessToWin | undefined>
 export async function getAllGuessToWin(): Promise<GuessToWin[]> {
     const { rows } = await sql`
         SELECT
+            id,
             winner,
             hints,
             prize,
