@@ -1221,8 +1221,38 @@ export async function EditGuildMember(guildId: Snowflake, userId: Snowflake, opt
     return data;
 }
 
+export async function PinMessage(channelId: Snowflake, messageId: Snowflake, reason?: string): Promise<boolean> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
 
+    const endpoint = Routes.channelMessagesPin(channelId, messageId);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'x-audit-log-reason': reason ?? '',
+        },
+        method: 'PUT',
+    });
 
+    return res.ok;
+}
+export async function UnpinMessage(channelId: Snowflake, messageId: Snowflake, reason?: string): Promise<boolean> {
+    if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
+    if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
+
+    const endpoint = Routes.channelMessagesPin(channelId, messageId);
+    const url = RouteBases.api + endpoint;
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            'x-audit-log-reason': reason ?? '',
+        },
+        method: 'DELETE',
+    });
+
+    return res.ok;
+}
 
 export function ToPermissions(permissions: DiscordPermissions): Permissions {
     // https://discord.com/developers/docs/topics/permissions
