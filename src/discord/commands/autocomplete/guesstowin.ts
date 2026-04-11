@@ -56,7 +56,7 @@ export default async function(
                 // remove all instances of /§[0-9a-f]/gm within the names
                 .map(i => ({
                     name: i.name.replace(/\/§[0-9a-f]/gm, ''),
-                    value: i.name
+                    value: i.name.replace(/\/§[0-9a-f]/gm, '')
                 }))
                 .filter(i => i.name.toLowerCase().includes(options.setup.answer.value.toLowerCase()))
                 .slice(0, 25) || []
