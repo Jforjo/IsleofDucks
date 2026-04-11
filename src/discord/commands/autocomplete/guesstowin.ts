@@ -55,8 +55,8 @@ export default async function(
             choices: items.items.filter((i): i is typeof i & { name: string } => typeof i.name === 'string')
                 // remove all instances of §[0-9a-f] within the names
                 .map(i => ({
-                    name: i.name.replace(/§[0-9a-f]/gm, ''),
-                    value: i.name.replace(/§[0-9a-f]/gm, '')
+                    name: i.name.replaceAll(/§[0-9a-f]/gm, ''),
+                    value: i.name.replaceAll(/§[0-9a-f]/gm, '')
                 }))
                 .filter(i => i.name.toLowerCase().includes(options.setup.answer.value.toLowerCase()))
                 .slice(0, 25) || []
