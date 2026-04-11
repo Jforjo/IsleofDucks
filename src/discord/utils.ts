@@ -989,6 +989,7 @@ export async function getTotalScrambleBlacklists(): Promise<number> {
 }
 
 export interface GuessToWin {
+    id: string;
     winner: string | null;
     hints: {
         hint: string;
@@ -1003,6 +1004,7 @@ export interface GuessToWin {
 export async function getGuessToWin(id: string): Promise<GuessToWin | undefined> {
     const { rows } = await sql`
         SELECT
+            id,
             winner,
             hints,
             prize,
@@ -1039,10 +1041,10 @@ export async function createGuessToWin(answer: string, prize?: string | null, sp
     `;
     return rows[0].id;
 }
-export async function endGuessToWin(id: string, winner?: string | null): Promise<void> {
+export async function endGuessToWin(id: string, guesses: number, winner: string): Promise<void> {
     await sql`
         UPDATE guesstowin
-        SET ended = now(), winner = ${winner || null}
+        SET ended = now(), winner = ${winner}, guesses = ${guesses}
         WHERE id = ${id}
     `;
 }
