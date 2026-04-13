@@ -219,28 +219,45 @@ export default async function(
                 }
             }
 
+            const response = await SendMessage(IsleofDucks.channels.duckoc, {
+                content: `guesstowin ${game}`
+            });
+            if (!response) {
+                await CreateInteractionResponse(interaction.id, interaction.token, {
+                    type: InteractionResponseType.ChannelMessageWithSource,
+                    data: {
+                        flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                        components: ErrorEmbed("Failed to send game data to DuckOC. Game will not function properly.", timestamp, true),
+                    }
+                });
+                return NextResponse.json(
+                    { success: false, error: "Failed to send game data to DuckOC. Game will not function properly." },
+                    { status: 500 }
+                )
+            }
+
             // Allow people to see/type in the channel
-            // await EditChannel(IsleofDucks.channels.guesstowin, {
-            //     permission_overwrites: [
-            //         {
-            //             id: IsleofDucks.serverID,
-            //             type: OverwriteType.Role,
-            //             allow: ToPermissions({
-            //                 view_channel: true,
-            //             }),
-            //             deny: ToPermissions({
-            //                 send_messages: true,
-            //             })
-            //         },
-            //         {
-            //             id: IsleofDucks.roles.verified,
-            //             type: OverwriteType.Role,
-            //             allow: ToPermissions({
-            //                 send_messages: true,
-            //             }),
-            //         }
-            //     ]
-            // });
+            await EditChannel(IsleofDucks.channels.guesstowin, {
+                permission_overwrites: [
+                    {
+                        id: IsleofDucks.serverID,
+                        type: OverwriteType.Role,
+                        allow: ToPermissions({
+                            view_channel: true,
+                        }),
+                        deny: ToPermissions({
+                            send_messages: true,
+                        })
+                    },
+                    {
+                        id: IsleofDucks.roles.verified,
+                        type: OverwriteType.Role,
+                        allow: ToPermissions({
+                            send_messages: true,
+                        }),
+                    }
+                ]
+            });
 
             await CreateInteractionResponse(interaction.id, interaction.token, {
                 type: InteractionResponseType.ChannelMessageWithSource,
