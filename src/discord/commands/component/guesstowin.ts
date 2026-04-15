@@ -182,6 +182,10 @@ export default async function(
                     type: ComponentType.TextDisplay,
                     content: `Prize: **${prize}**`,
                 });
+            components.push({
+                type: ComponentType.TextDisplay,
+                content: `Guesses so far: 0`,
+            })
             // components.push({ type: ComponentType.Separator });
             // components.push({
             //     type: ComponentType.TextDisplay,
