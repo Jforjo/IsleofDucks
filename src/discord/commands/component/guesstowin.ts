@@ -182,10 +182,6 @@ export default async function(
                     type: ComponentType.TextDisplay,
                     content: `Prize: **${prize}**`,
                 });
-            components.push({
-                type: ComponentType.TextDisplay,
-                content: `Guesses so far: 0`,
-            })
             // components.push({ type: ComponentType.Separator });
             // components.push({
             //     type: ComponentType.TextDisplay,
@@ -242,6 +238,7 @@ export default async function(
 
             // Allow people to see/type in the channel
             await EditChannel(IsleofDucks.channels.guesstowin, {
+                topic: `${game} | Guesses so far: 0 | ${prize ? `${prize} ` : ''}${sponsor ? `sponsored by <@${sponsor}>` : 'Guess to Win'}`,
                 permission_overwrites: [
                     {
                         id: IsleofDucks.serverID,
