@@ -99,7 +99,6 @@ export default async function(
     const users = await getAllMinecraftUsers();
     for (const user of users) {
         if (user.exp !== 0) continue;
-        if (user.superlativelastupdated !== null) continue;
         const hypixel = await checkPlayer(user.uuid);
         if (!hypixel.success) {
             if (hypixel.message === "Key throttle") return NextResponse.json(
