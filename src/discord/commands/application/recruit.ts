@@ -4,7 +4,7 @@ import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTy
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
-import { getBannedPlayer, getSettingValue } from "@/discord/utils";
+import { checkMinecraftInDB, createMinecraftUser, getBannedPlayer, getSettingValue, updateMinecraftUser } from "@/discord/utils";
 import { getScammerFromUUID } from "@/discord/jerry";
 
 export async function checkPlayer(
@@ -430,6 +430,16 @@ export default async function(
             filename: `${mojang.name}.png`
         }
     ]);
+
+    const exists = await checkMinecraftInDB(mojang.uuid);
+    if (!exists) {
+        await createMinecraftUser(mojang.uuid);
+    }
+    
+    await updateMinecraftUser(mojang.uuid, {
+        exp: profileAPIResponse.experience,
+    });
+
     return NextResponse.json(
         { success: true },
         { status: 200 }
