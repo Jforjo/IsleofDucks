@@ -1,7 +1,7 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, ErrorEmbed } from "@/discord/discordUtils";
 import { getSettingValue, getAllMinecraftUsersExpReqLimited, getAllMinecraftUsersExpReqCount } from "@/discord/utils";
-import { getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -90,11 +90,20 @@ export default async function(
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {
+        const playerData = await isPlayerInGuild(user.uuid);
         const nameRes = await getUsernameOrUUID(user.uuid);
         if (nameRes.success) {
-            return { uuid: user.uuid, name: nameRes.name };
+            return {
+                uuid: user.uuid,
+                name: nameRes.name,
+                inGuild: playerData.success && playerData.isInGuild
+            };
         } else {
-            return { uuid: user.uuid, name: user.uuid };
+            return {
+                uuid: user.uuid,
+                name: user.uuid,
+                inGuild: playerData.success && playerData.isInGuild
+            };
         }
     }));
 
@@ -112,7 +121,7 @@ export default async function(
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: users.map(user => user.name.replaceAll("_", "\\_")).join("\n")
+                        content: users.map(user => `${user.name.replaceAll("_", "\\_")}${user.inGuild ? "" : " **NO GUILD**"}`).join("\n")
                     },
                     { type: ComponentType.Separator },
                     {
