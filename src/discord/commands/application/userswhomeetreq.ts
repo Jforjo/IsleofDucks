@@ -92,6 +92,7 @@ export default async function(
         components: [
             {
                 type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
                 components: [
                     {
                         type: ComponentType.TextDisplay,

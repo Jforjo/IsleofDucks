@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getAllMinecraftUsersExpReqLimited, getSettingValue } from "@/discord/utils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -66,6 +66,7 @@ export default async function(
         components: [
             {
                 type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
                 components: [
                     {
                         type: ComponentType.TextDisplay,
