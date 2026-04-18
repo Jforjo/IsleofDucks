@@ -1305,3 +1305,20 @@ export async function getAllMinecraftUsers(): Promise<MinecraftDataReturnType[]>
     `;
     return rows as MinecraftDataReturnType[];
 }
+
+export async function getAllMinecraftUsersLimited(offset: number, limit = 100): Promise<MinecraftDataReturnType[]> {
+    const { rows } = await sql`
+        SELECT
+            id,
+            uuid,
+            superlativestartingvalue,
+            superlativecurrentvalue,
+            superlativelastupdated,
+            exp,
+            scramble
+        FROM minecraftplayerdata
+        ORDER BY id ASC
+        LIMIT ${limit} OFFSET ${offset}
+    `;
+    return rows as MinecraftDataReturnType[];
+}
