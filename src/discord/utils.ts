@@ -1300,6 +1300,8 @@ export async function getAllMinecraftUsers(): Promise<MinecraftDataReturnType[]>
             superlativelastupdated,
             exp,
             scramble
-        FROM minecraftplayerdata`;
+        FROM minecraftplayerdata
+        ORDER BY id ASC
+    `;
     return rows as MinecraftDataReturnType[];
 }
