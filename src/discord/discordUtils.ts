@@ -2569,7 +2569,7 @@ export function ErrorEmbed(description: string, timestamp: ReturnType<typeof Con
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
                     }
                 ]
             }
