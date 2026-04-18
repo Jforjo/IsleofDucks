@@ -1,7 +1,7 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole, GetGuildMember, ErrorEmbed } from "@/discord/discordUtils";
-import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getUserDataFromUUID, getSettingValue, getAllMinecraftUsersExpReqLimited, getAllMinecraftUsersExpReqCount } from "@/discord/utils";
-import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, ErrorEmbed } from "@/discord/discordUtils";
+import { getSettingValue, getAllMinecraftUsersExpReqLimited, getAllMinecraftUsersExpReqCount } from "@/discord/utils";
+import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -75,7 +75,7 @@ export default async function(
         );
     }
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req), 0, 25);
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, 0, 25);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
@@ -86,7 +86,7 @@ export default async function(
             { status: 400 }
         );
     }
-    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req));
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100);
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {

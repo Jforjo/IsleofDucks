@@ -50,7 +50,7 @@ export default async function(
         );
     }
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req), ( parseInt(page) - 1 ) * 25, 25);
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, ( parseInt(page) - 1 ) * 25, 25);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
@@ -61,7 +61,7 @@ export default async function(
             { status: 400 }
         );
     }
-    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req));
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100);
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {
