@@ -65,24 +65,25 @@ export default async function(
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {
-        const discordData = await getUserDataFromUUID(user.uuid);
-        const playerData = await getHypixelPlayer(user.uuid);
         const playerGuildData = await isPlayerInGuild(user.uuid);
+        if (playerGuildData.success && playerGuildData.isInGuild) return;
+        const discordData = await getUserDataFromUUID(user.uuid);
+        // const playerData = await getHypixelPlayer(user.uuid);
         const nameRes = await getUsernameOrUUID(user.uuid);
         if (nameRes.success) {
             return {
                 uuid: user.uuid,
                 name: nameRes.name,
-                inGuild: playerGuildData.success && playerGuildData.isInGuild,
-                isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false,
+                // inGuild: playerGuildData.success && playerGuildData.isInGuild,
+                // isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false,
                 inDiscord: discordData.success && discordData.data.discord ? true : false
             };
         } else {
             return {
                 uuid: user.uuid,
                 name: user.uuid,
-                inGuild: playerGuildData.success && playerGuildData.isInGuild,
-                isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false,
+                // inGuild: playerGuildData.success && playerGuildData.isInGuild,
+                // isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false,
                 inDiscord: discordData.success && discordData.data.discord ? true : false
             };
         }
@@ -102,7 +103,7 @@ export default async function(
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: users.map(user => `${user.name.replaceAll("_", "\\_")}${user.inGuild ? "" : " **NO GUILD**"}${user.isOnline ? " (ONLINE)" : ""}${user.inDiscord ? "" : " (NEW)"}`).join("\n")
+                        content: users.filter(user => user !== undefined).map(user => `${user.name.replaceAll("_", "\\_")}${user.inDiscord ? "" : " **NEW**"}`).join("\n")
                     },
                     { type: ComponentType.Separator },
                     {
