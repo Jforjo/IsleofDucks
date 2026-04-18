@@ -60,7 +60,7 @@ export default async function(
     const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
     const minecraftUsers = await getAllMinecraftUsers();
     const alreadyLinked = await getAllLinkedUsers();
-    const users = minecraftUsers.filter(u => !alreadyLinked.some(a => a.uuid === u.uuid)).sort((a, b) => b.exp - a.exp);
+    const users = minecraftUsers.filter(u => !alreadyLinked.some(a => a.uuid === u.uuid)).sort(() => Math.random() - 0.5);
     for (const user of users) {
         const hypixel = await getHypixelPlayer(user.uuid);
         if (!hypixel.success) {
