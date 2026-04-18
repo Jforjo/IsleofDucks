@@ -4,6 +4,7 @@ import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLink
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
+import { checkPlayer } from "./recruit";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -95,24 +96,21 @@ export default async function(
     //     }
     // }
 
-    const auctions = await getHypixelAuctions();
-    if (!auctions.success) {
-        await FollowupMessage(interaction.token, {
-            content: `Failed to get Hypixel auctions: ${auctions.message}\n${auctions.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + auctions.retry ) / 1000)}:R> to continue` : ""}`,
-        });
-        return NextResponse.json(
-            { success: false, error: "Failed to get Hypixel auctions" },
-            { status: 500 }
-        );
-    }
-
-    for (const auction of auctions.auctions!) {
-        const user = auction.auctioneer;
-        if (!user) continue;
-        const exists = await checkMinecraftInDB(user);
-        if (!exists) {
-            await createMinecraftUser(user);
+    const users = await getAllMinecraftUsers();
+    for (const user of users) {
+        if (user.exp !== 0) continue;
+        if (user.superlativelastupdated !== null) continue;
+        const hypixel = await checkPlayer(user.uuid);
+        if (!hypixel.success) {
+            if (hypixel.message === "Key throttle") return NextResponse.json(
+                { success: false, error: "Hypixel API key is being throttled, try again later" },
+                { status: 500 }
+            );
+            continue;
         }
+        await updateMinecraftUser(user.uuid, {
+            exp: hypixel.experience
+        });
     }
 
     await FollowupMessage(interaction.token, {
