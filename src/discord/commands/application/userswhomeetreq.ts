@@ -75,8 +75,8 @@ export default async function(
         );
     }
 
-    const users = await getAllMinecraftUsersExpReqLimited(parseInt(req), 0, 25);
-    if (users.length === 0) {
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req), 0, 25);
+    if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
             components: ErrorEmbed(`No users meet the requirements for ${options.duck ? "Duck" : "Duckling"}`, timestamp, true)
@@ -86,6 +86,16 @@ export default async function(
             { status: 400 }
         );
     }
+
+    // Get all names of the users
+    const users = await Promise.all(usersRes.map(async (user) => {
+        const nameRes = await getUsernameOrUUID(user.uuid);
+        if (nameRes.success) {
+            return { uuid: user.uuid, name: nameRes.name };
+        } else {
+            return { uuid: user.uuid, name: user.uuid };
+        }
+    }));
 
     await FollowupMessage(interaction.token, {
         flags: MessageFlags.IsComponentsV2,
@@ -101,7 +111,7 @@ export default async function(
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: users.map(user => user.uuid).join("\n")
+                        content: users.map(user => user.name).join("\n")
                     },
                     { type: ComponentType.Separator },
                     {
