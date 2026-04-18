@@ -86,7 +86,7 @@ export default async function(
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: users.map(user => user.name).join("\n")
+                        content: users.map(user => user.name.replaceAll("_", "\\_")).join("\n")
                     },
                     { type: ComponentType.Separator },
                     {
