@@ -56,61 +56,81 @@ export default async function(
         }
     });
 
-    // let linked = 0;
-    // const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
-    // const minecraftUsers = await getAllMinecraftUsers();
-    // const alreadyLinked = await getAllLinkedUsers();
-    // const users = minecraftUsers.filter(u => !alreadyLinked.some(a => a.uuid === u.uuid)).sort((a, b) => b.exp - a.exp);
-    // for (const user of users) {
-    //     const hypixel = await getHypixelPlayer(user.uuid);
-    //     if (!hypixel.success) {
-    //         await FollowupMessage(interaction.token, {
-    //             content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}\nLinked so far: ${linked}/${users.length}\n${hypixel.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + hypixel.retry ) / 1000)}:R> to continue` : ""}`,
-    //         });
-    //         if (hypixel.message === "Key throttle") return NextResponse.json(
-    //             { success: false, error: "Hypixel API key is being throttled, try again later" },
-    //             { status: 500 }
-    //         );
-    //         continue;
-    //     }
-
-    //     const player = hypixel.player;
-    //     if (!player.socialMedia || !player.socialMedia.links || !player.socialMedia.links.DISCORD) continue;
-
-    //     const discord = player.socialMedia.links.DISCORD;
-    //     const discordUser = discUsers.find(u => u.user.username === discord);
-    //     if (!discordUser) continue;
-        
-    //     if (alreadyLinked.some(l => l.discordid === discordUser.user.id)) continue;
-    //     try {
-    //         await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
-    //         linked++;
-    //     } catch (e) {
-    //         if (e instanceof Error) {
-    //             if (e.message === "Discord user not found") {
-    //                 await updateDiscordUser(discordUser.user.id);
-    //             } else if (e.message === "Minecraft user not found") {
-    //                 await updateMinecraftUser(user.uuid);
-    //             } else console.error(e);
-    //         } else console.error(e);
-    //     }
-    // }
-
-    const users = await getAllMinecraftUsers();
+    let linked = 0;
+    const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
+    const minecraftUsers = await getAllMinecraftUsers();
+    const alreadyLinked = await getAllLinkedUsers();
+    const users = minecraftUsers.filter(u => !alreadyLinked.some(a => a.uuid === u.uuid)).sort((a, b) => b.exp - a.exp);
     for (const user of users) {
-        if (user.exp !== 0) continue;
-        const hypixel = await checkPlayer(user.uuid);
+        const hypixel = await getHypixelPlayer(user.uuid);
         if (!hypixel.success) {
+            await FollowupMessage(interaction.token, {
+                content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}\nLinked so far: ${linked}/${users.length}\n${hypixel.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + hypixel.retry ) / 1000)}:R> to continue` : ""}`,
+            });
             if (hypixel.message === "Key throttle") return NextResponse.json(
                 { success: false, error: "Hypixel API key is being throttled, try again later" },
                 { status: 500 }
             );
             continue;
         }
-        await updateMinecraftUser(user.uuid, {
-            exp: hypixel.experience
-        });
+
+        const player = hypixel.player;
+        if (!player.socialMedia || !player.socialMedia.links || !player.socialMedia.links.DISCORD) continue;
+
+        const discord = player.socialMedia.links.DISCORD;
+        const discordUser = discUsers.find(u => u.user.username === discord);
+        if (!discordUser) continue;
+        
+        if (alreadyLinked.some(l => l.discordid === discordUser.user.id)) continue;
+        try {
+            await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
+            linked++;
+        } catch (e) {
+            if (e instanceof Error) {
+                if (e.message === "Discord user not found") {
+                    await updateDiscordUser(discordUser.user.id);
+                } else if (e.message === "Minecraft user not found") {
+                    await updateMinecraftUser(user.uuid);
+                } else console.error(e);
+            } else console.error(e);
+        }
     }
+
+    // const auctions = await getHypixelAuctions();
+    // if (!auctions.success) {
+    //     await FollowupMessage(interaction.token, {
+    //         content: `Failed to get Hypixel auctions: ${auctions.message}\n${auctions.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + auctions.retry ) / 1000)}:R> to continue` : ""}`,
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Failed to get Hypixel auctions" },
+    //         { status: 500 }
+    //     );
+    // }
+
+    // for (const auction of auctions.auctions!) {
+    //     const user = auction.auctioneer;
+    //     if (!user) continue;
+    //     const exists = await checkMinecraftInDB(user);
+    //     if (!exists) {
+    //         await createMinecraftUser(user);
+    //     }
+    //     const playerData = await checkPlayer(user);
+    //     if (!playerData.success) {
+    //         if (playerData.message === "Key throttle") {
+    //             await FollowupMessage(interaction.token, {
+    //                 content: `Hypixel API key is being throttled, try again <t:${Math.floor(( timestamp.getTime() + playerData.retry! ) / 1000)}:R> to continue`,
+    //             });
+    //             return NextResponse.json(
+    //                 { success: false, error: "Hypixel API key is being throttled, try again later" },
+    //                 { status: 500 }
+    //             );
+    //         }
+    //         continue;
+    //     }
+    //     await updateMinecraftUser(user, {
+    //         exp: playerData.experience,
+    //     });
+    // }
 
     await FollowupMessage(interaction.token, {
         content: `Done!`,
