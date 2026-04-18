@@ -1,6 +1,6 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { getAllMinecraftUsersExpReqLimited, getSettingValue } from "@/discord/utils";
+import { getAllMinecraftUsersExpReqCount, getAllMinecraftUsersExpReqLimited, getSettingValue } from "@/discord/utils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -61,6 +61,7 @@ export default async function(
             { status: 400 }
         );
     }
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req));
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {
@@ -108,7 +109,7 @@ export default async function(
                     {
                         custom_id: `userswhomeetreq-search`,
                         type: ComponentType.Button,
-                        label: `Page ${page}/${Math.ceil(users.length / 25)}`,
+                        label: `Page ${page}/${Math.ceil(userCount / 25)}`,
                         style: ButtonStyle.Secondary,
                         disabled: false
                     },
@@ -117,7 +118,7 @@ export default async function(
                         type: ComponentType.Button,
                         label: '▶️',
                         style: ButtonStyle.Primary,
-                        disabled: Math.ceil(users.length / 25) < parseInt(page) + 1
+                        disabled: Math.ceil(userCount / 25) < parseInt(page) + 1
                     }
                 ]
             }

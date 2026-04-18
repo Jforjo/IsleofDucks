@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole, GetGuildMember, ErrorEmbed } from "@/discord/discordUtils";
-import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getUserDataFromUUID, getSettingValue, getAllMinecraftUsersExpReqLimited } from "@/discord/utils";
+import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getUserDataFromUUID, getSettingValue, getAllMinecraftUsersExpReqLimited, getAllMinecraftUsersExpReqCount } from "@/discord/utils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
@@ -86,6 +86,7 @@ export default async function(
             { status: 400 }
         );
     }
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req));
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {
@@ -133,7 +134,7 @@ export default async function(
                     {
                         custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-search`,
                         type: ComponentType.Button,
-                        label: `Page 1/${Math.ceil(users.length / 25)}`,
+                        label: `Page 1/${Math.ceil(userCount / 25)}`,
                         style: ButtonStyle.Secondary,
                         disabled: false
                     },
@@ -142,7 +143,7 @@ export default async function(
                         type: ComponentType.Button,
                         label: '▶️',
                         style: ButtonStyle.Primary,
-                        disabled: Math.ceil(users.length / 25) < 2
+                        disabled: Math.ceil(userCount / 25) < 2
                     }
                 ]
             }

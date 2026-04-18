@@ -1339,3 +1339,12 @@ export async function getAllMinecraftUsersExpReqLimited(exp: number, offset: num
     `;
     return rows as MinecraftDataReturnType[];
 }
+export async function getAllMinecraftUsersExpReqCount(exp: number): Promise<number> {
+    const { rows } = await sql`
+        SELECT
+            COUNT(*) as count
+        FROM minecraftplayerdata
+        WHERE exp >= ${exp} AND superlativelastupdated = 0
+    `;
+    return rows[0].count;
+}
