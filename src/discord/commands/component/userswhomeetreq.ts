@@ -1,6 +1,6 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getHypixelPlayer, getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
-import { getAllMinecraftUsersExpReqCount, getAllMinecraftUsersExpReqLimited, getSettingValue } from "@/discord/utils";
+import { getAllMinecraftUsersExpReqCount, getAllMinecraftUsersExpReqLimited, getSettingValue, getUserDataFromUUID } from "@/discord/utils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -65,6 +65,7 @@ export default async function(
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {
+        const discordData = await getUserDataFromUUID(user.uuid);
         const playerData = await getHypixelPlayer(user.uuid);
         const playerGuildData = await isPlayerInGuild(user.uuid);
         const nameRes = await getUsernameOrUUID(user.uuid);
@@ -73,14 +74,16 @@ export default async function(
                 uuid: user.uuid,
                 name: nameRes.name,
                 inGuild: playerGuildData.success && playerGuildData.isInGuild,
-                isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false
+                isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false,
+                inDiscord: discordData.success && discordData.data.discord ? true : false
             };
         } else {
             return {
                 uuid: user.uuid,
                 name: user.uuid,
                 inGuild: playerGuildData.success && playerGuildData.isInGuild,
-                isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false
+                isOnline: playerData.success && playerData.player?.lastLogin && playerData.player?.lastLogout ? playerData.player.lastLogin > playerData.player.lastLogout : false,
+                inDiscord: discordData.success && discordData.data.discord ? true : false
             };
         }
     }));
@@ -99,7 +102,7 @@ export default async function(
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: users.map(user => `${user.name.replaceAll("_", "\\_")}${user.inGuild ? "" : " **NO GUILD**"}${user.isOnline ? " (ONLINE)" : ""}`).join("\n")
+                        content: users.map(user => `${user.name.replaceAll("_", "\\_")}${user.inGuild ? "" : " **NO GUILD**"}${user.isOnline ? " (ONLINE)" : ""}${user.inDiscord ? "" : " (NEW)"}`).join("\n")
                     },
                     { type: ComponentType.Separator },
                     {
