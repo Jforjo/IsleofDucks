@@ -1334,7 +1334,7 @@ export async function getAllMinecraftUsersExpReqLimited(exp: number, offset: num
             scramble
         FROM minecraftplayerdata
         WHERE exp >= ${exp} AND superlativelastupdated = 0
-        ORDER BY id ASC
+        ORDER BY id
         LIMIT ${limit} OFFSET ${offset}
     `;
     return rows as MinecraftDataReturnType[];
