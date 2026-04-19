@@ -75,7 +75,7 @@ export default async function(
         );
     }
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, 0, 25);
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, options.duck.page ? options.duck.page - 1 : options.duckling.page ? options.duckling.page - 1 : 0, 25);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
@@ -141,7 +141,7 @@ export default async function(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_0`,
+                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_${options.duck.page ? options.duck.page - 1 : options.duckling.page ? options.duckling.page - 1 : 0}`,
                         type: ComponentType.Button,
                         label: '◀️',
                         style: ButtonStyle.Primary,
@@ -155,7 +155,7 @@ export default async function(
                         disabled: false
                     },
                     {
-                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_2`,
+                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_${options.duck.page ? options.duck.page + 1 : options.duckling.page ? options.duckling.page + 1 : 2}`,
                         type: ComponentType.Button,
                         label: '▶️',
                         style: ButtonStyle.Primary,
@@ -178,12 +178,28 @@ export const CommandData = {
         {
             name: "duck",
             description: "View all users who meet the requirements for the Duck guild.",
-            type: ApplicationCommandOptionType.Subcommand
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "page",
+                    description: "The page of the results to view.",
+                    type: ApplicationCommandOptionType.Integer,
+                    required: false
+                }
+            ]
         },
         {
             name: "duckling",
             description: "View all users who meet the requirements for the Duckling guild.",
-            type: ApplicationCommandOptionType.Subcommand
-        }
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: "page",
+                    description: "The page of the results to view.",
+                    type: ApplicationCommandOptionType.Integer,
+                    required: false
+                }
+            ]
+        },
     ]
 }
