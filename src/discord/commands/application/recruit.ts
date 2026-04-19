@@ -431,14 +431,15 @@ export default async function(
         }
     ]);
 
-    // const exists = await checkMinecraftInDB(mojang.uuid);
-    // if (!exists) {
-    //     await createMinecraftUser(mojang.uuid);
-    // }
+    const exists = await checkMinecraftInDB(mojang.uuid);
+    if (!exists) {
+        // await createMinecraftUser(mojang.uuid);
+    } else {
+        await updateMinecraftUser(mojang.uuid, {
+            exp: profileAPIResponse.experience,
+        });
+    }
     
-    // await updateMinecraftUser(mojang.uuid, {
-    //     exp: profileAPIResponse.experience,
-    // });
 
     return NextResponse.json(
         { success: true },
