@@ -1,8 +1,8 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, MessageType, Snowflake } from "discord-api-types/v10";
 import { CreateInteractionResponse, FollowupMessage, IsleofDucks, GetAllGuildMembers, ConvertSnowflakeToDate, RemoveGuildMemberRole, AddGuildMemberRole, GetAllChannelMessages } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
-import { getGuildData } from "@/discord/hypixelUtils";
-import { getUserDataFromDiscordID, getUserDataFromUUID } from "@/discord/utils";
+import { getGuildData, getHypixelPlayer } from "@/discord/hypixelUtils";
+import { checkLinked, getUserDataFromDiscordID, getUserDataFromUUID, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 
 export async function UpdateUserLevelRoles(guildID: Snowflake, userID: Snowflake): Promise<{
     rolesAdded: number;
@@ -543,7 +543,7 @@ export async function UpdateGroupRoles(guildID: Snowflake): Promise<{
         rolesRemoved,
         usersHadRolesAdded,
         usersHadRolesRemoved
-    }
+    };
 }
 
 export async function UpdateRoles(guildID: Snowflake): Promise<
@@ -574,7 +574,38 @@ export async function UpdateRoles(guildID: Snowflake): Promise<
         rolesRemoved,
         usersHadRolesAdded: usersHadRolesAdded,
         usersHadRolesRemoved: usersHadRolesRemoved.filter((value, index) => usersHadRolesRemoved.indexOf(value) === index)
+    };
+}
+
+export async function UpdateDiscordData(userId: Snowflake, uuid: string): Promise<boolean> {
+    const exists = await checkLinked(userId, uuid);
+    if (!exists) return false;
+
+    const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
+    
+    const hypixel = await getHypixelPlayer(uuid);
+    if (!hypixel.success) return false;
+
+    const player = hypixel.player;
+    if (!player.socialMedia || !player.socialMedia.links || !player.socialMedia.links.DISCORD) return false;
+
+    const discord = player.socialMedia.links.DISCORD;
+    const discordUser = discUsers.find(u => u.user.username === discord);
+    if (!discordUser) return false;
+    
+    try {
+        await linkDiscordToMinecraft(discordUser.user.id, uuid);
+    } catch (e) {
+        if (e instanceof Error) {
+            if (e.message === "Discord user not found") {
+                await updateDiscordUser(discordUser.user.id);
+            } else if (e.message === "Minecraft user not found") {
+                await updateMinecraftUser(uuid);
+            } else console.error(e);
+        } else console.error(e);
     }
+
+    return true;
 }
 
 export default async function(
@@ -731,6 +762,24 @@ export default async function(
             ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateUserBoosterRoles(interaction.guild.id, options.user.booster.user));
         } else if (options.user.groups) {
             ({ rolesAdded, rolesRemoved, usersHadRolesAdded, usersHadRolesRemoved } = await UpdateUserGroupRoles(interaction.guild.id, options.user.groups.user));
+        } else if (options.user.discord) {
+            const success = await UpdateDiscordData(options.user.discord.user, options.user.discord.uuid);
+            if (!success) {
+                await FollowupMessage(interaction.token, {
+                    content: `Failed to update discord data for the <@${options.user.discord.user}> with UUID ${options.user.discord.uuid}!`
+                });
+                return NextResponse.json(
+                    { success: false, error: `Failed to update discord data for the ${options.user.discord.user} with UUID ${options.user.discord.uuid}` },
+                    { status: 400 }
+                );
+            }
+            await FollowupMessage(interaction.token, {
+                content: `Updated discord data for the <@${options.user.discord.user}> with UUID ${options.user.discord.uuid}!`
+            });
+            return NextResponse.json(
+                { success: true },
+                { status: 200 }
+            );
         }
     } else {
         await FollowupMessage(interaction.token, {
@@ -869,6 +918,25 @@ export const CommandData = {
                             name: "user",
                             description: "The user.",
                             type: ApplicationCommandOptionType.User,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    name: "discord",
+                    description: "Update discord data for the user.",
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: "user",
+                            description: "The user.",
+                            type: ApplicationCommandOptionType.User,
+                            required: true
+                        },
+                        {
+                            name: "uuid",
+                            description: "The user's Minecraft UUID.",
+                            type: ApplicationCommandOptionType.String,
                             required: true
                         }
                     ]
