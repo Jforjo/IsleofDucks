@@ -75,7 +75,9 @@ export default async function(
         );
     }
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, options.duck.page ? options.duck.page - 1 : options.duckling.page ? options.duckling.page - 1 : 0, 25);
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100);
+
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, options.duck.page ? 25 * ( Math.min(options.duck.page, Math.ceil(userCount / 25)) - 1 ) : options.duckling.page ? 25 * ( Math.min(options.duckling.page, Math.ceil(userCount / 25)) - 1 ) : 0, 25);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
@@ -86,7 +88,6 @@ export default async function(
             { status: 400 }
         );
     }
-    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100);
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {
@@ -143,7 +144,7 @@ export default async function(
                 type: ComponentType.ActionRow,
                 components: [
                     {
-                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_${options.duck.page ? options.duck.page - 1 : options.duckling.page ? options.duckling.page - 1 : 0}`,
+                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_${options.duck.page ? Math.min(options.duck.page, Math.ceil(userCount / 25)) - 1 : options.duckling.page ? Math.min(options.duckling.page, Math.ceil(userCount / 25)) - 1 : 0}`,
                         type: ComponentType.Button,
                         label: '◀️',
                         style: ButtonStyle.Primary,
@@ -157,7 +158,7 @@ export default async function(
                         disabled: false
                     },
                     {
-                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_${options.duck.page ? options.duck.page + 1 : options.duckling.page ? options.duckling.page + 1 : 2}`,
+                        custom_id: `userswhomeetreq-${options.duck ? "duck" : "duckling"}-page_${options.duck.page ? Math.min(options.duck.page + 1, Math.ceil(userCount / 25)) : options.duckling.page ? Math.min(options.duckling.page + 1, Math.ceil(userCount / 25)) : 2}`,
                         type: ComponentType.Button,
                         label: '▶️',
                         style: ButtonStyle.Primary,
