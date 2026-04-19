@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, ErrorEmbed } from "@/discord/discordUtils";
-import { getSettingValue, getAllMinecraftUsersExpReqLimited, getAllMinecraftUsersExpReqCount, getUserDataFromUUID } from "@/discord/utils";
+import { getSettingValue, getAllMinecraftUsersExpReqLimited, getAllMinecraftUsersExpReqCount, getUserDataFromUUID, isBannedPlayer } from "@/discord/utils";
 import { getHypixelPlayer, getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
@@ -92,6 +92,8 @@ export default async function(
     const users = await Promise.all(usersRes.map(async (user) => {
         const playerGuildData = await isPlayerInGuild(user.uuid);
         if (playerGuildData.success && playerGuildData.isInGuild) return;
+        const bannedData = await isBannedPlayer(user.uuid);
+        if (bannedData) return;
         const discordData = await getUserDataFromUUID(user.uuid);
         // const playerData = await getHypixelPlayer(user.uuid);
         const nameRes = await getUsernameOrUUID(user.uuid);
