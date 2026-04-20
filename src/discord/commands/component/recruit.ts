@@ -418,7 +418,7 @@ export default async function Command(
             }
             if (!content.includes(username)) return;
             if (content.includes("has been sent an offline invite!")) {
-                disableButton = true;
+                disableButton = false;
             } else if (content.includes("has been invited!")) {
                 disableButton = true;
             } else if (content.includes("Could not find a player by the name of")) {
