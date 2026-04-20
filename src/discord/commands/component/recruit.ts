@@ -171,7 +171,7 @@ export default async function Command(
             if (message.components[0].type !== ComponentType.Container) return;
 
             if (!message.components[0].components) return;
-            if (message.components[0].components.length !== 1) return;
+            if (message.components[0].components.length !== 3) return;
             if (message.components[0].components[0].type !== ComponentType.TextDisplay) return;
 
             const content = message.components[0].components[0].content;
@@ -404,7 +404,7 @@ export default async function Command(
             if (message.components[0].type !== ComponentType.Container) return;
 
             if (!message.components[0].components) return;
-            if (message.components[0].components.length !== 1) return;
+            if (message.components[0].components.length !== 3) return;
             if (message.components[0].components[0].type !== ComponentType.TextDisplay) return;
 
             const content = message.components[0].components[0].content;
