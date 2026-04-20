@@ -259,7 +259,7 @@ export async function addDonation(
                 title: "Donations updated!",
                 description: [
                     `Total: ${formatNumber(newDonation)}`,
-                    `Raw: ${newDonation}`
+                    `Raw: ${formatNumberWithCommas(newDonation)}`
                 ].join("\n"),
                 fields: fields.length > 0 ? fields : undefined,
                 color: 0xFB9B00,
@@ -390,7 +390,7 @@ export async function removeDonation(
                 title: "Donations updated!",
                 description: [
                     `Total: ${formatNumber(newDonation)}`,
-                    `Raw: ${newDonation}`
+                    `Raw: ${formatNumberWithCommas(newDonation)}`
                 ].join("\n"),
                 fields: fields.length > 0 ? fields : undefined,
                 color: 0xFB9B00,
