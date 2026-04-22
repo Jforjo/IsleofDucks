@@ -132,6 +132,27 @@ export default async function(
         await createMinecraftUser(userRes.uuid);
     }
 
+    const discordAlrLinked = await checkLinked({discordid: member.user.id});
+    if (discordAlrLinked) {
+        await FollowupMessage(interaction.token, {
+            content: "You are already linked to a Minecraft account!",
+        });
+        return NextResponse.json(
+            { success: false, error: "You are already linked to a Minecraft account" },
+            { status: 400 }
+        );
+    }
+    const minecraftAlrLinked = await checkLinked({uuid: userRes.uuid});
+    if (minecraftAlrLinked) {
+        await FollowupMessage(interaction.token, {
+            content: "You are already linked to a Discord account!",
+        });
+        return NextResponse.json(
+            { success: false, error: "You are already linked to a Discord account" },
+            { status: 400 }
+        );
+    }
+
     try {
         await linkDiscordToMinecraft(member.user.id, userRes.uuid);
     } catch (e: any) {
@@ -161,7 +182,7 @@ export default async function(
         throw e;
     }
 
-    const didLink = await checkLinked(member.user.id, userRes.uuid);
+    const didLink = await checkLinked({discordid: member.user.id, uuid: userRes.uuid});
     if (!didLink) {
         await FollowupMessage(interaction.token, {
             // content: "An error occurred while linking your Discord account to your Minecraft account!"

@@ -32,7 +32,7 @@ export default async function(
         );
     }
     
-    const linked = await checkLinked(userId);
+    const linked = await checkLinked({discordid: userId});
     if (!linked) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,

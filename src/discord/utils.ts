@@ -1130,7 +1130,7 @@ export async function updateMinecraftUser(uuid: string, data: Partial<MinecraftD
     }
 }
 export async function linkDiscordToMinecraft(discordid: Snowflake, uuid: string): Promise<void> {
-    const linked = await checkLinked(discordid, uuid);
+    const linked = await checkLinked({discordid, uuid});
     if (linked) {
         // throw new Error("Discord user and Minecraft user are already linked");
         throw new Error("Already verified");
@@ -1257,8 +1257,26 @@ export async function checkMinecraftInDB(uuid: string): Promise<boolean> {
     const { rows } = await sql`SELECT COUNT(*) FROM minecraftplayerdata WHERE uuid = ${uuid}`;
     return rows[0].count > 0;
 }
-export async function checkLinked(discordid: Snowflake, uuid?: string): Promise<boolean> {
-    if (uuid) {
+export async function checkLinked({
+    discordid
+}: {
+    discordid: Snowflake;
+    uuid?: string;
+}): Promise<boolean>;
+export async function checkLinked({
+    uuid
+}: {
+    discordid?: Snowflake;
+    uuid: string;
+}): Promise<boolean>;
+export async function checkLinked({
+    discordid,
+    uuid
+}: {
+    discordid?: Snowflake;
+    uuid?: string;
+}): Promise<boolean> {
+    if (uuid && discordid) {
         const { rows } = await sql`
             SELECT COUNT(*)
             FROM userlink ul
@@ -1267,15 +1285,26 @@ export async function checkLinked(discordid: Snowflake, uuid?: string): Promise<
             WHERE d.discordid = ${discordid} AND m.uuid = ${uuid}
         `;
         return rows[0].count > 0;
+    } else if (uuid) {
+        const { rows } = await sql`
+            SELECT COUNT(*)
+            FROM userlink ul
+            JOIN discorduserdata d ON ul.discord = d.id
+            JOIN minecraftplayerdata m ON ul.minecraft = m.id
+            WHERE m.uuid = ${uuid}
+        `;
+        return rows[0].count > 0;
+    } else if (discordid) {
+        const { rows } = await sql`
+            SELECT COUNT(*)
+            FROM userlink ul
+            JOIN discorduserdata d ON ul.discord = d.id
+            JOIN minecraftplayerdata m ON ul.minecraft = m.id
+            WHERE d.discordid = ${discordid}
+        `;
+        return rows[0].count > 0;
     }
-    const { rows } = await sql`
-        SELECT COUNT(*)
-        FROM userlink ul
-        JOIN discorduserdata d ON ul.discord = d.id
-        JOIN minecraftplayerdata m ON ul.minecraft = m.id
-        WHERE d.discordid = ${discordid}
-    `;
-    return rows[0].count > 0;
+    return false;
 }
 export async function removeLink(discordid: Snowflake, uuid?: string): Promise<void> {
     if (uuid) {

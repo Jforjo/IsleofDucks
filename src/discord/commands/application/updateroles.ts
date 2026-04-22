@@ -578,7 +578,7 @@ export async function UpdateRoles(guildID: Snowflake): Promise<
 }
 
 export async function UpdateDiscordData(userId: Snowflake, uuid: string): Promise<boolean> {
-    const exists = await checkLinked(userId, uuid);
+    const exists = await checkLinked({discordid: userId, uuid});
     if (!exists) return false;
 
     const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
