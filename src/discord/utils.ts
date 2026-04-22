@@ -1257,13 +1257,23 @@ export async function checkMinecraftInDB(uuid: string): Promise<boolean> {
     const { rows } = await sql`SELECT COUNT(*) FROM minecraftplayerdata WHERE uuid = ${uuid}`;
     return rows[0].count > 0;
 }
-export async function checkLinked(discordid: Snowflake, uuid: string): Promise<boolean> {
+export async function checkLinked(discordid: Snowflake, uuid?: string): Promise<boolean> {
+    if (uuid) {
+        const { rows } = await sql`
+            SELECT COUNT(*)
+            FROM userlink ul
+            JOIN discorduserdata d ON ul.discord = d.id
+            JOIN minecraftplayerdata m ON ul.minecraft = m.id
+            WHERE d.discordid = ${discordid} AND m.uuid = ${uuid}
+        `;
+        return rows[0].count > 0;
+    }
     const { rows } = await sql`
         SELECT COUNT(*)
         FROM userlink ul
         JOIN discorduserdata d ON ul.discord = d.id
         JOIN minecraftplayerdata m ON ul.minecraft = m.id
-        WHERE d.discordid = ${discordid} AND m.uuid = ${uuid}
+        WHERE d.discordid = ${discordid}
     `;
     return rows[0].count > 0;
 }
