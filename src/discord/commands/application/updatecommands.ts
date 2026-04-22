@@ -30,6 +30,7 @@ import { CommandData as Sus } from "./sus";
 import { CommandData as GuessToWin } from "./guesstowin";
 import { CommandData as CoinToCopper } from "./cointocopper";
 import { CommandData as UsersWhoMeetReq } from "./userswhomeetreq";
+import { CommandData as Unverify } from "./unverify";
 import { CommandData as Help } from "@/discord/commandDatas/help";
 
 export default async function(
@@ -98,7 +99,8 @@ export default async function(
         Sus,
         GuessToWin,
         CoinToCopper,
-        UsersWhoMeetReq
+        UsersWhoMeetReq,
+        Unverify
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
