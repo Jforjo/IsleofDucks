@@ -1277,6 +1277,20 @@ export async function checkLinked(discordid: Snowflake, uuid?: string): Promise<
     `;
     return rows[0].count > 0;
 }
+export async function removeLink(discordid: Snowflake, uuid?: string): Promise<void> {
+    if (uuid) {
+        await sql`
+            DELETE FROM userlink
+            WHERE discord = (SELECT id FROM discorduserdata WHERE discordid = ${discordid})
+            AND minecraft = (SELECT id FROM minecraftplayerdata WHERE uuid = ${uuid})
+        `;
+    } else {
+        await sql`
+            DELETE FROM userlink
+            WHERE discord = (SELECT id FROM discorduserdata WHERE discordid = ${discordid})
+        `;
+    }
+}
 export async function getAllLinkedUsers(): Promise<{
     discordid: Snowflake;
     uuid: string;
