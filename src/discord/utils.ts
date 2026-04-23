@@ -464,7 +464,10 @@ export async function updateGuildSuperlative(
         } else if (rows[0].superlativelastupdated > Date.now() - 1000 * 60 * 30) continue;
         
         const updated = await updateSuperlativeValue(member.uuid, superlative.data.value);
-        if (typeof updated === "object" && "success" in updated && !updated.success) return updated;
+        if (typeof updated === "object" && "success" in updated && !updated.success) {
+            if ("message" in updated && updated.message === "User has no profiles") continue;
+            return updated;
+        }
         // Shouldn't happen
         if (typeof updated !== "number") continue;
         if (!rows[0]) continue;
