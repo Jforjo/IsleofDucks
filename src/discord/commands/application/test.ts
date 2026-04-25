@@ -48,13 +48,13 @@ export default async function(
     }
 
     const timestamp = ConvertSnowflakeToDate(interaction.id)
-    await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.ChannelMessageWithSource,
-        data: {
-            flags: MessageFlags.Ephemeral,
-            content: `<t:${Math.floor(timestamp.getTime() / 1000) + 60}:R>`
-        }
-    });
+    // await CreateInteractionResponse(interaction.id, interaction.token, {
+    //     type: InteractionResponseType.ChannelMessageWithSource,
+    //     data: {
+    //         flags: MessageFlags.Ephemeral,
+    //         content: `<t:${Math.floor(timestamp.getTime() / 1000) + 60}:R>`
+    //     }
+    // });
 
     // let linked = 0;
     // const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
@@ -132,28 +132,31 @@ export default async function(
     //     });
     // }
 
-    await FollowupMessage(interaction.token, {
-        flags: MessageFlags.IsComponentsV2,
-        components: [
-            {
-                type: ComponentType.Container,
-                accent_color: 0xBD42FF,
-                components: [
-                    {
-                        type: ComponentType.MediaGallery,
-                        items: [
-                            {
-                                // load avatar of user who ran the command
-                                media: {
-                                    url: `https://isle-of-ducks.com/api/welcomegif/v2?avatar=${interaction.member!.user.avatar}`,
+    await CreateInteractionResponse(interaction.id ,interaction.token, {
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: 0xBD42FF,
+                    components: [
+                        {
+                            type: ComponentType.MediaGallery,
+                            items: [
+                                {
+                                    // load avatar of user who ran the command
+                                    media: {
+                                        url: `https://isle-of-ducks.com/api/welcomegif/v2?avatar=${interaction.member!.user.avatar}`,
+                                    },
                                 },
-                            },
-                        ]
-                    }
-                ]
-            }
-        ]
-    }, null, true);
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    });
 
     // await FollowupMessage(interaction.token, {
     //     content: `Done!`,
