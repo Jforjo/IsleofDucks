@@ -153,7 +153,7 @@ export default async function(
                 ]
             }
         ]
-    });
+    }, null, true);
 
     // await FollowupMessage(interaction.token, {
     //     content: `Done!`,
