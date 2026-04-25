@@ -155,9 +155,9 @@ export default async function(
         ]
     });
 
-    await FollowupMessage(interaction.token, {
-        content: `Done!`,
-    });
+    // await FollowupMessage(interaction.token, {
+    //     content: `Done!`,
+    // });
 
     return NextResponse.json(
         { success: true },
