@@ -2,7 +2,7 @@ import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, Get
 import { getHypixelAuctions, getHypixelPlayer } from "@/discord/hypixelUtils";
 import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getImmunePlayers, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "./recruit";
 
@@ -56,45 +56,45 @@ export default async function(
         }
     });
 
-    let linked = 0;
-    const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
-    const minecraftUsers = await getAllMinecraftUsers();
-    const alreadyLinked = await getAllLinkedUsers();
-    const users = minecraftUsers.filter(u => !alreadyLinked.some(a => a.uuid === u.uuid)).sort(() => Math.random() - 0.5);
-    for (const user of users) {
-        const hypixel = await getHypixelPlayer(user.uuid);
-        if (!hypixel.success) {
-            await FollowupMessage(interaction.token, {
-                content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}\nLinked so far: ${linked}/${users.length}\n${hypixel.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + hypixel.retry ) / 1000)}:R> to continue` : ""}`,
-            });
-            if (hypixel.message === "Key throttle") return NextResponse.json(
-                { success: false, error: "Hypixel API key is being throttled, try again later" },
-                { status: 500 }
-            );
-            continue;
-        }
+    // let linked = 0;
+    // const discUsers = await GetAllGuildMembers(IsleofDucks.serverID);
+    // const minecraftUsers = await getAllMinecraftUsers();
+    // const alreadyLinked = await getAllLinkedUsers();
+    // const users = minecraftUsers.filter(u => !alreadyLinked.some(a => a.uuid === u.uuid)).sort(() => Math.random() - 0.5);
+    // for (const user of users) {
+    //     const hypixel = await getHypixelPlayer(user.uuid);
+    //     if (!hypixel.success) {
+    //         await FollowupMessage(interaction.token, {
+    //             content: `Failed to get Hypixel data for ${user.uuid}: ${hypixel.message}\nLinked so far: ${linked}/${users.length}\n${hypixel.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + hypixel.retry ) / 1000)}:R> to continue` : ""}`,
+    //         });
+    //         if (hypixel.message === "Key throttle") return NextResponse.json(
+    //             { success: false, error: "Hypixel API key is being throttled, try again later" },
+    //             { status: 500 }
+    //         );
+    //         continue;
+    //     }
 
-        const player = hypixel.player;
-        if (!player.socialMedia || !player.socialMedia.links || !player.socialMedia.links.DISCORD) continue;
+    //     const player = hypixel.player;
+    //     if (!player.socialMedia || !player.socialMedia.links || !player.socialMedia.links.DISCORD) continue;
 
-        const discord = player.socialMedia.links.DISCORD;
-        const discordUser = discUsers.find(u => u.user.username === discord);
-        if (!discordUser) continue;
+    //     const discord = player.socialMedia.links.DISCORD;
+    //     const discordUser = discUsers.find(u => u.user.username === discord);
+    //     if (!discordUser) continue;
         
-        if (alreadyLinked.some(l => l.discordid === discordUser.user.id)) continue;
-        try {
-            await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
-            linked++;
-        } catch (e) {
-            if (e instanceof Error) {
-                if (e.message === "Discord user not found") {
-                    await updateDiscordUser(discordUser.user.id);
-                } else if (e.message === "Minecraft user not found") {
-                    await updateMinecraftUser(user.uuid);
-                } else console.error(e);
-            } else console.error(e);
-        }
-    }
+    //     if (alreadyLinked.some(l => l.discordid === discordUser.user.id)) continue;
+    //     try {
+    //         await linkDiscordToMinecraft(discordUser.user.id, user.uuid);
+    //         linked++;
+    //     } catch (e) {
+    //         if (e instanceof Error) {
+    //             if (e.message === "Discord user not found") {
+    //                 await updateDiscordUser(discordUser.user.id);
+    //             } else if (e.message === "Minecraft user not found") {
+    //                 await updateMinecraftUser(user.uuid);
+    //             } else console.error(e);
+    //         } else console.error(e);
+    //     }
+    // }
 
     // const auctions = await getHypixelAuctions();
     // if (!auctions.success) {
@@ -131,6 +131,29 @@ export default async function(
     //         exp: playerData.experience,
     //     });
     // }
+
+    await FollowupMessage(interaction.token, {
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.Container,
+                accent_color: 0xBD42FF,
+                components: [
+                    {
+                        type: ComponentType.MediaGallery,
+                        items: [
+                            {
+                                // load avatar of user who ran the command
+                                media: {
+                                    url: `https://isle-of-ducks.com/api/welcomegif/v2?avatar=${interaction.member!.user.avatar}`,
+                                },
+                            },
+                        ]
+                    }
+                ]
+            }
+        ]
+    });
 
     await FollowupMessage(interaction.token, {
         content: `Done!`,
