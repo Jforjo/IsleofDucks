@@ -436,9 +436,9 @@ export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
     const usersHadRolesAdded: Snowflake[] = [];
     const usersHadRolesRemoved: Snowflake[] = [];
 
-    const combinedGuildRoles = await UpdateCombinedGuildRoles(guildID);
     const duckGuildRoles = await UpdateDuckGuildRoles(guildID);
     const ducklingGuildRoles = await UpdateDucklingGuildRoles(guildID);
+    const combinedGuildRoles = await UpdateCombinedGuildRoles(guildID);
 
     rolesAdded += combinedGuildRoles.rolesAdded + duckGuildRoles.rolesAdded + ducklingGuildRoles.rolesAdded;
     rolesRemoved += combinedGuildRoles.rolesRemoved + duckGuildRoles.rolesRemoved + ducklingGuildRoles.rolesRemoved;
