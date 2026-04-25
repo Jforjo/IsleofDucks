@@ -64,7 +64,8 @@ export default async function(
     }));
 
     const req = await getSettingValue(options.duck ? "duck_req" : "duckling_req");
-    if (req === null) {
+    const otherReq = await getSettingValue(options.duck ? "duckling_req" : "duck_req");
+    if (req === null || otherReq === null) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
             components: ErrorEmbed(`Failed to get ${options.duck ? "Duck" : "Duckling"} requirements from database`, timestamp, true)
@@ -75,10 +76,10 @@ export default async function(
         );
     }
 
-    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100);
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100, options.duck ? parseInt(otherReq) * 100 : undefined);
     const page = options.duck && options.duck.page ? Math.min(options.duck.page, Math.ceil(userCount / 25)) : options.duckling && options.duckling.page ? Math.min(options.duckling.page, Math.ceil(userCount / 25)) : 1;
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, page > 0 ? 25 * (page - 1) : 0, 25);
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, page > 0 ? 25 * (page - 1) : 0, 25, options.duck ? parseInt(otherReq) * 100 : undefined);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,

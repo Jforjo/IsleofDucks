@@ -39,7 +39,8 @@ export default async function(
     const guild = interaction.data.custom_id.split('-')[1];
 
     const req = await getSettingValue(`${guild}_req`);
-    if (req === null) {
+    const otherReq = await getSettingValue(`${guild === "duck" ? "duckling" : "duck"}_req`);
+    if (req === null || otherReq === null) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
             components: ErrorEmbed(`Failed to get ${guild === "duck" ? "Duck" : "Duckling"} requirements from database`, timestamp, true)
@@ -50,7 +51,7 @@ export default async function(
         );
     }
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, ( parseInt(page) - 1 ) * 25, 25);
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, ( parseInt(page) - 1 ) * 25, 25, guild === "duck" ? parseInt(otherReq) * 100 : undefined);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
@@ -61,7 +62,7 @@ export default async function(
             { status: 400 }
         );
     }
-    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100);
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100, guild === "duck" ? parseInt(otherReq) * 100 : undefined);
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {

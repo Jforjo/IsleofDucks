@@ -1380,7 +1380,24 @@ export async function getAllMinecraftUsersLimited(offset: number, limit = 100): 
     `;
     return rows as MinecraftDataReturnType[];
 }
-export async function getAllMinecraftUsersExpReqLimited(exp: number, offset: number, limit = 100): Promise<MinecraftDataReturnType[]> {
+export async function getAllMinecraftUsersExpReqLimited(minExp: number, offset: number, limit = 100, maxExp?: number): Promise<MinecraftDataReturnType[]> {
+    if (!maxExp) {
+        const { rows } = await sql`
+            SELECT
+                id,
+                uuid,
+                superlativestartingvalue,
+                superlativecurrentvalue,
+                superlativelastupdated,
+                exp,
+                scramble
+            FROM minecraftplayerdata
+            WHERE exp >= ${minExp} AND superlativelastupdated = 0
+            ORDER BY id DESC
+            LIMIT ${limit} OFFSET ${offset}
+        `;
+        return rows as MinecraftDataReturnType[];
+    }
     const { rows } = await sql`
         SELECT
             id,
@@ -1391,18 +1408,27 @@ export async function getAllMinecraftUsersExpReqLimited(exp: number, offset: num
             exp,
             scramble
         FROM minecraftplayerdata
-        WHERE exp >= ${exp} AND superlativelastupdated = 0
+        WHERE exp >= ${minExp} AND exp < ${maxExp} AND superlativelastupdated = 0
         ORDER BY id DESC
         LIMIT ${limit} OFFSET ${offset}
     `;
     return rows as MinecraftDataReturnType[];
 }
-export async function getAllMinecraftUsersExpReqCount(exp: number): Promise<number> {
+export async function getAllMinecraftUsersExpReqCount(minExp: number, maxExp?: number): Promise<number> {
+    if (!maxExp) {
+        const { rows } = await sql`
+            SELECT
+                COUNT(*) as count
+            FROM minecraftplayerdata
+            WHERE exp >= ${minExp} AND superlativelastupdated = 0
+        `;
+        return rows[0].count;
+    }
     const { rows } = await sql`
         SELECT
             COUNT(*) as count
         FROM minecraftplayerdata
-        WHERE exp >= ${exp} AND superlativelastupdated = 0
+        WHERE exp >= ${minExp} AND exp < ${maxExp} AND superlativelastupdated = 0
     `;
     return rows[0].count;
 }
