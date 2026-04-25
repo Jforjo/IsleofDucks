@@ -1163,6 +1163,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
     const { rows } = await sql`
         SELECT
             d.id as discordtableid,
+            d.discordid,
             d.hyguessr,
             d.donation,
             m.uuid,
@@ -1214,6 +1215,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
     const { rows } = await sql`
         SELECT
             d.id as discordtableid,
+            d.discordid,
             d.hyguessr,
             d.donation,
             m.uuid,
