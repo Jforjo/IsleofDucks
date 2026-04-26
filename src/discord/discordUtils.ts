@@ -1420,7 +1420,8 @@ const Channels = {
     verification: "1287099048796356608",
     donationTotal: "1106671914509946942",
     banlist: "903871143662993408",
-    guesstowin: "1132372503193473055"
+    guesstowin: "1132372503193473055",
+    guildinfo: "1320463957273739274"
 };
 const ChannelGroups = {
     tickets: "988883238292451378",

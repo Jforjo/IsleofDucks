@@ -133,30 +133,44 @@ export default async function(
     // }
 
     await CreateInteractionResponse(interaction.id ,interaction.token, {
-        type: InteractionResponseType.ChannelMessageWithSource,
-        data: {
-            flags: MessageFlags.IsComponentsV2,
-            components: [
-                {
-                    type: ComponentType.Container,
-                    accent_color: 0xBD42FF,
-                    components: [
-                        {
-                            type: ComponentType.MediaGallery,
-                            items: [
-                                {
-                                    // load avatar of user who ran the command
-                                    media: {
-                                        url: `https://isle-of-ducks.com/api/welcomegif/v2?avatar=${interaction.member!.user.avatar ? `https://cdn.discordapp.com/avatars/${interaction.member!.user.id}/${interaction.member!.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${Number(interaction.member!.user.discriminator) % 5}.png`}`,
-                                    },
-                                },
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
     });
+    await FollowupMessage(interaction.token, {
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.TextDisplay,
+                content: "Welcome!",
+            },
+            {
+                type: ComponentType.Container,
+                accent_color: 0xBD42FF,
+                components: [
+                    {
+                        type: ComponentType.MediaGallery,
+                        items: [
+                            {
+                                // load avatar of user who ran the command
+                                media: {
+                                    url: `welcome.gif`,
+                                },
+                            },
+                        ]
+                    },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `**Verify here <#${IsleofDucks.channels.verification}> and join our guild <#${IsleofDucks.channels.guildinfo}>!**`,
+                    }
+                ]
+            }
+        ]
+    }, [
+        {
+            id: 0,
+            url: `https://isle-of-ducks.com/api/welcomegif/v2?avatar=${interaction.member!.user.avatar ? `https://cdn.discordapp.com/avatars/${interaction.member!.user.id}/${interaction.member!.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${Number(interaction.member!.user.discriminator) % 5}.png`}`,
+            filename: "welcome.gif",
+        }
+    ], true);
 
     // await FollowupMessage(interaction.token, {
     //     content: `Done!`,
