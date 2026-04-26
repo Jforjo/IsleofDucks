@@ -152,7 +152,7 @@ export default async function(
                             {
                                 // load avatar of user who ran the command
                                 media: {
-                                    url: `welcome.gif`,
+                                    url: `attachment://welcome.gif`,
                                 },
                             },
                         ]
