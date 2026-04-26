@@ -167,7 +167,7 @@ export default async function(
     }, [
         {
             id: 0,
-            url: `https://isle-of-ducks.vercel.app/api/welcomegif/v2?avatar=${interaction.member!.user.avatar ? `https://cdn.discordapp.com/avatars/${interaction.member!.user.id}/${interaction.member!.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${Number(interaction.member!.user.discriminator) % 5}.png`}`,
+            url: `https://isle-of-ducks.vercel.app/api/welcomegif/v3?avatar=${interaction.member!.user.avatar ? `https://cdn.discordapp.com/avatars/${interaction.member!.user.id}/${interaction.member!.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${Number(interaction.member!.user.discriminator) % 5}.png`}`,
             filename: "welcome.gif",
         }
     ], true);
