@@ -43,9 +43,10 @@ export async function GET(request: NextRequest): Promise<Response> {
     
     const gifWidth = gifFrames[0].bitmap.width;
     const gifHeight = gifFrames[0].bitmap.height;
-    const width = 320;
+    const offset = gifHeight / 8;
+    const width = gifHeight - offset * 2;
     const height = width;
-    const xCenter = gifWidth - ( (gifHeight - height) / 2 + width / 2 );
+    const xCenter = gifWidth - width / 2 - offset; // Centered horizontally in the right half of the GIF
     const yCenter = gifHeight / 2;
     const x = xCenter - width / 2;
     const y = yCenter - height / 2;
