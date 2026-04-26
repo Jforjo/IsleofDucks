@@ -147,7 +147,7 @@ export default async function(
                                 {
                                     // load avatar of user who ran the command
                                     media: {
-                                        url: `https://isle-of-ducks.com/api/welcomegif/v2?avatar=${interaction.member!.user.avatar}`,
+                                        url: `https://isle-of-ducks.com/api/welcomegif/v2?avatar=${interaction.member!.user.avatar ? `https://cdn.discordapp.com/avatars/${interaction.member!.user.id}/${interaction.member!.user.avatar}.png` : `https://cdn.discordapp.com/embed/avatars/${Number(interaction.member!.user.discriminator) % 5}.png`}`,
                                     },
                                 },
                             ]
