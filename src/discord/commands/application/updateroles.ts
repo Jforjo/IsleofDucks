@@ -23,16 +23,22 @@ export async function UpdateUserLevelRoles(guildID: Snowflake, userID: Snowflake
         usersHadRolesRemoved
     };
 
+    let roleAdded: string | undefined;
     for (const role of IsleofDucks.roles.levels.sort((a, b) => a.requirement - b.requirement)) {
         if (player.data.minecraft.exp >= role.requirement) {
-            await AddGuildMemberRole(guildID, userID, role.id);
-            rolesAdded++;
-            usersHadRolesAdded.push(role.id);
+            roleAdded = role.id;
+            
         } else {
             await RemoveGuildMemberRole(guildID, userID, role.id);
             rolesRemoved++;
             usersHadRolesRemoved.push(role.id);
         }
+    }
+
+    if (roleAdded) {
+        await AddGuildMemberRole(guildID, userID, roleAdded);
+        rolesAdded++;
+        usersHadRolesAdded.push(roleAdded);
     }
         
     return {
