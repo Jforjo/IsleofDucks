@@ -1171,7 +1171,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
             m.superlativecurrentvalue,
             m.superlativelastupdated,
             m.exp,
-            m.scramble
+            m.scramble,
             m.id as minecrafttableid
         FROM discorduserdata d
         LEFT JOIN userlink u ON d.id = u.discord
