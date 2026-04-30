@@ -74,6 +74,29 @@ export default {
         value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_TAMING ?? 0
     },
     /**
+     * MINING
+     */
+    corpsesLooted: {
+        title: "Corpses Looted",
+        value: (profile: SkyBlockProfileMember) => {
+            if (!profile?.glacite_player_data) return 0
+            const data = profile.glacite_player_data.corpses_looted as {
+                lapis?: number;
+                umber?: number;
+                tungsten?: number;
+                vanguard?: number;
+            } | undefined;
+            return ( data?.lapis ?? 0 ) +
+            ( data?.umber ?? 0 ) +
+            ( data?.tungsten ?? 0 ) +
+            ( data?.vanguard ?? 0 )
+        }
+    },
+    mineshaftsEntered: {
+        title: "Mineshafts Entered",
+        value: (profile: SkyBlockProfileMember) => profile?.glacite_player_data?.mineshafts_entered ?? 0
+    },
+    /**
      *  SLAYERS
      */
     totalSlayerExperience: {
