@@ -73,11 +73,15 @@ export default {
         title: "Taming Experience",
         value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_TAMING ?? 0
     },
+    huntingExperience: {
+        title: "Hunting Experience",
+        value: (profile: SkyBlockProfileMember) => profile?.player_data?.experience?.SKILL_HUNTING ?? 0
+    },
     /**
      * MINING
      */
     corpsesLooted: {
-        title: "Corpses Looted",
+        title: "Total Corpses Looted",
         value: (profile: SkyBlockProfileMember) => {
             if (!profile?.glacite_player_data) return 0
             const data = profile.glacite_player_data.corpses_looted as {
