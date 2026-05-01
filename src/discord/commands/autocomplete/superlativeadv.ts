@@ -59,25 +59,14 @@ async function viewDate(
         );
     }
 
-    const filteredDates = getPossibleDates(value, dates);
-    if (filteredDates.length === 0) {
-        await CreateInteractionResponse(interaction.id, interaction.token, {
-            type: InteractionResponseType.ApplicationCommandAutocompleteResult,
-            data: { choices: [] }
-        });
-        return NextResponse.json(
-            { success: false, error: "No superlatives available for that month." },
-            { status: 404 }
-        );
-    }
-    const choices = filteredDates.map(date => {
-        const dDate = new Date(date.value);
+    const choices = dates.map(date => {
+        const dDate = new Date(date.start);
         return {
             name: `${dDate.toLocaleDateString("en-US", {
                 month: "long",
                 year: "numeric"
             })} - ${dates.find(d => new Date(d.start).getTime() === dDate.getTime())?.data.title}`,
-            value: date.value
+            value: date.start
         };
     });
 
