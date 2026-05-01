@@ -725,6 +725,7 @@ export async function getSuperlativesList(): Promise<PartialActiveSuperlative[]>
     const { rows } = await sql`
         SELECT type, start
         FROM superlatives
+        ORDER BY start ASC
     `;
 
     if (rows.length === 0) return [];
