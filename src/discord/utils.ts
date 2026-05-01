@@ -738,6 +738,7 @@ export async function getSuperlativesListLimit(offset = 0, limit = 5): Promise<P
     const { rows } = await sql`
         SELECT type, start
         FROM superlatives
+        ORDER BY start ASC
         LIMIT ${limit} OFFSET ${offset}
     `;
 
