@@ -231,6 +231,11 @@ export async function viewSuperlativeAdvWithDate(
     await SendMessage(interaction.channel.id, {
         embeds: [
             {
+                title: `Superlative - ${superlative.data.title}`,
+                description: `For Isle of Ducklings on ${date.toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric"
+                })}`,
                 color: IsleofDucks.colours.main,
                 fields: ducklingFieldArray,
             }
