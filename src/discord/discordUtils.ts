@@ -1381,57 +1381,56 @@ export async function updateSuperlativeValue(
         }
     }
 
-    const profileWithHighestExp = profiles.profiles.reduce((prev, current) => {
-        const prevExp = prev.members[uuid]?.leveling?.experience ?? 0;
-        const currentExp = current.members[uuid]?.leveling?.experience ?? 0;
-        return (currentExp > prevExp) ? current : prev;
-    });
-    const apiInventory = isInventoryAPI(profileWithHighestExp.members[uuid]);
-    const apiCollection = isCollectionAPI(profileWithHighestExp.members[uuid]);
-    const apiSkills = isSkillsAPI(profileWithHighestExp.members[uuid]);
-    const apiPersonalVault = isPersonalVaultAPI(profileWithHighestExp.members[uuid]);
-    if ((!apiInventory || !apiCollection || !apiSkills || !apiPersonalVault) && ![
-        "a49f060d103740debe7c19150287f6b0", // IsleofDuckbridge
-        "d40b221c3915495cbd44b918d6bc4728", // IsleofDucklings
-        "1478f55ac0834c309269aaf232df3008" // Duckieprincess
-    ].includes(uuid)) {
-        const userRes = await getUsernameOrUUID(uuid);
-        // Staff commands
-        await SendMessage("843010831964438538", {
-            flags: MessageFlags.IsComponentsV2,
-            components: [
-                {
-                    type: ComponentType.Container,
-                    accent_color: 0xFB9B00,
-                    components: [
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `## User missing APIs`
-                        },
-                        { type: ComponentType.Separator },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `**Username**: ${userRes.success ? userRes.name : "*failed to fetch username*"}\n` +
-                                `**UUID**: ${uuid}`
-                        },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `**Inventory**: ${apiInventory ? "✅" : "❌"}\n` +
-                                `**Collection**: ${apiCollection ? "✅" : "❌"}\n` +
-                                `**Skills**: ${apiSkills ? "✅" : "❌"}\n` +
-                                `**Personal Vault**: ${apiPersonalVault ? "✅" : "❌"}`
-                        },
-                        { type: ComponentType.Separator },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `-# Detected through Superlative • <t:${Math.floor(Date.now() / 1000)}:F>`
-                        }
-                    ]
-                }
-            ]
-        });
-    }
-    
+    // const profileWithHighestExp = profiles.profiles.reduce((prev, current) => {
+    //     const prevExp = prev.members[uuid]?.leveling?.experience ?? 0;
+    //     const currentExp = current.members[uuid]?.leveling?.experience ?? 0;
+    //     return (currentExp > prevExp) ? current : prev;
+    // });
+    // const apiInventory = isInventoryAPI(profileWithHighestExp.members[uuid]);
+    // const apiCollection = isCollectionAPI(profileWithHighestExp.members[uuid]);
+    // const apiSkills = isSkillsAPI(profileWithHighestExp.members[uuid]);
+    // const apiPersonalVault = isPersonalVaultAPI(profileWithHighestExp.members[uuid]);
+    // if ((!apiInventory || !apiCollection || !apiSkills || !apiPersonalVault) && ![
+    //     "a49f060d103740debe7c19150287f6b0", // IsleofDuckbridge
+    //     "d40b221c3915495cbd44b918d6bc4728", // IsleofDucklings
+    //     "1478f55ac0834c309269aaf232df3008" // Duckieprincess
+    // ].includes(uuid)) {
+    //     const userRes = await getUsernameOrUUID(uuid);
+    //     // Staff commands
+    //     await SendMessage("843010831964438538", {
+    //         flags: MessageFlags.IsComponentsV2,
+    //         components: [
+    //             {
+    //                 type: ComponentType.Container,
+    //                 accent_color: 0xFB9B00,
+    //                 components: [
+    //                     {
+    //                         type: ComponentType.TextDisplay,
+    //                         content: `## User missing APIs`
+    //                     },
+    //                     { type: ComponentType.Separator },
+    //                     {
+    //                         type: ComponentType.TextDisplay,
+    //                         content: `**Username**: ${userRes.success ? userRes.name : "*failed to fetch username*"}\n` +
+    //                             `**UUID**: ${uuid}`
+    //                     },
+    //                     {
+    //                         type: ComponentType.TextDisplay,
+    //                         content: `**Inventory**: ${apiInventory ? "✅" : "❌"}\n` +
+    //                             `**Collection**: ${apiCollection ? "✅" : "❌"}\n` +
+    //                             `**Skills**: ${apiSkills ? "✅" : "❌"}\n` +
+    //                             `**Personal Vault**: ${apiPersonalVault ? "✅" : "❌"}`
+    //                     },
+    //                     { type: ComponentType.Separator },
+    //                     {
+    //                         type: ComponentType.TextDisplay,
+    //                         content: `-# Detected through Superlative • <t:${Math.floor(Date.now() / 1000)}:F>`
+    //                     }
+    //                 ]
+    //             }
+    //         ]
+    //     });
+    // }
 
     const PlayerInDB = await checkMinecraftInDB(uuid);
     if (PlayerInDB) {
