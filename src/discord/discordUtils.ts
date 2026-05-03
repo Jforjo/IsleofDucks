@@ -1321,6 +1321,137 @@ export function formatNumber(num: number, decimals: number | null = 2): string {
     return num.toFixed(decimals);
 }
 
+export interface SuperlativeCallbackSuccess {
+    success: true;
+    value: number;
+    formattedValue: string;
+    current: number;
+}
+
+export interface SuperlativeCallbackError {
+    success: false;
+    message: string;
+    ping?: boolean;
+}
+
+export async function getSuperlativeValue(
+    uuid: string,
+    formatValue: (value: number) => string
+): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
+    let user = null;
+    const { rows } = await sql`SELECT superlativestartingvalue, superlativecurrentvalue FROM minecraftplayerdata WHERE uuid=${uuid}`;
+    if (rows.length > 0) user = rows[0];
+    if (user === null) return {
+        success: false,
+        message: `User not found: ${uuid}`
+    };
+    let value = 0;
+    if (user.superlativecurrentvalue != null) value = user.superlativecurrentvalue - user.superlativestartingvalue;
+    return {
+        success: true,
+        value: value,
+        formattedValue: formatValue(value),
+        current: user.superlativecurrentvalue != null ? user.superlativecurrentvalue : user.superlativestartingvalue
+    }
+}
+export async function updateSuperlativeValue(
+    uuid: string,
+    func: (profile: SkyBlockProfileMember) => number | undefined | Promise<number | undefined>
+): Promise<number | {
+    success: false;
+    status?: number;
+    message: string;
+    ping?: boolean;
+    retry?: number | null;
+}> {
+    let totalExp = 0;
+    
+    let value = 0;
+    const profiles = await getProfiles(uuid);
+    if (profiles.success === false) return profiles;
+
+    for (const profile of profiles.profiles) {
+        const temp = await func(profile.members[uuid]);
+        if (temp && temp > 0) {
+            if (value < temp) value = temp;
+        }
+        const exp = profile.members[uuid]?.leveling?.experience ?? 0;
+        if (exp && exp > 0) {
+            if (totalExp < exp) totalExp = exp;
+        }
+    }
+
+    const profileWithHighestExp = profiles.profiles.reduce((prev, current) => {
+        const prevExp = prev.members[uuid]?.leveling?.experience ?? 0;
+        const currentExp = current.members[uuid]?.leveling?.experience ?? 0;
+        return (currentExp > prevExp) ? current : prev;
+    });
+    const apiInventory = isInventoryAPI(profileWithHighestExp.members[uuid]);
+    const apiCollection = isCollectionAPI(profileWithHighestExp.members[uuid]);
+    const apiSkills = isSkillsAPI(profileWithHighestExp.members[uuid]);
+    const apiPersonalVault = isPersonalVaultAPI(profileWithHighestExp.members[uuid]);
+    if ((!apiInventory || !apiCollection || !apiSkills || !apiPersonalVault) && ![
+        "a49f060d103740debe7c19150287f6b0", // IsleofDuckbridge
+        "d40b221c3915495cbd44b918d6bc4728", // IsleofDucklings
+        "1478f55ac0834c309269aaf232df3008" // Duckieprincess
+    ].includes(uuid)) {
+        const userRes = await getUsernameOrUUID(uuid);
+        // Staff commands
+        await SendMessage("843010831964438538", {
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: 0xFB9B00,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `## User missing APIs`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `**Username**: ${userRes.success ? userRes.name : "*failed to fetch username*"}\n` +
+                                `**UUID**: ${uuid}`
+                        },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `**Inventory**: ${apiInventory ? "✅" : "❌"}\n` +
+                                `**Collection**: ${apiCollection ? "✅" : "❌"}\n` +
+                                `**Skills**: ${apiSkills ? "✅" : "❌"}\n` +
+                                `**Personal Vault**: ${apiPersonalVault ? "✅" : "❌"}`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `-# Detected through Superlative • <t:${Math.floor(Date.now() / 1000)}:F>`
+                        }
+                    ]
+                }
+            ]
+        });
+    }
+    
+
+    const PlayerInDB = await checkMinecraftInDB(uuid);
+    if (PlayerInDB) {
+        // Superlative already has a limit on updates, so no need to check here
+        // if (PlayerInDB.expupdated <= Date.now() - 1000 * 60 * 60) {
+            // Update if it's been over an hour since last update
+            await updateMinecraftPlayerDataExp(uuid, totalExp);
+        // }
+    } else {
+        await updateMinecraftUser(uuid, {
+            exp: totalExp,
+            superlativelastupdated: 0,
+            superlativecurrentvalue: null,
+            superlativestartingvalue: null
+        });
+    }
+    
+    return value;
+}
+
 const ServerID = "823061629812867113";
 const StaticIDs = {
     IsleofDucksBot: "1287662103414571009",
@@ -2124,138 +2255,6 @@ export const CloseTicketPermissions = {
         IsleofDucks.roles.mod_duckling,
         IsleofDucks.roles.service_management,
     ]),
-}
-
-
-
-export interface SuperlativeCallbackSuccess {
-    success: true;
-    value: number;
-    formattedValue: string;
-    current: number;
-}
-
-export interface SuperlativeCallbackError {
-    success: false;
-    message: string;
-    ping?: boolean;
-}
-
-export async function getSuperlativeValue(
-    uuid: string,
-    formatValue: (value: number) => string
-): Promise<SuperlativeCallbackError | SuperlativeCallbackSuccess> {
-    let user = null;
-    const { rows } = await sql`SELECT superlativestartingvalue, superlativecurrentvalue FROM minecraftplayerdata WHERE uuid=${uuid}`;
-    if (rows.length > 0) user = rows[0];
-    if (user === null) return {
-        success: false,
-        message: `User not found: ${uuid}`
-    };
-    let value = 0;
-    if (user.superlativecurrentvalue != null) value = user.superlativecurrentvalue - user.superlativestartingvalue;
-    return {
-        success: true,
-        value: value,
-        formattedValue: formatValue(value),
-        current: user.superlativecurrentvalue != null ? user.superlativecurrentvalue : user.superlativestartingvalue
-    }
-}
-export async function updateSuperlativeValue(
-    uuid: string,
-    func: (profile: SkyBlockProfileMember) => number | undefined | Promise<number | undefined>
-): Promise<number | {
-    success: false;
-    status?: number;
-    message: string;
-    ping?: boolean;
-    retry?: number | null;
-}> {
-    let totalExp = 0;
-    
-    let value = 0;
-    const profiles = await getProfiles(uuid);
-    if (profiles.success === false) return profiles;
-
-    for (const profile of profiles.profiles) {
-        const temp = await func(profile.members[uuid]);
-        if (temp && temp > 0) {
-            if (value < temp) value = temp;
-        }
-        const exp = profile.members[uuid]?.leveling?.experience ?? 0;
-        if (exp && exp > 0) {
-            if (totalExp < exp) totalExp = exp;
-        }
-    }
-
-    const profileWithHighestExp = profiles.profiles.reduce((prev, current) => {
-        const prevExp = prev.members[uuid]?.leveling?.experience ?? 0;
-        const currentExp = current.members[uuid]?.leveling?.experience ?? 0;
-        return (currentExp > prevExp) ? current : prev;
-    });
-    const apiInventory = isInventoryAPI(profileWithHighestExp.members[uuid]);
-    const apiCollection = isCollectionAPI(profileWithHighestExp.members[uuid]);
-    const apiSkills = isSkillsAPI(profileWithHighestExp.members[uuid]);
-    const apiPersonalVault = isPersonalVaultAPI(profileWithHighestExp.members[uuid]);
-    if ((!apiInventory || !apiCollection || !apiSkills || !apiPersonalVault) && ![
-        "a49f060d103740debe7c19150287f6b0", // IsleofDuckbridge
-        "d40b221c3915495cbd44b918d6bc4728", // IsleofDucklings
-        "1478f55ac0834c309269aaf232df3008" // Duckieprincess
-    ].includes(uuid)) {
-        const userRes = await getUsernameOrUUID(uuid);
-        await SendMessage(IsleofDucks.channels.staffcommands, {
-            flags: MessageFlags.IsComponentsV2,
-            components: [
-                {
-                    type: ComponentType.Container,
-                    accent_color: IsleofDucks.colours.main,
-                    components: [
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `## User missing APIs`
-                        },
-                        { type: ComponentType.Separator },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `**Username**: ${userRes.success ? userRes.name : "*failed to fetch username*"}\n` +
-                                `**UUID**: ${uuid}`
-                        },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `**Inventory**: ${apiInventory ? "✅" : "❌"}\n` +
-                                `**Collection**: ${apiCollection ? "✅" : "❌"}\n` +
-                                `**Skills**: ${apiSkills ? "✅" : "❌"}\n` +
-                                `**Personal Vault**: ${apiPersonalVault ? "✅" : "❌"}`
-                        },
-                        { type: ComponentType.Separator },
-                        {
-                            type: ComponentType.TextDisplay,
-                            content: `-# Detected through Superlative • <t:${Math.floor(Date.now() / 1000)}:F>`
-                        }
-                    ]
-                }
-            ]
-        });
-    }
-    
-
-    const PlayerInDB = await checkMinecraftInDB(uuid);
-    if (PlayerInDB) {
-        // Superlative already has a limit on updates, so no need to check here
-        // if (PlayerInDB.expupdated <= Date.now() - 1000 * 60 * 60) {
-            // Update if it's been over an hour since last update
-            await updateMinecraftPlayerDataExp(uuid, totalExp);
-        // }
-    } else {
-        await updateMinecraftUser(uuid, {
-            exp: totalExp,
-            superlativelastupdated: 0,
-            superlativecurrentvalue: null,
-            superlativestartingvalue: null
-        });
-    }
-    
-    return value;
 }
 
 export interface Superlative {
