@@ -1,10 +1,11 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuild, APIGuildMember, APIInteractionResponseCallbackData, APIMessage, APIMessageTopLevelComponent, APIUser, ComponentType, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIGuildResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIGuildMemberJSONBody, RESTPatchAPIGuildMemberResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
-import { calcCataLevel, getProfiles } from "./hypixelUtils";
+import { APIGuild, APIGuildMember, APIInteractionResponseCallbackData, APIMessage, APIMessageTopLevelComponent, APIUser, ComponentType, MessageFlags, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIGuildResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIGuildMemberJSONBody, RESTPatchAPIGuildMemberResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { calcCataLevel, getProfiles, getUsernameOrUUID } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { checkMinecraftInDB, updateMinecraftPlayerDataExp, updateMinecraftUser } from "./utils";
 import { AES, enc } from "crypto-ts";
+import { isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./commands/application/checkapi";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -1380,6 +1381,57 @@ export async function updateSuperlativeValue(
         }
     }
 
+    const profileWithHighestExp = profiles.profiles.reduce((prev, current) => {
+        const prevExp = prev.members[uuid]?.leveling?.experience ?? 0;
+        const currentExp = current.members[uuid]?.leveling?.experience ?? 0;
+        return (currentExp > prevExp) ? current : prev;
+    });
+    const apiInventory = isInventoryAPI(profileWithHighestExp.members[uuid]);
+    const apiCollection = isCollectionAPI(profileWithHighestExp.members[uuid]);
+    const apiSkills = isSkillsAPI(profileWithHighestExp.members[uuid]);
+    const apiPersonalVault = isPersonalVaultAPI(profileWithHighestExp.members[uuid]);
+    if ((!apiInventory || !apiCollection || !apiSkills || !apiPersonalVault) && ![
+        "a49f060d103740debe7c19150287f6b0", // IsleofDuckbridge
+        "d40b221c3915495cbd44b918d6bc4728", // IsleofDucklings
+        "1478f55ac0834c309269aaf232df3008" // Duckieprincess
+    ].includes(uuid)) {
+        const userRes = await getUsernameOrUUID(uuid);
+        await SendMessage(IsleofDucks.channels.staffcommands, {
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `## User missing APIs`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `**Username**: ${userRes.success ? userRes.name : "*failed to fetch username*"}\n` +
+                                `**UUID**: ${uuid}`
+                        },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `**Inventory**: ${apiInventory ? "✅" : "❌"}\n` +
+                                `**Collection**: ${apiCollection ? "✅" : "❌"}\n` +
+                                `**Skills**: ${apiSkills ? "✅" : "❌"}\n` +
+                                `**Personal Vault**: ${apiPersonalVault ? "✅" : "❌"}`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `-# Detected through Superlative • <t:${Math.floor(Date.now() / 1000)}:F>`
+                        }
+                    ]
+                }
+            ]
+        });
+    }
+    
+
     const PlayerInDB = await checkMinecraftInDB(uuid);
     if (PlayerInDB) {
         // Superlative already has a limit on updates, so no need to check here
@@ -1408,6 +1460,7 @@ const StaticIDs = {
 };
 const Channels = {
     staffgeneral: "823077540654612492",
+    staffcommands: "843010831964438538",
     support: "910160132233658408",
     carrierapps: "1004135601534152755",
     giveaways: "882151291340611605",
