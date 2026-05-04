@@ -323,7 +323,7 @@ export default async function(
                 disabled: true
             });
         }
-        if (profileAPIResponse.experience >= profileAPIResponse.ducklingReq) {
+        // if (profileAPIResponse.experience >= profileAPIResponse.ducklingReq) {
             buttons.duckling.push({
                 type: ComponentType.Button,
                 custom_id: `recruit-invite-duckling-${mojang.name}`,
@@ -337,7 +337,7 @@ export default async function(
                 style: ButtonStyle.Primary,
                 disabled: true
             });
-        }
+        // }
     }
 
     await FollowupMessage(interaction.token, {
