@@ -37,7 +37,7 @@ export default async function(
                             },
                             {
                                 label: "Isle of Ducklings",
-                                description: ducklingReq ? `The current level requirement for Isle of Ducklings is ${parseInt(ducklingReq)}.` : undefined,
+                                description: ducklingReq ? `The current level requirement for Isle of Ducklings is ${parseInt(ducklingReq)} (lenient).` : undefined,
                                 value: "duckling",
                             },
                         ]

@@ -3,7 +3,7 @@ import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember, CheckChannelExists } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "../application/recruit";
-import { capitalizeFirstLetter, getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
+import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
 
 export default async function(
@@ -330,15 +330,16 @@ export default async function(
             { success: true },
             { status: 200 }
         );
-    } else if (appType === "duckling" && profileAPIResponse.experience < profileAPIResponse.ducklingReq) {
-        await FollowupMessage(interaction.token, {
-            content: `You do not meet the level requirements to join Isle of Ducklings (${profileAPIResponse.experience / 100}/${profileAPIResponse.ducklingReq / 100})!`,
-        });
-        return NextResponse.json(
-            { success: true },
-            { status: 200 }
-        );
     }
+    // else if (appType === "duckling" && profileAPIResponse.experience < profileAPIResponse.ducklingReq) {
+    //     await FollowupMessage(interaction.token, {
+    //         content: `You do not meet the level requirements to join Isle of Ducklings (${profileAPIResponse.experience / 100}/${profileAPIResponse.ducklingReq / 100})!`,
+    //     });
+    //     return NextResponse.json(
+    //         { success: true },
+    //         { status: 200 }
+    //     );
+    // }
 
     const guildResponse = await isPlayerInGuild(mojang.uuid);
     if (!guildResponse.success) {
