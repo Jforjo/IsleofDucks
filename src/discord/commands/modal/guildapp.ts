@@ -481,7 +481,7 @@ export default async function(
                 fields: [
                     ...[reason ? {
                         name: "Reason for Joining",
-                        value: reason,
+                        value: `\`\`\`${reason}\`\`\``,
                         inline: false
                     } as APIEmbedField : undefined].filter((field): field is APIEmbedField => field !== undefined),
                     {

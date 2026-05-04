@@ -68,7 +68,7 @@ export default async function(
 
     if (userData?.success && userData.data?.minecraft?.uuid) {
         const profileRes = await checkPlayer(userData.data.minecraft.uuid);
-        if (profileRes.success && profileRes.experience / 100 < profileRes.ducklingReq) {
+        if (profileRes.success && profileRes.experience < profileRes.ducklingReq) {
             components.push({
                 type: ComponentType.Label,
                 label: "Reason",
