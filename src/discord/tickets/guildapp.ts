@@ -76,7 +76,7 @@ export default async function(
                     type: ComponentType.TextInput,
                     custom_id: "reason",
                     style: TextInputStyle.Paragraph,
-                    placeholder: `As you do not meet the requirements for Isle of Ducklings, please explain why you are joining or who recommended you join.`,
+                    placeholder: `As you do not meet the requirements for Isle of Ducklings, please say your reason for applying.`,
                     required: true
                 }
             });
