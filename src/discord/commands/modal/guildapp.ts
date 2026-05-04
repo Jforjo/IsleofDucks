@@ -1,4 +1,4 @@
-import { APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, MessageFlags, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
+import { APIEmbedField, APIInteractionResponse, APIModalSubmitInteraction, ButtonStyle, ChannelType, ComponentType, InteractionResponseType, MessageFlags, RESTAPIGuildCreateOverwrite } from "discord-api-types/v10";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, ToPermissions, CreateChannel, SendMessage, BanGuildMember, CheckChannelExists } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
@@ -40,7 +40,24 @@ export default async function(
     }
     const username = interaction.data.components[1].component.value;
     const appType = interaction.data.components[0].component.values[0];
-    
+    let reason: string | undefined = undefined;
+
+    if (interaction.data.components.length === 3) {
+        if (
+            interaction.data.components[2].type !== ComponentType.Label ||
+            interaction.data.components[2].component.type !== ComponentType.TextInput
+        ) {
+            await FollowupMessage(interaction.token, {
+                content: "Invalid modal response!",
+            });
+            return NextResponse.json(
+                { success: false, error: "Invalid modal response" },
+                { status: 400 }
+            );
+        }
+        reason = interaction.data.components[2].component.value;
+    }
+
     const TICKET = IsleofDucks.ticketTypes.filter((ticket) => ticket.id === `${appType}app`)[0];
     if (!TICKET) {
         await FollowupMessage(interaction.token, {
@@ -462,6 +479,11 @@ export default async function(
                     ( scammerResponse.success && !scammerResponse.scammer ) &&
                     !bannedResponse ? `\`\`\`/g invite ${mojang.name}\`\`\`` : undefined,
                 fields: [
+                    ...[reason ? {
+                        name: "Reason for Joining",
+                        value: reason,
+                        inline: false
+                    } as APIEmbedField : undefined].filter((field): field is APIEmbedField => field !== undefined),
                     {
                         name: "Guild",
                         value: guildResponse.isInGuild ?
