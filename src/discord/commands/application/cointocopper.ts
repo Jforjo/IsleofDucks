@@ -1,9 +1,9 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { SkyblockBazaarResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIComponentInContainer, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
-const mutations = {
+export const mutations = {
     ASHWREATH: {
         coins: 10000,
         copper: 5
@@ -166,7 +166,7 @@ const mutations = {
     },
 };
 
-async function getMutations(): Promise<[keyof typeof mutations, SkyblockBazaarResponse["products"][string]][] | undefined> {
+export async function getMutations(): Promise<[keyof typeof mutations, SkyblockBazaarResponse["products"][string]][] | undefined> {
     const bzRes = await fetch("https://api.hypixel.net/v2/skyblock/bazaar");
     if (!bzRes.ok) return;
     const bzData = await bzRes.json() as SkyblockBazaarResponse;
@@ -197,7 +197,7 @@ export default async function(
     const bzData = await getMutations();
     if (!bzData) {
         await FollowupMessage(interaction.token, {
-            flags: MessageFlags.Ephemeral,
+            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
             components: ErrorEmbed("Failed to fetch mutation data from the bazaar API", timestamp, true)
         }, null, true);
         return NextResponse.json(
@@ -225,10 +225,35 @@ export default async function(
                 {
                     type: ComponentType.Container,
                     accent_color: IsleofDucks.colours.main,
-                    components: mutationPrices.map(({ mutation, sell, buy }) => ({
-                        type: ComponentType.TextDisplay,
-                        content: `**${mutation}** - ${sell.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })} / ${buy.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}`,
-                    }))
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `## Cheapest Coins-to-Copper Mutations`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: mutationPrices.map(({ mutation, sell, buy }) => 
+                                `**${mutation}** - ${sell.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })} / ${buy.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}`
+                            ).join("\n")
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                        }
+                    ]
+                },
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            type: ComponentType.Button,
+                            custom_id: `cointocopper-rosedragon`,
+                            label: "Calculate with Rose Dragon",
+                            style: ButtonStyle.Primary,
+                        }
+                    ]
                 }
             ]
         }, null, true);
