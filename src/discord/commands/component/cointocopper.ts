@@ -160,7 +160,7 @@ export default async function(
                 components: [
                     {
                         type: ComponentType.TextDisplay,
-                        content: `## Cheapest Coins-to-Copper Mutations (with Rose Dragon Bonus: ${copperBonus}%)`
+                        content: `## Cheapest Coins-to-Copper Mutations (with Rose Dragon Bonus: ${copperBonus}% • Synthesis Bonus: ${synthBonus}%)`
                     },
                     { type: ComponentType.Separator },
                     {
