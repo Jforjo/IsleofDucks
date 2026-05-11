@@ -250,7 +250,7 @@ export default async function(
                         {
                             type: ComponentType.Button,
                             custom_id: `cointocopper-rosedragon`,
-                            label: "Calculate with Rose Dragon",
+                            label: "Calculate with Rose Dragon and Chip Bonus",
                             style: ButtonStyle.Primary,
                         }
                     ]

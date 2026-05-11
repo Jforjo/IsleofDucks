@@ -1023,7 +1023,7 @@ export function calcPetLevel(petxp: number): number {
     return petlvl;
 }
 
-export async function getPets(uuid: string): Promise<
+export async function getPets(profiles: SkyBlockProfile[], uuid: string): Promise<
     {
         success: false;
         message: string;
@@ -1033,15 +1033,7 @@ export async function getPets(uuid: string): Promise<
         pets: SkyBlockProfilePetsData['pets'];
     }> {
     
-    const profilesRes = await getProfiles(uuid);
-    if (!profilesRes.success) {
-        return {
-            success: false,
-            message: profilesRes.message,
-            status: profilesRes.status ?? 500
-        };
-    }
-    const activeProfile = profilesRes.profiles.find(profile => profile.selected);
+    const activeProfile = profiles.find(profile => profile.selected);
     if (!activeProfile) {
         return {
             success: false,

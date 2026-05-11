@@ -1,5 +1,5 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
-import { calcPetLevel, getPets } from "@/discord/hypixelUtils";
+import { calcPetLevel, getPets, getProfiles } from "@/discord/hypixelUtils";
 import { getUserDataFromDiscordID } from "@/discord/utils";
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -44,7 +44,66 @@ export default async function(
         );
     }
 
-    const petData = await getPets(userData.data.minecraft.uuid);
+    const profileData = await getProfiles(userData.data.minecraft.uuid);
+    if (!profileData.success || !profileData.profiles) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Unable to fetch your linked Minecraft account data. Please make sure you have linked your account using /verify.", timestamp, true)
+        }, null, true);
+        return NextResponse.json(
+            { success: false, error: "Unable to fetch user data." },
+            { status: 400 }
+        );
+    }
+
+    const playerData = profileData.profiles.find(profile => profile.selected)?.members[userData.data.minecraft.uuid]?.player_data;
+    if (!playerData) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Unable to fetch profile data.", timestamp, true)
+        }, null, true);
+        return NextResponse.json(
+            { success: false, error: "Unable to fetch profile data." },
+            { status: 400 }
+        );
+    }
+    if (!("garden_chips" in playerData)) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Unable to find garden chip data in profile data.", timestamp, true)
+        }, null, true);
+        return NextResponse.json(
+            { success: false, error: "Unable to find garden chip data in profile data." },
+            { status: 400 }
+        );
+    }
+    const chips = playerData.garden_chips as {
+        cropshot?: number;
+        mechamind?: number;
+        overdrive?: number;
+        quickdraw?: number;
+        sowledge?: number;
+        hypercharge?: number;
+        rarefinder?: number;
+        synthesis?: number;
+        evergreen?: number;
+        vermin_vaporizer?: number;
+    }
+    if (!("synthesis" in chips) || chips.synthesis === undefined) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Unable to find synthesis data in garden chip data.", timestamp, true)
+        }, null, true);
+        return NextResponse.json(
+            { success: false, error: "Unable to find synthesis data in garden chip data." },
+            { status: 400 }
+        );
+    }
+
+    const synthChipLevel = chips.synthesis;
+    const synthBonus = synthChipLevel <= 10 ? synthChipLevel * 1 : synthChipLevel <= 15 ? synthChipLevel * 1.5 : synthChipLevel * 2;
+
+    const petData = await getPets(profileData.profiles, userData.data.minecraft.uuid);
     if (!petData.success || !petData.pets) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
@@ -87,8 +146,8 @@ export default async function(
         const buyPrice = value.quick_status.buyPrice;
         return {
             mutation: key,
-            sell: ( mutationInfo.coins + sellPrice ) / ( mutationInfo.copper * (1 + copperBonus / 100) ),
-            buy: ( mutationInfo.coins + buyPrice ) / ( mutationInfo.copper * (1 + copperBonus / 100) )
+            sell: ( mutationInfo.coins + sellPrice ) / ( mutationInfo.copper * ( (1 + copperBonus / 100) + (1 + synthBonus / 100) ) ),
+            buy: ( mutationInfo.coins + buyPrice ) / ( mutationInfo.copper * ( (1 + copperBonus / 100) + (1 + synthBonus / 100) ) )
         };
     }).sort((a, b) => a.sell - b.sell);
 
