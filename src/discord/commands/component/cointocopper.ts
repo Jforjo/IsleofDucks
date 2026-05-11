@@ -89,18 +89,18 @@ export default async function(
         evergreen?: number;
         vermin_vaporizer?: number;
     }
-    if (!("synthesis" in chips) || chips.synthesis === undefined) {
-        await FollowupMessage(interaction.token, {
-            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
-            components: ErrorEmbed("Unable to find synthesis data in garden chip data.", timestamp, true)
-        }, null, true);
-        return NextResponse.json(
-            { success: false, error: "Unable to find synthesis data in garden chip data." },
-            { status: 400 }
-        );
-    }
+    // if (!("synthesis" in chips) || chips.synthesis === undefined) {
+    //     await FollowupMessage(interaction.token, {
+    //         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+    //         components: ErrorEmbed("Unable to find synthesis data in garden chip data.", timestamp, true)
+    //     }, null, true);
+    //     return NextResponse.json(
+    //         { success: false, error: "Unable to find synthesis data in garden chip data." },
+    //         { status: 400 }
+    //     );
+    // }
 
-    const synthChipLevel = chips.synthesis;
+    const synthChipLevel = chips.synthesis || 0;
     const synthBonus = synthChipLevel <= 10 ? synthChipLevel * 1 : synthChipLevel <= 15 ? synthChipLevel * 1.5 : synthChipLevel * 2;
 
     const petData = await getPets(profileData.profiles, userData.data.minecraft.uuid);
@@ -116,17 +116,17 @@ export default async function(
     }
     const rdragExp = petData.pets.find(pet => pet.tier === "LEGENDARY" && pet.type === "ROSE_DRAGON")?.exp || 0;
     const rdragLevel = calcPetLevel(rdragExp);
-    if (rdragLevel < 101) {
-        await FollowupMessage(interaction.token, {
-            flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
-            components: ErrorEmbed(`Your Rose Dragon is not high enough level to use the Rose Dragon calculator. (Level ${rdragLevel}/101)`, timestamp, true)
-        }, null, true);
-        return NextResponse.json(
-            { success: false, error: "Your Rose Dragon is not high enough level to use the Rose Dragon calculator." },
-            { status: 400 }
-        );
-    }
-    const copperBonus = rdragLevel / 10;
+    // if (rdragLevel < 101) {
+    //     await FollowupMessage(interaction.token, {
+    //         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+    //         components: ErrorEmbed(`Your Rose Dragon is not high enough level to use the Rose Dragon calculator. (Level ${rdragLevel}/101)`, timestamp, true)
+    //     }, null, true);
+    //     return NextResponse.json(
+    //         { success: false, error: "Your Rose Dragon is not high enough level to use the Rose Dragon calculator." },
+    //         { status: 400 }
+    //     );
+    // }
+    const copperBonus = rdragLevel < 101 ? 0 : rdragLevel / 10;
 
     const bzData = await getMutations();
     if (!bzData) {
