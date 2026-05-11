@@ -146,8 +146,8 @@ export default async function(
         const buyPrice = value.quick_status.buyPrice;
         return {
             mutation: key,
-            sell: ( mutationInfo.coins + sellPrice ) / ( mutationInfo.copper * ( (1 + copperBonus / 100) + (1 + synthBonus / 100) ) ),
-            buy: ( mutationInfo.coins + buyPrice ) / ( mutationInfo.copper * ( (1 + copperBonus / 100) + (1 + synthBonus / 100) ) )
+            sell: ( mutationInfo.coins + sellPrice ) / ( mutationInfo.copper * (1 + copperBonus / 100 + synthBonus / 100) ),
+            buy: ( mutationInfo.coins + buyPrice ) / ( mutationInfo.copper * (1 + copperBonus / 100 + synthBonus / 100) )
         };
     }).sort((a, b) => a.sell - b.sell);
 
