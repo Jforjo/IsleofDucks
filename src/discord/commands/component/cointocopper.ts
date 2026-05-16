@@ -115,7 +115,7 @@ export default async function(
         );
     }
     const rdragExp = petData.pets.find(pet => pet.tier === "LEGENDARY" && pet.type === "ROSE_DRAGON")?.exp || 0;
-    const rdragLevel = calcPetLevel(rdragExp);
+    const rdragLevel = Math.floor(calcPetLevel(rdragExp));
     // if (rdragLevel < 101) {
     //     await FollowupMessage(interaction.token, {
     //         flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
