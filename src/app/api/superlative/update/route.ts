@@ -1,4 +1,5 @@
 import { formatNumber, getSuperlativeValue, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { getActiveSuperlative } from "@/discord/utils";
 import type { NextRequest } from "next/server";
 
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     }
 
     const params = request.nextUrl.searchParams;
-    const uuid = params.get("uuid");
+    const user = params.get("user");
     const guild = params.get("guild");
 
     const superlative = await getActiveSuperlative();
@@ -31,7 +32,15 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
 
-    if (uuid) {
+    if (user) {
+        const uuidRes = await getUsernameOrUUID(user);
+        if (!uuidRes.success) {
+            return Response.json({
+                success: false,
+                message: "Failed to get UUID from username"
+            });
+        }
+        const uuid = uuidRes.uuid;
         const superlativeData = await getSuperlativeValue(uuid, (value) => formatNumber(value, superlative.dp));
         if (!superlativeData.success) {
             return Response.json({
@@ -48,7 +57,7 @@ export async function GET(request: NextRequest): Promise<Response> {
                 }
             });
             await SendMessage(IsleofDucks.channels.duckoc, {
-                content: `setrank ${uuid} ${rankShould}`
+                content: `setrank ${user} ${rankShould}`
             });
         } else if (guild === "duckling") {
             superlative.ducklingranks.sort((a, b) => a.requirement - b.requirement).forEach((rank, _index) => {
@@ -57,7 +66,7 @@ export async function GET(request: NextRequest): Promise<Response> {
                 }
             });
             await SendMessage(IsleofDucks.channels.ducklingoc, {
-                content: `setrank ${uuid} ${rankShould}`
+                content: `setrank ${user} ${rankShould}`
             });
         } else {
             return Response.json({
@@ -68,7 +77,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     } else {
         return Response.json({
             success: false,
-            message: "Missing uuid or guild parameter"
+            message: "Missing user or guild parameter"
         });
     }
 
