@@ -1,6 +1,6 @@
 import { CreateTranscript } from "@/discord/commands/component/transcript";
-import { DeleteChannel, GetGuildChannels, IsleofDucks, SendMessage } from "@/discord/discordUtils";
-import { APITextChannel, ChannelType } from "discord-api-types/v10";
+import { DeleteChannel, GetCurrentTranscript, GetGuildChannels, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { APITextChannel, ChannelType, RESTAPIGuildChannelResolvable } from "discord-api-types/v10";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest): Promise<Response> {
@@ -37,11 +37,10 @@ export async function GET(request: NextRequest): Promise<Response> {
             message: "Failed to fetch guild channels"
         });
     }
-    const channel = channels.find(c => {
+    const channel = (channels as RESTAPIGuildChannelResolvable[]).find(c => {
         if (c.type !== ChannelType.GuildText) return false;
-        const channel = c as APITextChannel;
-        if (!channel.topic) return false;
-        const topicParts = channel.topic.split(' | ');
+        if (!c.topic) return false;
+        const topicParts = c.topic.split(' | ');
         if (topicParts[0] !== "duckapp" && topicParts[0] !== "ducklingapp") return false;
         return topicParts[1].toLowerCase() === name.toLowerCase();
     }) as APITextChannel | undefined;
@@ -49,6 +48,31 @@ export async function GET(request: NextRequest): Promise<Response> {
         return Response.json({
             success: false,
             message: "No ticket channel found for this user"
+        });
+    }
+
+    const currentTranscript = await GetCurrentTranscript();
+    if (!currentTranscript) {
+        return Response.json({
+            success: false,
+            message: "Failed to fetch transcript data"
+        });
+    }
+    // Check if a transcript already exists for this channel
+    const threadChannel = (channels as RESTAPIGuildChannelResolvable[]).find(c => {
+        if (c.type !== ChannelType.PublicThread) return false;
+        if (c.parent_id !== currentTranscript.channelId) return false;
+        if (!c.name) return false;
+        if (c.name !== channel.name) return false;
+        // if created within the past minute then return true
+        if (c.thread_metadata?.create_timestamp && (new Date().getTime() - new Date(c.thread_metadata.create_timestamp).getTime()) < 60000) {
+            return true;
+        }
+        return false;
+    }) as APITextChannel | undefined;
+    if (threadChannel) {
+        return Response.json({
+            success: true
         });
     }
 
