@@ -34,6 +34,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     if (bannedResponse) return Response.json({
         success: true,
         banned: true,
+        uuid: bannedResponse.uuid,
         reason: bannedResponse.reason,
         discords: bannedResponse.discords
     });
@@ -42,6 +43,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     if (bannedFromDiscordIDResponse) return Response.json({
         success: true,
         banned: true,
+        uuid: bannedFromDiscordIDResponse.uuid,
         reason: bannedFromDiscordIDResponse.reason,
         discords: bannedFromDiscordIDResponse.discords
     });
