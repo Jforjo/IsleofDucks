@@ -298,6 +298,25 @@ export async function getBannedPlayer(uuid: string): Promise<
         reason: rows[0].reason
     }
 }
+export async function getBannedPlayerFromDiscordID(discordId: string): Promise<
+    { uuid: string; discords: Snowflake[] | null; reason: string } |
+    null
+> {
+    const { rows } = await sql`
+        SELECT *
+        FROM banlist
+        WHERE discord IS NOT NULL
+            AND discord::jsonb @> ${JSON.stringify([discordId])}::jsonb;
+    `;
+    if (rows.length == 0) return null;
+    const discords = rows[0].discord ? JSON.parse(rows[0].discord) : null;
+    return {
+        uuid: rows[0].uuid,
+        // is 'discords' is a string then return that in an array, otherwise return it as normal
+        discords: typeof discords === 'string' ? [discords] : discords,
+        reason: rows[0].reason
+    }
+}
 // export async function getBannedPlayer(uuid: string): Promise<
 //     { uuid: string; discord: string | null; reason: string }[] |
 //     { uuid: string; discord: string | null; reason: string } |
