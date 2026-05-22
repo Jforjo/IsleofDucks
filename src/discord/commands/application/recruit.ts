@@ -400,9 +400,9 @@ export default async function(
                         value: SBUBanlistResponse.success ? (
                             SBUBanlistResponse.banned ? (
                                 SBUBanlistResponse.details === undefined || SBUBanlistResponse.details === null ?
-                                    `${no} They are in the SBU banlist!` :
+                                    `${no} They are in the SBU ban list!` :
                                     `${no} ${SBUBanlistResponse.details.reason}`
-                            ) : `${yes} They are not in the SBU banlist`
+                            ) : `${yes} They are not in the SBU ban list`
                         ) : `⚠️ Failed to check banlist status`,
                     },
                     {
