@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
 import { checkMinecraftInDB, createMinecraftUser, getBannedPlayer, getSettingValue, updateMinecraftUser } from "@/discord/utils";
 import { getScammerFromUUID } from "@/discord/jerry";
+import { getSBUBanlistFromUUID } from "@/discord/sbu";
 
 export async function checkPlayer(
     uuid: string,
@@ -283,6 +284,8 @@ export default async function(
     // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
     const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
     if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
+    const SBUBanlistResponse = await getSBUBanlistFromUUID(mojang.uuid);
+    if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
 
     const buttons: {
         duck: { type: ComponentType.Button; custom_id: string; label: string; style: ButtonStyle.Primary; disabled?: boolean; }[],
@@ -393,12 +396,22 @@ export default async function(
                         inline: false
                     },
                     {
+                        name: "SBU Banlist",
+                        value: SBUBanlistResponse.success ? (
+                            SBUBanlistResponse.banned ? (
+                                SBUBanlistResponse.details === undefined || SBUBanlistResponse.details === null ?
+                                    `${no} They are in the SBU banlist!` :
+                                    `${no} ${SBUBanlistResponse.details.reason}`
+                            ) : `${yes} They are not in the SBU banlist`
+                        ) : `⚠️ Failed to check banlist status`,
+                    },
+                    {
                         name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
                         value: [
                             !scammerResponse.success ?
                                 `⚠️ Failed to check scammer status` :
                             scammerResponse.scammer ? (
-                                scammerResponse.details === null ?
+                                scammerResponse.details === undefined || scammerResponse.details === null ?
                                     `${no} They are a scammer!` :
                                     `${no} ${scammerResponse.details.reason}`
                             ) : `${yes} They are not in the Jerry scammer list`,

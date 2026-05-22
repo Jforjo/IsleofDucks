@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { checkPlayer } from "../application/recruit";
 import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
+import { getSBUBanlistFromUUID } from "@/discord/sbu";
 
 export default async function(
     interaction: APIModalSubmitInteraction
@@ -305,6 +306,9 @@ export default async function(
             { status: 200 }
         );
     }
+    
+    const SBUBanlistResponse = await getSBUBanlistFromUUID(mojang.uuid);
+    if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
 
     if (member.roles.some(role => TICKET.denyRoles?.includes(role))) {
         await FollowupMessage(interaction.token, {
@@ -517,6 +521,16 @@ export default async function(
                         name: "Banned",
                         value: `${yes} They are not in my ban list`,
                         inline: false
+                    },
+                    {
+                        name: "SBU Banlist",
+                        value: SBUBanlistResponse.success ? (
+                            SBUBanlistResponse.banned ? (
+                                SBUBanlistResponse.details === undefined || SBUBanlistResponse.details === null ?
+                                    `${no} They are in the SBU banlist!` :
+                                    `${no} ${SBUBanlistResponse.details.reason}`
+                            ) : `${yes} They are not in the SBU banlist`
+                        ) : `⚠️ Failed to check banlist status`,
                     },
                     {
                         name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
