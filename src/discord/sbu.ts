@@ -1,5 +1,3 @@
-
-
 const SBU = {
     routes: {
         base: `http://sbu.rubic-solution.de/api`,
