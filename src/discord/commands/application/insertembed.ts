@@ -41,7 +41,7 @@ export default async function(
         )
     }
 
-    const name = "verify";
+    const name = "rules";
 
     const embed = await CheckEmbedExists(name);
     if (embed) {
@@ -228,68 +228,68 @@ const embeds = {
             }
         ])
     },
-    verify: {
+    rules: {
         content: null,
         data: JSON.stringify({
-            flags: 32768,
-            components: [
+            embeds: [
                 {
-                    type: 12,
-                    items: [
+                    title: "Server Rules",
+                    color: 12403455,
+                    image: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=6a158819&is=6a143699&hm=292c190187f41872af9e3b13404cc93cb85888c93e7f96fc68ca83f116e679f8&=&format=webp&quality=lossless"
+                    },
+                    thumbnail: {
+                        url: "https://media.discordapp.net/attachments/997909150610763900/1340823450222333952/5355689_archive_data_document_file_file_format_icon.png?ex=6a158065&is=6a142ee5&hm=04634f75a04792caee64e5ba23c0b9d848666a1d02a6388ddcda046f3284dcb7&=&format=webp&quality=lossless"
+                    },
+                    fields: [
                         {
-                            media: {
-                                url: "https://media.discordapp.net/attachments/1300979867881312347/1487511647198384270/66ef1102a7269.png?ex=69ca116d&is=69c8bfed&hm=7856823854205cfaf93fe1c032cfccc3b2569baa19588bfd30469ee9a7813a08&=&format=webp&quality=lossless"
-                            }
+                            name: "▫️Respect Others",
+                            value: "\nTreat all members respectfully. Harassment, discrimination, slurs, hate speech, or excessive toxicity will not be tolerated. If you have personal issues with someone, handle them in DMs or make a <#1330207810872676403> if needed."
+                        },
+                        {
+                            name: "▫️No Cheats",
+                            value: "The use of cheats, macros, hacks, dupes, exploits, scam methods, or cheat clients is strictly prohibited in our server, including gamemodes outside of Skyblock. Avoid discussions on the topic."
+                        },
+                        {
+                            name: "▫️No Malicious Behavior",
+                            value: "Any malicious activity is strictly prohibited. This includes hacking, scamming, phishing, doxxing, spreading malware, or intentionally harming the server or its members. Violations may result in an immediate permanent ban."
+                        },
+                        {
+                            name: "▫️No Obnoxious Behavior",
+                            value: "Do not spam messages, message split, excessively self-promote, or intentionally disrupt conversations. You may not beg for items, troll in VC, or post NSFW, gore, explicit, or otherwise inappropriate content. This is a public community - keep posts safe for everyone.\n"
+                        },
+                        {
+                            name: "▫️Cooperation with Staff",
+                            value: "Do not disrespect, harass, or repeatedly argue with staff members. Avoid ghost pings or unnecessary pings unless the issue is urgent. If you need help or have questions, please create a support ticket instead of directly messaging staff, so the entire team can view and assist with your request."
+                        },
+                        {
+                            name: "▫️Use English",
+                            value: "This is an English server. Please keep conversations in English, so members and staff can communicate and moderate effectively."
+                        },
+                        {
+                            name: "▫️Follow Discord ToS",
+                            value: "All members must follow the [Discord Terms of Service and Community Guidelines.](https://discord.com/terms)"
+                        },
+                        {
+                            name: "▫️Staff Discretion",
+                            value: "Staff reserve the right to take action against behavior not explicitly listed in these rules if it negatively affects the community."
                         }
                     ]
-                },
+                }
+            ],
+            attachments: [
                 {
-                    type: 17,
-                    components: [
-                        {
-                            type: 10,
-                            content: "## Welcome to Isle of Ducks ⋆˚꩜｡"
-                        },
-                        {
-                            type: 10,
-                            content: "Please verify by entering your Minecraft username to access the rest of the server."
-                        },
-                        {
-                            type: 10,
-                            content: "Be sure to review our rules [here](https://discord.com/channels/823061629812867113/823061630300192790)."
-                        },
-                        {
-                            type: 10,
-                            content: "If you have any issues, create a ticket here <#1330207810872676403> \nEnjoy your stay!"
-                        },
-                        {
-                            type: 12,
-                            items: [
-                                {
-                                    media: {
-                                        url: "https://media.discordapp.net/attachments/997909150610763900/1340469331670339696/title-_ISLE_OF_DUCKS_-871x37_4.png?ex=69c91119&is=69c7bf99&hm=e086ce5415436ed1fa3879283d2fbc70a2d94b542b3d0b888ab99b5866a4cf07&=&format=webp&quality=lossless"
-                                    },
-                                    description: null
-                                }
-                            ]
-                        }
-                    ],
-                    accent_color: 12403455
-                },
-                {
-                    type: 1,
-                    components: [
-                        {
-                            style: 1,
-                            type: 2,
-                            custom_id: "verify",
-                            label: "Verify"
-                        }
-                    ]
+                    id: 0
                 }
             ]
         }),
         components: undefined,
-        attachments: undefined
+        attachments: JSON.stringify([
+            {
+                id: 0,
+                filename: 'title.png',
+                url: "https://media.discordapp.net/attachments/1300979867881312347/1508540168045596742/rules.png?ex=6a15e903&is=6a149783&hm=e5303d7276cc1f810ae02832e49d7288652f2fc504a253c2b8a65d2b9c709d32&=&format=webp&quality=lossless"
+            }
+        ])
     }
 }
