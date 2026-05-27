@@ -137,8 +137,18 @@ export default async function(
         type: InteractionResponseType.DeferredChannelMessageWithSource,
     });
 
-    await getScammerListFromIDs(["791380888197660722"]);
-    await getScammerListFromIDs(["1135286141294215168"]);
+    await getScammerListFromIDs([
+        // scamming
+        "1135286141294215168",
+        // ratting
+        "1303468907377459200",
+        // blackmail / defrauding
+        "1374377451169517681",
+        // exit scamming, ratting, alt of 340267184041361410
+        "268803307680563201",
+        // looting
+        "268803307680563201"
+    ]);
 
     await FollowupMessage(interaction.token, {
         content: `Done!`,
