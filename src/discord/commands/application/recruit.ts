@@ -4,9 +4,10 @@ import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTy
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
-import { checkMinecraftInDB, createMinecraftUser, getBannedPlayer, getSettingValue, updateMinecraftUser } from "@/discord/utils";
+import { checkMinecraftInDB, createMinecraftUser, getBannedPlayer, getSettingValue, getUserDataFromUUID, updateMinecraftUser } from "@/discord/utils";
 import { getScammerFromUUID } from "@/discord/jerry";
 import { getSBUBanlistFromUUID } from "@/discord/sbu";
+import { getScammerListFromIDs } from "@/discord/scammerList";
 
 export async function checkPlayer(
     uuid: string,
@@ -287,6 +288,10 @@ export default async function(
     const SBUBanlistResponse = await getSBUBanlistFromUUID(mojang.uuid);
     if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
 
+    const userData = await getUserDataFromUUID(mojang.uuid);
+    const ScammerListResponse = userData?.success && userData.data.discord ? await getScammerListFromIDs([ userData.data.discord.discordid ]) : null;
+    if (ScammerListResponse && !ScammerListResponse.success) console.log("ScammerList Error:", ScammerListResponse.message);
+
     const buttons: {
         duck: { type: ComponentType.Button; custom_id: string; label: string; style: ButtonStyle.Primary; disabled?: boolean; }[],
         duckling: { type: ComponentType.Button; custom_id: string; label: string; style: ButtonStyle.Primary; disabled?: boolean; }[]
@@ -405,6 +410,17 @@ export default async function(
                             ) : `${yes} They are not in the SBU ban list`
                         ) : `⚠️ Failed to check banlist status`,
                     },
+                    ...(
+                        ScammerListResponse !== null ? 
+                            [{
+                                name: "Scammer List",
+                                value: ScammerListResponse.success && userData.success && userData.data.discord ? (
+                                    ScammerListResponse.data.results[userData.data.discord.discordid] !== null && ScammerListResponse.data.results[userData.data.discord.discordid] !== undefined ?
+                                        `${no} ${ScammerListResponse.data.results[userData.data.discord.discordid]!.method} (${ScammerListResponse.data.results[userData.data.discord.discordid]!.scammed})` :
+                                    `${yes} They are not in the scammer list`
+                                ) : `⚠️ Failed to check scammer list status`,
+                            }] : []
+                    ),
                     {
                         name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
                         value: [
