@@ -3,15 +3,22 @@ interface ScammerListSuccessResponse {
     data: {
         results: {
             [key: string]: {
-                matched_by: string;
-            }
-        } | null;
+                tag: string;
+                id: string;
+                method: string;
+                scammed: string;
+                known_alts_ids: string[];
+                previous_tags: string[];
+                known_payment_tags: string[];
+                matchedBy: string;
+            } | null;
+        };
         summary: {
             requested: number,
             found: number,
             notFound: number,
             ids: string[]
-        }
+        };
     }
 }
 interface ScammerListErrorResponse {

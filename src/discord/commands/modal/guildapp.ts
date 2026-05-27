@@ -6,6 +6,7 @@ import { checkPlayer } from "../application/recruit";
 import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
 import { getSBUBanlistFromUUID } from "@/discord/sbu";
+import { getScammerListFromIDs } from "@/discord/scammerList";
 
 export default async function(
     interaction: APIModalSubmitInteraction
@@ -320,6 +321,9 @@ export default async function(
         );
     }
 
+    const ScammerListResponse = await getScammerListFromIDs([ member.user.id ]);
+    if (!ScammerListResponse.success) console.log("ScammerList Error:", ScammerListResponse.message);
+
     const profileAPIResponse = await checkPlayer(mojang.uuid);
     if (!profileAPIResponse.success) {
         await FollowupMessage(interaction.token, {
@@ -531,6 +535,14 @@ export default async function(
                                     `${no} ${SBUBanlistResponse.details.reason}`
                             ) : `${yes} They are not in the SBU ban list`
                         ) : `⚠️ Failed to check banlist status`,
+                    },
+                    {
+                        name: "Scammer List",
+                        value: ScammerListResponse.success ? (
+                            ScammerListResponse.data.results[member.user.id] !== null && ScammerListResponse.data.results[member.user.id] !== undefined ?
+                                `${no} ${ScammerListResponse.data.results[member.user.id]!.method} (${ScammerListResponse.data.results[member.user.id]!.scammed})` :
+                            `${yes} They are not in the scammer list`
+                        ) : `⚠️ Failed to check scammer list status`,
                     },
                     {
                         name: "Jerry Scammer List (by SkyblockZ: discord.gg/skyblock)",
