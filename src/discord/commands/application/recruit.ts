@@ -281,15 +281,22 @@ export default async function(
         );
     }
 
-    const bannedResponse = await getBannedPlayer(mojang.uuid);
-    // const oldScammerResponse = await isOnOldScammerList(mojang.uuid);
-    const scammerResponse = await getScammerFromUUID(mojang.uuiddashes);
-    if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
-    const SBUBanlistResponse = await getSBUBanlistFromUUID(mojang.uuid);
-    if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
-
     const userData = await getUserDataFromUUID(mojang.uuid);
-    const ScammerListResponse = userData?.success && userData.data.discord ? await getScammerListFromIDs([ userData.data.discord.discordid ]) : null;
+
+    const bannedResponsePromise = getBannedPlayer(mojang.uuid);
+    const scammerResponsePromise = getScammerFromUUID(mojang.uuiddashes);
+    const SBUBanlistResponsePromise = getSBUBanlistFromUUID(mojang.uuid);
+    const ScammerListResponsePromise = userData?.success && userData.data.discord ? getScammerListFromIDs([ userData.data.discord.discordid ]) : null;
+
+    const [bannedResponse, scammerResponse, SBUBanlistResponse, ScammerListResponse] = await Promise.all([
+        bannedResponsePromise,
+        scammerResponsePromise,
+        SBUBanlistResponsePromise,
+        ScammerListResponsePromise
+    ]);
+
+    if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
+    if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
     if (ScammerListResponse && !ScammerListResponse.success) console.log("ScammerList Error:", ScammerListResponse.message);
 
     const buttons: {
