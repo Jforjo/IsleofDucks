@@ -656,6 +656,7 @@ export default async function(
         else if (role === IsleofDucks.roles.mod_duck) perm = true;
         else if (role === IsleofDucks.roles.mod_duckling) perm = true;
         else if (role === IsleofDucks.roles.service_management) perm = true;
+        else if (role === IsleofDucks.roles.trainee) perm = true;
         if (perm) break;
     }
     if (!perm) {
