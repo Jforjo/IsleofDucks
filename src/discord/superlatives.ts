@@ -198,6 +198,36 @@ export default {
         value: (profile: SkyBlockProfileMember) => profile?.collection?.WILD_ROSE ?? 0
     },
     /**
+     * TROPHIES
+     */
+    trophiesFished: {
+        title: "Trophies Fished",
+        value: (profile: SkyBlockProfileMember) => {
+            const itemsFished = profile?.player_stats?.items_fished as {
+                trophy_frogs: number;
+                trophy_fish: number;
+            } | undefined;
+            return (itemsFished?.trophy_fish ?? 0) + (
+                itemsFished && "trophy_frogs" in itemsFished ? itemsFished?.trophy_frogs ?? 0 : 0
+            )
+        }
+    },
+    trophyFrogsFished: {
+        title: "Trophies Frogs Fished",
+        value: (profile: SkyBlockProfileMember) => {
+            const itemsFished = profile?.player_stats?.items_fished as {
+                trophy_frogs: number;
+            } | undefined;
+            if (!itemsFished) return 0;
+            if (!("trophy_frogs" in itemsFished)) return 0;
+            return itemsFished.trophy_frogs ?? 0;
+        }
+    },
+    trophyFishFished: {
+        title: "Trophies Fish Fished",
+        value: (profile: SkyBlockProfileMember) => profile?.player_stats?.items_fished?.trophy_fish ?? 0
+    },
+    /**
      * BESTIARY
      */
     headlesshorsemanBestiary: {
