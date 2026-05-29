@@ -200,8 +200,8 @@ export default {
     /**
      * TROPHIES
      */
-    trophiesFished: {
-        title: "Trophies Fished",
+    totalTrophiesFished: {
+        title: "Total Trophies Fished",
         value: (profile: SkyBlockProfileMember) => {
             const itemsFished = profile?.player_stats?.items_fished as {
                 trophy_frogs: number;
