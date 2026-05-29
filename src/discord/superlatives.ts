@@ -213,7 +213,7 @@ export default {
         }
     },
     trophyFrogsFished: {
-        title: "Trophies Frogs Fished",
+        title: "Trophy Frogs Fished",
         value: (profile: SkyBlockProfileMember) => {
             const itemsFished = profile?.player_stats?.items_fished as {
                 trophy_frogs: number;
@@ -224,7 +224,7 @@ export default {
         }
     },
     trophyFishFished: {
-        title: "Trophies Fish Fished",
+        title: "Trophy Fish Fished",
         value: (profile: SkyBlockProfileMember) => profile?.player_stats?.items_fished?.trophy_fish ?? 0
     },
     /**
