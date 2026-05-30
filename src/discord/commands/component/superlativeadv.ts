@@ -500,14 +500,14 @@ async function testSuperlativeAdv(
                         type: ComponentType.Button,
                         label: "Ducks",
                         style: guild === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
-                        disabled: guild !== "ducks"
+                        disabled: guild === "ducks"
                     },
                     {
                         custom_id: `superlativeadv-test-ducklings-${type}`,
                         type: ComponentType.Button,
                         label: "Ducklings",
                         style: guild === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
-                        disabled: guild !== "ducklings"
+                        disabled: guild === "ducklings"
                     }
                 ]
             }
