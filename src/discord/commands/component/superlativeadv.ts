@@ -390,20 +390,28 @@ async function testSuperlativeAdv(
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
         const valueRes = await fetch(`https://api.ducks.network/superlativevalue/${type}/${member.uuid}`, {
+            headers: {
+                Authorization: `Bearer ${process.env.BRIDGE_API_KEY}`
+            },
             next: {
                 revalidate: 600
             }
         });
-        if (!valueRes.ok) {
-            const errorData = await valueRes.json() as { message: string };
-            throw new Error(errorData.message);
+        const data = await valueRes.json() as {
+            success: false;
+            message: string;
+        } | {
+            success: true;
+            value: number;
+        };
+        if (data.success === false) {
+            throw new Error(data.message);
         }
-        const value = await valueRes.json() as { value: number };
 
         return {
             uuid: member.uuid,
             name: mojang.name,
-            value: value.value
+            value: data.value
         };
     })).catch((err) => {
         console.log(err.message);
