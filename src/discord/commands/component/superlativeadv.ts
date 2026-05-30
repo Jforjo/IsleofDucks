@@ -389,7 +389,7 @@ async function testSuperlativeAdv(
     const superlativeResult = await Promise.all(guildData.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
-        const valueRes = await fetch(`https://isle-of-ducks.vercel.app/superlativevalue/${type}/${member.uuid}`, {
+        const valueRes = await fetch(`https://isle-of-ducks.vercel.app/api/superlativevalue/${type}/${member.uuid}`, {
             headers: {
                 Authorization: `Bearer ${process.env.BRIDGE_API_KEY}`
             },
