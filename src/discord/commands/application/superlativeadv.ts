@@ -858,6 +858,10 @@ async function testSuperlativeAdv(
         );
     }
 
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.DeferredChannelMessageWithSource,
+    });
+
     const timestamp = ConvertSnowflakeToDate(interaction.id);
     const superlativeType = SuperlativeTypes[typeInput as keyof typeof SuperlativeTypes];
 
