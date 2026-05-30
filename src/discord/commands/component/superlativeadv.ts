@@ -335,7 +335,7 @@ async function testSuperlativeAdv(
         embeds: [
             {
                 title: "Superlative - Fetching",
-                description: `Fetching ${guild === "duckling" ? "Isle of Ducklings" : "Isle of Ducks"} guild...`,
+                description: `Fetching ${guild === "ducklings" ? "Isle of Ducklings" : "Isle of Ducks"} guild...`,
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
@@ -499,15 +499,15 @@ async function testSuperlativeAdv(
                         custom_id: `superlativeadv-test-ducks-${type}`,
                         type: ComponentType.Button,
                         label: "Ducks",
-                        style: ButtonStyle.Success,
-                        disabled: false
+                        style: guild === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: guild !== "ducks"
                     },
                     {
                         custom_id: `superlativeadv-test-ducklings-${type}`,
                         type: ComponentType.Button,
                         label: "Ducklings",
-                        style: ButtonStyle.Primary,
-                        disabled: true
+                        style: guild === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                        disabled: guild !== "ducklings"
                     }
                 ]
             }
