@@ -924,16 +924,21 @@ async function testSuperlativeAdv(
     const superlativeResult = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
-        const profile = await getProfiles(member.uuid);
-        if (!profile.success) throw new Error(profile.message);
-        const memberProfile = profile.profiles.find(p => p.members && member.uuid in p.members);
-        if (!memberProfile) throw new Error("Member profile not found");
-        const value = await superlativeType.value(memberProfile.members[member.uuid]);
+        const valueRes = await fetch(`https://api.ducks.network/superlativevalue/${typeInput}/${member.uuid}`, {
+            next: {
+                revalidate: 600
+            }
+        });
+        if (!valueRes.ok) {
+            const errorData = await valueRes.json() as { message: string };
+            throw new Error(errorData.message);
+        }
+        const value = await valueRes.json() as { value: number };
 
         return {
             uuid: member.uuid,
             name: mojang.name,
-            value: value
+            value: value.value
         };
     })).catch((err) => {
         console.log(err.message);
