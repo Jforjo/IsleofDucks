@@ -1,10 +1,10 @@
 import { APIInteractionResponse, APIMessageComponentButtonInteraction, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { viewSuperlativeAdv, viewSuperlativeAdvWithDate } from "../application/superlativeadv";
-import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, formatNumber, getSuperlativeValue, IsleofDucks } from "@/discord/discordUtils";
 import { createSuperlative } from "@/discord/utils";
-import superlativeTypes from "@/discord/superlatives";
 import SuperlativeTypes from "@/discord/superlatives";
+import { getGuildData, getUsernameOrUUID } from "@/discord/hypixelUtils";
 
 async function createSuperlativeAdv(
     interaction: APIMessageComponentButtonInteraction
@@ -139,7 +139,7 @@ async function createSuperlativeAdv(
 
     const rankData = sections.filter((section) => section !== false);
 
-    const superlativeType = Object.entries(SuperlativeTypes).filter(([, v]) => v.title === dataText[2]).map(([k,]) => k)[0] as keyof typeof superlativeTypes;
+    const superlativeType = Object.entries(SuperlativeTypes).filter(([, v]) => v.title === dataText[2]).map(([k,]) => k)[0] as keyof typeof SuperlativeTypes;
 
     const created = await createSuperlative(
         startDate,
@@ -284,6 +284,222 @@ async function createRanks(
     );
 }
 
+async function testSuperlativeAdv(
+    interaction: APIMessageComponentButtonInteraction,
+    guild: string,
+    type: string
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    if (!interaction.member) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "Could not find who ran the command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        )
+    }
+    if (!interaction.member.roles.includes(IsleofDucks.roles.admin)) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral,
+                content: "You do not have permission to run this command!"
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: "You do not have permission to run this command" },
+            { status: 403 }
+        )
+    }
+
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+    const superlativeType = SuperlativeTypes[type as keyof typeof SuperlativeTypes];
+
+    const guildPromise = getGuildData(guild === "ducklings" ? "Isle of Ducklings" : "Isle of Ducks");
+    const guildUpdateResponse = FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Fetching",
+                description: `Fetching ${guild === "duckling" ? "Isle of Ducklings" : "Isle of Ducks"} guild...`,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+    const guildData = await guildPromise;
+    await guildUpdateResponse;
+    if (!guildData.success) {
+        let content = undefined;
+        if (guildData?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        await FollowupMessage(interaction.token, {
+            content: content,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: guildData.message === "Key throttle" && typeof guildData.retry === "number" ? [
+                        guildData.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + guildData.retry ) / 1000)}:R>`
+                    ].join("\n") : guildData.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: guildData.message },
+            { status: 400 }
+        );
+    }
+    
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: "Superlative - Fetching",
+                description: `Fetching player data...`,
+                color: 0xFB9B00,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ]
+    });
+
+    const superlativeResult = await Promise.all(guildData.guild.members.map(async (member) => {
+        const mojang = await getUsernameOrUUID(member.uuid);
+        if (!mojang.success) throw new Error(mojang.message);
+        const superlativeData = await getSuperlativeValue(member.uuid, (value) => formatNumber(value, 2));
+        if (!superlativeData.success) throw new Error(superlativeData.message);
+
+        return {
+            uuid: member.uuid,
+            name: mojang.name,
+            value: superlativeData.value
+        };
+    })).catch((err) => {
+        console.log(err.message);
+        return {
+            success: false,
+            message: err.message,
+            ping: err.message === "Invalid API key"
+        };
+    });
+    
+    if ("success" in superlativeResult && superlativeResult.success === false) {
+        let content = undefined;
+        if (superlativeResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
+        await FollowupMessage(interaction.token, {
+            content: content,
+            embeds: [
+                {
+                    title: "Something went wrong!",
+                    description: superlativeResult.message,
+                    color: 0xB00020,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: false, error: superlativeResult.message },
+            { status: 400 }
+        );
+    }
+    
+    let result = superlativeResult as {
+        uuid: string;
+        name: string;
+        value: number;
+    }[];
+    // b - a = bigger number first
+    result.sort((a, b) => b.value - a.value);
+    result = result.map((member, index) => {
+        return {
+            rank: index + 1,
+            uuid: member.uuid,
+            name: member.name,
+            value: member.value
+        };
+    });
+    const finalResult = result as {
+        rank: number;
+        uuid: string;
+        name: string;
+        value: number;
+    }[];
+    const fieldArray = [];
+    const chunkSize = 21;
+    for (let i = 0; i < finalResult.length; i += chunkSize) {
+        fieldArray.push(
+            {
+                name: '\u200b',
+                value: finalResult.slice(i, i + chunkSize).map((field) => `\`#${field.rank}\` ${field.name.replaceAll('_', '\\_')}: ${field.value}`).join('\n'),
+                inline: true
+            }
+        );
+    }
+
+    await FollowupMessage(interaction.token, {
+        embeds: [
+            {
+                title: `Superlative Test for ${superlativeType.title}`,
+                // description: ``,
+                color: 0xFB9B00,
+                fields: fieldArray,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
+            }
+        ],
+        components: [
+            {
+                type: ComponentType.ActionRow,
+                components: [
+                    {
+                        custom_id: `superlativeadv-test-ducks-${type}`,
+                        type: ComponentType.Button,
+                        label: "Ducks",
+                        style: ButtonStyle.Success,
+                        disabled: false
+                    },
+                    {
+                        custom_id: `superlativeadv-test-ducklings-${type}`,
+                        type: ComponentType.Button,
+                        label: "Ducklings",
+                        style: ButtonStyle.Primary,
+                        disabled: true
+                    }
+                ]
+            }
+        ]
+    });
+
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
 export default async function(
     interaction: APIMessageComponentButtonInteraction
 ): Promise<
@@ -313,7 +529,7 @@ export default async function(
     } else if (customIds[1] === "create") {
         if (customIds[2] === "create") return await createSuperlativeAdv(interaction);
         else return await createRanks(interaction, customIds[2]);
-    }
+    } else if (customIds[1] === "test") return await testSuperlativeAdv(interaction, customIds[2], customIds[3]);
 
     return NextResponse.json(
         { success: true },

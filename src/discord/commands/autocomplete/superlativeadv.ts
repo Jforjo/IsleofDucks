@@ -289,6 +289,7 @@ export default async function(
         if ('date' in options.create && options.create.date.focused === true) return await createDate(interaction, options.create.date.value);
         else if ('type' in options.create && options.create.type.focused === true) return await createType(interaction, options.create.type.value);
     } else if ('delete' in options && 'date' in options.delete && options.delete.date.focused === true) return await deleteDate(interaction, options.delete.date.value);
+    else if ('test' in options && 'type' in options.test && options.test.type.focused === true) return await createType(interaction, options.test.type.value);
 
     return NextResponse.json(
         { success: true },
