@@ -1,5 +1,5 @@
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage, formatNumber, Emojis, getSuperlativeValue } from "@/discord/discordUtils";
-import { getGuildData, getUsernameOrUUID } from "@/discord/hypixelUtils";
+import { getGuildData, getProfiles, getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { deleteSuperlative, getSuperlative, getSuperlativesListLimit, getTotalSuperlatives } from "@/discord/utils";
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, APIMessageComponentButtonInteraction, APISectionComponent, ApplicationCommandOptionType, ButtonStyle, ComponentType, InteractionResponseType, InteractionType, MessageFlags, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -924,13 +924,16 @@ async function testSuperlativeAdv(
     const superlativeResult = await Promise.all(guild.guild.members.map(async (member) => {
         const mojang = await getUsernameOrUUID(member.uuid);
         if (!mojang.success) throw new Error(mojang.message);
-        const superlativeData = await getSuperlativeValue(member.uuid, (value) => formatNumber(value, 2));
-        if (!superlativeData.success) throw new Error(superlativeData.message);
+        const profile = await getProfiles(member.uuid);
+        if (!profile.success) throw new Error(profile.message);
+        const memberProfile = profile.profiles.find(p => p.members && member.uuid in p.members);
+        if (!memberProfile) throw new Error("Member profile not found");
+        const value = await superlativeType.value(memberProfile.members[member.uuid]);
 
         return {
             uuid: member.uuid,
             name: mojang.name,
-            value: superlativeData.value
+            value: value
         };
     })).catch((err) => {
         console.log(err.message);
