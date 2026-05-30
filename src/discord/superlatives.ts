@@ -204,11 +204,11 @@ export default {
         title: "Total Trophies Fished",
         value: (profile: SkyBlockProfileMember) => {
             const itemsFished = profile?.player_stats?.items_fished as {
-                trophy_frogs: number;
+                trophy_frog: number;
                 trophy_fish: number;
             } | undefined;
             return (itemsFished?.trophy_fish ?? 0) + (
-                itemsFished && "trophy_frogs" in itemsFished ? itemsFished?.trophy_frogs ?? 0 : 0
+                itemsFished && "trophy_frog" in itemsFished ? itemsFished?.trophy_frog ?? 0 : 0
             )
         }
     },
@@ -216,11 +216,11 @@ export default {
         title: "Trophy Frogs Fished",
         value: (profile: SkyBlockProfileMember) => {
             const itemsFished = profile?.player_stats?.items_fished as {
-                trophy_frogs: number;
+                trophy_frog: number;
             } | undefined;
             if (!itemsFished) return 0;
-            if (!("trophy_frogs" in itemsFished)) return 0;
-            return itemsFished.trophy_frogs ?? 0;
+            if (!("trophy_frog" in itemsFished)) return 0;
+            return itemsFished.trophy_frog ?? 0;
         }
     },
     trophyFishFished: {
