@@ -324,7 +324,7 @@ async function testSuperlativeAdv(
     }
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
+        type: InteractionResponseType.DeferredMessageUpdate,
     });
 
     const timestamp = ConvertSnowflakeToDate(interaction.id);
