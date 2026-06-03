@@ -25,6 +25,8 @@ import { CommandData as Bridge } from "./bridge";
 import { CommandData as Leaderboard } from "./leaderboard";
 import { CommandData as Ban } from "./ban";
 import { CommandData as Settings } from "./settings";
+import { CommandData as Strike } from "./strike";
+import { CommandData as Strikelist } from "./strikelist";
 import { CommandData as Verify } from "./verify";
 import { CommandData as Sus } from "./sus";
 import { CommandData as GuessToWin } from "./guesstowin";
@@ -100,7 +102,9 @@ export default async function(
         GuessToWin,
         CoinToCopper,
         UsersWhoMeetReq,
-        Unverify
+        Unverify,
+        Strike,
+        Strikelist
     ] as RESTPutAPIApplicationCommandsJSONBody);
 
     console.log(result);
