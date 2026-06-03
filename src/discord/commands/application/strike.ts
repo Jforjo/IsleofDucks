@@ -53,7 +53,7 @@ export default async function(
                         type: ComponentType.UserSelect,
                         custom_id: "discordid",
                         placeholder: "Select the Discord user to strike",
-                        min_values: 0,
+                        min_values: 1,
                         max_values: 1,
                         required: true,
                     },
