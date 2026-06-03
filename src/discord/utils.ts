@@ -1469,6 +1469,7 @@ export async function getAllStrikesLimited(offset: number, limit = 100): Promise
             discordid,
             strikes
         FROM discorduserdata
+        WHERE strikes > 0
         ORDER BY strikes DESC
         LIMIT ${limit} OFFSET ${offset}
     `;
