@@ -54,7 +54,7 @@ async function removeStrikes(
     }
 
     await SendMessage(IsleofDucks.channels.strikelog, {
-        flags: MessageFlags.IsComponentsV2,
+        flags: MessageFlags.IsComponentsV2 | MessageFlags.SuppressNotifications,
         components: [
             {
                 type: ComponentType.Container,
