@@ -9,6 +9,7 @@ type DiscordUserDataReturnType = {
     discordid: Snowflake;
     hyguessr: number;
     donation: number;
+    strikes: number;
     // accesstoken: string;
     // refreshtoken: string;
 };
@@ -1187,6 +1188,7 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
             d.discordid,
             d.hyguessr,
             d.donation,
+            d.strikes,
             m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
@@ -1207,7 +1209,8 @@ export async function getUserDataFromDiscordID(discordid: Snowflake): Promise<{
                 id: rows[0].discordtableid,
                 discordid: rows[0].discordid,
                 hyguessr: rows[0].hyguessr,
-                donation: rows[0].donation
+                donation: rows[0].donation,
+                strikes: rows[0].strikes
                 // accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
                 // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
             },
@@ -1239,6 +1242,7 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
             d.discordid,
             d.hyguessr,
             d.donation,
+            d.strikes,
             m.uuid,
             m.superlativestartingvalue,
             m.superlativecurrentvalue,
@@ -1259,7 +1263,8 @@ export async function getUserDataFromUUID(uuid: string): Promise<{
                 id: rows[0].discordtableid,
                 discordid: rows[0].discordid,
                 hyguessr: rows[0].hyguessr,
-                donation: rows[0].donation
+                donation: rows[0].donation,
+                strikes: rows[0].strikes
                 // accesstoken: AES.decrypt(rows[0].accesstoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8),
                 // refreshtoken: AES.decrypt(rows[0].refreshtoken, process.env.ENCRYPTION_KEY!).toString(enc.Utf8)
             } : undefined,
@@ -1452,4 +1457,58 @@ export async function getAllMinecraftUsersExpReqCount(minExp: number, maxExp?: n
         WHERE exp >= ${minExp} AND exp < ${maxExp} AND superlativelastupdated = 0
     `;
     return rows[0].count;
+}
+
+type StrikeDataReturnType = {
+    discordid: string;
+    strikes: number;
+}
+export async function getAllStrikesLimited(offset: number, limit = 100): Promise<StrikeDataReturnType[]> {
+    const { rows } = await sql`
+        SELECT
+            discordid,
+            strikes
+        FROM discorduserdata
+        ORDER BY strikes DESC
+        LIMIT ${limit} OFFSET ${offset}
+    `;
+    return rows as StrikeDataReturnType[];
+}
+export async function getTotalStrikesCount(): Promise<number> {
+    const { rows } = await sql`SELECT COUNT(*) as count FROM discorduserdata WHERE strikes > 0`;
+    return rows[0].count;
+}
+export async function getUserStrike(discordid: string): Promise<StrikeDataReturnType | undefined> {
+    const { rows } = await sql`
+        SELECT
+            discordid,
+            strikes
+        FROM discorduserdata
+        WHERE discordid = ${discordid}
+    `;
+    if (rows.length === 0) return;
+    return rows[0] as StrikeDataReturnType;
+}
+export async function addStrike(discordid: string): Promise<number> {
+    const strike = await getUserStrike(discordid);
+    if (strike) {
+        const { rows: newCount } = await sql`UPDATE discorduserdata SET strikes = strikes + 1 WHERE discordid = ${discordid} RETURNING strikes`;
+        if (newCount.length === 0) return strike.strikes + 1; // should never happen but just in case
+        return newCount[0].strikes;
+    } else {
+        await sql`UPDATE discorduserdata SET strikes = 1 WHERE discordid = ${discordid}`;
+        return 1;
+    }
+}
+export async function removeStrike(discordid: string): Promise<number | null> {
+    const strike = await getUserStrike(discordid);
+    if (!strike) return null;
+    if (strike.strikes > 0) {
+        const { rows: newCount } = await sql`UPDATE discorduserdata SET strikes = strikes - 1 WHERE discordid = ${discordid} RETURNING strikes`;
+        if (newCount.length === 0) return strike.strikes - 1; // should never happen but just in case
+        return newCount[0].strikes;
+    } else {
+        await sql`UPDATE discorduserdata SET strikes = 0 WHERE discordid = ${discordid}`;
+        return 0;
+    }
 }
