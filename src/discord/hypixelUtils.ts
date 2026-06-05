@@ -726,7 +726,7 @@ export async function getHypixelAuctions(page = 0): Promise<
 
     if (page === 0 && data.page !== undefined && data.totalPages !== undefined) {
         const promises = [];
-        for (let pageNumber = data.page + 1; pageNumber <= data.totalPages; pageNumber++) {
+        for (let pageNumber = data.page + 1; pageNumber < data.totalPages; pageNumber++) {
             console.log("Fetching additional auction page", pageNumber);
             promises.push(getHypixelAuctions(pageNumber));
         }
