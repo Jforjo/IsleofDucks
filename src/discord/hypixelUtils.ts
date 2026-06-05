@@ -729,21 +729,13 @@ export async function getHypixelAuctions(page = 0): Promise<
         for (let pageNumber = data.page + 1; pageNumber <= data.totalPages; pageNumber++) {
             promises.push(getHypixelAuctions(pageNumber));
         }
-        const results = await Promise.allSettled(promises);
+        const results = await Promise.all(promises);
         for (const result of results) {
-            if (result.status === "rejected") {
-                console.error("Failed to fetch additional auction page:", result.reason);
-                return {
-                    success: false,
-                    status: 500,
-                    message: "Failed to fetch additional auction pages"
-                };
+            if (!result.success) {
+                console.error("Failed to fetch additional auction page:", result.message);
+                return result;
             }
-            const value = result.value;
-            if (!value.success) {
-                return value;
-            }
-            auctions.push(...value.auctions!);
+            auctions.push(...result.auctions!);
         }
     }
 
