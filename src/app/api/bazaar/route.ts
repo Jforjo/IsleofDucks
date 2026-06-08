@@ -39,7 +39,11 @@ export async function GET(request: NextRequest): Promise<Response> {
     }
 
     const bazaar = Object.fromEntries(Object.entries(bazaarRes.bazaar.products).map(([key, product]) => {
-        return [items.items!.find((i) => i.id === key)?.name || product.product_id, product]
+        if (product.product_id.includes("ENCHANTMENT_")) return [
+            product.product_id.replace("ENCHANTMENT_", "").replace("ULTIMATE_", "").replaceAll("_", " ").split(" ").map((s) => s[0] + s.slice(1).toLowerCase()).join(" "),
+            product
+        ]
+        return [items.items!.find((i) => i.id === key)?.name || product.product_id, product];
     }).filter(([name, ]) => name !== null)) as Record<string, SkyblockBazaarResponse['products'][string]>;
 
     if (!item) return Response.json({
