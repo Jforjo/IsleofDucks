@@ -39,7 +39,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     }
 
     const bazaar = Object.fromEntries(Object.entries(bazaarRes.bazaar.products).map(([key, product]) => {
-        return [items.items!.find((i) => i.id === key)?.name || null, product]
+        return [items.items!.find((i) => i.id === key)?.name || product.product_id, product]
     }).filter(([name, ]) => name !== null)) as Record<string, SkyblockBazaarResponse['products'][string]>;
 
     if (!item) return Response.json({
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         bazaar: bazaar
     });
 
-    const filteredBazaar = Object.fromEntries(Object.entries(bazaar).filter(([name, product]) => name.toLowerCase() === item.toLowerCase() || product.product_id.toLowerCase() === item.toLowerCase()));
+    const filteredBazaar = Object.fromEntries(Object.entries(bazaar).filter(([name, ]) => name.toLowerCase() === item.toLowerCase()));
 
     if (Object.keys(filteredBazaar).length === 0) return Response.json({
         success: false,
