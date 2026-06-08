@@ -87,7 +87,8 @@ async function removeStrikes(
         content: null,
         embeds: [
             {
-                title: `<@${discordId}> - ${discordId} was removed from my strike list!`,
+                title: `User was removed from my strike list!`,
+                description: `Discord: <@${discordId}> - ${discordId}`,
                 color: 0xFB9B00,
                 footer: {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
