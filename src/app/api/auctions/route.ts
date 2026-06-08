@@ -48,8 +48,18 @@ export async function GET(request: NextRequest): Promise<Response> {
         message: "No auctions found for the specified item"
     });
 
+    const orederedAuctions = filteredAuctions.sort((a, b) => a.amount - b.amount);
+    const avg = orederedAuctions.slice(0, 5).reduce((a, b) => a + b.amount, 0) / 5;
+    const baseline = avg * 0.1;
+
+    const filteredAuctions2 = filteredAuctions.filter((auction) => auction.amount > baseline);
+    if (filteredAuctions2.length === 0) return Response.json({
+        success: true,
+        auction: filteredAuctions[0]
+    });
+
     return Response.json({
         success: true,
-        auction: filteredAuctions.sort((a, b) => a.amount - b.amount)[0]
+        auction: filteredAuctions2[0]
     });
 }
