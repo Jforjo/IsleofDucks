@@ -175,7 +175,7 @@ export default async function(
             if (sponsor)
                 components.push({
                     type: ComponentType.TextDisplay,
-                    content: `Sponsored by <@${IsleofDucks.staticIDs.Jforjo}>`,
+                    content: `Sponsored by <@${sponsor}>`,
                 });
             if (prize)
                 components.push({
