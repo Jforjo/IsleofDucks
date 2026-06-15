@@ -438,6 +438,7 @@ async function checkImmune(
                 title: "Removed immune players",
                 description: [
                     `Removed ${removedCount.notInGuild} immune players that are not in the guild.`,
+                    `Removed ${removedCount.levelReq} immune players that did not meet the level requirement.`,
                     '',
                     ...removedCount.names
                 ].join('\n'),
