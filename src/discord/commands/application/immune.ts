@@ -1,7 +1,7 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole, GetGuildMember } from "@/discord/discordUtils";
-import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getUserDataFromUUID } from "@/discord/utils";
-import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, RemoveGuildMemberRole, AddGuildMemberRole, GetGuildMember, ErrorEmbed } from "@/discord/discordUtils";
+import { getImmunePlayers, isImmunePlayer, addImmunePlayer, removeImmunePlayer, getUserDataFromUUID, getSettingValue } from "@/discord/utils";
+import { getGuildData, getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
 
 async function addImmune(
@@ -358,32 +358,62 @@ async function checkImmune(
         )
     }
 
-    const removedCount: { notInGuild: number, names: string[] } = {
+    const removedCount: {
+        notInGuild: number,
+        levelReq: number,
+        names: string[]
+    } = {
         notInGuild: 0,
+        levelReq: 0,
         names: []
     };
+
+    const duckGuildResponse = await getGuildData("Isle of Ducks");
+    if (!duckGuildResponse.success) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not get guild data for Isle of Ducks", timestamp, true)
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not get guild data for Isle of Ducks" },
+            { status: 400 }
+        )
+    }
+    const ducklingGuildResponse = await getGuildData("Isle of Ducklings");
+    if (!ducklingGuildResponse.success) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not get guild data for Isle of Ducklings", timestamp, true)
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not get guild data for Isle of Ducklings" },
+            { status: 400 }
+        )
+    }
+    const immuneReq = await getSettingValue("immune_req");
+
     for (const player of immunePlayers.players) {
-        const guildRes = await isPlayerInGuild(player.uuid);
-        if (!guildRes.success) continue;
-        if (!guildRes.isInGuild) {
+        const userData = await getUserDataFromUUID(player.uuid);
+
+        if (!duckGuildResponse.guild.members.find(member => member.uuid === player.uuid) && !ducklingGuildResponse.guild.members.find(member => member.uuid === player.uuid)) {
             await removeImmunePlayer(player.uuid);
             removedCount.notInGuild++;
-            const discordRes = await getUserDataFromUUID(player.uuid);
-            if (discordRes && discordRes.success && discordRes.data.discord && discordRes.data.discord.discordid) {
-                await RemoveGuildMemberRole(IsleofDucks.serverID, discordRes.data.discord.discordid, IsleofDucks.roles.immune);
-                removedCount.names.push(`<@${discordRes.data.discord.discordid}> - ${player.name ?? player.uuid}`);
+            if (userData && userData.success && userData.data.discord && userData.data.discord.discordid) {
+                await RemoveGuildMemberRole(IsleofDucks.serverID, userData.data.discord.discordid, IsleofDucks.roles.immune);
+                removedCount.names.push(`<@${userData.data.discord.discordid}> - ${player.name ?? player.uuid}`);
             } else {
                 removedCount.names.push(player.name ?? player.uuid);
             }
-        } else if (guildRes.guild.name !== "Isle of Ducks" && guildRes.guild.name !== "Isle of Ducklings") {
+        }
+
+        if (userData && userData.success && userData.data.minecraft.exp / 100 < Number(immuneReq)) {
             await removeImmunePlayer(player.uuid);
-            removedCount.notInGuild++;
-            const discordRes = await getUserDataFromUUID(player.uuid);
-            if (discordRes && discordRes.success && discordRes.data.discord && discordRes.data.discord.discordid) {
-                await RemoveGuildMemberRole(IsleofDucks.serverID, discordRes.data.discord.discordid, IsleofDucks.roles.immune);
-                removedCount.names.push(`<@${discordRes.data.discord.discordid}> - ${player.name ?? player.uuid}`);
+            removedCount.levelReq++;
+            if (userData.data.discord && userData.data.discord.discordid) {
+                await RemoveGuildMemberRole(IsleofDucks.serverID, userData.data.discord.discordid, IsleofDucks.roles.immune);
+                removedCount.names.push(`<@${userData.data.discord.discordid}> - ${player.name ?? player.uuid} (Level Req)`);
             } else {
-                removedCount.names.push(player.name ?? player.uuid);
+                removedCount.names.push(`${player.name ?? player.uuid} (Level Req)`);
             }
         }
 
