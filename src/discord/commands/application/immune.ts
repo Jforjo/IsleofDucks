@@ -407,7 +407,7 @@ async function checkImmune(
         }
 
         if (userData && userData.success && userData.data.minecraft.exp / 100 < Number(immuneReq) && player.reason === "Level") {
-            await removeImmunePlayer(player.uuid);
+            await removeImmunePlayer(player.uuid, "Level");
             removedCount.levelReq++;
             if (userData.data.discord && userData.data.discord.discordid) {
                 await RemoveGuildMemberRole(IsleofDucks.serverID, userData.data.discord.discordid, IsleofDucks.roles.immune);
