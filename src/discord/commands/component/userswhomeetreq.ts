@@ -51,7 +51,7 @@ export default async function(
         );
     }
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, ( parseInt(page) - 1 ) * 25, 25, guild === "duck" ? parseInt(otherReq) * 100 : undefined);
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, ( parseInt(page) - 1 ) * 25, 25, guild === "duck" ? undefined : parseInt(otherReq) * 100);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
@@ -62,7 +62,7 @@ export default async function(
             { status: 400 }
         );
     }
-    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100, guild === "duck" ? parseInt(otherReq) * 100 : undefined);
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100, guild === "duck" ? undefined : parseInt(otherReq) * 100);
 
     // Get all names of the users
     const users = await Promise.all(usersRes.map(async (user) => {

@@ -76,10 +76,10 @@ export default async function(
         );
     }
 
-    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100, options.duck ? parseInt(otherReq) * 100 : undefined);
+    const userCount = await getAllMinecraftUsersExpReqCount(parseInt(req) * 100, options.duck ? undefined : parseInt(otherReq) * 100);
     const page = options.duck && options.duck.page ? Math.min(options.duck.page, Math.ceil(userCount / 25)) : options.duckling && options.duckling.page ? Math.min(options.duckling.page, Math.ceil(userCount / 25)) : 1;
 
-    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, page > 0 ? 25 * (page - 1) : 0, 25, options.duck ? parseInt(otherReq) * 100 : undefined);
+    const usersRes = await getAllMinecraftUsersExpReqLimited(parseInt(req) * 100, page > 0 ? 25 * (page - 1) : 0, 25, options.duck ? undefined : parseInt(otherReq) * 100);
     if (usersRes.length === 0) {
         await FollowupMessage(interaction.token, {
             flags: MessageFlags.IsComponentsV2,
