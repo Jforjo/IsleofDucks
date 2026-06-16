@@ -1,6 +1,6 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
 import { getHypixelAuctions, getHypixelPlayer } from "@/discord/hypixelUtils";
-import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getImmunePlayers, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
+import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getImmunePlayers, getUserDataFromUUID, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
@@ -49,12 +49,15 @@ export default async function(
     }
 
     const timestamp = ConvertSnowflakeToDate(interaction.id)
-    // await CreateInteractionResponse(interaction.id, interaction.token, {
-    //     type: InteractionResponseType.ChannelMessageWithSource,
-    //     data: {
-    //         flags: MessageFlags.Ephemeral,
-    //         content: `<t:${Math.floor(timestamp.getTime() / 1000) + 60}:R>`
-    //     }
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+            flags: MessageFlags.Ephemeral,
+            content: `<t:${Math.floor(timestamp.getTime() / 1000) + 60}:R>`
+        }
+    });
+    // await CreateInteractionResponse(interaction.id ,interaction.token, {
+    //     type: InteractionResponseType.DeferredChannelMessageWithSource,
     // });
 
     // let linked = 0;
@@ -97,58 +100,55 @@ export default async function(
     //     }
     // }
 
-    // const auctions = await getHypixelAuctions();
-    // if (!auctions.success) {
-    //     await FollowupMessage(interaction.token, {
-    //         content: `Failed to get Hypixel auctions: ${auctions.message}\n${auctions.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + auctions.retry ) / 1000)}:R> to continue` : ""}`,
-    //     });
-    //     return NextResponse.json(
-    //         { success: false, error: "Failed to get Hypixel auctions" },
-    //         { status: 500 }
-    //     );
-    // }
+    const auctions = await getHypixelAuctions();
+    if (!auctions.success) {
+        await FollowupMessage(interaction.token, {
+            content: `Failed to get Hypixel auctions: ${auctions.message}\n${auctions.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + auctions.retry ) / 1000)}:R> to continue` : ""}`,
+        });
+        return NextResponse.json(
+            { success: false, error: "Failed to get Hypixel auctions" },
+            { status: 500 }
+        );
+    }
 
-    // for (const auction of auctions.auctions!) {
-    //     const user = auction.auctioneer;
-    //     if (!user) continue;
-    //     const exists = await checkMinecraftInDB(user);
-    //     if (!exists) {
-    //         await createMinecraftUser(user);
-    //     }
-    //     const playerData = await checkPlayer(user);
-    //     if (!playerData.success) {
-    //         if (playerData.message === "Key throttle") {
-    //             await FollowupMessage(interaction.token, {
-    //                 content: `Hypixel API key is being throttled, try again <t:${Math.floor(( timestamp.getTime() + playerData.retry! ) / 1000)}:R> to continue`,
-    //             });
-    //             return NextResponse.json(
-    //                 { success: false, error: "Hypixel API key is being throttled, try again later" },
-    //                 { status: 500 }
-    //             );
-    //         }
-    //         continue;
-    //     }
-    //     await updateMinecraftUser(user, {
-    //         exp: playerData.experience,
-    //     });
-    // }
+    for (const auction of auctions.auctions!) {
+        const user = auction.auctioneer;
+        if (!user) continue;
+        const exists = await getUserDataFromUUID(user);
+        if (!exists.success) {
+            await createMinecraftUser(user);
+        }
+        if (exists.success && exists.data.minecraft.exp !== 0) continue;
+        const playerData = await checkPlayer(user);
+        if (!playerData.success) {
+            if (playerData.message === "Key throttle") {
+                await FollowupMessage(interaction.token, {
+                    content: `Hypixel API key is being throttled, try again <t:${Math.floor(( timestamp.getTime() + playerData.retry! ) / 1000)}:R> to continue`,
+                });
+                return NextResponse.json(
+                    { success: false, error: "Hypixel API key is being throttled, try again later" },
+                    { status: 500 }
+                );
+            }
+            continue;
+        }
+        await updateMinecraftUser(user, {
+            exp: playerData.experience,
+        });
+    }
 
-    await CreateInteractionResponse(interaction.id ,interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
-    });
-
-    await getScammerListFromIDs([
-        // scamming
-        "1135286141294215168",
-        // ratting
-        "1303468907377459200",
-        // blackmail / defrauding
-        "1374377451169517681",
-        // exit scamming, ratting, alt of 340267184041361410
-        "268803307680563201",
-        // looting
-        "268803307680563201"
-    ]);
+    // await getScammerListFromIDs([
+    //     // scamming
+    //     "1135286141294215168",
+    //     // ratting
+    //     "1303468907377459200",
+    //     // blackmail / defrauding
+    //     "1374377451169517681",
+    //     // exit scamming, ratting, alt of 340267184041361410
+    //     "268803307680563201",
+    //     // looting
+    //     "268803307680563201"
+    // ]);
 
     await FollowupMessage(interaction.token, {
         content: `Done!`,
