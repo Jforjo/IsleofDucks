@@ -24,7 +24,7 @@ export default async function(
         const user = await getUsernameOrUUID(score.uuid);
         if (!user.success) throw new Error(user.message);
         return {
-            name: user.name,
+            name: user.name.replaceAll("_", "\\_"),
             score: score.score,
         };
     })).catch((err) => {
@@ -64,7 +64,7 @@ export default async function(
                 components: [
                     {
                         type: ComponentType.TextDisplay,
-                        content: "## Scramble Leaderboard",
+                        content: "## Scramble Leaderboard (Top 10)",
                     },
                     { type: ComponentType.Separator },
                     {
@@ -90,7 +90,7 @@ export default async function(
 }
 export const CommandData = {
     name: "leaderboard",
-    description: "Shows the top 10 players in verious catagories.",
+    description: "Shows the top 10 players in various categories.",
     options: [
         {
             type: ApplicationCommandOptionType.Subcommand,
