@@ -432,7 +432,7 @@ export async function UpdateDucklingGuildRoles(guildID: Snowflake): Promise<{
             if (!discordID) continue;
             const discordMember = members.find(m => m.user.id === discordID);
             if (!discordMember) continue;
-            if (discordMember.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
+            if (!discordMember.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
                 await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duckling_guild_member);
                 rolesAdded++;
                 usersHadRolesAdded.push(discordID);
