@@ -1495,6 +1495,7 @@ const Roles = {
     duck_guild_member: "933258162931400764",
     duckling_guild_member: "998380474407846000",
     guild_member: "1450726539594567791",
+    new_guild_member: "1519212585495564329",
     immune: "1276013765405704266",
     booster: "881421446017056799",
     booster2x: "993257342848213126",

@@ -101,10 +101,12 @@ export async function UpdateUserGuildRoles(guildID: Snowflake, userID: Snowflake
         const removed1 = await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.duck_guild_member);
         const removed2 = await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.duckling_guild_member);
         const removed3 = await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.guild_member);
-        rolesRemoved += (Number(removed1) + Number(removed2)) + Number(removed3);
+        const removed4 = await RemoveGuildMemberRole(guildID, userID, IsleofDucks.roles.new_guild_member);
+        rolesRemoved += (Number(removed1) + Number(removed2)) + Number(removed3) + Number(removed4);
         removed1 && usersHadRolesRemoved.push(IsleofDucks.roles.duck_guild_member);
         removed2 && usersHadRolesRemoved.push(IsleofDucks.roles.duckling_guild_member);
         removed3 && usersHadRolesRemoved.push(IsleofDucks.roles.guild_member);
+        removed4 && usersHadRolesRemoved.push(IsleofDucks.roles.new_guild_member);
     }
 
     return {
@@ -371,6 +373,8 @@ export async function UpdateDuckGuildRoles(guildID: Snowflake): Promise<{
     const usersHadRolesAdded: Snowflake[] = [];
     const usersHadRolesRemoved: Snowflake[] = [];
 
+    const weekAgo = Date.now() - 1000 * 60 * 60 * 24 * 7;
+
     if (duckMembers.success) {
         for (const member of duckMembers.guild.members) {
             const res = await getUserDataFromUUID(member.uuid);
@@ -380,18 +384,27 @@ export async function UpdateDuckGuildRoles(guildID: Snowflake): Promise<{
             if (!discordID) continue;
             const discordMember = members.find(m => m.user.id === discordID);
             if (!discordMember) continue;
-            if (discordMember.roles.includes(IsleofDucks.roles.duck_guild_member)) continue;
-            await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duck_guild_member);
-            rolesAdded++;
-            usersHadRolesAdded.push(discordID);
+            if (!discordMember.roles.includes(IsleofDucks.roles.duck_guild_member)) {
+                await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duck_guild_member);
+                rolesAdded++;
+                usersHadRolesAdded.push(discordID);
+            }
+            if (member.joined > weekAgo) {
+                if (!discordMember.roles.includes(IsleofDucks.roles.new_guild_member)) {
+                    await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.new_guild_member);
+                    rolesAdded++;
+                    usersHadRolesAdded.push(discordID);
+                }
+            }
         }
     }
+
 
     return {
         rolesAdded,
         rolesRemoved,
-        usersHadRolesAdded,
-        usersHadRolesRemoved
+        usersHadRolesAdded: usersHadRolesAdded.filter((value, index) => usersHadRolesAdded.indexOf(value) === index),
+        usersHadRolesRemoved: usersHadRolesRemoved.filter((value, index) => usersHadRolesRemoved.indexOf(value) === index)
     }
 }
 export async function UpdateDucklingGuildRoles(guildID: Snowflake): Promise<{
@@ -407,6 +420,8 @@ export async function UpdateDucklingGuildRoles(guildID: Snowflake): Promise<{
     let rolesRemoved = 0;
     const usersHadRolesAdded: Snowflake[] = [];
     const usersHadRolesRemoved: Snowflake[] = [];
+    
+    const weekAgo = Date.now() - 1000 * 60 * 60 * 24 * 7;
 
     if (ducklingMembers.success) {
         for (const member of ducklingMembers.guild.members) {
@@ -417,18 +432,26 @@ export async function UpdateDucklingGuildRoles(guildID: Snowflake): Promise<{
             if (!discordID) continue;
             const discordMember = members.find(m => m.user.id === discordID);
             if (!discordMember) continue;
-            if (discordMember.roles.includes(IsleofDucks.roles.duckling_guild_member)) continue;
-            await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duckling_guild_member);
-            rolesAdded++;
-            usersHadRolesAdded.push(discordID);
+            if (discordMember.roles.includes(IsleofDucks.roles.duckling_guild_member)) {
+                await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.duckling_guild_member);
+                rolesAdded++;
+                usersHadRolesAdded.push(discordID);
+            }
+            if (member.joined > weekAgo) {
+                if (!discordMember.roles.includes(IsleofDucks.roles.new_guild_member)) {
+                    await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.new_guild_member);
+                    rolesAdded++;
+                    usersHadRolesAdded.push(discordID);
+                }
+            }
         }
     }
 
     return {
         rolesAdded,
         rolesRemoved,
-        usersHadRolesAdded,
-        usersHadRolesRemoved
+        usersHadRolesAdded: usersHadRolesAdded.filter((value, index) => usersHadRolesAdded.indexOf(value) === index),
+        usersHadRolesRemoved: usersHadRolesRemoved.filter((value, index) => usersHadRolesRemoved.indexOf(value) === index)
     }
 }
 export async function UpdateGuildRoles(guildID: Snowflake): Promise<{
