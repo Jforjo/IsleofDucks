@@ -395,6 +395,12 @@ export async function UpdateDuckGuildRoles(guildID: Snowflake): Promise<{
                     rolesAdded++;
                     usersHadRolesAdded.push(discordID);
                 }
+            } else {
+                if (discordMember.roles.includes(IsleofDucks.roles.new_guild_member)) {
+                    await RemoveGuildMemberRole(guildID, discordID, IsleofDucks.roles.new_guild_member);
+                    rolesRemoved++;
+                    usersHadRolesRemoved.push(discordID);
+                }
             }
         }
     }
