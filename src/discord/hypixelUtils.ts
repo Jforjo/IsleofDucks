@@ -291,7 +291,7 @@ export async function getProfiles(
         return {
             success: false,
             status: res.status,
-            message: 'User has no profiles'
+            message: `User has no profiles: ${uuid}`
         };
     }
     return {
