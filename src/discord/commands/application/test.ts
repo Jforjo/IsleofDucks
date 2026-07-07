@@ -1,5 +1,5 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
-import { getHypixelAuctions, getHypixelPlayer } from "@/discord/hypixelUtils";
+import { getHypixelAuctions, getHypixelPlayer, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getImmunePlayers, getUserDataFromUUID, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
@@ -111,31 +111,52 @@ export default async function(
         );
     }
 
+    const players: string[] = [];
+    const guilds: string[] = [];
+
     for (const auction of auctions.auctions!) {
         const user = auction.auctioneer;
         if (!user) continue;
-        const exists = await getUserDataFromUUID(user);
-        if (!exists.success) {
-            await createMinecraftUser(user);
-        }
-        if (exists.success && exists.data.minecraft.exp !== 0) continue;
-        const playerData = await checkPlayer(user);
-        if (!playerData.success) {
-            if (playerData.message === "Key throttle") {
-                await FollowupMessage(interaction.token, {
-                    content: `Hypixel API key is being throttled, try again <t:${Math.floor(( timestamp.getTime() + playerData.retry! ) / 1000)}:R> to continue`,
-                });
-                return NextResponse.json(
-                    { success: false, error: "Hypixel API key is being throttled, try again later" },
-                    { status: 500 }
-                );
-            }
+        if (players.includes(user)) continue;
+        const guild = await isPlayerInGuild(user);
+        if (!guild.success) {
+            if (guild.message === "Key throttle") break;
             continue;
         }
-        await updateMinecraftUser(user, {
-            exp: playerData.experience,
-        });
+        if (!guild.isInGuild) continue;
+        guilds.push(guild.guild.name);
+        players.push(...guild.guild.members.map(m => m.uuid));
     }
+
+    await FollowupMessage(interaction.token, {
+        content: guilds.join("\n"),
+    });
+
+    // for (const auction of auctions.auctions!) {
+    //     const user = auction.auctioneer;
+    //     if (!user) continue;
+    //     const exists = await getUserDataFromUUID(user);
+    //     if (!exists.success) {
+    //         await createMinecraftUser(user);
+    //     }
+    //     if (exists.success && exists.data.minecraft.exp !== 0) continue;
+    //     const playerData = await checkPlayer(user);
+    //     if (!playerData.success) {
+    //         if (playerData.message === "Key throttle") {
+    //             await FollowupMessage(interaction.token, {
+    //                 content: `Hypixel API key is being throttled, try again <t:${Math.floor(( timestamp.getTime() + playerData.retry! ) / 1000)}:R> to continue`,
+    //             });
+    //             return NextResponse.json(
+    //                 { success: false, error: "Hypixel API key is being throttled, try again later" },
+    //                 { status: 500 }
+    //             );
+    //         }
+    //         continue;
+    //     }
+    //     await updateMinecraftUser(user, {
+    //         exp: playerData.experience,
+    //     });
+    // }
 
     // await getScammerListFromIDs([
     //     // scamming
@@ -150,9 +171,9 @@ export default async function(
     //     "268803307680563201"
     // ]);
 
-    await FollowupMessage(interaction.token, {
-        content: `Done!`,
-    });
+    // await FollowupMessage(interaction.token, {
+    //     content: `Done!`,
+    // });
 
     return NextResponse.json(
         { success: true },
