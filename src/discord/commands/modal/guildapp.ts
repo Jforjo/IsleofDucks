@@ -7,6 +7,7 @@ import { getBannedPlayer, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
 import { getSBUBanlistFromUUID } from "@/discord/sbu";
 import { getScammerListFromIDs } from "@/discord/scammerList";
+import { getSkyKingsBanlistFromUUID } from "@/discord/skykings";
 
 export default async function(
     interaction: APIModalSubmitInteraction
@@ -311,6 +312,9 @@ export default async function(
     const SBUBanlistResponse = await getSBUBanlistFromUUID(mojang.uuid);
     if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
 
+    const SkyKingsBanlistResponse = await getSkyKingsBanlistFromUUID(mojang.uuid);
+    if (!SkyKingsBanlistResponse.success) console.log("SkyKingsBanlist Error:", SkyKingsBanlistResponse.message);
+
     if (member.roles.some(role => TICKET.denyRoles?.includes(role))) {
         await FollowupMessage(interaction.token, {
             content: `You cannot create this ticket type as you have a role that denies you from creating it!`,
@@ -534,6 +538,16 @@ export default async function(
                                     `${no} They are in the SBU ban list!` :
                                     `${no} ${SBUBanlistResponse.details.reason}`
                             ) : `${yes} They are not in the SBU ban list`
+                        ) : `⚠️ Failed to check banlist status`,
+                    },
+                    {
+                        name: "SkyKings Banlist",
+                        value: SkyKingsBanlistResponse.success ? (
+                            SkyKingsBanlistResponse.result.scammer ? (
+                                SkyKingsBanlistResponse.result.reason === null ?
+                                    `${no} They are in the SkyKings ban list!` :
+                                    `${no} ${SkyKingsBanlistResponse.result.reason}`
+                            ) : `${yes} They are not in the SkyKings ban list`
                         ) : `⚠️ Failed to check banlist status`,
                     },
                     {
