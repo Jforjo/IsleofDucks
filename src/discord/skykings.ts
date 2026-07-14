@@ -36,7 +36,7 @@ export async function getSkyKingsBanlistFromUUID(
     const res = await fetch(SKYKINGS.routes.getScammerFromUUID(uuid), {
         method: 'GET',
         headers: {
-            'Authorization': `${process.env.SKYKINGS_TOKEN}`
+            'Authorization': `Bearer ${process.env.SKYKINGS_TOKEN}`
         }
     });
 
