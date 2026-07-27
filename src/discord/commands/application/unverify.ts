@@ -49,8 +49,7 @@ export default async function(
 
     await removeLink(userId);
 
-    if (interaction.guild)
-        await RemoveGuildMemberRole(interaction.guild.id, userId, IsleofDucks.roles.verified);
+    await RemoveGuildMemberRole(IsleofDucks.serverID, userId, IsleofDucks.roles.verified);
 
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.ChannelMessageWithSource,
