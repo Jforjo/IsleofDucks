@@ -1,6 +1,6 @@
 import { AddGuildMemberRole, CreateInteractionResponse, EditGuildMember, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getHypixelPlayer, getUsernameOrUUID } from "@/discord/hypixelUtils";
-import { checkDiscordInDB, checkLinked, checkMinecraftInDB, createDiscordUser, createMinecraftUser, linkDiscordToMinecraft } from "@/discord/utils";
+import { checkDiscordInDB, checkLinked, checkMinecraftInDB, createDiscordUser, createMinecraftUser, getUserDataFromDiscordID, linkDiscordToMinecraft } from "@/discord/utils";
 import { APIModalSubmitInteraction, APIInteractionResponse, InteractionResponseType, MessageFlags, ComponentType, APIGuildMember } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 
@@ -133,6 +133,20 @@ export default async function(
     }
 
     const discordAlrLinked = await checkLinked({discordid: member.user.id});
+    const minecraftAlrLinked = await checkLinked({uuid: userRes.uuid});
+    // Add role to users who have already verified, but for some reason
+    // do not have the verified role (ie they left the server annd rejoined)
+    if (discordAlrLinked && minecraftAlrLinked) {
+        const linkedData = await getUserDataFromDiscordID(member.user.id);
+        if (linkedData && "uuid" in linkedData && linkedData.uuid === userRes.uuid) {
+            await AddGuildMemberRole(IsleofDucks.serverID, member.user.id, IsleofDucks.roles.verified);
+
+            return NextResponse.json(
+                { success: true },
+                { status: 200 }
+            );
+        }
+    }
     if (discordAlrLinked) {
         await FollowupMessage(interaction.token, {
             content: "You are already linked to a Minecraft account!",
@@ -142,7 +156,6 @@ export default async function(
             { status: 400 }
         );
     }
-    const minecraftAlrLinked = await checkLinked({uuid: userRes.uuid});
     if (minecraftAlrLinked) {
         await FollowupMessage(interaction.token, {
             content: "You are already linked to a Discord account!",
