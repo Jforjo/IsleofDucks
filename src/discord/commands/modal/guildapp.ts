@@ -312,8 +312,8 @@ export default async function(
     const SBUBanlistResponse = await getSBUBanlistFromUUID(mojang.uuid);
     if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
 
-    const SkyKingsBanlistResponse = await getSkyKingsBanlistFromUUID(mojang.uuid);
-    if (!SkyKingsBanlistResponse.success) console.log("SkyKingsBanlist Error:", SkyKingsBanlistResponse.message);
+    // const SkyKingsBanlistResponse = await getSkyKingsBanlistFromUUID(mojang.uuid);
+    // if (!SkyKingsBanlistResponse.success) console.log("SkyKingsBanlist Error:", SkyKingsBanlistResponse.message);
 
     if (member.roles.some(role => TICKET.denyRoles?.includes(role))) {
         await FollowupMessage(interaction.token, {
@@ -540,16 +540,16 @@ export default async function(
                             ) : `${yes} They are not in the SBU ban list`
                         ) : `⚠️ Failed to check banlist status`,
                     },
-                    {
-                        name: "SkyKings Banlist",
-                        value: SkyKingsBanlistResponse.success ? (
-                            SkyKingsBanlistResponse.result.scammer ? (
-                                SkyKingsBanlistResponse.result.reason === null ?
-                                    `${no} They are in the SkyKings ban list!` :
-                                    `${no} ${SkyKingsBanlistResponse.result.reason}`
-                            ) : `${yes} They are not in the SkyKings ban list`
-                        ) : `⚠️ Failed to check banlist status`,
-                    },
+                    // {
+                    //     name: "SkyKings Banlist",
+                    //     value: SkyKingsBanlistResponse.success ? (
+                    //         SkyKingsBanlistResponse.result.scammer ? (
+                    //             SkyKingsBanlistResponse.result.reason === null ?
+                    //                 `${no} They are in the SkyKings ban list!` :
+                    //                 `${no} ${SkyKingsBanlistResponse.result.reason}`
+                    //         ) : `${yes} They are not in the SkyKings ban list`
+                    //     ) : `⚠️ Failed to check banlist status`,
+                    // },
                     {
                         name: "Scammer List",
                         value: ScammerListResponse.success ? (
