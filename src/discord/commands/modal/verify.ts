@@ -138,7 +138,7 @@ export default async function(
     // do not have the verified role (ie they left the server annd rejoined)
     if (discordAlrLinked && minecraftAlrLinked) {
         const linkedData = await getUserDataFromDiscordID(member.user.id);
-        if (linkedData && "uuid" in linkedData && linkedData.uuid === userRes.uuid) {
+        if (linkedData.success && linkedData.data.minecraft && linkedData.data.minecraft.uuid === userRes.uuid) {
             await AddGuildMemberRole(IsleofDucks.serverID, member.user.id, IsleofDucks.roles.verified);
 
             return NextResponse.json(
