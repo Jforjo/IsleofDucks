@@ -101,6 +101,22 @@ export default {
         value: (profile: SkyBlockProfileMember) => profile?.glacite_player_data?.mineshafts_entered ?? 0
     },
     /**
+     * FORAGING
+     */
+    totalTreeGifts: {
+        title: "Total Tree Gifts",
+        value: (profile: SkyBlockProfileMember) => {
+            if (!("foraging" in profile)) return 0;
+            const foraging = profile.foraging as {
+                tree_gifts?: {
+                    FIG?: number;
+                    MANGROVE?: number;
+                }
+            } | undefined;
+            return ( foraging?.tree_gifts?.FIG ?? 0 ) + ( foraging?.tree_gifts?.MANGROVE ?? 0 )
+        }
+    },
+    /**
      *  SLAYERS
      */
     totalSlayerExperience: {
