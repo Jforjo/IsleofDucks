@@ -111,9 +111,14 @@ export default {
                 tree_gifts?: {
                     FIG?: number;
                     MANGROVE?: number;
+                    HELIX?: number;
                 }
             } | undefined;
-            return ( foraging?.tree_gifts?.FIG ?? 0 ) + ( foraging?.tree_gifts?.MANGROVE ?? 0 )
+            return (
+                ( foraging?.tree_gifts?.FIG ?? 0 ) +
+                ( foraging?.tree_gifts?.MANGROVE ?? 0 ) +
+                ( foraging?.tree_gifts?.HELIX ?? 0 )
+            );
         }
     },
     /**
