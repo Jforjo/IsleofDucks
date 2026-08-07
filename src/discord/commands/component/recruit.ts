@@ -425,6 +425,8 @@ export default async function Command(
                 disableButton = true;
             } else if (content.includes("is already in another guild!")) {
                 disableButton = false;
+            } else if (content.includes("You've already invited")) {
+                disableButton = false;
             } else return;
             logMessage = content;
             return;
