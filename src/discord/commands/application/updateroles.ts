@@ -233,24 +233,14 @@ export async function UpdateLevelRoles(guildID: Snowflake): Promise<{
                 if (member.roles.includes(role.id)) {
                     await RemoveGuildMemberRole(guildID, member.user.id, role.id);
                     rolesRemoved++;
-                    usersHadRolesRemoved.push(role.id);
+                    usersHadRolesRemoved.push(member.user.id);
                 }
             }
-            return {
-                rolesAdded,
-                rolesRemoved,
-                usersHadRolesAdded,
-                usersHadRolesRemoved
-            }
+            continue;
         }
 
         const player = await getUserDataFromDiscordID(member.user.id);
-        if (!player || !player.success || !player.data.minecraft) return {
-            rolesAdded,
-            rolesRemoved,
-            usersHadRolesAdded,
-            usersHadRolesRemoved
-        };
+        if (!player || !player.success || !player.data.minecraft) continue;
 
         let expectedRole: Snowflake = "";
         let currentRoles: Snowflake[] = [];
@@ -267,7 +257,7 @@ export async function UpdateLevelRoles(guildID: Snowflake): Promise<{
                 if (role !== expectedRole) {
                     await RemoveGuildMemberRole(guildID, member.user.id, role);
                     rolesRemoved++;
-                    usersHadRolesRemoved.push(role);
+                    usersHadRolesRemoved.push(member.user.id);
                 } else {
                     newRoles.push(role);
                 }
@@ -279,7 +269,7 @@ export async function UpdateLevelRoles(guildID: Snowflake): Promise<{
         if (currentRoles.length < 1) {
             await AddGuildMemberRole(guildID, member.user.id, expectedRole);
             rolesAdded++;
-            usersHadRolesAdded.push(expectedRole);
+            usersHadRolesAdded.push(member.user.id);
         }
     }
 
