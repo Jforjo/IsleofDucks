@@ -99,6 +99,27 @@ export default async function Command(
     
     const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative(guildName, superlative);
 
+    if (superlative.hidden) {
+        await BACKGROUND_SUPERLATIVE_UPDATE;
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: `Superlative - ${superlative.data.title}`,
+                    description: "This superlative is hidden!",
+                    color: IsleofDucks.colours.main,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+        return NextResponse.json(
+            { success: true },
+            { status: 200 }
+        );
+    }
+
     const guildPromise = getGuildData(guildName);
     const guildUpdateResponse = FollowupMessage(interaction.token, {
         embeds: [
