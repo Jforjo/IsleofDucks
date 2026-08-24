@@ -70,7 +70,7 @@ async function createSuperlativeAdv(
         );
     }
 
-    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z\s]+)\*\*\nDecimals: \*\*([0-3])\*\*$/gm.exec(interaction.message.components[0].components[1].content);
+    const dataText = /^Start Date: \*\*([a-zA-Z]+ [0-9]{4})\*\*\nType: \*\*([a-zA-Z\s]+)\*\*\nDecimals: \*\*([0-3])\*\*\nHidden: \*\*(true|false)\*\*$/gm.exec(interaction.message.components[0].components[1].content);
     if (!dataText) {
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
@@ -146,7 +146,8 @@ async function createSuperlativeAdv(
         superlativeType,
         Number(dataText[3]),
         rankData.filter((section) => section.type === "duck").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
-        rankData.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement }))
+        rankData.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
+        Boolean(dataText[4])
     );
 
     if (!created) {

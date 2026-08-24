@@ -394,7 +394,8 @@ async function createSuperlativeAdv(
     interaction: APIChatInputApplicationCommandInteraction,
     dateInput: string,
     typeInput: string,
-    decimals = 2
+    decimals = 2,
+    hidden = false
 ): Promise<
     NextResponse<
         {
@@ -435,11 +436,11 @@ async function createSuperlativeAdv(
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
                 flags: MessageFlags.Ephemeral,
-                content: "Invalid decmial value."
+                content: "Invalid decimal value."
             }
         });
         return NextResponse.json(
-            { success: false, error: "Invalid decmial value." },
+            { success: false, error: "Invalid decimal value." },
             { status: 404 }
         );
     }
@@ -512,7 +513,8 @@ async function createSuperlativeAdv(
                                     year: "numeric"
                                 })}**`,
                                 `Type: **${superlativeType.title}**`,
-                                `Decimals: **${decimals}**`
+                                `Decimals: **${decimals}**`,
+                                `Hidden: **${hidden}**`
                             ].join('\n'),
                         },
                         {
@@ -1137,7 +1139,7 @@ export default async function(
         if (options.view.date) return await viewSuperlativeAdvWithDate(interaction, options.view.date);
         return await viewSuperlativeAdv(interaction);
     }
-    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date, options.create.type, options.create.decimals);
+    else if (options.create) return await createSuperlativeAdv(interaction, options.create.date, options.create.type, options.create.decimals, options.create.hidden);
     else if (options.delete) return await deleteSuperlativeAdv(interaction, options.delete.date);
     else if (options.test) return await testSuperlativeAdv(interaction, options.test.type);
 
@@ -1186,6 +1188,11 @@ export const CommandData = {
                     name: "decimals",
                     description: "The amount of decimal places to show when displaying the superlative. (default: 2)",
                     type: ApplicationCommandOptionType.Integer
+                },
+                {
+                    name: "hidden",
+                    description: "Whether or not the superlative should be hidden.",
+                    type: ApplicationCommandOptionType.Boolean
                 }
             ]
         },

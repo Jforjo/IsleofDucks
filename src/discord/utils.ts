@@ -698,10 +698,11 @@ export interface ActiveSuperlative extends PartialActiveSuperlative {
     }[];
     duckstats: SuperlativeStats[];
     ducklingstats: SuperlativeStats[];
+    hidden: boolean;
 }
 export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> {
     const { rows } = await sql`
-        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats, hidden
         FROM superlatives
         WHERE
             EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now()) AND
@@ -718,12 +719,13 @@ export async function getActiveSuperlative(): Promise<ActiveSuperlative | null> 
         duckranks: rows[0].duckranks,
         ducklingranks: rows[0].ducklingranks,
         duckstats: rows[0].duckstats,
-        ducklingstats: rows[0].ducklingstats
+        ducklingstats: rows[0].ducklingstats,
+        hidden: rows[0].hidden
     };
 }
 export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null> {
     const { rows } = await sql`
-        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats, hidden
         FROM superlatives
         WHERE EXTRACT (MONTH FROM start) = EXTRACT (MONTH FROM now()) - 1
         LIMIT 1
@@ -738,7 +740,8 @@ export async function getPreviousSuperlative(): Promise<ActiveSuperlative | null
         duckranks: rows[0].duckranks,
         ducklingranks: rows[0].ducklingranks,
         duckstats: rows[0].duckstats,
-        ducklingstats: rows[0].ducklingstats
+        ducklingstats: rows[0].ducklingstats,
+        hidden: rows[0].hidden
     };
 }
 export async function getSuperlativesList(): Promise<PartialActiveSuperlative[]> {
@@ -779,7 +782,7 @@ export async function getTotalSuperlatives(): Promise<number> {
 }
 export async function getSuperlative(start: string): Promise<ActiveSuperlative | null> {
     const { rows } = await sql`
-        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats
+        SELECT type, start, dp, duckranks, ducklingranks, duckstats, ducklingstats, hidden
         FROM superlatives
         WHERE start = ${start}
         LIMIT 1
@@ -794,7 +797,8 @@ export async function getSuperlative(start: string): Promise<ActiveSuperlative |
         duckranks: rows[0].duckranks,
         ducklingranks: rows[0].ducklingranks,
         duckstats: rows[0].duckstats,
-        ducklingstats: rows[0].ducklingstats
+        ducklingstats: rows[0].ducklingstats,
+        hidden: rows[0].hidden
     };
 }
 interface SuperlativeStats {
@@ -828,15 +832,16 @@ export async function createSuperlative(
         id: string;
         name: string;
         requirement: number;
-    }[]
+    }[],
+    hidden = false
 ): Promise<boolean> {
     const { rows } = await sql`SELECT COUNT(*) FROM superlatives WHERE start = ${start}`;
     if (rows[0].count > 0) return false;
     const duckTemp: string[] = [];
     const ducklingTemp: string[] = [];
     await sql`
-        INSERT INTO superlatives (start, type, dp, duckranks, ducklingranks, duckstats, ducklingstats)
-        VALUES (${start}, ${type}, ${dp}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)}, ${JSON.stringify(duckTemp)}, ${JSON.stringify(ducklingTemp)})
+        INSERT INTO superlatives (start, type, dp, duckranks, ducklingranks, duckstats, ducklingstats, hidden)
+        VALUES (${start}, ${type}, ${dp}, ${JSON.stringify(duckranks)}, ${JSON.stringify(ducklingranks)}, ${JSON.stringify(duckTemp)}, ${JSON.stringify(ducklingTemp)}, ${hidden})
     `;
     return true;
 }
