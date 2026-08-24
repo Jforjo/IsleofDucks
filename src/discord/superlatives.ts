@@ -82,19 +82,11 @@ export default {
      */
     corpsesLooted: {
         title: "Total Corpses Looted",
-        value: (profile: SkyBlockProfileMember) => {
-            if (!profile?.glacite_player_data) return 0
-            const data = profile.glacite_player_data.corpses_looted as {
-                lapis?: number;
-                umber?: number;
-                tungsten?: number;
-                vanguard?: number;
-            } | undefined;
-            return ( data?.lapis ?? 0 ) +
-            ( data?.umber ?? 0 ) +
-            ( data?.tungsten ?? 0 ) +
-            ( data?.vanguard ?? 0 )
-        }
+        value: (profile: SkyBlockProfileMember) =>
+            ( profile.glacite_player_data?.corpses_looted?.lapis ?? 0 ) +
+            ( profile.glacite_player_data?.corpses_looted?.umber ?? 0 ) +
+            ( profile.glacite_player_data?.corpses_looted?.tungsten ?? 0 ) +
+            ( profile.glacite_player_data?.corpses_looted?.vanguard ?? 0 )
     },
     mineshaftsEntered: {
         title: "Mineshafts Entered",
@@ -105,21 +97,10 @@ export default {
      */
     totalTreeGifts: {
         title: "Total Tree Gifts",
-        value: (profile: SkyBlockProfileMember) => {
-            if (!("foraging" in profile)) return 0;
-            const foraging = profile.foraging as {
-                tree_gifts?: {
-                    FIG?: number;
-                    MANGROVE?: number;
-                    HELIX?: number;
-                }
-            } | undefined;
-            return (
-                ( foraging?.tree_gifts?.FIG ?? 0 ) +
-                ( foraging?.tree_gifts?.MANGROVE ?? 0 ) +
-                ( foraging?.tree_gifts?.HELIX ?? 0 )
-            );
-        }
+        value: (profile: SkyBlockProfileMember) =>
+            ( profile.foraging?.tree_gifts?.FIG ?? 0 ) +
+            ( profile.foraging?.tree_gifts?.MANGROVE ?? 0 ) +
+            ( profile.foraging?.tree_gifts?.HELIX ?? 0 )
     },
     /**
      *  SLAYERS
@@ -223,26 +204,13 @@ export default {
      */
     totalTrophiesFished: {
         title: "Total Trophies Fished",
-        value: (profile: SkyBlockProfileMember) => {
-            const itemsFished = profile?.player_stats?.items_fished as {
-                trophy_frog: number;
-                trophy_fish: number;
-            } | undefined;
-            return (itemsFished?.trophy_fish ?? 0) + (
-                itemsFished && "trophy_frog" in itemsFished ? itemsFished?.trophy_frog ?? 0 : 0
-            )
-        }
+        value: (profile: SkyBlockProfileMember) =>
+            (profile?.player_stats?.items_fished?.trophy_fish ?? 0) +
+            (profile?.player_stats?.items_fished?.trophy_frog ?? 0)
     },
     trophyFrogsFished: {
         title: "Trophy Frogs Fished",
-        value: (profile: SkyBlockProfileMember) => {
-            const itemsFished = profile?.player_stats?.items_fished as {
-                trophy_frog: number;
-            } | undefined;
-            if (!itemsFished) return 0;
-            if (!("trophy_frog" in itemsFished)) return 0;
-            return itemsFished.trophy_frog ?? 0;
-        }
+        value: (profile: SkyBlockProfileMember) => profile?.player_stats?.items_fished?.trophy_frog ?? 0
     },
     trophyFishFished: {
         title: "Trophy Fish Fished",
