@@ -361,7 +361,6 @@ export default async function Command(
     const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks", superlative);
 
     if (superlative.hidden) {
-        await BACKGROUND_SUPERLATIVE_UPDATE;
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
@@ -375,6 +374,7 @@ export default async function Command(
                 }
             ],
         });
+        await BACKGROUND_SUPERLATIVE_UPDATE;
         return NextResponse.json(
             { success: true },
             { status: 200 }
