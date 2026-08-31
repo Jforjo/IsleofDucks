@@ -183,6 +183,24 @@ export default {
             return totalTiers;
         }
     },
+    cropCollection: {
+        title: "Crop Collection",
+        value: (profile: SkyBlockProfileMember) =>
+            (profile?.collection?.WHEAT ?? 0) + // Wheat
+            // (profile?.collection?.SEEDS ?? 0) + // Seeds
+            (profile?.collection?.CARROT_ITEM ?? 0) + // Carrot
+            (profile?.collection?.POTATO_ITEM ?? 0) + // Potato
+            (profile?.collection?.CACTUS ?? 0) + // Cactus
+            (profile?.collection?.MELON ?? 0) + // Melon slice
+            (profile?.collection?.PUMPKIN ?? 0) + // Pumpkin
+            (profile?.collection?.SUGAR_CANE ?? 0) + // Sugar cane
+            (profile?.collection?.NETHER_STALK ?? 0) + // Nether wart
+            (profile?.collection?.WILD_ROSE ?? 0) + // Wild rose
+            (profile?.collection?.MOONFLOWER ?? 0) + // Moonflower
+            (profile?.collection?.DOUBLE_PLANT ?? 0) + // Sunflower
+            (profile?.collection?.MUSHROOM_COLLECTION ?? 0) + // Mushroom
+            (profile?.collection?.["INK_SACK:3"] ?? 0) // Cocoa Beans
+    },
     mangroveCollection: {
         title: "Mangrove Collection",
         value: (profile: SkyBlockProfileMember) => profile?.collection?.MANGROVE_LOG ?? 0
