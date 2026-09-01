@@ -274,7 +274,10 @@ export default async function Command(
         );
     }
 
-    if (superlative.hidden) {
+    if (superlative.hidden && !(
+        interaction.member &&
+        interaction.member.roles.includes(IsleofDucks.roles.admin)
+    )) {
         await FollowupMessage(interaction.token, {
             embeds: [
                 {
