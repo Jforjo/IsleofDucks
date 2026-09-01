@@ -287,6 +287,27 @@ export default async function Command(
                     timestamp: new Date().toISOString()
                 }
             ],
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            custom_id: `superlative-ducks${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducks",
+                            style: buttonID === "ducks" ? ButtonStyle.Success : ButtonStyle.Primary,
+                            disabled: buttonID === "ducks"
+                        },
+                        {
+                            custom_id: `superlative-ducklings${displayTotals ? "-total" : ""}${detailed ? "-detailed" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducklings",
+                            style: buttonID === "ducklings" ? ButtonStyle.Success : ButtonStyle.Primary,
+                            disabled: buttonID === "ducklings"
+                        }
+                    ]
+                }
+            ]
         });
     
         let channelName = "";

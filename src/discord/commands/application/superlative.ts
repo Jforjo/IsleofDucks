@@ -549,6 +549,27 @@ export default async function Command(
                     timestamp: new Date().toISOString()
                 }
             ],
+            components: [
+                {
+                    type: ComponentType.ActionRow,
+                    components: [
+                        {
+                            custom_id: `superlative-ducks${displayTotals ? "-total" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducks",
+                            style: ButtonStyle.Success,
+                            disabled: true
+                        },
+                        {
+                            custom_id: `superlative-ducklings${displayTotals ? "-total" : ""}`,
+                            type: ComponentType.Button,
+                            label: "Ducklings",
+                            style: ButtonStyle.Primary,
+                            disabled: false
+                        }
+                    ]
+                }
+            ]
         });
     
         let setrankmsg = "";
@@ -566,7 +587,7 @@ export default async function Command(
 
         await BACKGROUND_SUPERLATIVE_UPDATE;
         await saveSuperlative();
-        
+
         return NextResponse.json(
             { success: true },
             { status: 200 }
