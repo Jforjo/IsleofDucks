@@ -360,27 +360,6 @@ export default async function Command(
     
     const BACKGROUND_SUPERLATIVE_UPDATE = updateGuildSuperlative("Isle of Ducks", superlative);
 
-    if (superlative.hidden) {
-        await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: `Superlative - ${superlative.data.title}`,
-                    description: "This superlative is hidden!",
-                    color: IsleofDucks.colours.main,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
-        });
-        await BACKGROUND_SUPERLATIVE_UPDATE;
-        return NextResponse.json(
-            { success: true },
-            { status: 200 }
-        );
-    }
-
     const guildPromise = getGuildData("Isle of Ducks");
     const guildUpdateResponse = FollowupMessage(interaction.token, {
         embeds: [
@@ -554,6 +533,43 @@ export default async function Command(
         return NextResponse.json(
             { success: false, error: superlativeResult.message },
             { status: 400 }
+        );
+    }
+
+    if (superlative.hidden) {
+        await FollowupMessage(interaction.token, {
+            embeds: [
+                {
+                    title: `Superlative - ${superlative.data.title}`,
+                    description: "This superlative is hidden!",
+                    color: IsleofDucks.colours.main,
+                    footer: {
+                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                    },
+                    timestamp: new Date().toISOString()
+                }
+            ],
+        });
+    
+        let setrankmsg = "";
+        if (setranks.length > 0) {
+            for (const setrank of setranks) {
+                if (setrankmsg.length + setrank.length + 1 > 2000) {
+                    continue;
+                }
+                setrankmsg += `${setrank}\n`;
+            }
+            await SendMessage(IsleofDucks.channels.duckoc, {
+                content: setrankmsg
+            });
+        }
+
+        await BACKGROUND_SUPERLATIVE_UPDATE;
+        await saveSuperlative();
+        
+        return NextResponse.json(
+            { success: true },
+            { status: 200 }
         );
     }
     
