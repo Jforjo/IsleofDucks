@@ -27,13 +27,13 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
 
-    // const superlative = await getActiveSuperlative();
-    // if (superlative && superlative.hidden) {
-    //     return Response.json({
-    //         success: false,
-    //         message: "Superlative is hidden"
-    //     });
-    // }
+    const superlative = await getActiveSuperlative();
+    if (superlative && superlative.hidden) {
+        return Response.json({
+            success: false,
+            message: "Superlative is hidden"
+        });
+    }
 
     const userData = await getUserDataFromUUID(uuid);
     if (!userData || !userData.success) {
