@@ -2604,9 +2604,9 @@ export async function getUserAccessToken(discordId: string): Promise<{
     };
 }
 
-export function ErrorEmbed(description: string, timestamp: ReturnType<typeof ConvertSnowflakeToDate>, component?: false): APIInteractionResponseCallbackData;
-export function ErrorEmbed(description: string, timestamp: ReturnType<typeof ConvertSnowflakeToDate>, component: true): APIMessageTopLevelComponent[];
-export function ErrorEmbed(description: string, timestamp: ReturnType<typeof ConvertSnowflakeToDate>, component?: boolean): APIInteractionResponseCallbackData | APIMessageTopLevelComponent[] {
+export function ErrorEmbed(description: string, timestamp?: ReturnType<typeof ConvertSnowflakeToDate>, component?: false): APIInteractionResponseCallbackData;
+export function ErrorEmbed(description: string, timestamp?: ReturnType<typeof ConvertSnowflakeToDate>, component?: true): APIMessageTopLevelComponent[];
+export function ErrorEmbed(description: string, timestamp?: ReturnType<typeof ConvertSnowflakeToDate>, component?: boolean): APIInteractionResponseCallbackData | APIMessageTopLevelComponent[] {
     if (component) {
         return [
             {
@@ -2625,7 +2625,7 @@ export function ErrorEmbed(description: string, timestamp: ReturnType<typeof Con
                     { type: ComponentType.Separator },
                     {
                         type: ComponentType.TextDisplay,
-                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                        content: `-# ${timestamp ? `Response time: ${Date.now() - timestamp.getTime()}ms • ` : ""}<t:${Math.floor(Date.now() / 1000)}:F>`
                     }
                 ]
             }
@@ -2637,7 +2637,7 @@ export function ErrorEmbed(description: string, timestamp: ReturnType<typeof Con
                 title: "Something went wrong!",
                 description: description,
                 color: IsleofDucks.colours.error,
-                footer: {
+                footer: timestamp && {
                     text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
                 },
                 timestamp: new Date().toISOString()
