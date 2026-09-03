@@ -1,5 +1,5 @@
-import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, InteractionResponseType } from "discord-api-types/v10";
-import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIComponentInContainer, APIInteractionResponse, ApplicationCommandOptionType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage, ErrorEmbed } from "@/discord/discordUtils";
 import { addAwayPlayer, removeAwayPlayer, getAwayPlayers, arrayContainsAny } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
@@ -20,7 +20,8 @@ async function applyAway(
 
     if (!interaction.member) {
         await FollowupMessage(interaction.token, {
-            content: "Could not find who ran the command!"
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not find who ran the command!", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Could not find who ran the command" },
@@ -29,7 +30,8 @@ async function applyAway(
     }
     if (!arrayContainsAny(interaction.member.roles, RequiredRoles.apply)) {
         await FollowupMessage(interaction.token, {
-            content: "You don't have permission to use this command!"
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("You don't have permission to use this command!", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "You don't have permission to use this command" },
@@ -40,55 +42,87 @@ async function applyAway(
     await addAwayPlayer(interaction.member.user.id, reason, leaveTimestamp, returnTimestamp);
 
     await SendMessage(IsleofDucks.channels.staffgeneral, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: `\`${interaction.member.nick ?? interaction.member.user.username}\` has applied to be away!`,
-                fields: [
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
                     {
-                        name: "Reason",
-                        value: reason
+                        type: ComponentType.TextDisplay,
+                        content: `## \`${interaction.member.nick ?? interaction.member.user.username}\` has applied to be away!`,
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `**Reason**`,
+                            reason
+                        ].join("\n"),
                     },
                     {
-                        name: "Leave Time",
-                        value: `<t:${leaveTimestamp}:F>`
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `**Leave Time**`,
+                            `<t:${leaveTimestamp}:F>`
+                        ].join("\n"),
                     },
                     {
-                        name: "Return Time",
-                        value: `<t:${returnTimestamp}:F>`
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `**Return Time**`,
+                            `<t:${returnTimestamp}:F>`
+                        ].join("\n"),
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
                     }
-                ],
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                ]
             }
         ]
     });
 
     await FollowupMessage(interaction.token, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: `Successfully applied to be away!`,
-                fields: [
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
                     {
-                        name: "Reason",
-                        value: reason
+                        type: ComponentType.TextDisplay,
+                        content: "## Successfully applied to be away!",
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `**Reason**`,
+                            reason
+                        ].join("\n"),
                     },
                     {
-                        name: "Leave Time",
-                        value: `<t:${leaveTimestamp}:F>`
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `**Leave Time**`,
+                            `<t:${leaveTimestamp}:F>`
+                        ].join("\n"),
                     },
                     {
-                        name: "Return Time",
-                        value: `<t:${returnTimestamp}:F>`
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            `**Return Time**`,
+                            `<t:${returnTimestamp}:F>`
+                        ].join("\n"),
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
                     }
-                ],
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                ]
             }
         ]
     });
@@ -114,7 +148,8 @@ async function removeAway(
 
     if (!interaction.member) {
         await FollowupMessage(interaction.token, {
-            content: "Could not find who ran the command!"
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not find who ran the command!", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Could not find who ran the command" },
@@ -123,7 +158,8 @@ async function removeAway(
     }
     if (!arrayContainsAny(interaction.member.roles, RequiredRoles.remove)) {
         await FollowupMessage(interaction.token, {
-            content: "You don't have permission to use this command!"
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("You don't have permission to use this command!", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "You don't have permission to use this command" },
@@ -134,15 +170,27 @@ async function removeAway(
     const { userid } = await removeAwayPlayer(id);
 
     await FollowupMessage(interaction.token, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: `Successfully removed user from my away list!`,
-                description: `User: <@${userid}>`,
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: "## Successfully removed user from my away list!",
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `User: <@${userid}>`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    }
+                ]
             }
         ]
     });
@@ -167,7 +215,8 @@ async function viewAway(
 
     if (!interaction.member) {
         await FollowupMessage(interaction.token, {
-            content: "Could not find who ran the command!"
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not find who ran the command!", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Could not find who ran the command" },
@@ -176,7 +225,8 @@ async function viewAway(
     }
     if (!arrayContainsAny(interaction.member.roles, RequiredRoles.view)) {
         await FollowupMessage(interaction.token, {
-            content: "You don't have permission to use this command!"
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("You don't have permission to use this command!", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "You don't have permission to use this command" },
@@ -187,17 +237,8 @@ async function viewAway(
     const awayPlayers = await getAwayPlayers();
     if (!awayPlayers) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Could not get players who will be away.",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not get players who will be away!", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Could not get players who will be away" },
@@ -207,16 +248,24 @@ async function viewAway(
 
     if (awayPlayers.length === 0) {
         await FollowupMessage(interaction.token, {
-            embeds: [
+            flags: MessageFlags.IsComponentsV2,
+            components: [
                 {
-                    title: "There are no players who will be away!",
-                    color: 0xFB9B00,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `There are no players who will be away!`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                        }
+                    ]
                 }
-            ],
+            ]
         });
         return NextResponse.json(
             { success: false, error: "There are no players who will be away" },
@@ -225,24 +274,31 @@ async function viewAway(
     }
 
     await FollowupMessage(interaction.token, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: "Away Players",
-                color: 0xFB9B00,
-                fields: awayPlayers.map(player => {
-                    return {
-                        name: `ID: ${player.id}`,
-                        value: [
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `## Away Players`
+                    },
+                    { type: ComponentType.Separator },
+                    ...(awayPlayers.map(player => ({
+                        type: ComponentType.TextDisplay,
+                        content: [
                             `**User:** <@${player.userid}>`,
                             `**Reason:** ${player.reason}`,
-                            `**Dates:** <t:${player.leave}:F> - <t:${player.return}:F>`,
+                            `**Dates:** <t:${player.leave}:F> - <t:${player.return}:F>`
                         ].join("\n")
-                    };
-                }),
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                    })) as APIComponentInContainer[]),
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    }
+                ]
             }
         ]
     });
@@ -272,17 +328,8 @@ export default async function(
 
     if (!interaction.data) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Missing interaction data",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Missing interaction data", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Missing interaction data" },
@@ -292,17 +339,8 @@ export default async function(
     const interactionData = interaction.data as APIChatInputApplicationCommandInteractionData;
     if (!interactionData.options) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Missing interaction data options",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Missing interaction data options", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Missing interaction data options" },
@@ -339,17 +377,8 @@ export default async function(
     }
 
     await FollowupMessage(interaction.token, {
-        embeds: [
-            {
-                title: "Something went wrong!",
-                description: "Unknown command",
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
-            }
-        ],
+        flags: MessageFlags.IsComponentsV2,
+        components: ErrorEmbed("Unknown command", timestamp, true)
     });
     return NextResponse.json(
         { success: false, error: "Unknown command" },
