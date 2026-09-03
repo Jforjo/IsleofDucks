@@ -1,5 +1,5 @@
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
-import { CreateInteractionResponse, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, ErrorEmbed, IsleofDucks } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { arrayContainsAny } from "@/discord/utils";
 
@@ -17,8 +17,8 @@ export default async function(
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                flags: MessageFlags.Ephemeral,
-                content: "Could not find who ran the command!"
+                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                components: ErrorEmbed("Could not find who ran the command", undefined, true)
             }
         });
         return NextResponse.json(
@@ -30,8 +30,8 @@ export default async function(
         await CreateInteractionResponse(interaction.id, interaction.token, {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
-                flags: MessageFlags.Ephemeral,
-                content: "You don't have permission to use this command!"
+                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                components: ErrorEmbed("You don't have permission to use this command!", undefined, true)
             }
         });
         return NextResponse.json(
@@ -97,7 +97,7 @@ export default async function(
         }
     });
     return NextResponse.json(
-        { success: false },
+        { success: true },
         { status: 200 }
     );
 }
