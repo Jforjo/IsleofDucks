@@ -1,4 +1,4 @@
-import { getUserDataFromUUID } from "@/discord/utils";
+import { getActiveSuperlative, getUserDataFromUUID } from "@/discord/utils";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest): Promise<Response> {
@@ -24,6 +24,14 @@ export async function GET(request: NextRequest): Promise<Response> {
         return Response.json({
             success: false,
             message: "Missing UUID"
+        });
+    }
+
+    const superlative = await getActiveSuperlative();
+    if (superlative && superlative.hidden) {
+        return Response.json({
+            success: false,
+            message: "Superlative is hidden"
         });
     }
 
