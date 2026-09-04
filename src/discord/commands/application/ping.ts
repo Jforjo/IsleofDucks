@@ -1,5 +1,5 @@
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, InteractionResponseType } from "discord-api-types/v10";
-import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage } from "../../discordUtils";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, IsleofDucks } from "../../discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -13,24 +13,34 @@ export default async function(
     >
 > {
     // User sees the "[bot] is thinking..." message
-    await CreateInteractionResponse(interaction.id, interaction.token, {
-        type: InteractionResponseType.DeferredChannelMessageWithSource,
-    });
-
+    // await CreateInteractionResponse(interaction.id, interaction.token, {
+    //     type: InteractionResponseType.DeferredChannelMessageWithSource,
+    // });
+    
     const timestamp = ConvertSnowflakeToDate(interaction.id);
 
-    await FollowupMessage(interaction.token, {
-        content: undefined,
-        embeds: [
-            {
-                title: "Pong!",
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+    await CreateInteractionResponse(interaction.id, interaction.token, {
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+            flags: MessageFlags.IsComponentsV2,
+            components: [
+                {
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: "# Pong!"
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`   
+                        }
+                    ]
                 },
-                timestamp: new Date().toISOString()
-            }
-        ],
+            ]
+        }
     });
 
     return NextResponse.json(
