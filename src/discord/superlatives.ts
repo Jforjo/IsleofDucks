@@ -92,6 +92,25 @@ export default {
         title: "Mineshafts Entered",
         value: (profile: SkyBlockProfileMember) => profile?.glacite_player_data?.mineshafts_entered ?? 0
     },
+    totalPowder: {
+        title: "Total Powder",
+        value: (profile: SkyBlockProfileMember) =>
+            ( profile?.mining_core?.powder_mithril ?? 0 ) +
+            ( profile?.mining_core?.powder_gemstone ?? 0 ) +
+            ( profile?.mining_core?.powder_glacite ?? 0 )
+    },
+    mithrilPowder: {
+        title: "Mithril Powder",
+        value: (profile: SkyBlockProfileMember) => profile?.mining_core?.powder_mithril ?? 0
+    },
+    gemstonePowder: {
+        title: "Gemstone Powder",
+        value: (profile: SkyBlockProfileMember) => profile?.mining_core?.powder_gemstone ?? 0
+    },
+    glacitePowder: {
+        title: "Glacite Powder",
+        value: (profile: SkyBlockProfileMember) => profile?.mining_core?.powder_glacite ?? 0
+    },
     /**
      * FORAGING
      */
