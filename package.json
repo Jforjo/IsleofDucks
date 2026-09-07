@@ -20,6 +20,7 @@
     "crypto-ts": "^1.0.2",
     "discord-api-types": "^0.38.42",
     "discord-interactions": "^4.4.0",
+    "farming-weight": "^0.16.1",
     "gifwrap": "^0.10.1",
     "jsonwebtoken": "^9.0.3",
     "nanoid": "^5.1.7",
