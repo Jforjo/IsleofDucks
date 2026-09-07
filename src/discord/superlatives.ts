@@ -1,5 +1,6 @@
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember"
 import { calcCataLevel, getHypixelCollections } from "./hypixelUtils";
+import { Crop, CROP_WEIGHT } from "farming-weight";
 
 export default {
     skyblockLevel: {
@@ -122,6 +123,27 @@ export default {
             ( profile.foraging?.tree_gifts?.HELIX ?? 0 )
     },
     /**
+     * FARMING
+     */
+    cropFarmingWeight: {
+        title: "Crop Farming Weight",
+        value: (profile: SkyBlockProfileMember) =>
+            ( (profile?.collection?.[Crop.Wheat] ?? 0) / CROP_WEIGHT[Crop.Wheat] ) + // Wheat
+            // ( (profile?.collection?.[Crop.Seeds] ?? 0) / CROP_WEIGHT[Crop.Seeds] ) + // Seeds
+            ( (profile?.collection?.[Crop.Carrot] ?? 0) / CROP_WEIGHT[Crop.Carrot] ) + // Carrot
+            ( (profile?.collection?.[Crop.Potato] ?? 0) / CROP_WEIGHT[Crop.Potato] ) + // Potato
+            ( (profile?.collection?.[Crop.Cactus] ?? 0) / CROP_WEIGHT[Crop.Cactus] ) + // Cactus
+            ( (profile?.collection?.[Crop.Melon] ?? 0) / CROP_WEIGHT[Crop.Melon] ) + // Melon slice
+            ( (profile?.collection?.[Crop.Pumpkin] ?? 0) / CROP_WEIGHT[Crop.Pumpkin] ) + // Pumpkin
+            ( (profile?.collection?.[Crop.SugarCane] ?? 0) / CROP_WEIGHT[Crop.SugarCane] ) + // Sugar cane
+            ( (profile?.collection?.[Crop.NetherWart] ?? 0) / CROP_WEIGHT[Crop.NetherWart] ) + // Nether wart
+            ( (profile?.collection?.[Crop.WildRose] ?? 0) / CROP_WEIGHT[Crop.WildRose] ) + // Wild rose
+            ( (profile?.collection?.[Crop.Moonflower] ?? 0) / CROP_WEIGHT[Crop.Moonflower] ) + // Moonflower
+            ( (profile?.collection?.[Crop.Sunflower] ?? 0) / CROP_WEIGHT[Crop.Sunflower] ) + // Sunflower
+            ( (profile?.collection?.[Crop.Mushroom] ?? 0) / CROP_WEIGHT[Crop.Mushroom] ) + // Mushroom
+            ( (profile?.collection?.[Crop.CocoaBeans] ?? 0) / CROP_WEIGHT[Crop.CocoaBeans] ) // Cocoa Beans
+    },
+    /**
      *  SLAYERS
      */
     totalSlayerExperience: {
@@ -205,20 +227,20 @@ export default {
     cropCollection: {
         title: "Crop Collection",
         value: (profile: SkyBlockProfileMember) =>
-            (profile?.collection?.WHEAT ?? 0) + // Wheat
-            // (profile?.collection?.SEEDS ?? 0) + // Seeds
-            (profile?.collection?.CARROT_ITEM ?? 0) + // Carrot
-            (profile?.collection?.POTATO_ITEM ?? 0) + // Potato
-            (profile?.collection?.CACTUS ?? 0) + // Cactus
-            (profile?.collection?.MELON ?? 0) + // Melon slice
-            (profile?.collection?.PUMPKIN ?? 0) + // Pumpkin
-            (profile?.collection?.SUGAR_CANE ?? 0) + // Sugar cane
-            (profile?.collection?.NETHER_STALK ?? 0) + // Nether wart
-            (profile?.collection?.WILD_ROSE ?? 0) + // Wild rose
-            (profile?.collection?.MOONFLOWER ?? 0) + // Moonflower
-            (profile?.collection?.DOUBLE_PLANT ?? 0) + // Sunflower
-            (profile?.collection?.MUSHROOM_COLLECTION ?? 0) + // Mushroom
-            (profile?.collection?.["INK_SACK:3"] ?? 0) // Cocoa Beans
+            (profile?.collection?.[Crop.Wheat] ?? 0) + // Wheat
+            // (profile?.collection?.[Crop.Seeds] ?? 0) + // Seeds
+            (profile?.collection?.[Crop.Carrot] ?? 0) + // Carrot
+            (profile?.collection?.[Crop.Potato] ?? 0) + // Potato
+            (profile?.collection?.[Crop.Cactus] ?? 0) + // Cactus
+            (profile?.collection?.[Crop.Melon] ?? 0) + // Melon slice
+            (profile?.collection?.[Crop.Pumpkin] ?? 0) + // Pumpkin
+            (profile?.collection?.[Crop.SugarCane] ?? 0) + // Sugar cane
+            (profile?.collection?.[Crop.NetherWart] ?? 0) + // Nether wart
+            (profile?.collection?.[Crop.WildRose] ?? 0) + // Wild rose
+            (profile?.collection?.[Crop.Moonflower] ?? 0) + // Moonflower
+            (profile?.collection?.[Crop.Sunflower] ?? 0) + // Sunflower
+            (profile?.collection?.[Crop.Mushroom] ?? 0) + // Mushroom
+            (profile?.collection?.[Crop.CocoaBeans] ?? 0) // Cocoa Beans
     },
     mangroveCollection: {
         title: "Mangrove Collection",
