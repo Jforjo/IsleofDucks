@@ -2073,7 +2073,7 @@ const Surveys = [
             }
         ]
     }
-]
+];
 
 const RoleGroups = [
     {
@@ -2115,6 +2115,14 @@ const RoleGroups = [
         id: Roles.groups.activity,
         roles: Roles.activity.map(r => r.role)
     }
+];
+
+const BanlistTypes = [
+    "SCAMMING",
+    "CHEATING",
+    "TOXICITY",
+    "ALT_ABUSE",
+    "OTHER"
 ]
 
 export const IsleofDucks = {
@@ -2131,6 +2139,7 @@ export const IsleofDucks = {
     roles: Roles,
     roleGroups: RoleGroups,
     surveys: Surveys,
+    banlistTypes: BanlistTypes,
 }
 
 export const CarrierRequirements = {
