@@ -1,7 +1,7 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, Emojis, ErrorEmbed, FollowupMessage, IsleofDucks } from "@/discord/discordUtils";
 import { getUsernameOrUUID, isPlayerInGuild } from "@/discord/hypixelUtils";
 import { SkyblockProfilesResponse } from "@zikeji/hypixel/dist/types/AugmentedTypes";
-import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { isBankingAPI, isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./checkapi";
 import { checkMinecraftInDB, createMinecraftUser, getBannedPlayer, getSettingValue, getUserDataFromUUID, updateMinecraftUser } from "@/discord/utils";
@@ -142,17 +142,8 @@ export default async function(
 
     if (!interaction.member) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Could not find who ran the command",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed('Could not find who ran the command', timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Could not find who ran the command" },
@@ -161,17 +152,8 @@ export default async function(
     }
     if (!interaction.data) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Missing interaction data",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed('Missing interaction data', timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: 'Missing interaction data' },
@@ -180,17 +162,8 @@ export default async function(
     }
     if (!interaction.data.options) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Missing interaction data",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed('Missing interaction data options', timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: 'Missing interaction data options' },
@@ -210,17 +183,8 @@ export default async function(
 
     if (!mojang.success) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: mojang.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed(mojang.message, timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: mojang.message },
@@ -230,24 +194,14 @@ export default async function(
 
     const guildResponse = await isPlayerInGuild(mojang.uuid);
     if (!guildResponse.success) {
-        let content = undefined;
-        if (guildResponse.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
-            content: content,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: guildResponse.message === "Key throttle" && typeof guildResponse.retry === "number" ? [
-                        guildResponse.message,
-                        `Try again <t:${Math.floor(( timestamp.getTime() + guildResponse.retry ) / 1000)}:R>`
-                    ].join("\n") : guildResponse.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed(
+                guildResponse.message === "Key throttle" && typeof guildResponse.retry === "number" ? [
+                    guildResponse.message,
+                    `Try again <t:${Math.floor(( timestamp.getTime() + guildResponse.retry ) / 1000)}:R>`
+                ].join("\n") : guildResponse.message,
+            timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: guildResponse.message },
@@ -257,24 +211,14 @@ export default async function(
 
     const profileAPIResponse = await checkPlayer(mojang.uuid, profile);
     if (!profileAPIResponse.success) {
-        let content = undefined;
-        if (profileAPIResponse.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
-            content: content,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: profileAPIResponse.message === "Key throttle" && typeof profileAPIResponse.retry === "number" ? [
-                        profileAPIResponse.message,
-                        `Try again <t:${Math.floor(( timestamp.getTime() + profileAPIResponse.retry ) / 1000)}:R>`
-                    ].join("\n") : profileAPIResponse.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed(
+                profileAPIResponse.message === "Key throttle" && typeof profileAPIResponse.retry === "number" ? [
+                    profileAPIResponse.message,
+                    `Try again <t:${Math.floor(( timestamp.getTime() + profileAPIResponse.retry ) / 1000)}:R>`
+                ].join("\n") : profileAPIResponse.message,
+            timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: profileAPIResponse.message },
