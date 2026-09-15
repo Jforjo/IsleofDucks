@@ -36,6 +36,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         banned: true,
         uuid: bannedResponse.uuid,
         reason: bannedResponse.reason,
+        type: bannedResponse.type,
         discords: bannedResponse.discords
     });
 
@@ -45,6 +46,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         banned: true,
         uuid: bannedFromDiscordIDResponse.uuid,
         reason: bannedFromDiscordIDResponse.reason,
+        type: bannedFromDiscordIDResponse.type,
         discords: bannedFromDiscordIDResponse.discords
     });
 

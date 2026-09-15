@@ -61,7 +61,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     const scammerResponse = await getScammerFromUUID(addDashesToUUID(uuid.replaceAll('-', '')));
     if (scammerResponse.success && scammerResponse.scammer) {
         const discordIds = scammerResponse.details?.discordIds;
-        await addBannedPlayer(uuid, discordIds ? discordIds[0] : null, scammerResponse.details ? scammerResponse.details.reason : "Unknown");
+        await addBannedPlayer(uuid, discordIds ? discordIds[0] : null, scammerResponse.details ? scammerResponse.details.reason : "Unknown", "SCAMMING");
         if (discordIds && discordIds.length > 1) {
             for (const discord of discordIds.slice(1)) {
                 await updateBannedPlayerDiscord(uuid, discord);
@@ -70,7 +70,8 @@ export async function GET(request: NextRequest): Promise<Response> {
         return Response.json({
             success: true,
             banned: true,
-            reason: scammerResponse.details ? scammerResponse.details.reason : "Unknown"
+            reason: scammerResponse.details ? scammerResponse.details.reason : "Unknown",
+            type: "SCAMMING"
         });
     }
 
