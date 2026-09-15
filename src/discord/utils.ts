@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { getGuildData, getUsernameOrUUID } from './hypixelUtils';
 import { Snowflake } from 'discord-api-types/globals';
-import { formatNumber, getSuperlativeValue, updateSuperlativeValue } from './discordUtils';
+import { formatNumber, getSuperlativeValue, IsleofDucks, updateSuperlativeValue } from './discordUtils';
 import superlativeTypes from './superlatives';
 
 type DiscordUserDataReturnType = {
@@ -204,9 +204,10 @@ export async function getBannedPlayers(
         name?: string;
         discords: Snowflake[] | null;
         reason: string;
+        type: typeof IsleofDucks.banlistTypes[number];
     }[];
 }> {
-    const { rows } = await sql`SELECT uuid, discord, reason FROM banlist LIMIT ${limit} OFFSET ${offset}`;
+    const { rows } = await sql`SELECT uuid, discord, reason, type FROM banlist LIMIT ${limit} OFFSET ${offset}`;
 
     const players = await Promise.all(rows.map(async (row) => {
         const nameRes = await getUsernameOrUUID(row.uuid);
@@ -216,7 +217,8 @@ export async function getBannedPlayers(
             uuid: row.uuid,
             name: name,
             discords: row.discord ? JSON.parse(row.discord) : null,
-            reason: row.reason
+            reason: row.reason,
+            type: row.type
         }
     }));
 
@@ -229,14 +231,14 @@ export async function getBannedPlayersCount(): Promise<number> {
     const { rows } = await sql`SELECT COUNT(*) FROM banlist`;
     return rows[0].count;
 }
-export async function addBannedPlayer(uuid: string, discord: Snowflake | null, reason: string): Promise<void> {
+export async function addBannedPlayer(uuid: string, discord: Snowflake | null, reason: string, banlistType: typeof IsleofDucks.banlistTypes[number]): Promise<void> {
     const discords = [];
     let discordsValue: string | null = null;
     if (discord) {
         discords.push(discord);
         discordsValue = JSON.stringify(discords);
     }
-    await sql`INSERT INTO banlist (uuid, discord, reason) VALUES (${uuid}, ${discordsValue}, ${reason})`;
+    await sql`INSERT INTO banlist (uuid, discord, reason, type) VALUES (${uuid}, ${discordsValue}, ${reason}, ${banlistType})`;
 }
 export async function updateBannedPlayerDiscord(uuid: string, discord: Snowflake): Promise<void> {
     const user = await getBannedPlayer(uuid);
@@ -264,6 +266,7 @@ export async function searchBannedPlayers(
         name?: string;
         discords: Snowflake[] | null;
         reason: string;
+        type: typeof IsleofDucks.banlistTypes[number];
     }[];
     count: number;
 }> {
@@ -282,11 +285,11 @@ export async function searchBannedPlayers(
     return {
         success: true,
         players: filteredPlayers.slice(offset, offset + limit),
-        count: filteredPlayers.length
+        count: filteredPlayers.length,
     };
 }
 export async function getBannedPlayer(uuid: string): Promise<
-    { uuid: string; discords: Snowflake[] | null; reason: string } |
+    { uuid: string; discords: Snowflake[] | null; reason: string; type: typeof IsleofDucks.banlistTypes[number] } |
     null
 > {
     const { rows } = await sql`SELECT * FROM banlist WHERE uuid = ${uuid}`;
@@ -296,11 +299,12 @@ export async function getBannedPlayer(uuid: string): Promise<
         uuid: rows[0].uuid,
         // is 'discords' is a string then return that in an array, otherwise return it as normal
         discords: typeof discords === 'string' ? [discords] : discords,
-        reason: rows[0].reason
+        reason: rows[0].reason,
+        type: rows[0].type
     }
 }
 export async function getBannedPlayerFromDiscordID(discordId: string): Promise<
-    { uuid: string; discords: Snowflake[] | null; reason: string } |
+    { uuid: string; discords: Snowflake[] | null; reason: string; type: typeof IsleofDucks.banlistTypes[number] } |
     null
 > {
     const { rows } = await sql`
@@ -315,7 +319,8 @@ export async function getBannedPlayerFromDiscordID(discordId: string): Promise<
         uuid: rows[0].uuid,
         // is 'discords' is a string then return that in an array, otherwise return it as normal
         discords: typeof discords === 'string' ? [discords] : discords,
-        reason: rows[0].reason
+        reason: rows[0].reason,
+        type: rows[0].type
     }
 }
 // export async function getBannedPlayer(uuid: string): Promise<

@@ -53,6 +53,9 @@ export default async function(
         );
     }
 
+    const interactionData = interaction.data as APIModalSubmitInteraction["data"];
+    const banlistType = interactionData.custom_id.split("-")[2] as typeof IsleofDucks.banlistTypes[number];
+
     const components = Object.fromEntries(interaction.data.components.map(component => {
         if (component.type !== ComponentType.Label) return null;
         return [
@@ -128,7 +131,8 @@ export default async function(
         components["discordid"].component.values[0] !== "" ?
             components["discordid"].component.values[0] :
             null,
-        components["reason"].component.value
+        components["reason"].component.value,
+        banlistType,
     );
 
     if (components["discordid"].component.values[0] !== "")

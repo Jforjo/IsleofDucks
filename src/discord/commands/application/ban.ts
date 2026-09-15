@@ -1,4 +1,4 @@
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, TextInputStyle } from "discord-api-types/v10";
 import { CreateInteractionResponse, ErrorEmbed, IsleofDucks } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { arrayContainsAny } from "@/discord/utils";
@@ -39,11 +39,54 @@ export default async function(
             { status: 403 }
         );
     }
+
+    if (!interaction.data) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                components: ErrorEmbed("Missing interaction data", undefined, true)
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: 'Missing interaction data' },
+            { status: 400 }
+        );
+    }
+
+    const interactionData = interaction.data as APIChatInputApplicationCommandInteractionData;
+    if (!interactionData.options || interactionData.options.length !== 1 || interactionData.options[0].type !== ApplicationCommandOptionType.String) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                components: ErrorEmbed("Missing interaction data options", undefined, true)
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: 'Missing interaction data options' },
+            { status: 400 }
+        );
+    }
+
+    if (!interactionData.options[0] || !IsleofDucks.banlistTypes.includes(interactionData.options[0].value as typeof IsleofDucks.banlistTypes[number])) {
+        await CreateInteractionResponse(interaction.id, interaction.token, {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+                flags: MessageFlags.Ephemeral | MessageFlags.IsComponentsV2,
+                components: ErrorEmbed("Invalid banlist type", undefined, true)
+            }
+        });
+        return NextResponse.json(
+            { success: false, error: 'Invalid banlist type' },
+            { status: 400 }
+        );
+    }
     
     await CreateInteractionResponse(interaction.id, interaction.token, {
         type: InteractionResponseType.Modal,
         data: {
-            custom_id: `ban-modal`,
+            custom_id: `ban-modal-${interactionData.options[0].value}`,
             title: "Ban a player",
             components: [
                 {
@@ -104,6 +147,15 @@ export default async function(
 export const CommandData = {
     name: "ban",
     description: "Ban someone.",
+    options: [
+        {
+            name: "type",
+            description: "The type of ban",
+            type: ApplicationCommandOptionType.String,
+            required: true,
+            choices: IsleofDucks.banlistTypes.map(type => ({ name: type, value: type }))
+        }
+    ],
     type: ApplicationCommandType.ChatInput,
 }
 export const RequiredRoles: string[] = [

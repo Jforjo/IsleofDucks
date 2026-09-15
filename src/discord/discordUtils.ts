@@ -2123,7 +2123,7 @@ const BanlistTypes = [
     "TOXICITY",
     "ALT_ABUSE",
     "OTHER"
-]
+] as const;
 
 export const IsleofDucks = {
     colours: {
