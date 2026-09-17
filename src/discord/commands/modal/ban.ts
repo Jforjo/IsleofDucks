@@ -154,6 +154,7 @@ export default async function(
         type: ComponentType.TextDisplay,
         content: [
             `## ${uuidResponse.name.replaceAll('_', '\\_')} has been banned!`,
+            `Type: ${banlistType}`,
             `Reason: ${components["reason"].component.value}`,
             components["discordid"].component.values[0] !== "" ? `Discord: <@${components["discordid"].component.values[0]}> - ${components["discordid"].component.values[0]}` : "",
         ].filter(Boolean).join("\n"),
