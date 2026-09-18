@@ -1,7 +1,7 @@
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
 import { formatNumberWithCommas, getImmunePlayers } from "@/discord/utils";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, ErrorEmbed } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -23,24 +23,14 @@ export default async function(
 
     const guildResponse = await getGuildData("Isle of Ducks");
     if (!guildResponse.success) {
-        let content = undefined;
-        if (guildResponse.ping) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
-            content: content,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: guildResponse.message === "Key throttle" && typeof guildResponse.retry === "number" ? [
-                        guildResponse.message,
-                        `Try again <t:${Math.floor(( timestamp.getTime() + guildResponse.retry ) / 1000)}:R>`
-                    ].join("\n") : guildResponse.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed(
+                guildResponse.message === "Key throttle" && typeof guildResponse.retry === "number" ? [
+                    guildResponse.message,
+                    `Try again <t:${Math.floor(( timestamp.getTime() + guildResponse.retry ) / 1000)}:R>`
+                ].join("\n") : guildResponse.message,
+            timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: guildResponse.message },
@@ -53,18 +43,8 @@ export default async function(
     
     if (immunePlayers?.success === false) {
         await FollowupMessage(interaction.token, {
-            content: undefined,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: "Failed to fetch the immune players",
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Failed to fetch the immune players", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Failed to fetch the immune players" },
@@ -95,21 +75,9 @@ export default async function(
     });
 
     if ("success" in result && result.success === false) {
-        let content = undefined;
-        if (result.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
-            content: content,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: result.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed(result.message, timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: result.message },
