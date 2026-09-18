@@ -1,4 +1,4 @@
-import { BanGuildMember, ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { BanGuildMember, ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { addBannedPlayer, isBannedPlayer } from "@/discord/utils";
 import { APIComponentInContainer, APIInteractionResponse, APIModalSubmitInteraction, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
@@ -18,11 +18,13 @@ export default async function(
         type: InteractionResponseType.DeferredChannelMessageWithSource,
         data: { flags: MessageFlags.Ephemeral }
     });
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
 
     const guildID = interaction.guild_id;
     if (!guildID) {
         await FollowupMessage(interaction.token, {
-            content: "This modal can only be submitted in a server!",
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("This modal can only be submitted in a server", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "This modal can only be submitted in a server" },
@@ -32,7 +34,8 @@ export default async function(
     const member = interaction.member;
     if (!member) {
         await FollowupMessage(interaction.token, {
-            content: "Could not find who ran the submitted the modal!",
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not find who ran the submitted the modal", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Could not find who ran the submitted the modal" },
@@ -45,7 +48,8 @@ export default async function(
         member.roles.includes(IsleofDucks.roles.mod_duckling)
     )) {
         await FollowupMessage(interaction.token, {
-            content: "You don't have permission to submit this modal!",
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("You don't have permission to submit this modal", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "You don't have permission to submit this modal" },
@@ -64,7 +68,6 @@ export default async function(
         ];
     }).filter((c): c is [string, Extract<APIModalSubmitInteraction["data"]["components"][number], { type: ComponentType.Label }>] => c !== null));
 
-    const timestamp = ConvertSnowflakeToDate(interaction.id);
     if (!components["username"] ||
         components["username"].component.type !== ComponentType.TextInput ||
         !components["discordid"] ||
@@ -75,7 +78,8 @@ export default async function(
         components["proof"].component.type !== ComponentType.FileUpload
     ) {
         await FollowupMessage(interaction.token, {
-            content: "Invalid modal response!",
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Invalid modal response", timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: "Invalid modal response" },
@@ -87,17 +91,8 @@ export default async function(
     const uuidResponse = await getUsernameOrUUID(username);
     if (!uuidResponse.success) {
         await FollowupMessage(interaction.token, {
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: uuidResponse.message,
-                    color: IsleofDucks.colours.error,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ]
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed(uuidResponse.message, timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: uuidResponse.message },
@@ -109,14 +104,22 @@ export default async function(
     const banned = await isBannedPlayer(uuid);
     if (banned) {
         await FollowupMessage(interaction.token, {
-            embeds: [
+            flags: MessageFlags.IsComponentsV2,
+            components: [
                 {
-                    title: `${uuidResponse.name.replaceAll("_", "\\_")} is already banned!`,
-                    color: IsleofDucks.colours.main,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `## ${uuidResponse.name.replaceAll('_', '\\_')} is already banned!`,
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`,
+                        }
+                    ]
                 }
             ]
         });
@@ -158,9 +161,9 @@ export default async function(
             `Reason: ${components["reason"].component.value}`,
             components["discordid"].component.values[0] !== "" ? `Discord: <@${components["discordid"].component.values[0]}> - ${components["discordid"].component.values[0]}` : "",
         ].filter(Boolean).join("\n"),
-    }, { type: ComponentType.Separator });
+    });
     if (interaction.data.resolved && interaction.data.resolved.attachments) {
-        containerComponents.push({
+        containerComponents.push({ type: ComponentType.Separator }, {
             type: ComponentType.TextDisplay,
             content: `**Proof:**`,
         }, {
@@ -189,7 +192,24 @@ export default async function(
     });
 
     await FollowupMessage(interaction.token, {
-        content: `${uuidResponse.name.replaceAll("_", "\\_")} has been banned!`,
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `## ${uuidResponse.name.replaceAll("_", "\\_")} has been banned!`,
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`,
+                    }
+                ]
+            }
+        ]
     });
 
     return NextResponse.json(
