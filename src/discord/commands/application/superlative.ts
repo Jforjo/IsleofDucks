@@ -321,27 +321,38 @@ export default async function Command(
 
     const superlativePromise = getActiveSuperlative();
     const superlativeUpdateResponse = FollowupMessage(interaction.token, {
-        flags: MessageFlags.IsComponentsV2,
-        components: [
+        // flags: MessageFlags.IsComponentsV2,
+        // components: [
+        //     {
+        //         type: ComponentType.Container,
+        //         accent_color: IsleofDucks.colours.main,
+        //         components: [
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `## Superlative - Fetching`
+        //             },
+        //             { type: ComponentType.Separator },
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `Fetching current superlative...`
+        //             },
+        //             { type: ComponentType.Separator },
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+        //             }
+        //         ]
+        //     }
+        // ]
+        embeds: [
             {
-                type: ComponentType.Container,
-                accent_color: IsleofDucks.colours.main,
-                components: [
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `## Superlative - Fetching`
-                    },
-                    { type: ComponentType.Separator },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `Fetching current superlative...`
-                    },
-                    { type: ComponentType.Separator },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
-                    }
-                ]
+                title: `Superlative - Fetching`,
+                description: `Fetching current superlative...`,
+                color: IsleofDucks.colours.main,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
             }
         ]
     });
@@ -386,27 +397,38 @@ export default async function Command(
 
     const guildPromise = getGuildData("Isle of Ducks");
     const guildUpdateResponse = FollowupMessage(interaction.token, {
-        flags: MessageFlags.IsComponentsV2,
-        components: [
+        // flags: MessageFlags.IsComponentsV2,
+        // components: [
+        //     {
+        //         type: ComponentType.Container,
+        //         accent_color: IsleofDucks.colours.main,
+        //         components: [
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `## Superlative - Fetching`
+        //             },
+        //             { type: ComponentType.Separator },
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `Fetching Isle of Ducks guild...`
+        //             },
+        //             { type: ComponentType.Separator },
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+        //             }
+        //         ]
+        //     }
+        // ]
+        embeds: [
             {
-                type: ComponentType.Container,
-                accent_color: IsleofDucks.colours.main,
-                components: [
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `## Superlative - Fetching`
-                    },
-                    { type: ComponentType.Separator },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `Fetching Isle of Ducks guild...`
-                    },
-                    { type: ComponentType.Separator },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
-                    }
-                ]
+                title: `Superlative - Fetching`,
+                description: `Fetching Isle of Ducks guild...`,
+                color: IsleofDucks.colours.main,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
             }
         ]
     });
@@ -427,27 +449,38 @@ export default async function Command(
     }
     
     await FollowupMessage(interaction.token, {
-        flags: MessageFlags.IsComponentsV2,
-        components: [
+        // flags: MessageFlags.IsComponentsV2,
+        // components: [
+        //     {
+        //         type: ComponentType.Container,
+        //         accent_color: IsleofDucks.colours.main,
+        //         components: [
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `## Superlative - Fetching`
+        //             },
+        //             { type: ComponentType.Separator },
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `Fetching player data...`
+        //             },
+        //             { type: ComponentType.Separator },
+        //             {
+        //                 type: ComponentType.TextDisplay,
+        //                 content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+        //             }
+        //         ]
+        //     }
+        // ]
+        embeds: [
             {
-                type: ComponentType.Container,
-                accent_color: IsleofDucks.colours.main,
-                components: [
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `## Superlative - Fetching`
-                    },
-                    { type: ComponentType.Separator },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `Fetching player data...`
-                    },
-                    { type: ComponentType.Separator },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
-                    }
-                ]
+                title: `Superlative - Fetching`,
+                description: `Fetching player data...`,
+                color: IsleofDucks.colours.main,
+                footer: {
+                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                },
+                timestamp: new Date().toISOString()
             }
         ]
     });
@@ -507,12 +540,21 @@ export default async function Command(
     if ("success" in superlativeResult && superlativeResult.success === false) {
         if (superlativeResult.message.includes("User not found: ")) {
             await FollowupMessage(interaction.token, {
-                flags: MessageFlags.IsComponentsV2,
-                components: ErrorEmbed([
-                    superlativeResult.message,
-                    `Superlative data is being updated right now.`,
-                    `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
-                ].join("\n"), timestamp, true)
+                embeds: [
+                    {
+                        title: `Updating Users...`,
+                        description: [
+                            superlativeResult.message,
+                            `Superlative data is being updated right now.`,
+                            `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
+                        ].join("\n"),
+                        color: IsleofDucks.colours.main,
+                        footer: {
+                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
             });
             const result = await BACKGROUND_SUPERLATIVE_UPDATE;
             if (!result.success) {
