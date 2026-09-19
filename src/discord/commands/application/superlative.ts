@@ -651,6 +651,7 @@ export default async function Command(
     }
 
     await FollowupMessage(interaction.token, {
+        flags: null,
         embeds: [
             {
                 title: `Superlative - ${superlative.data.title}${displayTotals ? " (total)" : ""}`,

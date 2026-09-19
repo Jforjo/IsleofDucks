@@ -474,6 +474,7 @@ export default async function Command(
         });
     } else {
         await FollowupMessage(interaction.token, {
+            flags: null,
             embeds: [
                 {
                     title: `Superlative - ${superlative.data.title}${displayTotals ? " (total)" : ""}`,
