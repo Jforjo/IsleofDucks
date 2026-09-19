@@ -1,6 +1,6 @@
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ButtonStyle, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { getUsernameOrUUID, getGuildData } from "@/discord/hypixelUtils";
-import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, SendMessage, getSuperlativeValue, formatNumber } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, ConvertSnowflakeToDate, IsleofDucks, Emojis, SendMessage, getSuperlativeValue, formatNumber, ErrorEmbed } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 import { getActiveSuperlative, saveSuperlative, updateGuildSuperlative } from "@/discord/utils";
 
@@ -321,15 +321,27 @@ export default async function Command(
 
     const superlativePromise = getActiveSuperlative();
     const superlativeUpdateResponse = FollowupMessage(interaction.token, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: "Superlative - Fetching",
-                description: "Fetching current superlative...",
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `## Superlative - Fetching`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `Fetching current superlative...`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    }
+                ]
             }
         ]
     });
@@ -337,17 +349,29 @@ export default async function Command(
     await superlativeUpdateResponse;
     if (superlative == null) {
         await FollowupMessage(interaction.token, {
-            embeds: [
+            flags: MessageFlags.IsComponentsV2,
+            components: [
                 {
-                    title: "Superlative - None",
-                    description: "There is no superlative right now!",
-                    color: 0xFB9B00,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
+                    type: ComponentType.Container,
+                    accent_color: IsleofDucks.colours.main,
+                    components: [
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `## Superlative - None`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `There is no superlative right now!`
+                        },
+                        { type: ComponentType.Separator },
+                        {
+                            type: ComponentType.TextDisplay,
+                            content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                        }
+                    ]
                 }
-            ],
+            ]
         });
         return NextResponse.json(
             { success: true },
@@ -362,39 +386,39 @@ export default async function Command(
 
     const guildPromise = getGuildData("Isle of Ducks");
     const guildUpdateResponse = FollowupMessage(interaction.token, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: "Superlative - Fetching",
-                description: "Fetching Isle of Ducks guild...",
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `## Superlative - Fetching`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `Fetching Isle of Ducks guild...`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    }
+                ]
             }
         ]
     });
     const guild = await guildPromise;
     await guildUpdateResponse;
     if (!guild.success) {
-        let content = undefined;
-        if (guild?.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         await FollowupMessage(interaction.token, {
-            content: content,
-            embeds: [
-                {
-                    title: "Something went wrong!",
-                    description: guild.message === "Key throttle" && typeof guild.retry === "number" ? [
-                        guild.message,
-                        `Try again <t:${Math.floor(( timestamp.getTime() + guild.retry ) / 1000)}:R>`
-                    ].join("\n") : guild.message,
-                    color: 0xB00020,
-                    footer: {
-                        text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                    },
-                    timestamp: new Date().toISOString()
-                }
-            ],
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed(guild.message === "Key throttle" && typeof guild.retry === "number" ? [
+                guild.message,
+                `Try again <t:${Math.floor(( timestamp.getTime() + guild.retry ) / 1000)}:R>`
+            ].join("\n") : guild.message, timestamp, true)
         });
         return NextResponse.json(
             { success: false, error: guild.message },
@@ -403,15 +427,27 @@ export default async function Command(
     }
     
     await FollowupMessage(interaction.token, {
-        embeds: [
+        flags: MessageFlags.IsComponentsV2,
+        components: [
             {
-                title: "Superlative - Fetching",
-                description: `Fetching player data...`,
-                color: 0xFB9B00,
-                footer: {
-                    text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                },
-                timestamp: new Date().toISOString()
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `## Superlative - Fetching`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `Fetching player data...`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    }
+                ]
             }
         ]
     });
@@ -469,44 +505,23 @@ export default async function Command(
     });
     
     if ("success" in superlativeResult && superlativeResult.success === false) {
-        let content = undefined;
-        if (superlativeResult.ping === true) content = `<@${IsleofDucks.staticIDs.Jforjo}>`;
         if (superlativeResult.message.includes("User not found: ")) {
             await FollowupMessage(interaction.token, {
-                content: content,
-                embeds: [
-                    {
-                        title: "Updating Users...",
-                        description: [
-                            superlativeResult.message,
-                            `Superlative data is being updated right now.`,
-                            `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
-                        ].join("\n"),
-                        color: 0xFB9B00,
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ],
+                flags: MessageFlags.IsComponentsV2,
+                components: ErrorEmbed([
+                    superlativeResult.message,
+                    `Superlative data is being updated right now.`,
+                    `If this embed doesn't change <t:${Math.floor(timestamp.getTime() / 1000) + 60}:R> then run the command again.`,
+                ].join("\n"), timestamp, true)
             });
             const result = await BACKGROUND_SUPERLATIVE_UPDATE;
             if (!result.success) {
                 await FollowupMessage(interaction.token, {
-                    embeds: [
-                        {
-                            title: "Something went wrong",
-                            description: result.message === "Key throttle" && typeof result.retry === "number" ? [
-                                result.message,
-                                `Try again <t:${Math.floor(( timestamp.getTime() + result.retry ) / 1000)}:R>`
-                            ].join("\n") : result.message,
-                            color: 0xB00020,
-                            footer: {
-                                text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                            },
-                            timestamp: new Date().toISOString()
-                        }
-                    ]
+                    flags: MessageFlags.IsComponentsV2,
+                    components: ErrorEmbed(result.message === "Key throttle" && typeof result.retry === "number" ? [
+                        result.message,
+                        `Try again <t:${Math.floor(( timestamp.getTime() + result.retry ) / 1000)}:R>`
+                    ].join("\n") : result.message, timestamp, true)
                 })
                 return NextResponse.json(
                     { success: false, error: result.message, },
@@ -516,18 +531,8 @@ export default async function Command(
             return await Command(interaction);
         } else {
             await FollowupMessage(interaction.token, {
-                content: content,
-                embeds: [
-                    {
-                        title: "Something went wrong!",
-                        description: superlativeResult.message,
-                        color: 0xB00020,
-                        footer: {
-                            text: `Response time: ${Date.now() - timestamp.getTime()}ms`,
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ],
+                flags: MessageFlags.IsComponentsV2,
+                components: ErrorEmbed(superlativeResult.message, timestamp, true)
             });
         }
         return NextResponse.json(
@@ -694,8 +699,8 @@ export default async function Command(
         });
     }
 
-    await BACKGROUND_SUPERLATIVE_UPDATE;
     await saveSuperlative();
+    await BACKGROUND_SUPERLATIVE_UPDATE;
 
     return NextResponse.json(
         { success: true },
