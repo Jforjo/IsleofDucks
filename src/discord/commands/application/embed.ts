@@ -1,5 +1,5 @@
 import { APIApplicationCommandInteractionDataStringOption, APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandOptionType, ApplicationCommandType, InteractionResponseType, RESTPatchAPIApplicationCommandJSONBody } from "discord-api-types/v10";
-import { CreateInteractionResponse, FollowupMessage, IsleofDucks, CheckEmbedExists, GetEmbedData, SendMessage, EditMessage } from "@/discord/discordUtils";
+import { CreateInteractionResponse, FollowupMessage, IsleofDucks, CheckEmbedExists, GetEmbedData, SendMessage, EditMessage, GetAllEmbeds } from "@/discord/discordUtils";
 import { NextResponse } from "next/server";
 
 export default async function(
@@ -114,6 +114,7 @@ export const CommandData = {
             name: "name",
             description: "Name of the embed",
             type: ApplicationCommandOptionType.String,
+            choices: await GetAllEmbeds(),
             required: true
         },
         {

@@ -2330,6 +2330,10 @@ export async function CheckEmbedExists(embedID: string): Promise<boolean> {
     const { rows } = await sql`SELECT name FROM embeds WHERE name = ${embedID}`;
     return rows.length > 0;
 }
+export async function GetAllEmbeds(): Promise<string[]> {
+    const { rows } = await sql`SELECT name FROM embeds`;
+    return rows.map(row => row.name);
+}
 export async function GetEmbedData(embedID: string): Promise<{
     success: false;
     message: string;
