@@ -114,7 +114,7 @@ export const CommandData = {
             name: "name",
             description: "Name of the embed",
             type: ApplicationCommandOptionType.String,
-            choices: await GetAllEmbeds(),
+            autocomplete: true,
             required: true
         },
         {
