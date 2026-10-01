@@ -147,7 +147,7 @@ async function createSuperlativeAdv(
         Number(dataText[3]),
         rankData.filter((section) => section.type === "duck").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
         rankData.filter((section) => section.type === "duckling").map((section) => ({ id: section.id.toUpperCase(), name: section.name.toLowerCase(), requirement: section.requirement })),
-        Boolean(dataText[4])
+        dataText[4] === "true"
     );
 
     if (!created) {
