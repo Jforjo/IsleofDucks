@@ -49,6 +49,21 @@ export type DeleteGuildLBBlacklistEntryResponse = GuildLBError | {
     };
 };
 
+export type GetGuildLBBlacklistResponse = GuildLBError | {
+    success: true;
+    data: {
+        playerUuid: string;
+        category: BlacklistEntryType;
+        reason: string;
+        addedBy: string;
+        public: boolean;
+        createdAt: string;
+    }[];
+    meta: {
+        generatedAt: string;
+    };
+};
+
 const ROUTES = {
     base: "https://guildlb.com/api",
     allianceBlacklistCheck: (uuid: string) => `/alliance/blacklist/check/${uuid}`,
@@ -135,4 +150,26 @@ export async function deleteGuildLBBlacklistEntry(uuid: string): Promise<DeleteG
     }
 
     return await res.json() as DeleteGuildLBBlacklistEntryResponse;
+}
+
+export async function getGuildLBBlacklist(): Promise<GetGuildLBBlacklistResponse> {
+    if (!process.env.GUILDLB_API_KEY) throw new Error("GUILDLB_API_KEY is not set");
+
+    const res = await fetch(`${ROUTES.base}${ROUTES.guildBlacklist()}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${process.env.GUILDLB_API_KEY}`
+        }
+    });
+
+    if (res.status === 429) {
+        const retryAfter = res.headers.get("Retry-After");
+        if (retryAfter) {
+            const retryAfterMs = parseInt(retryAfter) * 1000;
+            await new Promise(resolve => setTimeout(resolve, retryAfterMs));
+            return getGuildLBBlacklist();
+        }
+    }
+
+    return await res.json() as GetGuildLBBlacklistResponse;
 }
