@@ -6,7 +6,7 @@ import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, Appl
 import { NextResponse } from "next/server";
 import { checkPlayer } from "./recruit";
 import { getScammerListFromIDs } from "@/discord/scammerList";
-import { addGuildLBBlacklistEntry } from "@/discord/guildlb";
+import { addGuildLBBlacklistEntry, getGuildLBBlacklist } from "@/discord/guildlb";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -152,8 +152,20 @@ export default async function(
     // ]);
 
 
+    const alrBanned = await getGuildLBBlacklist();
+    if (!alrBanned.success) {
+        await FollowupMessage(interaction.token, {
+            content: `Failed to fetch GuildLB blacklist`,
+        });
+        return NextResponse.json(
+            { success: false, error: "Failed to fetch GuildLB blacklist" },
+            { status: 500 }
+        );
+    }
     const banned = await getBannedPlayers(0, 2000000000);
+    const alreadyBannedUUIDs = new Set(alrBanned.data.map(entry => entry.playerUuid));
     for (const player of banned.players) {
+        if (alreadyBannedUUIDs.has(player.uuid)) continue;
         await addGuildLBBlacklistEntry(player.uuid, player.reason, player.type);
     }
 
