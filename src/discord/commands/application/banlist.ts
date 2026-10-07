@@ -3,6 +3,7 @@ import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, Isl
 import { getBannedPlayers, removeBannedPlayer, getBannedPlayersCount, getBannedPlayer, searchBannedPlayers, updateBannedPlayerDiscord } from "@/discord/utils";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { NextResponse } from "next/server";
+import { deleteGuildLBBlacklistEntry } from "@/discord/guildlb";
 
 // async function addBanned(
 //     interaction: APIChatInputApplicationCommandInteraction,
@@ -199,6 +200,7 @@ async function removeBanned(
     }
 
     await removeBannedPlayer(uuid);
+    await deleteGuildLBBlacklistEntry(uuid);
 
     if (banned.discords) {
         for (const discord of banned.discords) {

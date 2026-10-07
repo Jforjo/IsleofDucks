@@ -1,4 +1,5 @@
 import { BanGuildMember, ConvertSnowflakeToDate, CreateInteractionResponse, ErrorEmbed, FollowupMessage, IsleofDucks, SendMessage } from "@/discord/discordUtils";
+import { addGuildLBBlacklistEntry } from "@/discord/guildlb";
 import { getUsernameOrUUID } from "@/discord/hypixelUtils";
 import { addBannedPlayer, isBannedPlayer } from "@/discord/utils";
 import { APIComponentInContainer, APIInteractionResponse, APIModalSubmitInteraction, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
@@ -137,6 +138,8 @@ export default async function(
         components["reason"].component.value,
         banlistType,
     );
+
+    await addGuildLBBlacklistEntry(uuid, components["reason"].component.value, banlistType, member.user.id);
 
     if (components["discordid"].component.values[0] !== "")
         await BanGuildMember(
