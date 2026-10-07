@@ -9,6 +9,7 @@ import { getScammerFromUUID } from "@/discord/jerry";
 import { getSBUBanlistFromUUID } from "@/discord/sbu";
 import { getScammerListFromIDs } from "@/discord/scammerList";
 import { getSkyKingsBanlistFromUUID } from "@/discord/skykings";
+import { checkGuildLBBlacklist } from "@/discord/guildlb";
 
 export async function checkPlayer(
     uuid: string,
@@ -232,6 +233,7 @@ export default async function(
     const scammerResponsePromise = getScammerFromUUID(mojang.uuiddashes);
     const SBUBanlistResponsePromise = getSBUBanlistFromUUID(mojang.uuid);
     // const SkyKingsBanlistResponsePromise = getSkyKingsBanlistFromUUID(mojang.uuid);
+    const guildLBBlacklistResponsePromise = checkGuildLBBlacklist(mojang.uuid);
     const ScammerListResponsePromise = userData?.success && userData.data.discord ? getScammerListFromIDs([ userData.data.discord.discordid ]) : null;
 
     const [
@@ -239,17 +241,20 @@ export default async function(
         scammerResponse,
         SBUBanlistResponse,
         // SkyKingsBanlistResponse,
+        guildLBBlacklistResponse,
         ScammerListResponse
     ] = await Promise.all([
         bannedResponsePromise,
         scammerResponsePromise,
         SBUBanlistResponsePromise,
         // SkyKingsBanlistResponsePromise,
+        guildLBBlacklistResponsePromise,
         ScammerListResponsePromise
     ]);
 
     if (!scammerResponse.success) console.log("Scammer Error:", scammerResponse.reason);
     if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
+    if (!guildLBBlacklistResponse.success) console.log("GuildLBBlacklist Error:", guildLBBlacklistResponse);
     // if (!SkyKingsBanlistResponse.success) console.log("SkyKingsBanlist Error:", SkyKingsBanlistResponse.message);
     if (ScammerListResponse && !ScammerListResponse.success) console.log("ScammerList Error:", ScammerListResponse.message);
 
@@ -371,6 +376,16 @@ export default async function(
                             ) : `${yes} They are not in the SBU ban list`
                         ) : `⚠️ Failed to check banlist status`,
                     },
+                    {
+                        name: "GuildLB Banlist",
+                        value: guildLBBlacklistResponse.success ? (
+                            guildLBBlacklistResponse.data.blacklisted ? (
+                                guildLBBlacklistResponse.data.entries.length === 0 ?
+                                    `${no} They are in the GuildLB ban list!` :
+                                    `${no} ${guildLBBlacklistResponse.data.entries[0].reason}`
+                            ) : `${yes} They are not in the GuildLB ban list`
+                        ) : `⚠️ Failed to check banlist status`,
+                    },
                     // {
                     //     name: "SkyKings Banlist",
                     //     value: SkyKingsBanlistResponse.success ? (
@@ -439,7 +454,6 @@ export default async function(
             exp: profileAPIResponse.experience,
         });
     }
-    
 
     return NextResponse.json(
         { success: true },

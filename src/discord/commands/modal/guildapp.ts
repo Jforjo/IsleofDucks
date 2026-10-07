@@ -8,6 +8,7 @@ import { getScammerFromDiscord, getScammerFromUUID } from "@/discord/jerry";
 import { getSBUBanlistFromUUID } from "@/discord/sbu";
 import { getScammerListFromIDs } from "@/discord/scammerList";
 import { getSkyKingsBanlistFromUUID } from "@/discord/skykings";
+import { checkGuildLBBlacklist } from "@/discord/guildlb";
 
 export default async function(
     interaction: APIModalSubmitInteraction
@@ -312,6 +313,9 @@ export default async function(
     const SBUBanlistResponse = await getSBUBanlistFromUUID(mojang.uuid);
     if (!SBUBanlistResponse.success) console.log("SBUBanlist Error:", SBUBanlistResponse.message);
 
+    const guildLBBlacklistResponse = await checkGuildLBBlacklist(mojang.uuid);
+    if (!guildLBBlacklistResponse.success) console.log("GuildLBBlacklist Error:", guildLBBlacklistResponse);
+
     // const SkyKingsBanlistResponse = await getSkyKingsBanlistFromUUID(mojang.uuid);
     // if (!SkyKingsBanlistResponse.success) console.log("SkyKingsBanlist Error:", SkyKingsBanlistResponse.message);
 
@@ -538,6 +542,16 @@ export default async function(
                                     `${no} They are in the SBU ban list!` :
                                     `${no} ${SBUBanlistResponse.details.reason}`
                             ) : `${yes} They are not in the SBU ban list`
+                        ) : `⚠️ Failed to check banlist status`,
+                    },
+                    {
+                        name: "GuildLB Banlist",
+                        value: guildLBBlacklistResponse.success ? (
+                            guildLBBlacklistResponse.data.blacklisted ? (
+                                guildLBBlacklistResponse.data.entries.length === 0 ?
+                                    `${no} They are in the GuildLB ban list!` :
+                                    `${no} ${guildLBBlacklistResponse.data.entries[0].reason}`
+                            ) : `${yes} They are not in the GuildLB ban list`
                         ) : `⚠️ Failed to check banlist status`,
                     },
                     // {
