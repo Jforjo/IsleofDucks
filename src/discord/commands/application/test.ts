@@ -1,11 +1,12 @@
 import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
-import { getHypixelAuctions, getHypixelPlayer, isPlayerInGuild } from "@/discord/hypixelUtils";
-import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getImmunePlayers, getUserDataFromUUID, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
+import { getHypixelAuctions, getHypixelPlayer } from "@/discord/hypixelUtils";
+import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getBannedPlayers, getImmunePlayers, getUserDataFromUUID, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
 import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "./recruit";
 import { getScammerListFromIDs } from "@/discord/scammerList";
+import { addGuildLBBlacklistEntry } from "@/discord/guildlb";
 
 export default async function(
     interaction: APIChatInputApplicationCommandInteraction
@@ -100,37 +101,16 @@ export default async function(
     //     }
     // }
 
-    const auctions = await getHypixelAuctions();
-    if (!auctions.success) {
-        await FollowupMessage(interaction.token, {
-            content: `Failed to get Hypixel auctions: ${auctions.message}\n${auctions.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + auctions.retry ) / 1000)}:R> to continue` : ""}`,
-        });
-        return NextResponse.json(
-            { success: false, error: "Failed to get Hypixel auctions" },
-            { status: 500 }
-        );
-    }
-
-    const players: string[] = [];
-    const guilds: string[] = [];
-
-    for (const auction of auctions.auctions!) {
-        const user = auction.auctioneer;
-        if (!user) continue;
-        if (players.includes(user)) continue;
-        const guild = await isPlayerInGuild(user);
-        if (!guild.success) {
-            if (guild.message === "Key throttle") break;
-            continue;
-        }
-        if (!guild.isInGuild) continue;
-        guilds.push(guild.guild.name);
-        players.push(...guild.guild.members.map(m => m.uuid));
-    }
-
-    await FollowupMessage(interaction.token, {
-        content: guilds.join("\n"),
-    });
+    // const auctions = await getHypixelAuctions();
+    // if (!auctions.success) {
+    //     await FollowupMessage(interaction.token, {
+    //         content: `Failed to get Hypixel auctions: ${auctions.message}\n${auctions.retry ? `Try again <t:${Math.floor(( timestamp.getTime() + auctions.retry ) / 1000)}:R> to continue` : ""}`,
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Failed to get Hypixel auctions" },
+    //         { status: 500 }
+    //     );
+    // }
 
     // for (const auction of auctions.auctions!) {
     //     const user = auction.auctioneer;
@@ -171,9 +151,15 @@ export default async function(
     //     "268803307680563201"
     // ]);
 
-    // await FollowupMessage(interaction.token, {
-    //     content: `Done!`,
-    // });
+
+    const banned = await getBannedPlayers(0, 2000000000);
+    for (const player of banned.players) {
+        await addGuildLBBlacklistEntry(player.uuid, player.reason, player.type);
+    }
+
+    await FollowupMessage(interaction.token, {
+        content: `Done!`,
+    });
 
     return NextResponse.json(
         { success: true },
