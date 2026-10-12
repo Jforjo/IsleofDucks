@@ -51,12 +51,12 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
 
-    if (!profile.members[uuid].bestiary?.migrated_stats || !profile.members[uuid].bestiary?.migration) {
-        return Response.json({
-            success: false,
-            message: "Bestiary data is not migrated"
-        });
-    }
+    // if (!profile.members[uuid].bestiary?.migrated_stats || !profile.members[uuid].bestiary?.migration) {
+    //     return Response.json({
+    //         success: false,
+    //         message: "Bestiary data is not migrated"
+    //     });
+    // }
 
     if (!profile.members[uuid].bestiary?.deaths) {
         return Response.json({

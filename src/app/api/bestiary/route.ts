@@ -51,10 +51,17 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
 
-    if (!profile.members[uuid].bestiary?.migrated_stats || !profile.members[uuid].bestiary?.migration) {
+    // if (!profile.members[uuid].bestiary?.migrated_stats || !profile.members[uuid].bestiary?.migration) {
+    //     return Response.json({
+    //         success: false,
+    //         message: "Bestiary data is not migrated"
+    //     });
+    // }
+
+    if (!profile.members[uuid].bestiary?.kills) {
         return Response.json({
             success: false,
-            message: "Bestiary data is not migrated"
+            message: "Kills data is not available"
         });
     }
 
