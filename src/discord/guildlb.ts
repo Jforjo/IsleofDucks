@@ -173,3 +173,55 @@ export async function getGuildLBBlacklist(): Promise<GetGuildLBBlacklistResponse
 
     return await res.json() as GetGuildLBBlacklistResponse;
 }
+
+type GetGuildLBPlayerResponse = GuildLBError | {
+    success: true,
+    data: {
+        uuid: string,
+        name: string,
+        guild_id: string,
+        guild_name: string,
+        guild_rank: string,
+        skyblock_level: number,
+        skills: number,
+        slayers: number,
+        catacombs: number,
+        networth: number,
+        non_cosmetic_networth: number,
+        networth_formatted: string,
+        slayers_formatted: string,
+        updated_at: string,
+        socials: any,
+        scammer_status: string,
+        scammer_alt: false,
+        scammer_reason: null,
+        scammer_source: string,
+        scammer_flags: any[]
+    },
+    meta: {
+        generatedAt: string,
+        ttl: number
+    }
+};
+
+export async function getGuildLBPlayer(uuid: string): Promise<GetGuildLBPlayerResponse> {
+    if (!process.env.GUILDLB_API_KEY) throw new Error("GUILDLB_API_KEY is not set");
+
+    const res = await fetch(`${ROUTES.base}${ROUTES.player(uuid)}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${process.env.GUILDLB_API_KEY}`
+        }
+    });
+
+    if (res.status === 429) {
+        const retryAfter = res.headers.get("Retry-After");
+        if (retryAfter) {
+            const retryAfterMs = parseInt(retryAfter) * 1000;
+            await new Promise(resolve => setTimeout(resolve, retryAfterMs));
+            return getGuildLBPlayer(uuid);
+        }
+    }
+
+    return await res.json() as GetGuildLBPlayerResponse;
+}
