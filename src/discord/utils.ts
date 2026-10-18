@@ -43,6 +43,14 @@ export function formatNumberWithCommas(num: number): string {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+export function formatNumberWithSuffix(num: number, dp: number): string {
+    if (num >= 1e12) return (num / 1e12).toFixed(dp) + "T";
+    if (num >= 1e9) return (num / 1e9).toFixed(dp) + "B";
+    if (num >= 1e6) return (num / 1e6).toFixed(dp) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(dp) + "K";
+    return num.toString();
+}
+
 export function chunkByMaxChars(items: string[], maxChars: number, separator = "\n"): string[][] {
     const chunks: string[][] = [];
     let current: string[] = [];
