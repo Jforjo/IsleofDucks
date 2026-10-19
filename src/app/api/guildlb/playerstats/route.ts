@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
-import { createCanvas, loadImage, type CanvasRenderingContext2D } from "canvas";
+import { createCanvas, loadImage, registerFont, type CanvasRenderingContext2D } from "canvas";
 import { getGuildLBPlayer } from "@/discord/guildlb";
+import path from "path";
 
 function roundToDP(value: number, dp: number): number {
     const factor = Math.pow(10, dp);
@@ -82,6 +83,9 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     const playerImage = await loadImage(`https://mc-api.io/render/FULL/${uuid}?size256`);
     
+    const fontPath = path.resolve(process.cwd(), 'public/fonts/Roboto-Bold.ttf');
+    registerFont(fontPath, { family: 'Roboto', weight: 'bold' });
+
     const offset = 8;
     const imageWidth = playerImage.height * 2 + offset * 2;
     const imageHeight = playerImage.height + offset * 2;
@@ -159,7 +163,7 @@ export async function GET(request: NextRequest): Promise<Response> {
      * TOP (name)
      */
     for (let i = 20; i >= 0; i--) {
-        ctx.font = `bold ${i}px`;
+        ctx.font = `bold ${i}px Roboto`;
         if (!(ctx.measureText(`${player.data.rank_prefix ? player.data.rank_prefix.replaceAll(/§[a-f0-9]/gm, "") + " " : ""}${player.data.name}${player.data.guild_tag ? ` [${player.data.guild_tag}]` : ""}`).width > imageWidth - playerImage.width - offset * 5)) {
             break;
         }
@@ -204,7 +208,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     topGuildText += `Updated ${lastUpdatedText}`;
     ctx.fillStyle = "gray";
     for (let i = 10; i >= 0; i--) {
-        ctx.font = `bold ${i}px`;
+        ctx.font = `bold ${i}px Roboto`;
         if (!(ctx.measureText(topGuildText).width > imageWidth - playerImage.width - offset * 5)) {
             break;
         }
@@ -219,13 +223,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 0,0 (Level)
      */
     ctx.fillStyle = "black";
-    ctx.font = `bold 16px`;
+    ctx.font = `bold 16px Roboto`;
     ctx.fillText(
         centerText(ctx, "Level", boxWidth - offset * 2),
         playerImage.width + offset * 5,
         (imageHeight - offset * 5) / 8 * 3
     );
-    ctx.font = `bold 20px`;
+    ctx.font = `bold 20px Roboto`;
     ctx.fillStyle = levelToColour(player.data.skyblock_level);
     ctx.fillText(
         centerText(ctx, `${player.data.skyblock_level}`, boxWidth - offset * 2),
@@ -237,13 +241,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 0,1 (Skills)
      */
     ctx.fillStyle = "black";
-    ctx.font = `bold 16px`;
+    ctx.font = `bold 16px Roboto`;
     ctx.fillText(
         centerText(ctx, "Skills", boxWidth - offset * 2),
         playerImage.width + boxWidth + offset * 7,
         (imageHeight - offset * 5) / 8 * 3
     );
-    ctx.font = `bold 20px`;
+    ctx.font = `bold 20px Roboto`;
     ctx.fillStyle = "#ff55ff";
     ctx.fillText(
         centerText(ctx, `${roundToDP(player.data.skills, 2)}`, boxWidth - offset * 2),
@@ -255,13 +259,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 1,0 (Slayer)
      */
     ctx.fillStyle = "black";
-    ctx.font = `bold 16px`;
+    ctx.font = `bold 16px Roboto`;
     ctx.fillText(
         centerText(ctx, "Slayer", boxWidth - offset * 2),
         playerImage.width + offset * 5,
         (imageHeight - offset * 5) / 8 * 5 + offset
     );
-    ctx.font = `bold 20px`;
+    ctx.font = `bold 20px Roboto`;
     ctx.fillStyle = "#55ff55";
     ctx.fillText(
         centerText(ctx, `${player.data.slayers_formatted}`, boxWidth - offset * 2),
@@ -273,13 +277,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 1,1 (Cata)
      */
     ctx.fillStyle = "black";
-    ctx.font = `bold 16px`;
+    ctx.font = `bold 16px Roboto`;
     ctx.fillText(
         centerText(ctx, "Cata", boxWidth - offset * 2),
         playerImage.width + boxWidth + offset * 7,
         (imageHeight - offset * 5) / 8 * 5 + offset
     );
-    ctx.font = `bold 20px`;
+    ctx.font = `bold 20px Roboto`;
     ctx.fillStyle = "#ff5555";
     ctx.fillText(
         centerText(ctx, `${roundToDP(player.data.dungeons_map.catacombs_level, 2)}`, boxWidth - offset * 2),
@@ -291,13 +295,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 2,0 (Networth)
      */
     ctx.fillStyle = "black";
-    ctx.font = `bold 16px`;
+    ctx.font = `bold 16px Roboto`;
     ctx.fillText(
         centerText(ctx, "Networth", boxWidth - offset * 2),
         playerImage.width + offset * 5,
         (imageHeight - offset * 5) / 8 * 7 + offset * 2
     );
-    ctx.font = `bold 20px`;
+    ctx.font = `bold 20px Roboto`;
     ctx.fillStyle = "#ffff55";
     ctx.fillText(
         centerText(ctx, `${player.data.networth_formatted}`, boxWidth - offset * 2),
@@ -311,7 +315,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     ctx.fillStyle = "black";
     const modeText = `Mode: ${player.data.game_mode === '' ? "normal" : player.data.game_mode}`;
     for (let i = 16; i >= 0; i--) {
-        ctx.font = `bold ${i}px`;
+        ctx.font = `bold ${i}px Roboto`;
         if (!(ctx.measureText(modeText).width > boxWidth - offset * 2)) {
             break;
         }
@@ -323,7 +327,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     );
     const profileText = `Profile: ${player.data.cute_name}`;
     for (let i = 16; i >= 0; i--) {
-        ctx.font = `bold ${i}px`;
+        ctx.font = `bold ${i}px Roboto`;
         if (!(ctx.measureText(profileText).width > boxWidth - offset * 2)) {
             break;
         }
