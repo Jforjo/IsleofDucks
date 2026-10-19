@@ -213,12 +213,12 @@ type GetGuildLBPlayerResponse = GuildLBError | {
 };
 
 export async function getGuildLBPlayer(uuid: string): Promise<GetGuildLBPlayerResponse> {
-    if (!process.env.GUILDLB_API_KEY) throw new Error("GUILDLB_API_KEY is not set");
+    if (!process.env.GUILDLB_WEB_API_KEY) throw new Error("GUILDLB_WEB_API_KEY is not set");
 
     const res = await fetch(`${ROUTES.base}${ROUTES.player(uuid)}`, {
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${process.env.GUILDLB_API_KEY}`
+            "Authorization": `Bearer ${process.env.GUILDLB_WEB_API_KEY}`
         }
     });
 
