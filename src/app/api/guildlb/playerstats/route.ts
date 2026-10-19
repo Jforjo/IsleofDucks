@@ -82,6 +82,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     const lastUpdatedText = diffDays === 0 ? "Today" : diffDays === 1 ? "Yesterday" : `${diffDays} days ago`;
 
     const playerImage = await loadImage(`https://mc-api.io/render/FULL/${uuid}?size256`);
+    const bg = await loadImage(path.join(process.cwd(), "public", "images", "playerstats.jpg"));
     
     registerFont(path.resolve(process.cwd(), 'public/fonts/Roboto-Bold.ttf'), { family: 'Roboto', weight: 'bold' });
     registerFont(path.resolve(process.cwd(), 'public/fonts/NotoSansSymbols-Regular.ttf'), { family: 'NotoSymbols' });
@@ -94,6 +95,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     const ctx = canvas.getContext('2d');
 
     // ctx.putImageData(backgroundImage, 0, 0);
+    ctx.drawImage(bg, 0, 0, imageWidth, imageHeight);
 
     ctx.drawImage(playerImage, offset, offset, playerImage.width, playerImage.height);
 
@@ -158,6 +160,9 @@ export async function GET(request: NextRequest): Promise<Response> {
         [offset * 2]
     );
     ctx.stroke();
+    ctx.globalAlpha = 0.5;
+    ctx.fill();
+    ctx.globalAlpha = 1;
 
     /**
      * TOP (name)
@@ -206,7 +211,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         topGuildText = `${player.data.guild_rank} in ${player.data.guild_name} • `;
     }
     topGuildText += `Updated ${lastUpdatedText}`;
-    ctx.fillStyle = "gray";
+    ctx.fillStyle = "white";
     for (let i = 10; i >= 0; i--) {
         ctx.font = `bold ${i}px Roboto, NotoSymbols`;
         if (!(ctx.measureText(topGuildText).width > imageWidth - playerImage.width - offset * 5)) {
@@ -222,7 +227,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     /**
      * 0,0 (Level)
      */
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = `bold 16px Roboto, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Level", boxWidth - offset * 2),
@@ -240,7 +245,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     /**
      * 0,1 (Skills)
      */
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = `bold 16px Roboto, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Skills", boxWidth - offset * 2),
@@ -258,7 +263,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     /**
      * 1,0 (Slayer)
      */
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = `bold 16px Roboto, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Slayer", boxWidth - offset * 2),
@@ -276,7 +281,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     /**
      * 1,1 (Cata)
      */
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = `bold 16px Roboto, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Cata", boxWidth - offset * 2),
@@ -294,7 +299,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     /**
      * 2,0 (Networth)
      */
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = `bold 16px Roboto, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Networth", boxWidth - offset * 2),
@@ -312,7 +317,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     /**
      * 2,1 (Profile)
      */
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     const modeText = `Mode: ${player.data.game_mode === '' ? "normal" : player.data.game_mode}`;
     for (let i = 16; i >= 0; i--) {
         ctx.font = `bold ${i}px Roboto, NotoSymbols`;
