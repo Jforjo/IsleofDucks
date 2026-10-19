@@ -82,7 +82,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     const lastUpdatedText = diffDays === 0 ? "Today" : diffDays === 1 ? "Yesterday" : `${diffDays} days ago`;
 
     const playerImage = await loadImage(`https://mc-api.io/render/FULL/${uuid}?size256`);
-    const bg = await loadImage(path.join(process.cwd(), "public", "images", "playerstats2.png"));
+    // const bg = await loadImage(path.join(process.cwd(), "public", "images", "playerstats2.png"));
     
     registerFont(path.resolve(process.cwd(), 'public/fonts/AtkinsonHyperlegible-Bold.ttf'), { family: 'AtkinsonHyperlegible', weight: 'bold' });
     registerFont(path.resolve(process.cwd(), 'public/fonts/NotoSansSymbols-Regular.ttf'), { family: 'NotoSymbols' });
