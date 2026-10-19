@@ -175,33 +175,41 @@ export async function getGuildLBBlacklist(): Promise<GetGuildLBBlacklistResponse
 }
 
 type GetGuildLBPlayerResponse = GuildLBError | {
-    success: true,
+    success: true;
     data: {
-        uuid: string,
-        name: string,
-        guild_id: string,
-        guild_name: string,
-        guild_rank: string,
-        skyblock_level: number,
-        skills: number,
-        slayers: number,
-        catacombs: number,
-        networth: number,
-        non_cosmetic_networth: number,
-        networth_formatted: string,
-        slayers_formatted: string,
-        updated_at: string,
-        socials: any,
-        scammer_status: string,
-        scammer_alt: false,
-        scammer_reason: null,
-        scammer_source: string,
-        scammer_flags: any[]
-    },
+        uuid: string;
+        name: string;
+        cute_name: string | null;
+        game_mode: string | null;
+        rank_prefix: string | null;
+        guild_id: string | null;
+        guild_name: string | null;
+        guild_rank: string | null;
+        guild_tag: string | null;
+        guild_tag_color: string | null;
+        skyblock_level: number;
+        skills: number;
+        slayers: number;
+        catacombs: number;
+        networth: number;
+        non_cosmetic_networth: number;
+        networth_formatted: string;
+        slayers_formatted: string;
+        updated_at: string;
+        socials: any;
+        scammer_status: string;
+        scammer_alt: false;
+        scammer_reason: null;
+        scammer_source: string;
+        scammer_flags: any[];
+        dungeons_map: {
+            catacombs_level: number;
+        }
+    };
     meta: {
-        generatedAt: string,
-        ttl: number
-    }
+        generatedAt: string;
+        ttl: number;
+    };
 };
 
 export async function getGuildLBPlayer(uuid: string): Promise<GetGuildLBPlayerResponse> {
