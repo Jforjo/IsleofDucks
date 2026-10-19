@@ -82,9 +82,9 @@ export async function GET(request: NextRequest): Promise<Response> {
     const lastUpdatedText = diffDays === 0 ? "Today" : diffDays === 1 ? "Yesterday" : `${diffDays} days ago`;
 
     const playerImage = await loadImage(`https://mc-api.io/render/FULL/${uuid}?size256`);
-    const bg = await loadImage(path.join(process.cwd(), "public", "images", "playerstats.jpg"));
+    const bg = await loadImage(path.join(process.cwd(), "public", "images", "playerstats2.png"));
     
-    registerFont(path.resolve(process.cwd(), 'public/fonts/Roboto-Bold.ttf'), { family: 'Roboto', weight: 'bold' });
+    registerFont(path.resolve(process.cwd(), 'public/fonts/AtkinsonHyperlegible-Bold.ttf'), { family: 'AtkinsonHyperlegible', weight: 'bold' });
     registerFont(path.resolve(process.cwd(), 'public/fonts/NotoSansSymbols-Regular.ttf'), { family: 'NotoSymbols' });
 
     const offset = 8;
@@ -95,7 +95,11 @@ export async function GET(request: NextRequest): Promise<Response> {
     const ctx = canvas.getContext('2d');
 
     // ctx.putImageData(backgroundImage, 0, 0);
-    ctx.drawImage(bg, 0, 0, imageWidth, imageHeight);
+    // ctx.drawImage(bg, 0, 0, imageWidth, imageHeight);
+    // Make bg #10131a
+    ctx.fillStyle = "#10131a";
+    ctx.fillRect(0, 0, imageWidth, imageHeight);
+    ctx.fillStyle = "black";
 
     ctx.drawImage(playerImage, offset, offset, playerImage.width, playerImage.height);
 
@@ -168,7 +172,7 @@ export async function GET(request: NextRequest): Promise<Response> {
      * TOP (name)
      */
     for (let i = 20; i >= 0; i--) {
-        ctx.font = `bold ${i}px Roboto, NotoSymbols`;
+        ctx.font = `bold ${i}px AtkinsonHyperlegible, NotoSymbols`;
         if (!(ctx.measureText(`${player.data.rank_prefix ? player.data.rank_prefix.replaceAll(/§[a-f0-9]/gm, "") + " " : ""}${player.data.name}${player.data.guild_tag ? ` [${player.data.guild_tag}]` : ""}`).width > imageWidth - playerImage.width - offset * 5)) {
             break;
         }
@@ -213,7 +217,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     topGuildText += `Updated ${lastUpdatedText}`;
     ctx.fillStyle = "white";
     for (let i = 10; i >= 0; i--) {
-        ctx.font = `bold ${i}px Roboto, NotoSymbols`;
+        ctx.font = `bold ${i}px AtkinsonHyperlegible, NotoSymbols`;
         if (!(ctx.measureText(topGuildText).width > imageWidth - playerImage.width - offset * 5)) {
             break;
         }
@@ -228,13 +232,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 0,0 (Level)
      */
     ctx.fillStyle = "white";
-    ctx.font = `bold 16px Roboto, NotoSymbols`;
+    ctx.font = `bold 16px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Level", boxWidth - offset * 2),
         playerImage.width + offset * 5,
         (imageHeight - offset * 5) / 8 * 3
     );
-    ctx.font = `bold 20px Roboto, NotoSymbols`;
+    ctx.font = `bold 20px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillStyle = levelToColour(player.data.skyblock_level);
     ctx.fillText(
         centerText(ctx, `${player.data.skyblock_level}`, boxWidth - offset * 2),
@@ -246,13 +250,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 0,1 (Skills)
      */
     ctx.fillStyle = "white";
-    ctx.font = `bold 16px Roboto, NotoSymbols`;
+    ctx.font = `bold 16px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Skills", boxWidth - offset * 2),
         playerImage.width + boxWidth + offset * 7,
         (imageHeight - offset * 5) / 8 * 3
     );
-    ctx.font = `bold 20px Roboto, NotoSymbols`;
+    ctx.font = `bold 20px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillStyle = "#ff55ff";
     ctx.fillText(
         centerText(ctx, `${roundToDP(player.data.skills, 2)}`, boxWidth - offset * 2),
@@ -264,13 +268,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 1,0 (Slayer)
      */
     ctx.fillStyle = "white";
-    ctx.font = `bold 16px Roboto, NotoSymbols`;
+    ctx.font = `bold 16px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Slayer", boxWidth - offset * 2),
         playerImage.width + offset * 5,
         (imageHeight - offset * 5) / 8 * 5 + offset
     );
-    ctx.font = `bold 20px Roboto, NotoSymbols`;
+    ctx.font = `bold 20px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillStyle = "#55ff55";
     ctx.fillText(
         centerText(ctx, `${player.data.slayers_formatted}`, boxWidth - offset * 2),
@@ -282,13 +286,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 1,1 (Cata)
      */
     ctx.fillStyle = "white";
-    ctx.font = `bold 16px Roboto, NotoSymbols`;
+    ctx.font = `bold 16px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Cata", boxWidth - offset * 2),
         playerImage.width + boxWidth + offset * 7,
         (imageHeight - offset * 5) / 8 * 5 + offset
     );
-    ctx.font = `bold 20px Roboto, NotoSymbols`;
+    ctx.font = `bold 20px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillStyle = "#ff5555";
     ctx.fillText(
         centerText(ctx, `${roundToDP(player.data.dungeons_map.catacombs_level, 2)}`, boxWidth - offset * 2),
@@ -300,13 +304,13 @@ export async function GET(request: NextRequest): Promise<Response> {
      * 2,0 (Networth)
      */
     ctx.fillStyle = "white";
-    ctx.font = `bold 16px Roboto, NotoSymbols`;
+    ctx.font = `bold 16px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillText(
         centerText(ctx, "Networth", boxWidth - offset * 2),
         playerImage.width + offset * 5,
         (imageHeight - offset * 5) / 8 * 7 + offset * 2
     );
-    ctx.font = `bold 20px Roboto, NotoSymbols`;
+    ctx.font = `bold 20px AtkinsonHyperlegible, NotoSymbols`;
     ctx.fillStyle = "#ffff55";
     ctx.fillText(
         centerText(ctx, `${player.data.networth_formatted}`, boxWidth - offset * 2),
@@ -320,7 +324,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     ctx.fillStyle = "white";
     const modeText = `Mode: ${player.data.game_mode === '' ? "normal" : player.data.game_mode}`;
     for (let i = 16; i >= 0; i--) {
-        ctx.font = `bold ${i}px Roboto, NotoSymbols`;
+        ctx.font = `bold ${i}px AtkinsonHyperlegible, NotoSymbols`;
         if (!(ctx.measureText(modeText).width > boxWidth - offset * 2)) {
             break;
         }
@@ -332,7 +336,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     );
     const profileText = `Profile: ${player.data.cute_name}`;
     for (let i = 16; i >= 0; i--) {
-        ctx.font = `bold ${i}px Roboto, NotoSymbols`;
+        ctx.font = `bold ${i}px AtkinsonHyperlegible, NotoSymbols`;
         if (!(ctx.measureText(profileText).width > boxWidth - offset * 2)) {
             break;
         }
