@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import { createCanvas, loadImage, type CanvasRenderingContext2D } from "canvas";
 import { getGuildLBPlayer } from "@/discord/guildlb";
-import { formatNumberWithSuffix } from "@/discord/utils";
 
 function roundToDP(value: number, dp: number): number {
     const factor = Math.pow(10, dp);
