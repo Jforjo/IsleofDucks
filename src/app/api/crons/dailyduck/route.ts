@@ -123,7 +123,7 @@ export async function GET(request: NextRequest): Promise<Response> {
                         items: [
                             {
                                 media: {
-                                    url: `attachment://dailyduck.gif`
+                                    url: link
                                 }
                             }
                         ]
@@ -131,19 +131,7 @@ export async function GET(request: NextRequest): Promise<Response> {
                 ]
             }
         ],
-        attachments: [
-            {
-                id: 1,
-                filename: `dailyduck.gif`
-            }
-        ]
-    }, [
-        {
-            id: 1,
-            filename: `dailyduck.gif`,
-            url: link
-        }
-    ]);
+    });
 
     return Response.json({ success: true });
 }
