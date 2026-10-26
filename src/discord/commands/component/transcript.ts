@@ -75,7 +75,7 @@ export async function CreateTranscript(
         const isComponentsV2 = message.flags ? (message.flags & MessageFlags.IsComponentsV2) !== 0 : false;
 
         if (isComponentsV2) {
-            await ExecuteWebhook({
+            await ExecuteWebhook(process.env.TICKET_TRANSCRIPT_WEBHOOK_ID, process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN, {
                 thread_id: thread.id,
                 wait: true,
                 with_components: true
@@ -90,7 +90,7 @@ export async function CreateTranscript(
                 }
             });
         } else {
-            await ExecuteWebhook({
+            await ExecuteWebhook(process.env.TICKET_TRANSCRIPT_WEBHOOK_ID, process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN, {
                 thread_id: thread.id,
                 wait: true
             }, {

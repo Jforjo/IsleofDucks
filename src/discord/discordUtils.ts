@@ -1,11 +1,10 @@
 import { sql } from "@vercel/postgres";
 import { Permissions, Snowflake } from "discord-api-types/globals"
-import { APIGuild, APIGuildMember, APIInteractionResponseCallbackData, APIMessage, APIMessageTopLevelComponent, APIUser, ComponentType, MessageFlags, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIGuildResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIGuildMemberJSONBody, RESTPatchAPIGuildMemberResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
-import { calcCataLevel, getProfiles, getUsernameOrUUID } from "./hypixelUtils";
+import { APIGuild, APIGuildMember, APIInteractionResponseCallbackData, APIMessage, APIMessageTopLevelComponent, APIUser, ComponentType, RESTDeleteAPIChannelResult, RESTGetAPIChannelMessageResult, RESTGetAPIChannelMessagesQuery, RESTGetAPIChannelMessagesResult, RESTGetAPIChannelResult, RESTGetAPIGuildChannelsResult, RESTGetAPIGuildMemberResult, RESTGetAPIGuildMembersQuery, RESTGetAPIGuildMembersResult, RESTGetAPIGuildResult, RESTGetAPIWebhookWithTokenMessageResult, RESTPatchAPIChannelJSONBody, RESTPatchAPIChannelMessageJSONBody, RESTPatchAPIChannelMessageResult, RESTPatchAPIChannelResult, RESTPatchAPIGuildMemberJSONBody, RESTPatchAPIGuildMemberResult, RESTPatchAPIWebhookJSONBody, RESTPatchAPIWebhookResult, RESTPatchAPIWebhookWithTokenMessageJSONBody, RESTPatchAPIWebhookWithTokenMessageResult, RESTPostAPIChannelMessageJSONBody, RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessagesThreadsResult, RESTPostAPIGuildChannelJSONBody, RESTPostAPIGuildChannelResult, RESTPostAPIGuildForumThreadsJSONBody, RESTPostAPIInteractionCallbackJSONBody, RESTPostAPIInteractionCallbackWithResponseResult, RESTPostAPIWebhookWithTokenJSONBody, RESTPostAPIWebhookWithTokenQuery, RESTPostAPIWebhookWithTokenResult, RESTPutAPIApplicationCommandsJSONBody, RESTPutAPIApplicationCommandsResult, RESTPutAPIApplicationGuildCommandsJSONBody, RESTPutAPIApplicationGuildCommandsResult, RouteBases, Routes } from "discord-api-types/v10";
+import { calcCataLevel, getProfiles } from "./hypixelUtils";
 import { SkyBlockProfileMember } from "@zikeji/hypixel/dist/types/Augmented/SkyBlock/ProfileMember";
 import { checkMinecraftInDB, updateMinecraftPlayerDataExp, updateMinecraftUser } from "./utils";
 import { AES, enc } from "crypto-ts";
-import { isCollectionAPI, isInventoryAPI, isPersonalVaultAPI, isSkillsAPI } from "./commands/application/checkapi";
 
 export interface DiscordPermissions {
     create_instant_invite?: boolean;
@@ -945,6 +944,8 @@ export async function CreateThread(channelId: Snowflake, options: RESTPostAPIGui
 }
 
 export async function ExecuteWebhook(
+    webhookID: string | undefined,
+    webhookToken: string | undefined,
     queryParms: RESTPostAPIWebhookWithTokenQuery,
     options: RESTPostAPIWebhookWithTokenJSONBody,
     attachmentURLs?: {
@@ -955,10 +956,10 @@ export async function ExecuteWebhook(
 ): Promise<RESTPostAPIWebhookWithTokenResult | undefined> {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID is not defined');
     if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not defined');
-    if (!process.env.TICKET_TRANSCRIPT_WEBHOOK_ID) throw new Error('TICKET_TRANSCRIPT_WEBHOOK_ID is not defined');
-    if (!process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN) throw new Error('TICKET_TRANSCRIPT_WEBHOOK_TOKEN is not defined');
+    if (!webhookID) throw new Error('webhookID is not defined');
+    if (!webhookToken) throw new Error('webhookToken is not defined');
 
-    const endpoint = Routes.webhook(process.env.TICKET_TRANSCRIPT_WEBHOOK_ID, process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN);
+    const endpoint = Routes.webhook(webhookID, webhookToken);
     const url = RouteBases.api + endpoint + '?' + new URLSearchParams(Object.entries(queryParms)).toString();
 
     const formData = new FormData();
@@ -994,7 +995,7 @@ export async function ExecuteWebhook(
             const retryAfter = res.headers.get('retry-after');
             if (retryAfter && !isNaN(Number(retryAfter))) {
                 await new Promise(res => setTimeout(res, Number(retryAfter) * 1000));
-                return await ExecuteWebhook(queryParms, options);
+                return await ExecuteWebhook(webhookID, webhookToken, queryParms, options, attachmentURLs);
             }
         }
         console.error(data);
