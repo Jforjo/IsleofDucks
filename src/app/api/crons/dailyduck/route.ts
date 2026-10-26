@@ -103,8 +103,6 @@ export async function GET(request: NextRequest): Promise<Response> {
     }
 
     const link = "https://isle-of-ducks.vercel.app/api/duck";
-    const imageResponse = await fetch(link);
-    const fileType = imageResponse.headers.get("content-type")?.split("/")[1]?.split(";")[0] ?? "png";
 
     await ExecuteWebhook(process.env.DAILYDUCK_WEBHOOK_ID, process.env.DAILYDUCK_WEBHOOK_TOKEN, {
         wait: true,
@@ -125,7 +123,7 @@ export async function GET(request: NextRequest): Promise<Response> {
                         items: [
                             {
                                 media: {
-                                    url: `attachment://dailyduck.${fileType}`
+                                    url: `attachment://dailyduck.gif`
                                 }
                             }
                         ]
@@ -136,13 +134,13 @@ export async function GET(request: NextRequest): Promise<Response> {
         attachments: [
             {
                 id: 1,
-                filename: `dailyduck.${fileType}`
+                filename: `dailyduck.gif`
             }
         ]
     }, [
         {
             id: 1,
-            filename: `dailyduck.${fileType}`,
+            filename: `dailyduck.gif`,
             url: link
         }
     ]);
