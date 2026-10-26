@@ -176,7 +176,7 @@ async function transcript(
             attachment.id = index.toString();
             return attachment;
         });
-        await ExecuteWebhook({
+        await ExecuteWebhook(process.env.TICKET_TRANSCRIPT_WEBHOOK_ID, process.env.TICKET_TRANSCRIPT_WEBHOOK_TOKEN, {
             thread_id: threadID,
             wait: true
         }, {
