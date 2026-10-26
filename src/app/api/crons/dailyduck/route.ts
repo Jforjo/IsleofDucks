@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { ExecuteWebhook } from "@/discord/discordUtils";
-import { ComponentType } from "discord-api-types/v10";
+import { ComponentType, MessageFlags } from "discord-api-types/v10";
 
 export async function GET(request: NextRequest): Promise<Response> {
     // const authHeader = request.headers.get("authorization");
@@ -18,6 +18,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         wait: true,
         with_components: true
     }, {
+        flags: MessageFlags.IsComponentsV2,
         components: [
             {
                 type: ComponentType.Container,
