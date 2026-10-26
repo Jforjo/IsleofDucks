@@ -95,12 +95,12 @@ const DUCK_TITLES = [
 ]
 
 export async function GET(request: NextRequest): Promise<Response> {
-    // const authHeader = request.headers.get("authorization");
-    // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    //     return new Response("Unauthorized", {
-    //         status: 401,
-    //     });
-    // }
+    const authHeader = request.headers.get("authorization");
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return new Response("Unauthorized", {
+            status: 401,
+        });
+    }
 
     const link = "https://isle-of-ducks.vercel.app/api/duck";
     const imageResponse = await fetch(link);
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest): Promise<Response> {
                 components: [
                     {
                         type: ComponentType.TextDisplay,
-                        content: DUCK_TITLES[Math.floor(Math.random() * DUCK_TITLES.length)]
+                        content: `## ${DUCK_TITLES[Math.floor(Math.random() * DUCK_TITLES.length)]}`
                     },
                     {
                         type: ComponentType.MediaGallery,
