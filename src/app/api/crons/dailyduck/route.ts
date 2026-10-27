@@ -102,7 +102,9 @@ export async function GET(request: NextRequest): Promise<Response> {
         });
     }
 
-    const link = "https://isle-of-ducks.vercel.app/api/duck";
+    const res = await fetch("https://isle-of-ducks.vercel.app/api/duck");
+    const data = await res.json();
+    const link = data.url;
 
     await ExecuteWebhook(process.env.DAILYDUCK_WEBHOOK_ID, process.env.DAILYDUCK_WEBHOOK_TOKEN, {
         wait: true,
