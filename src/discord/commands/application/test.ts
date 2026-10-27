@@ -1,8 +1,8 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole, SendMessage } from "@/discord/discordUtils";
 import { getHypixelAuctions, getHypixelPlayer } from "@/discord/hypixelUtils";
 import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getBannedPlayers, getImmunePlayers, getUserDataFromUUID, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
-import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
+import { APIChatInputApplicationCommandInteraction, APIInteractionResponse, ApplicationCommandType, ComponentType, InteractionResponseType, MessageFlags, RESTPostAPIChannelMessageJSONBody } from "discord-api-types/v10";
 import { NextResponse } from "next/server";
 import { checkPlayer } from "./recruit";
 import { getScammerListFromIDs } from "@/discord/scammerList";
@@ -152,22 +152,85 @@ export default async function(
     // ]);
 
 
-    const alrBanned = await getGuildLBBlacklist();
-    if (!alrBanned.success) {
-        await FollowupMessage(interaction.token, {
-            content: `Failed to fetch GuildLB blacklist`,
-        });
-        return NextResponse.json(
-            { success: false, error: "Failed to fetch GuildLB blacklist" },
-            { status: 500 }
-        );
-    }
-    const banned = await getBannedPlayers(0, 2000000000);
-    const alreadyBannedUUIDs = new Set(alrBanned.data.map(entry => entry.playerUuid));
-    for (const player of banned.players) {
-        if (alreadyBannedUUIDs.has(player.uuid)) continue;
-        await addGuildLBBlacklistEntry(player.uuid, player.reason, player.type);
-    }
+    // const alrBanned = await getGuildLBBlacklist();
+    // if (!alrBanned.success) {
+    //     await FollowupMessage(interaction.token, {
+    //         content: `Failed to fetch GuildLB blacklist`,
+    //     });
+    //     return NextResponse.json(
+    //         { success: false, error: "Failed to fetch GuildLB blacklist" },
+    //         { status: 500 }
+    //     );
+    // }
+    // const banned = await getBannedPlayers(0, 2000000000);
+    // const alreadyBannedUUIDs = new Set(alrBanned.data.map(entry => entry.playerUuid));
+    // for (const player of banned.players) {
+    //     if (alreadyBannedUUIDs.has(player.uuid)) continue;
+    //     await addGuildLBBlacklistEntry(player.uuid, player.reason, player.type);
+    // }
+
+    const message = {
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `## Bridge Commands`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            "**bank** (ign) - Displays the bank balance of you or the specified player.",
+                            "**bz** [item] - Displays the Bazaar price of the specified item.",
+                            "**cata** (ign) - Displays the Catacombs stats of you or the specified player.",
+                            "**cf** - Coinflip result.",
+                            "**cole**/cw (ign) - Displays the Cole weight of you or the specified player.",
+                            "**collection** (ign) [collection] - Displays the specified collection for you or the specified player.",
+                            "**deaths** (ign) [mob] - Displays the number of deaths from the specified mob for you or the specified player.",
+                            "**farming**/fw (ign) - Displays the farming weight of you or the specified player.",
+                            "**game** - Start a guild game (scramble). At least 3 people need to run the command for a game to start.",
+                            "**grass** (ign) - DIsplays the time that you or the specificed player has been online or offline.",
+                            "**guess**/g [item] - Guess the scramble item.",
+                            "**gxp**/gexp (ign) - Displays the guild experience of you or the specified player.",
+                            "**help** - Displays the list of available commands.",
+                            "**hotm** (ign) - Displays the Heart of the Mountain stats of you or the specified player.",
+                            "**kills**/bestiary (ign) [mob] - Displays the number of kills for the specified mob for you or the specified player.",
+                            "**lbin** [item] - Displays the lowest BIN (Buy It Now) price for the specified item.",
+                            "**level**/lvl (ign) - Displays the level of you or the specified player.",
+                            "**mp**/ap (ign) - Displays the accessory power of you or the specified player.",
+                            "**nw** (ign) - Displays the net worth of you or the specified player.",
+                            "**purse** (ign) - Displays the purse balance of you or the specified player.",
+                            "**sacks** (ign) - Displays the sacks worth of you or the specified player.",
+                            "**skills**/s (ign) - Displays the skills of you or the specified player.",
+                            "**slayer** (ign) - Displays the slayer stats of you or the specified player.",
+                            "**stalk** (ign) - Displays the online status of you or the specified player.",
+                            "**superlative** (ign) - Displays the superlative stats of you or the specified player.",
+                            "**uuid** (ign) - Displays the UUID of you or the specified player.",
+                            "**wiki** (query) - Displays the wiki page for the specified query."
+                        ].join("\n")
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: [
+                            "Options with () are optional.",
+                            "Options with [] are required.",
+                            "Commands are case insensitive.",
+                            "Commands can be used with ! or without.",
+                        ].join("\n")
+                    }
+                ]
+            }
+        ]
+    } as RESTPostAPIChannelMessageJSONBody;
+
+    await SendMessage("1402532834551533649", message); // combined bridge
+    await SendMessage("1166902582464237658", message); // duck bridge
+    await SendMessage("1166891695774904410", message); // duckling bridge
 
     await FollowupMessage(interaction.token, {
         content: `Done!`,
