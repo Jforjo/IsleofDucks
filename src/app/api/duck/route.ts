@@ -22,6 +22,6 @@ export async function GET(): Promise<Response> {
     const randomDuck = files[Math.floor(Math.random() * files.length)];
     return Response.json({
         success: true,
-        url: `/images/ducks/${randomDuck}`
+        url: `https://isle-of-ducks.vercel.app/images/ducks/${randomDuck}`
     }, { status: 200 });
 }
