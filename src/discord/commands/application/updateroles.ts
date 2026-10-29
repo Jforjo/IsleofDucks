@@ -381,9 +381,19 @@ export async function UpdateDuckGuildRoles(guildID: Snowflake): Promise<{
             }
             if (member.joined > weekAgo) {
                 if (!discordMember.roles.includes(IsleofDucks.roles.new_guild_member)) {
-                    await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.new_guild_member);
-                    rolesAdded++;
-                    usersHadRolesAdded.push(discordID);
+                    if (!discordMember.roles.includes(IsleofDucks.roles.booster) &&
+                        !discordMember.roles.includes(IsleofDucks.roles.booster2x)) {
+                        await AddGuildMemberRole(guildID, discordID, IsleofDucks.roles.new_guild_member);
+                        rolesAdded++;
+                        usersHadRolesAdded.push(discordID);
+                    }
+                } else {
+                    if (discordMember.roles.includes(IsleofDucks.roles.booster) ||
+                        discordMember.roles.includes(IsleofDucks.roles.booster2x)) {
+                        await RemoveGuildMemberRole(guildID, discordID, IsleofDucks.roles.new_guild_member);
+                        rolesRemoved++;
+                        usersHadRolesRemoved.push(discordID);
+                    }
                 }
             } else {
                 if (discordMember.roles.includes(IsleofDucks.roles.new_guild_member)) {
