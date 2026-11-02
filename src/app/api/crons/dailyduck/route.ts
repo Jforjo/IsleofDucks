@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { ExecuteWebhook } from "@/discord/discordUtils";
 import { ComponentType, MessageFlags } from "discord-api-types/v10";
+import { getActiveSuperlative, updateGuildSuperlative } from "@/discord/utils";
 
 const DUCK_TITLES = [
     "A Duck Has Appeared!",
@@ -134,6 +135,16 @@ export async function GET(request: NextRequest): Promise<Response> {
             }
         ],
     });
+
+    const superlative = await getActiveSuperlative();
+    if (superlative) {
+        const header = request.headers.get("x-vercel-cron-schedule");
+        let guild = "Isle of Ducks"
+        if (header === "0 6 * * *" || header === "0 18 * * *") {
+            guild = "Isle of Ducklings";
+        }
+        await updateGuildSuperlative(guild, superlative);
+    }
 
     return Response.json({ success: true });
 }
