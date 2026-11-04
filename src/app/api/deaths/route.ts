@@ -61,7 +61,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     if (!profile.members[uuid].bestiary?.deaths) {
         return Response.json({
             success: false,
-            message: "Deaths data is not available"
+            message: "Data for deaths is not available"
         });
     }
 
