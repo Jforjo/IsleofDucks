@@ -1476,7 +1476,8 @@ const Channels = {
     banlist: "903871143662993408",
     guesstowin: "1132372503193473055",
     guildinfo: "1320463957273739274",
-    strikelog: "903880334574256148"
+    strikelog: "903880334574256148",
+    gexpLeaderboard: "961640422202028052"
 };
 const ChannelGroups = {
     tickets: "988883238292451378",
