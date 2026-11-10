@@ -85,7 +85,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     await SendMessage(IsleofDucks.channels.gexpLeaderboard, {
         embeds: [
             {
-                title: `Top ${duckData.length} Weekly GEXP for ${guildDataDuck.guild.name} ${guildDataDuck.guild.tag}`,
+                title: `Top ${duckData.length} Weekly GEXP for ${guildDataDuck.guild.name} [${guildDataDuck.guild.tag}]`,
                 description: [
                     "```js",
                     `Total RAW Weekly GEXP ${formatNumberWithCommas(duckData.reduce((acc, member) => acc + member.gexp, 0))}`,
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     await SendMessage(IsleofDucks.channels.gexpLeaderboard, {
         embeds: [
             {
-                title: `Top ${ducklingData.length} Weekly GEXP for ${guildDataDuckling.guild.name} ${guildDataDuckling.guild.tag}`,
+                title: `Top ${ducklingData.length} Weekly GEXP for ${guildDataDuckling.guild.name} [${guildDataDuckling.guild.tag}]`,
                 description: [
                     "```js",
                     `Total RAW Weekly GEXP ${formatNumberWithCommas(ducklingData.reduce((acc, member) => acc + member.gexp, 0))}`,
