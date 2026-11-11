@@ -288,6 +288,7 @@ async function viewAway(
                     ...(awayPlayers.map(player => ({
                         type: ComponentType.TextDisplay,
                         content: [
+                            `**ID:** ${player.id}`,
                             `**User:** <@${player.userid}>`,
                             `**Reason:** ${player.reason}`,
                             `**Dates:** <t:${player.leave}:F> - <t:${player.return}:F>`
