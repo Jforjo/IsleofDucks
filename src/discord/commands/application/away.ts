@@ -244,7 +244,7 @@ async function removeOldAway(
                 components: [
                     {
                         type: ComponentType.TextDisplay,
-                        content: `Successfully removed ${removedPlayers.length} old away players!`
+                        content: `## Successfully removed ${removedPlayers.length} old away players!`
                     },
                     { type: ComponentType.Separator },
                     {
