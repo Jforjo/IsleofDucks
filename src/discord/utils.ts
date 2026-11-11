@@ -602,6 +602,10 @@ export async function removeAwayPlayer(id: number): Promise<{ id: number, userid
     const { rows } = await sql`DELETE FROM away WHERE id = ${id} RETURNING *`;
     return rows[0] as { id: number, userid: Snowflake; reason: string; leave: number; return: number };
 }
+export async function removeAllOldAwayPlayers(): Promise<{ id: number, userid: Snowflake; reason: string; leave: number; return: number }[]> {
+    const { rows } = await sql`DELETE FROM away WHERE return < EXTRACT(EPOCH FROM NOW()) RETURNING *`;
+    return rows as { id: number, userid: Snowflake; reason: string; leave: number; return: number }[];
+}
 export async function getAwayPlayers(): Promise<{ id: number, userid: Snowflake; reason: string; leave: number; return: number }[]> {
     const { rows } = await sql`SELECT * FROM away ORDER BY leave ASC`;
     return rows as { id: number, userid: Snowflake; reason: string; leave: number; return: number }[];

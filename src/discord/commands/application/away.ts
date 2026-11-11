@@ -1,6 +1,6 @@
 import { APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData, APIComponentInContainer, APIInteractionResponse, ApplicationCommandOptionType, ComponentType, InteractionResponseType, MessageFlags } from "discord-api-types/v10";
 import { CreateInteractionResponse, ConvertSnowflakeToDate, FollowupMessage, IsleofDucks, SendMessage, ErrorEmbed } from "@/discord/discordUtils";
-import { addAwayPlayer, removeAwayPlayer, getAwayPlayers, arrayContainsAny } from "@/discord/utils";
+import { addAwayPlayer, removeAwayPlayer, getAwayPlayers, arrayContainsAny, removeAllOldAwayPlayers } from "@/discord/utils";
 import { NextResponse } from "next/server";
 
 async function applyAway(
@@ -201,6 +201,66 @@ async function removeAway(
     );
 }
 
+async function removeOldAway(
+    interaction: APIChatInputApplicationCommandInteraction
+): Promise<
+    NextResponse<
+        {
+            success: boolean;
+            error?: string;
+        } | APIInteractionResponse
+    >
+> {
+    const timestamp = ConvertSnowflakeToDate(interaction.id);
+
+    if (!interaction.member) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("Could not find who ran the command!", timestamp, true)
+        });
+        return NextResponse.json(
+            { success: false, error: "Could not find who ran the command" },
+            { status: 400 }
+        );
+    }
+    if (!arrayContainsAny(interaction.member.roles, RequiredRoles.remove)) {
+        await FollowupMessage(interaction.token, {
+            flags: MessageFlags.IsComponentsV2,
+            components: ErrorEmbed("You don't have permission to use this command!", timestamp, true)
+        });
+        return NextResponse.json(
+            { success: false, error: "You don't have permission to use this command" },
+            { status: 403 }
+        );
+    }
+
+    const removedPlayers = await removeAllOldAwayPlayers();
+    await FollowupMessage(interaction.token, {
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.Container,
+                accent_color: IsleofDucks.colours.main,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `Successfully removed ${removedPlayers.length} old away players!`
+                    },
+                    { type: ComponentType.Separator },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `-# Response time: ${Date.now() - timestamp.getTime()}ms • <t:${Math.floor(Date.now() / 1000)}:F>`
+                    }
+                ]
+            }
+        ]
+    });
+    return NextResponse.json(
+        { success: true },
+        { status: 200 }
+    );
+}
+
 async function viewAway(
     interaction: APIChatInputApplicationCommandInteraction
 ): Promise<
@@ -373,6 +433,8 @@ export default async function(
         return await applyAway(interaction, options.apply.reason, options.apply.leave, options.apply.return);
     } else if (options.remove) {
         return await removeAway(interaction, options.remove.id);
+    } else if (options.removeold) {
+        return await removeOldAway(interaction);
     } else if (options.view) {
         return await viewAway(interaction);
     }
@@ -429,6 +491,11 @@ export const CommandData = {
             ]
         },
         {
+            name: "removeold",
+            description: "Remove old entries from the away list.",
+            type: ApplicationCommandOptionType.Subcommand
+        },
+        {
             name: "view",
             description: "View all users who have applied for leave.",
             type: ApplicationCommandOptionType.Subcommand
@@ -442,7 +509,10 @@ export const RequiredRoles: Record<typeof CommandData["options"][number]["name"]
     remove: [
         IsleofDucks.roles.admin
     ],
+    removeold: [
+        IsleofDucks.roles.admin
+    ],
     view: [
         IsleofDucks.roles.staff
-    ]
+    ],
 }
