@@ -77,7 +77,15 @@ export async function getScammerFromUUID(
         }
     }
 
-    return await res.json() as GetScammerResponseSuccess | GetScammerResponseError;
+    try {
+        return await res.json() as GetScammerResponseSuccess | GetScammerResponseError;
+    } catch (error) {
+        console.log("JerryScammer JSON parse error", error);
+        return {
+            success: false,
+            reason: "Failed to parse scammer response"
+        }
+    }
 }
 
 export async function getScammerFromDiscord(

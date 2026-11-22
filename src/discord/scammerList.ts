@@ -40,7 +40,16 @@ export async function getScammerListFromIDs(
         body: JSON.stringify({ ids })
     });
 
-    const data = await res.json() as ScammerListSuccessResponse | ScammerListErrorResponse;
+    let data;
+    try {
+        data = await res.json() as ScammerListSuccessResponse | ScammerListErrorResponse;
+    } catch (error) {
+        console.log("ScammerList JSON parse error", error);
+        return {
+            success: false,
+            message: "Failed to parse scammer response"
+        }
+    }
 
     if (!res.ok) {
         return data;

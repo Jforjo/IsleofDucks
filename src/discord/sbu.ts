@@ -61,5 +61,13 @@ export async function getSBUBanlistFromUUID(
         }
     }
 
-    return await res.json() as GetScammerResponse;
+    try {
+        return await res.json() as GetScammerResponse;
+    } catch (error) {
+        console.log("SBUBanlist JSON parse error", error);
+        return {
+            success: false,
+            message: "Failed to parse scammer response"
+        }
+    }
 }

@@ -97,7 +97,15 @@ export async function checkGuildLBBlacklist(uuid: string): Promise<
         }
     }
 
-    return await res.json() as CheckGuildLBBlacklistResponse;
+    try {
+        return await res.json() as CheckGuildLBBlacklistResponse;
+    } catch (error) {
+        console.log("GuildLB JSON parse error", error);
+        return {
+            success: false,
+            message: "Failed to parse scammer response"
+        }
+    }
 }
 
 export async function addGuildLBBlacklistEntry(uuid: string, reason: string, type: BlacklistEntryType, addedBy = "791380888197660722"): Promise<AddGuildLBBlacklistEntryResponse> {
