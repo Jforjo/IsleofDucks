@@ -55,6 +55,6 @@ export async function getScammerListFromIDs(
         return data;
     }
 
-    console.log("ScammerList data", JSON.stringify(data, null, 2));
+    // console.log("ScammerList data", JSON.stringify(data, null, 2));
     return data;
 }
