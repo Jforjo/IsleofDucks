@@ -1,4 +1,4 @@
-import { ConvertSnowflakeToDate, CreateInteractionResponse, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole, SendMessage } from "@/discord/discordUtils";
+import { ConvertSnowflakeToDate, CreateInteractionResponse, EditMessage, FollowupMessage, GetAllGuildMembers, IsleofDucks, RemoveGuildMemberRole, SendMessage } from "@/discord/discordUtils";
 import { getHypixelAuctions, getHypixelPlayer } from "@/discord/hypixelUtils";
 import { checkMinecraftInDB, createMinecraftUser, getAllDiscordUsers, getAllLinkedUsers, getAllMinecraftUsers, getBannedPlayers, getImmunePlayers, getUserDataFromUUID, linkDiscordToMinecraft, updateDiscordUser, updateMinecraftUser } from "@/discord/utils";
 import { sql } from "@vercel/postgres";
@@ -191,14 +191,17 @@ export default async function(
                             "**cole**/cw (ign) - Displays the Cole weight of you or the specified player.",
                             "**collection** (ign) [collection] - Displays the specified collection for you or the specified player.",
                             "**deaths** (ign) [mob] - Displays the number of deaths from the specified mob for you or the specified player.",
+                            "**dungeon** (ign (boss) - Displays the boss collections for you or the specified player.",
                             "**farming**/fw (ign) - Displays the farming weight of you or the specified player.",
                             "**game** - Start a guild game (scramble). At least 3 people need to run the command for a game to start.",
                             "**grass** (ign) - DIsplays the time that you or the specificed player has been online or offline.",
                             "**guess**/g [item] - Guess the scramble item.",
                             "**gxp**/gexp (ign) - Displays the guild experience of you or the specified player.",
                             "**help** - Displays the list of available commands.",
+                            "**hotf** (ign) - Displays the Heart of the Forest stats of you or the specified player.",
                             "**hotm** (ign) - Displays the Heart of the Mountain stats of you or the specified player.",
                             "**kills**/bestiary (ign) [mob] - Displays the number of kills for the specified mob for you or the specified player.",
+                            "**kuudra** (ign) [tier] - Displays the Kuudra stats of you or the specified player.",
                             "**lbin** [item] - Displays the lowest BIN (Buy It Now) price for the specified item.",
                             "**level**/lvl (ign) - Displays the level of you or the specified player.",
                             "**mp**/ap (ign) - Displays the accessory power of you or the specified player.",
@@ -228,9 +231,9 @@ export default async function(
         ]
     } as RESTPostAPIChannelMessageJSONBody;
 
-    await SendMessage("1402532834551533649", message); // combined bridge
-    await SendMessage("1166902582464237658", message); // duck bridge
-    await SendMessage("1166891695774904410", message); // duckling bridge
+    await EditMessage("1402532834551533649", "1564620966376644750", message); // combined bridge
+    await EditMessage("1166902582464237658", "1564620967110648001", message); // duck bridge
+    await EditMessage("1166891695774904410", "1564620967853166613", message); // duckling bridge
 
     await FollowupMessage(interaction.token, {
         content: `Done!`,
