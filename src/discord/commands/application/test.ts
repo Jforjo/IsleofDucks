@@ -191,7 +191,7 @@ export default async function(
                             "**cole**/cw (ign) - Displays the Cole weight of you or the specified player.",
                             "**collection** (ign) [collection] - Displays the specified collection for you or the specified player.",
                             "**deaths** (ign) [mob] - Displays the number of deaths from the specified mob for you or the specified player.",
-                            "**dungeon** (ign (boss) - Displays the boss collections for you or the specified player.",
+                            "**dungeon** (ign) (boss) - Displays the boss collections for you or the specified player.",
                             "**farming**/fw (ign) - Displays the farming weight of you or the specified player.",
                             "**game** - Start a guild game (scramble). At least 3 people need to run the command for a game to start.",
                             "**grass** (ign) - DIsplays the time that you or the specificed player has been online or offline.",
