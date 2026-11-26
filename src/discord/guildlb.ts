@@ -74,12 +74,7 @@ const ROUTES = {
     playerNetworth: (name: string) => `/player/${name}/networth`
 }
 
-export async function checkGuildLBBlacklist(uuid: string): Promise<
-    {
-        success: false,
-        message: string
-    } | CheckGuildLBBlacklistResponse
-> {
+export async function checkGuildLBBlacklist(uuid: string): Promise<CheckGuildLBBlacklistResponse> {
     if (!process.env.GUILDLB_API_KEY) throw new Error("GUILDLB_API_KEY is not set");
 
     const res = await fetch(`${ROUTES.base}${ROUTES.allianceBlacklistCheck(uuid)}`, {
@@ -103,7 +98,10 @@ export async function checkGuildLBBlacklist(uuid: string): Promise<
         console.log("GuildLB JSON parse error", error);
         return {
             success: false,
-            message: "Failed to parse scammer response"
+            error: {
+                code: "JSON_PARSE_ERROR",
+                message: "Failed to parse scammer response"
+            }
         }
     }
 }
