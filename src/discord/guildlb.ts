@@ -135,7 +135,18 @@ export async function addGuildLBBlacklistEntry(uuid: string, reason: string, typ
         }
     }
 
-    return await res.json() as AddGuildLBBlacklistEntryResponse;
+    try {
+        return await res.json() as AddGuildLBBlacklistEntryResponse;
+    } catch (error) {
+        console.log("GuildLB JSON parse error", error);
+        return {
+            success: false,
+            error: {
+                code: "JSON_PARSE_ERROR",
+                message: "Failed to parse add blacklist entry response"
+            }
+        }
+    }
 }
 
 export async function deleteGuildLBBlacklistEntry(uuid: string): Promise<DeleteGuildLBBlacklistEntryResponse> {
@@ -157,7 +168,18 @@ export async function deleteGuildLBBlacklistEntry(uuid: string): Promise<DeleteG
         }
     }
 
-    return await res.json() as DeleteGuildLBBlacklistEntryResponse;
+    try {
+        return await res.json() as DeleteGuildLBBlacklistEntryResponse;
+    } catch (error) {
+        console.log("GuildLB JSON parse error", error);
+        return {
+            success: false,
+            error: {
+                code: "JSON_PARSE_ERROR",
+                message: "Failed to parse delete blacklist entry response"
+            }
+        }
+    }
 }
 
 export async function getGuildLBBlacklist(): Promise<GetGuildLBBlacklistResponse> {
@@ -179,7 +201,18 @@ export async function getGuildLBBlacklist(): Promise<GetGuildLBBlacklistResponse
         }
     }
 
-    return await res.json() as GetGuildLBBlacklistResponse;
+    try {
+        return await res.json() as GetGuildLBBlacklistResponse;
+    } catch (error) {
+        console.log("GuildLB JSON parse error", error);
+        return {
+            success: false,
+            error: {
+                code: "JSON_PARSE_ERROR",
+                message: "Failed to parse get guild blacklist response"
+            }
+        }
+    }
 }
 
 type GetGuildLBPlayerResponse = GuildLBError | {
@@ -239,5 +272,16 @@ export async function getGuildLBPlayer(uuid: string): Promise<GetGuildLBPlayerRe
         }
     }
 
-    return await res.json() as GetGuildLBPlayerResponse;
+    try {
+        return await res.json() as GetGuildLBPlayerResponse;
+    } catch (error) {
+        console.log("GuildLB JSON parse error", error);
+        return {
+            success: false,
+            error: {
+                code: "JSON_PARSE_ERROR",
+                message: "Failed to parse get guild player response"
+            }
+        }
+    }
 }
