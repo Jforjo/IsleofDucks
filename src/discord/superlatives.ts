@@ -7,14 +7,6 @@ export default {
         title: "SkyBlock Level",
         value: (profile: SkyBlockProfileMember) => (profile?.leveling?.experience ?? 0) / 100
     },
-    totalHunts: {
-        title: "Total Hunts",
-        value: (profile: SkyBlockProfileMember) => 
-            ( profile?.player_stats?.shard_trap_hunts ?? 0 ) +
-            ( profile?.player_stats?.shard_combat_hunts ?? 0 ) +
-            ( profile?.player_stats?.shard_forest_hunts ?? 0 ) +
-            ( profile?.player_stats?.shard_fishing_hunts ?? 0 )
-    },
     catacombsExperience: {
         title: "Catacombs Experience",
         value: (profile: SkyBlockProfileMember) => profile?.dungeons?.dungeon_types?.catacombs?.experience ?? 0
@@ -26,6 +18,23 @@ export default {
     petScore: {
         title: "Pet Score",
         value: (profile: SkyBlockProfileMember) => profile?.leveling?.highest_pet_score ?? 0
+    },
+    /**
+     * CHRISTMAS
+     */
+    giftsGiven: {
+        title: "Total Gifts Given",
+        value: (profile: SkyBlockProfileMember) => profile?.player_stats?.gifts?.total_given ?? 0
+    },
+    giftsRecieved: {
+        title: "Total Gifts Received",
+        value: (profile: SkyBlockProfileMember) => profile?.player_stats?.gifts?.total_received ?? 0
+    },
+    giftsTotal: {
+        title: "Total Gifts Given & Received",
+        value: (profile: SkyBlockProfileMember) =>
+            (profile?.player_stats?.gifts?.total_given ?? 0) +
+            (profile?.player_stats?.gifts?.total_received ?? 0)
     },
     /**
      *  SKILLS
@@ -121,6 +130,14 @@ export default {
             ( profile.foraging?.tree_gifts?.FIG ?? 0 ) +
             ( profile.foraging?.tree_gifts?.MANGROVE ?? 0 ) +
             ( profile.foraging?.tree_gifts?.HELIX ?? 0 )
+    },
+    totalHunts: {
+        title: "Total Hunts",
+        value: (profile: SkyBlockProfileMember) => 
+            ( profile?.player_stats?.shard_trap_hunts ?? 0 ) +
+            ( profile?.player_stats?.shard_combat_hunts ?? 0 ) +
+            ( profile?.player_stats?.shard_forest_hunts ?? 0 ) +
+            ( profile?.player_stats?.shard_fishing_hunts ?? 0 )
     },
     /**
      * FARMING
